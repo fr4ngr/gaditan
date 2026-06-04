@@ -50,27 +50,25 @@ function renderDestino(dest) {
                         <!-- Grid 2x2 para datos -->
                         <div style="display: grid; grid-template-columns: 1fr auto; row-gap: 0.5rem; column-gap: 1rem; align-items: center;">
                             
-                            <!-- Nombre -->
-                            <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                <div style="background: #eab308; color: #111827; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.75rem;">RT</div>
-                                <span style="font-size: 1.15rem; font-weight: 700; color: white;">Radio Taxi</span>
+                            <!-- Logo + Nombre + Teléfono -->
+                            <div style="grid-row: span 2; display: flex; align-items: center; gap: 0.75rem;">
+                                <div style="background: white; width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i data-lucide="phone" style="width:20px; height:20px; color: #111827;"></i></div>
+                                <div style="display: flex; flex-direction: column;">
+                                    <div style="font-size: 1.2rem; font-weight: 700; color: white; line-height: 1.1;">Radio Taxi</div>
+                                    <div style="font-size: 0.9rem; color: var(--text-muted); font-weight: 500; letter-spacing: 0.5px; margin-top: 0.2rem;">956 21 21 21</div>
+                                </div>
                             </div>
                             
                             <!-- Precio -->
-                            <div style="display: flex; align-items: baseline; gap: 0.15rem; justify-self: end;">
-                                <span style="font-size: 1.3rem; font-weight: 800; color: white;">${dest.price}</span>
+                            <div style="display: flex; align-items: baseline; gap: 0.15rem; justify-self: end; align-self: end;">
+                                <span style="font-size: 1.3rem; font-weight: 800; color: white; line-height: 1;">${dest.price}</span>
                                 <span style="font-size: 1.3rem; color: var(--brand-cyan); font-weight: 800; transform: translateY(2px);">*</span>
                             </div>
                             
-                            <!-- Teléfono alineado con nombre -->
-                            <div style="font-size: 0.9rem; color: var(--text-muted); font-weight: 500; padding-left: calc(28px + 0.5rem); letter-spacing: 0.5px;">
-                                956 21 21 21
-                            </div>
-                            
-                            <!-- Tiempo alineado con precio -->
+                            <!-- Tiempo de llegada -->
                             ${dest.time ? `
-                            <div style="font-size: 0.85rem; color: var(--text-muted); font-weight: 500; display: flex; align-items: center; gap: 0.3rem; justify-self: end;">
-                                <i data-lucide="clock" style="width: 14px; height: 14px;"></i> ${dest.time}
+                            <div style="display: flex; align-items: center; gap: 0.35rem; justify-self: end; align-self: start; background: rgba(34, 197, 94, 0.15); color: #4ade80; padding: 0.25rem 0.6rem; border-radius: 6px; font-size: 0.75rem; font-weight: 600;">
+                                <i data-lucide="clock" style="width:12px; height:12px;"></i> ${dest.time}
                             </div>` : '<div></div>'}
                         </div>
                     </div>
@@ -110,11 +108,13 @@ function renderDestino(dest) {
                     <div style="display: flex; justify-content: space-between; align-items: flex-start;">
                         <div>
                             <div style="font-size: 0.65rem; color: #eab308; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.4rem; font-weight: 600;">Servicio prestado por</div>
-                            <div style="font-size: 1.2rem; font-weight: 700; color: white; display: flex; align-items: center; gap: 0.4rem;">
-                                <div style="background: #7b48fa; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center;"><i data-lucide="car" style="width:14px; height:14px; color: white;"></i></div>
-                                cadiz.cab
+                            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                <div style="background: #7b48fa; width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i data-lucide="car" style="width:20px; height:20px; color: white;"></i></div>
+                                <div style="display: flex; flex-direction: column;">
+                                    <div style="font-size: 1.2rem; font-weight: 700; color: white; line-height: 1.1;">cadiz.cab</div>
+                                    <div style="font-size: 0.85rem; color: #a78bfa; font-weight: 500; margin-top: 0.2rem; letter-spacing: 0.5px;">Vehículos VTC</div>
+                                </div>
                             </div>
-                            <div style="font-size: 0.85rem; color: #a78bfa; font-weight: 500; margin-top: 0.1rem; margin-left: 1.9rem; letter-spacing: 0.5px;">Vehículos VTC</div>
                         </div>
                         <div style="text-align: right; display: flex; flex-direction: column; align-items: flex-end;">
                             <div style="background: #eab308; color: #111827; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; padding: 0.25rem 0.6rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">PREMIUM</div>
