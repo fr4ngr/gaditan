@@ -39,7 +39,7 @@ function renderDestino(dest) {
                 <div style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 1rem;">
                     <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.2rem;">
                         <div>
-                            <div style="font-size: 0.75rem; color: #eab308; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.2rem;"><i data-lucide="star" style="width: 10px; height: 10px; fill: #eab308; display: inline-block; vertical-align: middle; margin-right: 2px; margin-top: -2px;"></i> FAVORITO</div>
+                            <div style="font-size: 0.75rem; color: #eab308; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.2rem;">FAVORITO</div>
                             <div style="font-size: 1.2rem; font-weight: 700; color: white; display: flex; align-items: center; gap: 0.4rem;">
                                 <div style="background: #eab308; color: #111827; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.7rem;">RT</div>
                                 Radio Taxi
@@ -73,7 +73,7 @@ function renderDestino(dest) {
                             </div>
                         </div>
                         <div style="text-align: right;">
-                            <div style="font-size: 1.1rem; font-weight: 700; color: #d8b4fe; line-height: 1;">0€</div>
+                            <div style="background: #eab308; color: #111827; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; padding: 0.25rem 0.5rem; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">PREMIUM</div>
                         </div>
                     </div>
                     <div style="display: flex; gap: 0.5rem; width: 100%;">
