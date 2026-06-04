@@ -85,13 +85,10 @@ function renderDestino(dest) {
                 <a href="#" style="display: flex; justify-content: space-between; align-items: center; background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 9999px; padding: 0.6rem 1rem; text-decoration: none; margin-bottom: 0.5rem;">
                     <div style="display: flex; align-items: center; gap: 0.6rem;">
                         <div style="background: #ef4444; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center;"><i data-lucide="train" style="width:14px; height:14px; color: white;"></i></div>
-                        <div style="display: flex; flex-direction: column; justify-content: center;">
-                            <span style="font-size: 0.85rem; font-weight: 600; color: white; line-height: 1;">Cercanías</span>
-                            <span style="font-size: 0.65rem; color: #fca5a5; margin-top: 0.15rem;">${dest.trainTime ? dest.trainTime : '-- min'}</span>
-                        </div>
+                        <span style="font-size: 0.85rem; font-weight: 600; color: white;">Cercanías</span>
                     </div>
-                    <div style="display: flex; align-items: center; gap: 0.4rem;">
-                        <span style="font-size: 0.95rem; font-weight: 700; color: #fecaca;">${dest.trainPrice || '0€'}</span>
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <span style="background: #10b981; color: #022c22; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; padding: 0.25rem 0.5rem; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">ECO</span>
                         <i data-lucide="chevron-right" style="width: 16px; height: 16px; color: #fca5a5;"></i>
                     </div>
                 </a>
@@ -100,13 +97,10 @@ function renderDestino(dest) {
                 <a href="#" style="display: flex; justify-content: space-between; align-items: center; background: rgba(234, 179, 8, 0.08); border: 1px solid rgba(234, 179, 8, 0.3); border-radius: 9999px; padding: 0.6rem 1rem; text-decoration: none; margin-bottom: 0.5rem;">
                     <div style="display: flex; align-items: center; gap: 0.6rem;">
                         <div style="background: #eab308; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center;"><i data-lucide="bus" style="width:14px; height:14px; color: #111827;"></i></div>
-                        <div style="display: flex; flex-direction: column; justify-content: center;">
-                            <span style="font-size: 0.85rem; font-weight: 600; color: white; line-height: 1;">Autobús</span>
-                            <span style="font-size: 0.65rem; color: #fde047; margin-top: 0.15rem;">${dest.busTime ? dest.busTime : '-- min'}</span>
-                        </div>
+                        <span style="font-size: 0.85rem; font-weight: 600; color: white;">Autobús</span>
                     </div>
-                    <div style="display: flex; align-items: center; gap: 0.4rem;">
-                        <span style="font-size: 0.95rem; font-weight: 700; color: #fef08a;">${dest.busPrice || '0€'}</span>
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <span style="background: #10b981; color: #022c22; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; padding: 0.25rem 0.5rem; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">ECO</span>
                         <i data-lucide="chevron-right" style="width: 16px; height: 16px; color: #fde047;"></i>
                     </div>
                 </a>
@@ -115,13 +109,10 @@ function renderDestino(dest) {
                 <a href="#" style="display: flex; justify-content: space-between; align-items: center; background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 9999px; padding: 0.6rem 1rem; text-decoration: none; margin-bottom: 0.5rem;">
                     <div style="display: flex; align-items: center; gap: 0.6rem;">
                         <div style="background: #10b981; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center;"><i data-lucide="tram-front" style="width:14px; height:14px; color: white;"></i></div>
-                        <div style="display: flex; flex-direction: column; justify-content: center;">
-                            <span style="font-size: 0.85rem; font-weight: 600; color: white; line-height: 1;">Tranvía</span>
-                            <span style="font-size: 0.65rem; color: #6ee7b7; margin-top: 0.15rem;">${dest.tramTime ? dest.tramTime : '-- min'}</span>
-                        </div>
+                        <span style="font-size: 0.85rem; font-weight: 600; color: white;">Tranvía</span>
                     </div>
-                    <div style="display: flex; align-items: center; gap: 0.4rem;">
-                        <span style="font-size: 0.95rem; font-weight: 700; color: #a7f3d0;">${dest.tramPrice || '0€'}</span>
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <span style="background: #10b981; color: #022c22; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; padding: 0.25rem 0.5rem; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">ECO</span>
                         <i data-lucide="chevron-right" style="width: 16px; height: 16px; color: #6ee7b7;"></i>
                     </div>
                 </a>
