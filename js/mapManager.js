@@ -187,29 +187,24 @@ const mapManager = (() => {
     };
 
     const renderElegirView = (paradas) => {
-        const container = document.getElementById('paradas-list-container');
-        if (!container) return;
-        container.innerHTML = '';
-
-        // Contenedor del selector
-        const selectWrapper = document.createElement('div');
-        selectWrapper.className = 'glass';
-        selectWrapper.style.cssText = "padding: 1.5rem; border-radius: 20px; text-align: center; margin-bottom: 1rem;";
+        const topContainer = document.getElementById('elegir-select-container');
+        const bottomContainer = document.getElementById('paradas-list-container');
+        if (!topContainer || !bottomContainer) return;
         
-        const label = document.createElement('label');
-        label.innerText = "Selecciona tu parada del listado oficial:";
-        label.style.cssText = "display: block; margin-bottom: 1rem; color: var(--text-muted); font-size: 0.95rem; font-weight: 600;";
+        topContainer.innerHTML = '';
+        bottomContainer.innerHTML = '';
+        topContainer.style.display = 'block';
 
-        // Select nativo pero estilizado
+        // Select nativo pero estilizado (sin tarjeta, diseño suelto)
         const selectContainer = document.createElement('div');
-        selectContainer.style.cssText = "position: relative;";
+        selectContainer.style.cssText = "position: relative; width: 100%;";
         
         const select = document.createElement('select');
-        select.style.cssText = "width: 100%; padding: 1rem 3rem 1rem 1rem; border-radius: 12px; background: rgba(0,0,0,0.4); color: #fff; border: 1px solid var(--glass-border); font-size: 1rem; appearance: none; outline: none; cursor: pointer; font-family: inherit;";
+        select.style.cssText = "width: 100%; padding: 1rem 3rem 1rem 1.2rem; border-radius: 999px; background: rgba(0,0,0,0.6); color: #fff; border: 1px solid rgba(255,255,255,0.1); font-size: 1rem; appearance: none; outline: none; cursor: pointer; font-family: inherit; box-shadow: 0 4px 6px rgba(0,0,0,0.1); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);";
         
         const chevron = document.createElement('i');
         chevron.setAttribute('data-lucide', 'chevron-down');
-        chevron.style.cssText = "position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); color: var(--brand-cyan); pointer-events: none;";
+        chevron.style.cssText = "position: absolute; right: 1.2rem; top: 50%; transform: translateY(-50%); color: var(--brand-cyan); pointer-events: none;";
 
         const defaultOption = document.createElement('option');
         defaultOption.value = "";
@@ -226,9 +221,6 @@ const mapManager = (() => {
             select.appendChild(opt);
         });
 
-        // Contenedor de la tarjeta seleccionada (inicialmente vacío)
-        const resultContainer = document.createElement('div');
-
         select.addEventListener('change', (e) => {
             const selectedId = e.target.value;
             const parada = paradas.find(p => p.id === selectedId);
@@ -237,19 +229,16 @@ const mapManager = (() => {
                 renderMarkers([parada]);
                 map.flyTo([parada.lat, parada.lon], 17);
                 
-                // Mostrar tarjeta
-                resultContainer.innerHTML = '';
-                resultContainer.appendChild(buildListItem(parada));
+                // Mostrar tarjeta abajo
+                bottomContainer.innerHTML = '';
+                bottomContainer.appendChild(buildListItem(parada));
                 if (typeof lucide !== 'undefined') lucide.createIcons();
             }
         });
 
         selectContainer.appendChild(select);
         selectContainer.appendChild(chevron);
-        selectWrapper.appendChild(label);
-        selectWrapper.appendChild(selectContainer);
-        container.appendChild(selectWrapper);
-        container.appendChild(resultContainer);
+        topContainer.appendChild(selectContainer);
         
         if (typeof lucide !== 'undefined') lucide.createIcons();
     };
@@ -337,12 +326,14 @@ const mapManager = (() => {
         const btnTodas = document.getElementById('btn-todas');
         const btnCercana = document.getElementById('btn-cercana');
         const btnElegir = document.getElementById('btn-elegir');
+        const selectContainer = document.getElementById('elegir-select-container');
         
         clearRoute();
         
         btnTodas.className = 'md3-btn md3-tonal';
         btnCercana.className = 'md3-btn md3-tonal';
         btnElegir.className = 'md3-btn md3-tonal';
+        if (selectContainer) selectContainer.style.display = 'none';
         
         if (mode === 'todas') {
             btnTodas.className = 'md3-btn md3-primary';
