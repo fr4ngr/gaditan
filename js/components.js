@@ -53,12 +53,10 @@ function renderDestino(dest) {
                             <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.3rem;">aprox. ${dest.time ? '• ' + dest.time : ''}</div>
                         </div>
                     </div>
-                    <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%;">
-                        <a href="tel:+34956212121" class="md3-btn md3-primary" style="width: 100%; padding: 0.6rem 0;"><i data-lucide="phone" style="width:16px; height:16px;"></i> Llamar ahora</a>
-                        <div style="display: flex; gap: 0.5rem; width: 100%;">
-                            <a href="https://wa.me/34956212121" class="md3-btn" style="flex: 1; padding: 0.5rem 0; font-size: 0.9rem; background: rgba(37, 211, 102, 0.15); color: #86efac; border: 1px solid rgba(37, 211, 102, 0.3);"><i data-lucide="message-circle" style="width:16px; height:16px;"></i> WhatsApp</a>
-                            <a href="#reserva" class="md3-btn" style="flex: 1; padding: 0.5rem 0; font-size: 0.9rem; background: rgba(255, 255, 255, 0.1); color: white; border: 1px solid rgba(255, 255, 255, 0.2);"><i data-lucide="calendar" style="width:16px; height:16px;"></i> Reservar</a>
-                        </div>
+                    <div style="display: flex; gap: 0.4rem; width: 100%;">
+                        <a href="tel:+34956212121" class="md3-btn md3-primary" style="flex: 1; padding: 0.5rem 0; font-size: 0.8rem; white-space: nowrap;"><i data-lucide="phone" style="width:14px; height:14px;"></i> Llamar</a>
+                        <a href="https://wa.me/34956212121" class="md3-btn" style="flex: 1; padding: 0.5rem 0; font-size: 0.8rem; background: rgba(37, 211, 102, 0.15); color: #86efac; border: 1px solid rgba(37, 211, 102, 0.3); white-space: nowrap;"><i data-lucide="message-circle" style="width:14px; height:14px;"></i> WhatsApp</a>
+                        <a href="#reserva" class="md3-btn" style="flex: 1; padding: 0.5rem 0; font-size: 0.8rem; background: rgba(255, 255, 255, 0.1); color: white; border: 1px solid rgba(255, 255, 255, 0.2); white-space: nowrap;"><i data-lucide="calendar" style="width:14px; height:14px;"></i> Reservar</a>
                     </div>
                 </div>
                 
