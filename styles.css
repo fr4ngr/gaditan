@@ -912,3 +912,32 @@ details.mini-dest-card[open] .mini-dest-close-btn {
 details.native-accordion[open] .mini-dest-info-right {
     display: none !important;
 }
+
+/* Arreglo destello tactil y animaciones acordeon */
+details.native-accordion summary {
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+}
+details.native-accordion summary:focus {
+    outline: none;
+}
+details.native-accordion .native-content {
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease, padding 0.3s ease;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+details.native-accordion[open] .native-content {
+    opacity: 1;
+    max-height: 600px;
+    padding-top: 1.5rem;
+    padding-bottom: 0.5rem;
+}
+details.native-accordion.closing .native-content {
+    opacity: 0;
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+}

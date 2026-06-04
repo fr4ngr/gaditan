@@ -34,7 +34,7 @@ function renderDestino(dest) {
             </button>
         </summary>
         
-        <div class="native-content" style="padding-top: 1.5rem; padding-bottom: 0.5rem; display: flex; flex-direction: column; gap: 0.8rem; width: 100%;">
+        <div class="native-content" style="display: flex; flex-direction: column; gap: 0.8rem; width: 100%;">
                 <!-- Opción Radio Taxi -->
                 <div style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 1rem;">
                     <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.2rem;">
@@ -85,12 +85,32 @@ document.addEventListener("DOMContentLoaded", () => {
     const favGrid = document.getElementById("favoritos-grid-dinamico");
     if (favGrid) { favGrid.innerHTML = dbDestinos.favoritos.map(renderDestino).join(''); }
     
-    // Configurar comportamiento exclusivo para TODOS los details
+    // Configurar comportamiento exclusivo y animación de cierre suave
     document.querySelectorAll('details.native-accordion').forEach(details => {
+        const summary = details.querySelector('summary');
+        if (summary) {
+            summary.addEventListener('click', (e) => {
+                if (details.hasAttribute('open')) {
+                    e.preventDefault(); // Evitar cierre instantáneo nativo
+                    details.classList.add('closing');
+                    setTimeout(() => {
+                        details.removeAttribute('open');
+                        details.classList.remove('closing');
+                    }, 280); // Ligeramente inferior a los 300ms del CSS para evitar parpadeos
+                }
+            });
+        }
+        
         details.addEventListener('toggle', (e) => {
-            if (details.open) {
+            if (details.open && !details.classList.contains('closing')) {
                 document.querySelectorAll('details.native-accordion').forEach(other => {
-                    if (other !== details) other.removeAttribute('open');
+                    if (other !== details && other.hasAttribute('open')) {
+                        other.classList.add('closing');
+                        setTimeout(() => {
+                            other.removeAttribute('open');
+                            other.classList.remove('closing');
+                        }, 280);
+                    }
                 });
                 if (typeof lucide !== 'undefined') lucide.createIcons();
             }
