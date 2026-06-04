@@ -39,14 +39,15 @@ function renderDestino(dest) {
                 <div style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 1rem;">
                     <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.2rem;">
                         <div>
-                            <div style="font-size: 0.75rem; color: var(--brand-cyan); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.2rem;">Servicio Oficial</div>
+                            <div style="font-size: 0.75rem; color: #eab308; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.2rem;"><i data-lucide="star" style="width: 10px; height: 10px; fill: #eab308; display: inline-block; vertical-align: middle; margin-right: 2px; margin-top: -2px;"></i> FAVORITO</div>
                             <div style="font-size: 1.2rem; font-weight: 700; color: white; display: flex; align-items: center; gap: 0.4rem;">
-                                <div style="background: #eab308; color: #111827; width: 22px; height: 22px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.65rem;">RT</div>
+                                <div style="background: #eab308; color: #111827; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.7rem;">RT</div>
                                 Radio Taxi
                             </div>
                         </div>
-                        <div style="text-align: right;">
+                        <div style="text-align: right; display: flex; flex-direction: column; align-items: flex-end;">
                             <div style="font-size: 1.5rem; font-weight: 800; color: white; line-height: 1;">${dest.price}</div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.3rem;">aprox. ${dest.time ? '• ' + dest.time : ''}</div>
                         </div>
                     </div>
                     <div style="display: flex; gap: 0.5rem; width: 100%;">
@@ -55,21 +56,21 @@ function renderDestino(dest) {
                 </div>
                 
                 <!-- Opción VTC Alternativa -->
-                <div style="background: rgba(0,0,0,0.25); border: 1px dashed rgba(255,255,255,0.15); border-radius: 12px; padding: 0.8rem 1rem;">
+                <div style="background: rgba(123, 72, 250, 0.08); border: 1px solid rgba(123, 72, 250, 0.3); border-radius: 12px; padding: 0.8rem 1rem;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem;">
                         <div style="display: flex; align-items: center; gap: 0.6rem;">
-                            <div style="background: rgba(255,255,255,0.1); width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center;"><i data-lucide="car" style="width:14px; height:14px; color: #9ca3af;"></i></div>
+                            <div style="background: #7b48fa; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center;"><i data-lucide="car" style="width:14px; height:14px; color: white;"></i></div>
                             <div>
                                 <div style="font-size: 0.95rem; font-weight: 600; color: white;">cadiz.cab</div>
-                                <div style="font-size: 0.75rem; color: var(--text-muted);">Alternativa Premium</div>
+                                <div style="font-size: 0.75rem; color: #a78bfa;">Alternativa Premium</div>
                             </div>
                         </div>
                         <div style="text-align: right;">
-                            <div style="font-size: 1.1rem; font-weight: 700; color: #9ca3af; line-height: 1;">0€</div>
+                            <div style="font-size: 1.1rem; font-weight: 700; color: #d8b4fe; line-height: 1;">0€</div>
                         </div>
                     </div>
                     <div style="display: flex; gap: 0.5rem; width: 100%;">
-                        <a href="#" class="md3-btn" style="flex: 1; padding: 0.6rem 0; background: rgba(255,255,255,0.05); color: #9ca3af; border: 1px solid rgba(255,255,255,0.1);"><i data-lucide="info" style="width:16px; height:16px;"></i> Más info</a>
+                        <a href="#" class="md3-btn" style="flex: 1; padding: 0.6rem 0; background: rgba(123, 72, 250, 0.15); color: #e9d5ff; border: 1px solid rgba(123, 72, 250, 0.4);"><i data-lucide="info" style="width:16px; height:16px;"></i> Más info</a>
                     </div>
                 </div>
         </div>

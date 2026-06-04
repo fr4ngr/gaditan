@@ -907,3 +907,8 @@ details.mini-dest-card[open] .mini-dest-close-btn {
     opacity: 1;
     pointer-events: auto;
 }
+
+/* Ocultar info de la tarjeta al desplegar */
+details.native-accordion[open] .mini-dest-info-right {
+    display: none !important;
+}
