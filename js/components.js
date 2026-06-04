@@ -85,35 +85,46 @@ document.addEventListener("DOMContentLoaded", () => {
     const favGrid = document.getElementById("favoritos-grid-dinamico");
     if (favGrid) { favGrid.innerHTML = dbDestinos.favoritos.map(renderDestino).join(''); }
     
-    // Configurar comportamiento exclusivo y animación de cierre suave
+    // Lógica secuencial del acordeón
     document.querySelectorAll('details.native-accordion').forEach(details => {
         const summary = details.querySelector('summary');
-        if (summary) {
-            summary.addEventListener('click', (e) => {
-                if (details.hasAttribute('open')) {
-                    e.preventDefault(); // Evitar cierre instantáneo nativo
-                    details.classList.add('closing');
+        if (!summary) return;
+
+        summary.addEventListener('click', (e) => {
+            e.preventDefault(); // Anulamos el comportamiento nativo brusco
+
+            if (details.hasAttribute('open')) {
+                // Si ya está abierta, la cerramos suavemente
+                closeDetailsSmoothly(details);
+            } else {
+                // Si está cerrada, buscamos si hay alguna otra abierta
+                const currentlyOpen = document.querySelector('details.native-accordion[open]:not(.closing)');
+                
+                if (currentlyOpen && currentlyOpen !== details) {
+                    // 1. Cerramos la que está abierta
+                    closeDetailsSmoothly(currentlyOpen);
+                    // 2. Esperamos a que termine de cerrarse para abrir la nueva (efecto secuencial limpio)
                     setTimeout(() => {
-                        details.removeAttribute('open');
-                        details.classList.remove('closing');
-                    }, 280); // Ligeramente inferior a los 300ms del CSS para evitar parpadeos
+                        openDetailsSmoothly(details);
+                    }, 300); // 300ms de la transición CSS
+                } else {
+                    // No hay ninguna abierta, abrimos esta directamente
+                    openDetailsSmoothly(details);
                 }
-            });
-        }
-        
-        details.addEventListener('toggle', (e) => {
-            if (details.open && !details.classList.contains('closing')) {
-                document.querySelectorAll('details.native-accordion').forEach(other => {
-                    if (other !== details && other.hasAttribute('open')) {
-                        other.classList.add('closing');
-                        setTimeout(() => {
-                            other.removeAttribute('open');
-                            other.classList.remove('closing');
-                        }, 280);
-                    }
-                });
-                if (typeof lucide !== 'undefined') lucide.createIcons();
             }
         });
     });
+
+    function closeDetailsSmoothly(details) {
+        details.classList.add('closing');
+        setTimeout(() => {
+            details.removeAttribute('open');
+            details.classList.remove('closing');
+        }, 300);
+    }
+
+    function openDetailsSmoothly(details) {
+        details.setAttribute('open', '');
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+    }
 });
