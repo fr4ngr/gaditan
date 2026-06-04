@@ -162,6 +162,92 @@ const mapManager = (() => {
         return item;
     };
 
+    const buildSelectedStopWidget = (p) => {
+        const item = document.createElement('div');
+        item.style.cssText = `display: flex; flex-direction: column; width: 100%;`;
+        
+        // 1. Cabecera (Mini Tarjeta de la Parada)
+        let distHtml = '';
+        if (p.distance !== undefined) {
+            distHtml = `<div style="font-size: 0.75rem; color: var(--brand-cyan); font-weight: 600; display: flex; align-items: center; gap: 0.2rem; margin-top: 0.4rem;"><i data-lucide="footprints" style="width:14px; height:14px;"></i> ${formatDistance(p.distance)}</div>`;
+        }
+        const header = `
+            <div class="glass" style="padding: 1.25rem; border-radius: 20px; border: 1px solid var(--glass-border); margin-bottom: 1rem; display: flex; align-items: flex-start; justify-content: space-between;">
+                <div style="display: flex; flex-direction: column; gap: 0.2rem;">
+                    <strong style="color: #fff; font-size: 1.1rem;">${p.name}</strong>
+                    <span style="color: var(--text-muted); font-size: 0.85rem;">${p.address}</span>
+                    ${distHtml}
+                </div>
+                <button class="md3-btn" onclick="document.getElementById('map').scrollIntoView({ behavior: 'smooth', block: 'center' });" style="padding: 0.5rem 1rem; font-size: 0.85rem; background: rgba(123, 72, 250, 0.15); color: #e9d5ff; border: 1px solid rgba(123, 72, 250, 0.4); border-radius: 999px;">
+                    Ver mapa
+                </button>
+            </div>
+        `;
+
+        // 2. Tarjeta Radio Taxi + Alternativas
+        const content = `
+            <!-- Opción Radio Taxi -->
+            <div style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 1.25rem; display: flex; flex-direction: column; gap: 0.85rem;">
+                <!-- Info Section -->
+                <div style="display: flex; flex-direction: column; gap: 0.6rem;">
+                    <div style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.2px; font-weight: 600;">Servicio prestado por</div>
+                    <div style="display: grid; grid-template-columns: 1fr; row-gap: 0.1rem; column-gap: 1rem; align-items: center;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <div style="background: #eab308; color: #111827; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.75rem;">RT</div>
+                            <span style="font-size: 1.15rem; font-weight: 700; color: white;">Radio Taxi</span>
+                        </div>
+                        <div style="font-size: 0.9rem; color: var(--text-muted); font-weight: 500; padding-left: calc(28px + 0.5rem); letter-spacing: 0.5px;">
+                            956 21 21 21
+                        </div>
+                    </div>
+                </div>
+                <!-- Actions Section -->
+                <div style="display: flex; flex-direction: column; gap: 0.85rem; width: 100%;">
+                    <div style="font-size: 0.8rem; color: rgba(255,255,255,0.85); line-height: 1.25; text-align: left; font-weight: 400; background: rgba(0,0,0,0.2); padding: 0.5rem 0.75rem; border-radius: 12px; border-left: 3px solid var(--brand-cyan); display: flex; align-items: flex-start; gap: 0.4rem;">
+                        <span style="color: var(--brand-cyan); font-weight: 800; font-size: 1.1rem; line-height: 1; transform: translateY(2px);">*</span>
+                        <span style="flex: 1;">El precio final lo determina el taxímetro oficial. Consúltales sin compromiso.</span>
+                    </div>
+                    <div style="display: flex; justify-content: center; gap: 2.5rem; width: 100%; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 0.75rem;">
+                        <a href="tel:+34956212121" style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem; text-decoration: none;">
+                            <div class="circle-btn" style="background: #0284c7; box-shadow: none; width: 52px; height: 52px;"><i data-lucide="phone" style="width:24px; height:24px; color: white;"></i></div>
+                            <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 500;">Llamar</span>
+                        </a>
+                        <a href="https://wa.me/34956212121" style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem; text-decoration: none;">
+                            <div class="circle-btn" style="background: #25D366; box-shadow: none; width: 52px; height: 52px;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="white">
+                                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/>
+                                </svg>
+                            </div>
+                            <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 500;">WhatsApp</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Separador de Alternativas -->
+            <div style="display: flex; align-items: center; margin: 1.5rem 0 1rem 0; opacity: 0.8;">
+                <div style="flex: 1; height: 1px; background: linear-gradient(to right, transparent, rgba(255,255,255,0.15));"></div>
+                <span style="padding: 0 0.8rem; font-size: 0.65rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;">Otras Alternativas</span>
+                <div style="flex: 1; height: 1px; background: linear-gradient(to left, transparent, rgba(255,255,255,0.15));"></div>
+            </div>
+            
+            <!-- Opción Autobús -->
+            <a href="#" style="display: flex; justify-content: space-between; align-items: center; background: rgba(234, 179, 8, 0.08); border: 1px solid rgba(234, 179, 8, 0.3); border-radius: 9999px; padding: 0.6rem 1rem; text-decoration: none; margin-bottom: 0.5rem;">
+                <div style="display: flex; align-items: center; gap: 0.6rem;">
+                    <div style="background: #eab308; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center;"><i data-lucide="bus" style="width:14px; height:14px; color: #111827;"></i></div>
+                    <span style="font-size: 0.85rem; font-weight: 600; color: white;">Autobús</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <span style="background: #10b981; color: #022c22; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; padding: 0.25rem 0.5rem; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">ECO</span>
+                    <i data-lucide="chevron-right" style="width: 16px; height: 16px; color: #fde047;"></i>
+                </div>
+            </a>
+        `;
+
+        item.innerHTML = header + content;
+        return item;
+    };
+
     const renderList = (paradas) => {
         const container = document.getElementById('paradas-list-container');
         if (!container) return;
@@ -260,9 +346,9 @@ const mapManager = (() => {
                 renderMarkers([parada]);
                 map.flyTo([parada.lat, parada.lon], 17);
                 
-                // Mostrar tarjeta abajo
+                // Mostrar widget de la parada seleccionada
                 bottomContainer.innerHTML = '';
-                bottomContainer.appendChild(buildListItem(parada));
+                bottomContainer.appendChild(buildSelectedStopWidget(parada));
                 if (typeof lucide !== 'undefined') lucide.createIcons();
             }
         });
@@ -424,13 +510,19 @@ const mapManager = (() => {
                         return { ...p, distance: getDistance(lat, lon, p.lat, p.lon) };
                     }).sort((a, b) => a.distance - b.distance);
                     
-                    const cercanas = paradasConDistancia.slice(0, 2); // Solo 2
+                    const masCercana = paradasConDistancia[0];
                     renderMarkers(paradasConDistancia);
-                    renderList(cercanas);
+                    
+                    const container = document.getElementById('paradas-list-container');
+                    if (container) {
+                        container.innerHTML = '';
+                        container.appendChild(buildSelectedStopWidget(masCercana));
+                        if (typeof lucide !== 'undefined') lucide.createIcons();
+                    }
                     
                     const bounds = L.latLngBounds([
                         [lat, lon],
-                        [cercanas[0].lat, cercanas[0].lon]
+                        [masCercana.lat, masCercana.lon]
                     ]);
                     map.fitBounds(bounds, { padding: [50, 50], maxZoom: 16 });
 
