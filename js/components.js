@@ -182,17 +182,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 // Si ya está abierta, la cerramos suavemente
                 closeDetailsSmoothly(details);
             } else {
-                // Si está cerrada, buscamos si hay alguna otra abierta
-                const currentlyOpen = document.querySelector('details.native-accordion[open]:not(.closing)');
-                
-                if (currentlyOpen && currentlyOpen !== details) {
-                    // Cerramos la que está abierta y abrimos la nueva a la vez para evitar saltos bruscos
-                    closeDetailsSmoothly(currentlyOpen);
-                    openDetailsSmoothly(details);
-                } else {
-                    // No hay ninguna abierta, abrimos esta directamente
-                    openDetailsSmoothly(details);
-                }
+                // Abrimos esta tarjeta sin cerrar las demás para evitar el salto de layout
+                openDetailsSmoothly(details);
             }
         });
     });
