@@ -39,7 +39,7 @@ function renderDestino(dest) {
                 <div style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 1rem;">
                     <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.2rem;">
                         <div>
-                            <div style="font-size: 0.75rem; color: #eab308; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.2rem;">FAVORITO</div>
+                            <div style="font-size: 0.75rem; color: #06b6d4; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.2rem;">FAVORITO</div>
                             <div style="font-size: 1.2rem; font-weight: 700; color: white; display: flex; align-items: center; gap: 0.4rem;">
                                 <div style="background: #eab308; color: #111827; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.7rem;">RT</div>
                                 Radio Taxi
@@ -82,7 +82,7 @@ function renderDestino(dest) {
                 </div>
                 
                 <!-- Opción Cercanías (Rojo) - Formato Compacto -->
-                <a href="#" style="display: flex; justify-content: space-between; align-items: center; background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 12px; padding: 0.6rem 0.8rem; text-decoration: none;">
+                <a href="#" style="display: flex; justify-content: space-between; align-items: center; background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 9999px; padding: 0.6rem 1rem; text-decoration: none; margin-bottom: 0.5rem;">
                     <div style="display: flex; align-items: center; gap: 0.6rem;">
                         <div style="background: #ef4444; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center;"><i data-lucide="train" style="width:14px; height:14px; color: white;"></i></div>
                         <div style="display: flex; flex-direction: column; justify-content: center;">
@@ -97,7 +97,7 @@ function renderDestino(dest) {
                 </a>
 
                 <!-- Opción Autobús (Amarillo) - Formato Compacto -->
-                <a href="#" style="display: flex; justify-content: space-between; align-items: center; background: rgba(234, 179, 8, 0.08); border: 1px solid rgba(234, 179, 8, 0.3); border-radius: 12px; padding: 0.6rem 0.8rem; text-decoration: none;">
+                <a href="#" style="display: flex; justify-content: space-between; align-items: center; background: rgba(234, 179, 8, 0.08); border: 1px solid rgba(234, 179, 8, 0.3); border-radius: 9999px; padding: 0.6rem 1rem; text-decoration: none; margin-bottom: 0.5rem;">
                     <div style="display: flex; align-items: center; gap: 0.6rem;">
                         <div style="background: #eab308; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center;"><i data-lucide="bus" style="width:14px; height:14px; color: #111827;"></i></div>
                         <div style="display: flex; flex-direction: column; justify-content: center;">
@@ -112,7 +112,7 @@ function renderDestino(dest) {
                 </a>
 
                 <!-- Opción Tranvía (Verde) - Formato Compacto -->
-                <a href="#" style="display: flex; justify-content: space-between; align-items: center; background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 12px; padding: 0.6rem 0.8rem; text-decoration: none;">
+                <a href="#" style="display: flex; justify-content: space-between; align-items: center; background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 9999px; padding: 0.6rem 1rem; text-decoration: none; margin-bottom: 0.5rem;">
                     <div style="display: flex; align-items: center; gap: 0.6rem;">
                         <div style="background: #10b981; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center;"><i data-lucide="tram-front" style="width:14px; height:14px; color: white;"></i></div>
                         <div style="display: flex; flex-direction: column; justify-content: center;">
