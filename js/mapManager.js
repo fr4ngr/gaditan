@@ -208,7 +208,7 @@ const mapManager = (() => {
 
         const defaultOption = document.createElement('option');
         defaultOption.value = "";
-        defaultOption.innerText = "-- Selecciona una opción --";
+        defaultOption.innerText = "Elige tu parada";
         defaultOption.disabled = true;
         defaultOption.selected = true;
         select.appendChild(defaultOption);
