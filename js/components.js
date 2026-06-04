@@ -41,7 +41,7 @@ function renderDestino(dest) {
         </summary>
         <div class="native-content" style="display: flex; flex-direction: column; gap: 0.8rem; width: 100%;">
                 <!-- Opción Radio Taxi -->
-                <div style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 1.25rem; display: flex; flex-direction: column; gap: 1.25rem;">
+                <div style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 1.25rem; display: flex; flex-direction: column; gap: 0.85rem;">
                     
                     <!-- Info Section -->
                     <div style="display: flex; flex-direction: column; gap: 0.6rem;">
@@ -76,12 +76,12 @@ function renderDestino(dest) {
                     </div>
                     
                     <!-- Actions Section -->
-                    <div style="display: flex; flex-direction: column; gap: 1rem; width: 100%; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 1.25rem;">
+                    <div style="display: flex; flex-direction: column; gap: 0.85rem; width: 100%;">
                         <div style="font-size: 0.8rem; color: rgba(255,255,255,0.85); line-height: 1.25; text-align: left; font-weight: 400; background: rgba(0,0,0,0.2); padding: 0.5rem 0.75rem; border-radius: 12px; border-left: 3px solid var(--brand-cyan); display: flex; align-items: flex-start; gap: 0.4rem;">
                             <span style="color: var(--brand-cyan); font-weight: 800; font-size: 1.1rem; line-height: 1; transform: translateY(2px);">*</span>
                             <span style="flex: 1;">Estimación con tráfico favorable. El precio final lo determina el taxímetro oficial. Consúltales sin compromiso.</span>
                         </div>
-                        <div style="display: flex; justify-content: center; gap: 2.5rem; width: 100%; margin-top: 0.5rem;">
+                        <div style="display: flex; justify-content: center; gap: 2.5rem; width: 100%; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 0.75rem;">
                             <a href="tel:+34956212121" style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem; text-decoration: none;">
                             <div class="circle-btn" style="background: #0284c7; box-shadow: none; width: 52px; height: 52px;"><i data-lucide="phone" style="width:24px; height:24px;"></i></div>
                             <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 500;">Llamar</span>
@@ -106,7 +106,7 @@ function renderDestino(dest) {
                 </div>
                 
                 <!-- Opción VTC Alternativa -->
-                <div style="background: rgba(123, 72, 250, 0.08); border: 1px solid rgba(123, 72, 250, 0.3); border-radius: 16px; padding: 1.25rem; display: flex; flex-direction: column; gap: 1.25rem;">
+                <div style="background: rgba(123, 72, 250, 0.08); border: 1px solid rgba(123, 72, 250, 0.3); border-radius: 16px; padding: 1.25rem; display: flex; flex-direction: column; gap: 0.85rem;">
                     <div style="display: flex; justify-content: space-between; align-items: flex-start; width: 100%;">
                         <div style="width: 100%;">
                             <div style="font-size: 0.65rem; color: #eab308; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.4rem; font-weight: 600;">Servicio prestado por</div>
@@ -118,7 +118,7 @@ function renderDestino(dest) {
                             <div style="font-size: 0.85rem; color: #a78bfa; font-weight: 500; margin-top: 0.1rem; margin-left: 1.9rem; letter-spacing: 0.5px;">Vehículos VTC</div>
                         </div>
                     </div>
-                    <div style="display: flex; gap: 0.5rem; width: 100%; border-top: 1px solid rgba(123, 72, 250, 0.2); padding-top: 1.25rem;">
+                    <div style="display: flex; gap: 0.5rem; width: 100%; border-top: 1px solid rgba(123, 72, 250, 0.2); padding-top: 0.75rem;">
                         <a href="#" class="md3-btn" style="flex: 1; padding: 0.75rem 0; background: rgba(123, 72, 250, 0.15); color: #e9d5ff; border: 1px solid rgba(123, 72, 250, 0.4); border-radius: 999px; font-weight: 600; display: flex; justify-content: center; align-items: center; gap: 0.5rem; text-decoration: none;"><i data-lucide="calendar-check" style="width:18px; height:18px;"></i> Reservas</a>
                     </div>
                 </div>
