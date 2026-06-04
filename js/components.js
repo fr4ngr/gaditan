@@ -42,18 +42,22 @@ function renderDestino(dest) {
         <div class="native-content" style="display: flex; flex-direction: column; gap: 0.8rem; width: 100%;">
                 <!-- Opción Radio Taxi -->
                 <div style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 1rem;">
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.2rem;">
-                        <div>
-                            <div style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.2rem;">Servicio prestado por</div>
+                    <div style="display: flex; flex-direction: column; margin-bottom: 1.2rem; width: 100%;">
+                        <div style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.4rem;">Servicio prestado por</div>
+                        
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
                             <div style="font-size: 1.2rem; font-weight: 700; color: white; display: flex; align-items: center; gap: 0.4rem;">
                                 <div style="background: #eab308; color: #111827; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.7rem;">RT</div>
                                 Radio Taxi
                             </div>
-                            <div style="font-size: 0.85rem; color: var(--text-muted); font-weight: 500; margin-top: -0.1rem; margin-left: 1.9rem; letter-spacing: 0.5px;">956 21 21 21</div>
+                            <div style="font-size: 1.4rem; font-weight: 800; color: white; display: flex; align-items: baseline; gap: 0.3rem;">
+                                ${dest.price} <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 500;">aprox.</span>
+                            </div>
                         </div>
-                        <div style="text-align: right; display: flex; flex-direction: column; align-items: flex-end;">
-                            <div style="font-size: 1.5rem; font-weight: 800; color: white; line-height: 1;">${dest.price}</div>
-                            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.3rem;">aprox. ${dest.time ? '• ' + dest.time : ''}</div>
+                        
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.1rem;">
+                            <div style="font-size: 0.85rem; color: var(--text-muted); font-weight: 500; margin-left: 1.9rem; letter-spacing: 0.5px;">956 21 21 21</div>
+                            ${dest.time ? `<div style="font-size: 0.85rem; color: var(--text-muted); font-weight: 500; display: flex; align-items: center; gap: 0.25rem;"><i data-lucide="clock" style="width: 12px; height: 12px;"></i> ${dest.time}</div>` : ''}
                         </div>
                     </div>
                     <div style="display: flex; justify-content: center; gap: 3rem; width: 100%; padding-top: 0.5rem;">
