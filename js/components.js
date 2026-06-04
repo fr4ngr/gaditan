@@ -48,7 +48,7 @@ function renderDestino(dest) {
                         <div style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.2px; font-weight: 600;">Servicio prestado por</div>
                         
                         <!-- Grid 2x2 para datos -->
-                        <div style="display: grid; grid-template-columns: 1fr auto; row-gap: 0.5rem; column-gap: 1rem; align-items: center;">
+                        <div style="display: grid; grid-template-columns: 1fr auto; row-gap: 0.1rem; column-gap: 1rem; align-items: center;">
                             
                             <!-- Nombre -->
                             <div style="display: flex; align-items: center; gap: 0.5rem;">
