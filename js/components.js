@@ -73,6 +73,22 @@ function renderDestino(dest) {
                         <a href="#" class="md3-btn" style="flex: 1; padding: 0.6rem 0; background: rgba(123, 72, 250, 0.15); color: #e9d5ff; border: 1px solid rgba(123, 72, 250, 0.4);"><i data-lucide="info" style="width:16px; height:16px;"></i> Más info</a>
                     </div>
                 </div>
+                
+                <!-- Opciones Transporte Público -->
+                <div style="display: flex; gap: 0.5rem; width: 100%;">
+                    <div class="md3-btn" style="flex: 1; padding: 0.5rem 0.5rem; background: rgba(255,255,255,0.03); color: white; border: 1px solid rgba(255,255,255,0.08); flex-direction: column; gap: 0.2rem; align-items: center; justify-content: center; height: auto; pointer-events: none;">
+                        <div style="display: flex; align-items: center; gap: 0.3rem; font-size: 0.85rem; font-weight: 600;">
+                            <i data-lucide="train" style="width:14px; height:14px; color: #ef4444;"></i> Cercanías
+                        </div>
+                        <div style="font-size: 0.65rem; color: var(--text-muted); font-weight: 400;">${dest.trainPrice || '0€'} • ${dest.trainTime || '-- min'}</div>
+                    </div>
+                    <div class="md3-btn" style="flex: 1; padding: 0.5rem 0.5rem; background: rgba(255,255,255,0.03); color: white; border: 1px solid rgba(255,255,255,0.08); flex-direction: column; gap: 0.2rem; align-items: center; justify-content: center; height: auto; pointer-events: none;">
+                        <div style="display: flex; align-items: center; gap: 0.3rem; font-size: 0.85rem; font-weight: 600;">
+                            <i data-lucide="bus" style="width:14px; height:14px; color: #3b82f6;"></i> Autobús
+                        </div>
+                        <div style="font-size: 0.65rem; color: var(--text-muted); font-weight: 400;">${dest.busPrice || '0€'} • ${dest.busTime || '-- min'}</div>
+                    </div>
+                </div>
         </div>
     </details>
     `;
