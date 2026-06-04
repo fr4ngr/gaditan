@@ -20,7 +20,7 @@ function renderDestino(dest) {
     // Variable eliminada, el HTML de tiempo se genera directamente abajo
     
     return `
-    <details class="mini-dest-card native-accordion" style="margin-bottom: 2rem;">
+    <details class="mini-dest-card native-accordion" style="margin-bottom: 1rem;">
         <summary class="mini-dest-header" style="align-items: center; position: relative; width: 100%; list-style: none;">
             <div class="mini-dest-name" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0.2rem;">
                 <div style="font-size: 0.65rem; color: var(--brand-cyan); font-weight: 800; text-transform: uppercase; letter-spacing: 1px;">DESDE CÁDIZ A</div>
@@ -186,12 +186,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 const currentlyOpen = document.querySelector('details.native-accordion[open]:not(.closing)');
                 
                 if (currentlyOpen && currentlyOpen !== details) {
-                    // 1. Cerramos la que está abierta
+                    // Cerramos la que está abierta y abrimos la nueva a la vez para evitar saltos bruscos
                     closeDetailsSmoothly(currentlyOpen);
-                    // 2. Esperamos a que termine de cerrarse para abrir la nueva (efecto secuencial limpio)
-                    setTimeout(() => {
-                        openDetailsSmoothly(details);
-                    }, 300); // 300ms de la transición CSS
+                    openDetailsSmoothly(details);
                 } else {
                     // No hay ninguna abierta, abrimos esta directamente
                     openDetailsSmoothly(details);
