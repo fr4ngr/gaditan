@@ -29,9 +29,9 @@ function renderDestino(dest) {
                 </div>
             </div>
             <div class="mini-dest-info-right" style="text-align: right;">
-                <div style="display: flex; align-items: baseline; justify-content: flex-end; gap: 0.3rem;">
+                <div style="display: flex; align-items: baseline; justify-content: flex-end; gap: 0.1rem;">
                     <span class="mini-dest-price" style="line-height: 1;">${dest.price}</span>
-                    <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 500;">aprox.</span>
+                    <span style="font-size: 1.2rem; color: var(--brand-cyan); font-weight: 800; transform: translateY(2px);">*</span>
                 </div>
                 ${dest.time ? `<div style="font-size: 0.75rem; color: var(--text-muted); display: flex; align-items: center; justify-content: flex-end; gap: 0.25rem; margin-top: 0.3rem;"><i data-lucide="clock" style="width: 12px; height: 12px;"></i> ${dest.time}</div>` : ''}
             </div>
@@ -57,9 +57,9 @@ function renderDestino(dest) {
                             </div>
                             
                             <!-- Precio -->
-                            <div style="display: flex; align-items: baseline; gap: 0.25rem; justify-self: end;">
+                            <div style="display: flex; align-items: baseline; gap: 0.15rem; justify-self: end;">
                                 <span style="font-size: 1.3rem; font-weight: 800; color: white;">${dest.price}</span>
-                                <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 500;">aprox.</span>
+                                <span style="font-size: 1.3rem; color: var(--brand-cyan); font-weight: 800; transform: translateY(2px);">*</span>
                             </div>
                             
                             <!-- Teléfono alineado con nombre -->
