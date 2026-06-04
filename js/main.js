@@ -120,36 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    const mapElement = document.getElementById('map');
-    if (mapElement && typeof L !== 'undefined') {
-        const initMap = () => {
-            const map = L.map('map', {
-                scrollWheelZoom: false,
-                dragging: !L.Browser.mobile,
-                tap: false
-            }).setView([36.516, -6.288], 13);
-            
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-                attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
-                maxZoom: 19
-            }).addTo(map);
-            // Marker code is commented out so map loads without pins by default
-            /*
-            const redIcon = new L.Icon({...});
-            */
-        };
-
-        const observer = new IntersectionObserver((entries, observer) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    initMap();
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, { rootMargin: "200px" });
-        
-        observer.observe(mapElement);
-    }
+    // La inicialización del mapa de paradas ahora se gestiona en mapManager.js
 
     setupPhotonAutocomplete('calc-origin', 'origin-suggestions', (data) => calcContext.selectedOrigin = data, true);
     setupPhotonAutocomplete('calc-destination', 'dest-suggestions', (data) => calcContext.selectedDest = data, false);

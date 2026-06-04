@@ -286,7 +286,6 @@
             <div class="container">
                 <h2 class="section-title" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 0.5rem;">
                     <span data-translate="map-title">Mapa de Paradas</span>
-                    <i data-lucide="map-pin" style="color: var(--brand-cyan); fill: var(--brand-cyan); stroke: #111827;" size="48"></i>
                 </h2>
                 <p class="section-subtitle" style="text-align: center; color: var(--text-muted); margin-bottom: 2.5rem; font-size: 1.1rem;" data-translate="stops-map-sub">Encuentra la parada de taxi más cercana a tu ubicación en Cádiz.</p>
 
@@ -295,9 +294,15 @@
                     <button id="btn-todas" class="md3-btn md3-primary" style="width: auto; cursor: pointer;"><i data-lucide="map"></i> Todas</button>
                     <button id="btn-cercana" class="md3-btn md3-tonal" style="width: auto; cursor: pointer;"><i data-lucide="navigation"></i> Más Cercana</button>
                 </div>
-                <div class="map-container" style="border-radius: 20px; overflow: hidden; border: 1px solid var(--glass-border); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);">
+                <div class="map-container" style="border-radius: 20px; overflow: hidden; border: 1px solid var(--glass-border); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2); margin-bottom: 2rem;">
                     <div id="map" style="width: 100%; height: 450px; background-color: #e5e3df; filter: contrast(1.1) opacity(0.9) saturate(1.2);"></div>
                 </div>
+                
+                <!-- Lista dinámica de paradas -->
+                <div id="paradas-list-container" style="display: flex; flex-direction: column; gap: 0.8rem; margin-bottom: 2rem;"></div>
+                
+                <!-- Contenedor dinámico de rutas paso a paso -->
+                <div id="directions-container"></div>
             </div>
         </section>
 
@@ -557,6 +562,8 @@
     </div>
 
     <!-- Entry point de Módulos ES6 -->
+    <script src="js/mapData.js?v=1.0"></script>
+    <script src="js/mapManager.js?v=1.0"></script>
     <script src="js/components.js?v=2.0"></script>
     <script type="module" src="js/main.js?v=1780571581,83528"></script>
 <script>
