@@ -1,4 +1,3 @@
-
 // DESTINOS DATABASE Y COMPONENTES
 const dbDestinos = {
     aeropuertos: [
@@ -18,17 +17,17 @@ const dbDestinos = {
 };
 
 function renderDestino(dest) {
-    const timeHtml = dest.time ? <div class="mini-dest-time" style="font-size: 0.8rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.25rem;"><i data-lucide="clock" style="width: 12px; height: 12px;"></i> </div> : '';
+    const timeHtml = dest.time ? `<div class="mini-dest-time" style="font-size: 0.8rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.25rem;"><i data-lucide="clock" style="width: 12px; height: 12px;"></i> ${dest.time}</div>` : '';
     
-    return 
+    return `
     <details class="mini-dest-card native-accordion" style="margin-bottom: 2rem;">
         <summary class="mini-dest-header" style="align-items: center; position: relative; width: 100%;">
             <div class="mini-dest-name">
-                <i data-lucide="" size="16" style="color: var(--brand-cyan);"></i> 
+                <i data-lucide="${dest.icon}" size="16" style="color: var(--brand-cyan);"></i> ${dest.name}
             </div>
             <div class="mini-dest-info-right" style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.1rem;">
-                <div class="mini-dest-price" style="line-height: 1;"> aprox.</div>
-                
+                <div class="mini-dest-price" style="line-height: 1;">${dest.price} aprox.</div>
+                ${timeHtml}
             </div>
             <button class="mini-dest-close-btn" aria-label="Cerrar" style="pointer-events: none;" onclick="event.preventDefault(); this.closest('details').removeAttribute('open');">
                 <i data-lucide="x" style="width: 18px; height: 18px; pointer-events: none;"></i>
@@ -47,7 +46,7 @@ function renderDestino(dest) {
                             </div>
                         </div>
                         <div style="text-align: right;">
-                            <div style="font-size: 1.5rem; font-weight: 800; color: white; line-height: 1;"></div>
+                            <div style="font-size: 1.5rem; font-weight: 800; color: white; line-height: 1;">${dest.price}</div>
                         </div>
                     </div>
                     <div style="display: flex; gap: 0.5rem; width: 100%;">
@@ -75,7 +74,7 @@ function renderDestino(dest) {
                 </div>
         </div>
     </details>
-    ;
+    `;
 }
 
 document.addEventListener("DOMContentLoaded", () => {
