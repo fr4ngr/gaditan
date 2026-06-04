@@ -55,6 +55,13 @@ function renderDestino(dest) {
                     </div>
                 </div>
                 
+                <!-- Separador de Alternativas -->
+                <div style="display: flex; align-items: center; margin: 0.2rem 0; opacity: 0.8;">
+                    <div style="flex: 1; height: 1px; background: linear-gradient(to right, transparent, rgba(255,255,255,0.15));"></div>
+                    <span style="padding: 0 0.8rem; font-size: 0.65rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;">Otras Alternativas</span>
+                    <div style="flex: 1; height: 1px; background: linear-gradient(to left, transparent, rgba(255,255,255,0.15));"></div>
+                </div>
+                
                 <!-- Opción VTC Alternativa -->
                 <div style="background: rgba(123, 72, 250, 0.08); border: 1px solid rgba(123, 72, 250, 0.3); border-radius: 12px; padding: 0.8rem 1rem;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem;">
