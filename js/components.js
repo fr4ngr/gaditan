@@ -48,7 +48,7 @@ function renderDestino(dest) {
                                 <div style="background: #eab308; color: #111827; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.7rem;">RT</div>
                                 Radio Taxi
                             </div>
-                            <div style="font-size: 0.85rem; color: var(--text-muted); font-weight: 500; margin-top: 0.3rem; margin-left: 2rem; letter-spacing: 0.5px;">+34 956 21 21 21</div>
+                            <div style="font-size: 0.85rem; color: var(--text-muted); font-weight: 500; margin-top: 0.3rem; margin-left: 2rem; letter-spacing: 0.5px;">956 21 21 21</div>
                         </div>
                         <div style="text-align: right; display: flex; flex-direction: column; align-items: flex-end;">
                             <div style="font-size: 1.5rem; font-weight: 800; color: white; line-height: 1;">${dest.price}</div>
