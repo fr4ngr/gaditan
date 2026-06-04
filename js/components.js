@@ -110,6 +110,21 @@ function renderDestino(dest) {
                         <i data-lucide="chevron-right" style="width: 16px; height: 16px; color: #fde047;"></i>
                     </div>
                 </a>
+
+                <!-- Opción Tranvía (Verde) - Formato Compacto -->
+                <a href="#" style="display: flex; justify-content: space-between; align-items: center; background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 12px; padding: 0.6rem 0.8rem; text-decoration: none;">
+                    <div style="display: flex; align-items: center; gap: 0.6rem;">
+                        <div style="background: #10b981; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center;"><i data-lucide="tram-front" style="width:14px; height:14px; color: white;"></i></div>
+                        <div style="display: flex; flex-direction: column; justify-content: center;">
+                            <span style="font-size: 0.85rem; font-weight: 600; color: white; line-height: 1;">Tranvía</span>
+                            <span style="font-size: 0.65rem; color: #6ee7b7; margin-top: 0.15rem;">${dest.tramTime ? dest.tramTime : '-- min'}</span>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.4rem;">
+                        <span style="font-size: 0.95rem; font-weight: 700; color: #a7f3d0;">${dest.tramPrice || '0€'}</span>
+                        <i data-lucide="chevron-right" style="width: 16px; height: 16px; color: #6ee7b7;"></i>
+                    </div>
+                </a>
         </div>
     </details>
     `;
