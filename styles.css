@@ -1,4 +1,4 @@
-﻿/* CSS Premium: Glassmorphism & Cinematic UI */
+/* CSS Premium: Glassmorphism & Cinematic UI */
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap');
 
 :root {
@@ -914,12 +914,20 @@ details.native-accordion[open] .mini-dest-info-right {
 }
 
 /* Arreglo destello tactil y animaciones acordeon */
-details.native-accordion summary {
-    outline: none;
-    -webkit-tap-highlight-color: transparent;
+details.native-accordion,
+details.native-accordion * {
+    -webkit-tap-highlight-color: transparent !important;
+    -webkit-tap-highlight-color: rgba(0,0,0,0) !important;
 }
-details.native-accordion summary:focus {
-    outline: none;
+details.native-accordion summary {
+    outline: none !important;
+    user-select: none;
+    -webkit-user-select: none;
+}
+details.native-accordion summary:focus,
+details.native-accordion summary:active {
+    outline: none !important;
+    background: transparent !important;
 }
 details.native-accordion .native-content {
     opacity: 0;
