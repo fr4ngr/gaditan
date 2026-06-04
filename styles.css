@@ -939,7 +939,7 @@ details.native-accordion .native-content {
 }
 details.native-accordion[open] .native-content {
     opacity: 1;
-    max-height: 600px;
+    max-height: 1200px;
     padding-top: 1.5rem;
     padding-bottom: 0.5rem;
 }
