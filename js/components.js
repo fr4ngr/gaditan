@@ -55,15 +55,15 @@ function renderDestino(dest) {
                     </div>
                     <div style="display: flex; justify-content: space-around; width: 100%; padding-top: 0.5rem;">
                         <a href="tel:+34956212121" style="display: flex; flex-direction: column; align-items: center; gap: 0.4rem; text-decoration: none;">
-                            <div class="circle-btn" style="background: #0284c7; box-shadow: none;"><i data-lucide="phone" style="width:20px; height:20px;"></i></div>
+                            <div class="circle-btn" style="background: #0284c7; box-shadow: none;"><i data-lucide="phone" style="width:26px; height:26px;"></i></div>
                             <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 500;">Llamar</span>
                         </a>
                         <a href="https://wa.me/34956212121" style="display: flex; flex-direction: column; align-items: center; gap: 0.4rem; text-decoration: none;">
-                            <div class="circle-btn" style="background: #25D366; box-shadow: none;"><i data-lucide="message-circle" style="width:20px; height:20px;"></i></div>
+                            <div class="circle-btn" style="background: #25D366; box-shadow: none;"><i data-lucide="message-circle" style="width:26px; height:26px;"></i></div>
                             <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 500;">WhatsApp</span>
                         </a>
                         <a href="#reserva" style="display: flex; flex-direction: column; align-items: center; gap: 0.4rem; text-decoration: none;">
-                            <div class="circle-btn" style="background: #EA4335; box-shadow: none;"><i data-lucide="calendar" style="width:20px; height:20px;"></i></div>
+                            <div class="circle-btn" style="background: #EA4335; box-shadow: none;"><i data-lucide="calendar" style="width:26px; height:26px;"></i></div>
                             <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 500;">Reservar</span>
                         </a>
                     </div>
