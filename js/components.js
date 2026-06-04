@@ -76,8 +76,12 @@ function renderDestino(dest) {
                     </div>
                     
                     <!-- Actions Section -->
-                    <div style="display: flex; justify-content: center; gap: 2.5rem; width: 100%; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 1.25rem;">
-                        <a href="tel:+34956212121" style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem; text-decoration: none;">
+                    <div style="display: flex; flex-direction: column; gap: 1rem; width: 100%; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 1rem;">
+                        <div style="font-size: 0.65rem; color: var(--brand-cyan); line-height: 1.4; text-align: center; font-weight: 500; padding: 0 0.5rem;">
+                            *Estimación con tráfico favorable. El precio final lo determina el taxímetro oficial. Consúltales sin compromiso ante cualquier duda.
+                        </div>
+                        <div style="display: flex; justify-content: center; gap: 2.5rem; width: 100%;">
+                            <a href="tel:+34956212121" style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem; text-decoration: none;">
                             <div class="circle-btn" style="background: #0284c7; box-shadow: none; width: 52px; height: 52px;"><i data-lucide="phone" style="width:24px; height:24px;"></i></div>
                             <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 500;">Llamar</span>
                         </a>
@@ -89,6 +93,7 @@ function renderDestino(dest) {
                             </div>
                             <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 500;">WhatsApp</span>
                         </a>
+                        </div>
                     </div>
                 </div>
                 
