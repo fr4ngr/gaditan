@@ -64,6 +64,7 @@ const mapManager = (() => {
         // Bind events a botones
         document.getElementById('btn-todas').addEventListener('click', () => setMode('todas'));
         document.getElementById('btn-cercana').addEventListener('click', () => setMode('cercana'));
+        document.getElementById('btn-elegir').addEventListener('click', () => setMode('elegir'));
 
         // Intersection Observer para cargar marcadores cuando sea visible
         const observer = new IntersectionObserver((entries, obs) => {
@@ -233,15 +234,20 @@ const mapManager = (() => {
         currentMode = mode;
         const btnTodas = document.getElementById('btn-todas');
         const btnCercana = document.getElementById('btn-cercana');
+        const btnElegir = document.getElementById('btn-elegir');
         
         clearRoute();
         
+        // Limpiar estilos de todos los botones
+        btnTodas.className = 'md3-btn md3-tonal';
+        btnCercana.className = 'md3-btn md3-tonal';
+        btnElegir.className = 'md3-btn md3-tonal';
+        
         if (mode === 'todas') {
             btnTodas.className = 'md3-btn md3-primary';
-            btnCercana.className = 'md3-btn md3-tonal';
             
             renderMarkers(dbParadas);
-            renderList(dbParadas); // Renderizar sin ordenar
+            document.getElementById('paradas-list-container').innerHTML = ''; // Ocultar lista en modo "Todas"
             
             if (userMarker) {
                 map.removeLayer(userMarker);
@@ -249,16 +255,28 @@ const mapManager = (() => {
                 userLocation = null;
             }
             
-            // Ajustar vista para abarcar todas
             const bounds = L.latLngBounds(dbParadas.map(p => [p.lat, p.lon]));
             map.fitBounds(bounds, { padding: [20, 20] });
             
+        } else if (mode === 'elegir') {
+            btnElegir.className = 'md3-btn md3-primary';
+            
+            renderMarkers(dbParadas);
+            renderList(dbParadas); // Renderizar lista completa sin ordenar
+            
+            if (userMarker) {
+                map.removeLayer(userMarker);
+                userMarker = null;
+                userLocation = null;
+            }
+            
+            const bounds = L.latLngBounds(dbParadas.map(p => [p.lat, p.lon]));
+            map.fitBounds(bounds, { padding: [20, 20] });
+
         } else if (mode === 'cercana') {
-            btnTodas.className = 'md3-btn md3-tonal';
             btnCercana.className = 'md3-btn md3-primary';
             
             if (navigator.geolocation) {
-                // Mostrar loading state en la lista
                 document.getElementById('paradas-list-container').innerHTML = '<div style="text-align:center; padding: 2rem; color: var(--text-muted);"><i data-lucide="loader-2" class="spin" style="animation: spin 1s linear infinite;"></i> Localizando...</div>';
                 if (typeof lucide !== 'undefined') lucide.createIcons();
 
@@ -266,7 +284,6 @@ const mapManager = (() => {
                     const lat = position.coords.latitude;
                     const lon = position.coords.longitude;
                     
-                    // Validar si est en Cadiz (bounding box simple)
                     if (lat < 36.47 || lat > 36.56 || lon < -6.33 || lon > -6.23) {
                         alert("Parece que no te encuentras en Cádiz capital. Mostrando todas las paradas.");
                         setMode('todas');
@@ -279,17 +296,14 @@ const mapManager = (() => {
                     userMarker = L.marker([lat, lon], { icon: userIcon }).addTo(map);
                     userMarker.bindPopup("Tu ubicación actual");
 
-                    // Calcular distancias y ordenar
                     const paradasConDistancia = dbParadas.map(p => {
                         return { ...p, distance: getDistance(lat, lon, p.lat, p.lon) };
                     }).sort((a, b) => a.distance - b.distance);
                     
-                    // Mostrar top 3 en la lista
                     const cercanas = paradasConDistancia.slice(0, 3);
-                    renderMarkers(paradasConDistancia); // Pintamos todas para contexto visual
+                    renderMarkers(paradasConDistancia);
                     renderList(cercanas);
                     
-                    // Hacer zoom para que quepan el usuario y la primera parada
                     const bounds = L.latLngBounds([
                         [lat, lon],
                         [cercanas[0].lat, cercanas[0].lon]
