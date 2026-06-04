@@ -22,8 +22,11 @@ function renderDestino(dest) {
     return `
     <details class="mini-dest-card native-accordion" style="margin-bottom: 2rem;">
         <summary class="mini-dest-header" style="align-items: center; position: relative; width: 100%; list-style: none;">
-            <div class="mini-dest-name">
-                <i data-lucide="${dest.icon}" size="16" style="color: var(--brand-cyan);"></i> ${dest.name}
+            <div class="mini-dest-name" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0.2rem;">
+                <div style="font-size: 0.65rem; color: var(--brand-cyan); font-weight: 800; text-transform: uppercase; letter-spacing: 1px;">DESDE CÁDIZ A</div>
+                <div style="display: flex; align-items: center; gap: 0.4rem;">
+                    <i data-lucide="${dest.icon}" size="16" style="color: var(--brand-cyan);"></i> ${dest.name}
+                </div>
             </div>
             <div class="mini-dest-info-right" style="text-align: right;">
                 <div style="display: flex; align-items: baseline; justify-content: flex-end; gap: 0.3rem;">
@@ -37,12 +40,6 @@ function renderDestino(dest) {
             </button>
         </summary>
         <div class="native-content" style="display: flex; flex-direction: column; gap: 0.8rem; width: 100%;">
-                
-                <!-- Título interior al abrir la tarjeta -->
-                <div style="padding: 0.5rem 0 0.5rem 0;">
-                    <div style="font-size: 0.75rem; color: var(--brand-cyan); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.2rem;">DESDE CÁDIZ A</div>
-                    <h3 style="font-size: 1.5rem; font-weight: 800; color: white; margin: 0; line-height: 1.1; letter-spacing: -0.5px;">${dest.name}</h3>
-                </div>
                 <!-- Opción Radio Taxi -->
                 <div style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 1rem;">
                     <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.2rem;">
