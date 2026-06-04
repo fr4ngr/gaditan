@@ -36,8 +36,13 @@ function renderDestino(dest) {
                 <i data-lucide="x" style="width: 18px; height: 18px; pointer-events: none;"></i>
             </button>
         </summary>
-        
         <div class="native-content" style="display: flex; flex-direction: column; gap: 0.8rem; width: 100%;">
+                
+                <!-- Título interior al abrir la tarjeta -->
+                <div style="padding: 0.5rem 0 0.5rem 0;">
+                    <div style="font-size: 0.75rem; color: var(--brand-cyan); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.2rem;">DESDE CÁDIZ A</div>
+                    <h3 style="font-size: 1.5rem; font-weight: 800; color: white; margin: 0; line-height: 1.1; letter-spacing: -0.5px;">${dest.name}</h3>
+                </div>
                 <!-- Opción Radio Taxi -->
                 <div style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 1rem;">
                     <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.2rem;">
