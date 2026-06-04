@@ -17,17 +17,20 @@ const dbDestinos = {
 };
 
 function renderDestino(dest) {
-    const timeHtml = dest.time ? `<div class="mini-dest-time" style="font-size: 0.8rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.25rem;"><i data-lucide="clock" style="width: 12px; height: 12px;"></i> ${dest.time}</div>` : '';
+    // Variable eliminada, el HTML de tiempo se genera directamente abajo
     
     return `
     <details class="mini-dest-card native-accordion" style="margin-bottom: 2rem;">
-        <summary class="mini-dest-header" style="align-items: center; position: relative; width: 100%;">
+        <summary class="mini-dest-header" style="align-items: center; position: relative; width: 100%; list-style: none;">
             <div class="mini-dest-name">
                 <i data-lucide="${dest.icon}" size="16" style="color: var(--brand-cyan);"></i> ${dest.name}
             </div>
-            <div class="mini-dest-info-right" style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.1rem;">
-                <div class="mini-dest-price" style="line-height: 1;">${dest.price} aprox.</div>
-                ${timeHtml}
+            <div class="mini-dest-info-right" style="text-align: right;">
+                <div style="display: flex; align-items: baseline; justify-content: flex-end; gap: 0.3rem;">
+                    <span class="mini-dest-price" style="line-height: 1;">${dest.price}</span>
+                    <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 500;">aprox.</span>
+                </div>
+                ${dest.time ? `<div style="font-size: 0.75rem; color: var(--text-muted); display: flex; align-items: center; justify-content: flex-end; gap: 0.25rem; margin-top: 0.3rem;"><i data-lucide="clock" style="width: 12px; height: 12px;"></i> ${dest.time}</div>` : ''}
             </div>
             <button class="mini-dest-close-btn" aria-label="Cerrar" style="pointer-events: none;" onclick="event.preventDefault(); this.closest('details').removeAttribute('open');">
                 <i data-lucide="x" style="width: 18px; height: 18px; pointer-events: none;"></i>
