@@ -44,7 +44,7 @@ function renderDestino(dest) {
                 <div style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 1rem;">
                     <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.2rem;">
                         <div>
-                            <div style="font-size: 0.75rem; color: #06b6d4; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.2rem;">FAVORITO</div>
+                            <div style="font-size: 0.75rem; color: #06b6d4; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.2rem;">POPULAR</div>
                             <div style="font-size: 1.2rem; font-weight: 700; color: white; display: flex; align-items: center; gap: 0.4rem;">
                                 <div style="background: #eab308; color: #111827; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.7rem;">RT</div>
                                 Radio Taxi
@@ -55,7 +55,7 @@ function renderDestino(dest) {
                             <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.3rem;">aprox. ${dest.time ? '• ' + dest.time : ''}</div>
                         </div>
                     </div>
-                    <div style="display: flex; justify-content: space-around; width: 100%; padding-top: 0.5rem;">
+                    <div style="display: flex; justify-content: center; gap: 3rem; width: 100%; padding-top: 0.5rem;">
                         <a href="tel:+34956212121" style="display: flex; flex-direction: column; align-items: center; gap: 0.4rem; text-decoration: none;">
                             <div class="circle-btn" style="background: #0284c7; box-shadow: none;"><i data-lucide="phone" style="width:26px; height:26px;"></i></div>
                             <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 500;">Llamar</span>
@@ -67,10 +67,6 @@ function renderDestino(dest) {
                                 </svg>
                             </div>
                             <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 500;">WhatsApp</span>
-                        </a>
-                        <a href="#reserva" style="display: flex; flex-direction: column; align-items: center; gap: 0.4rem; text-decoration: none;">
-                            <div class="circle-btn" style="background: #EA4335; box-shadow: none;"><i data-lucide="calendar" style="width:26px; height:26px;"></i></div>
-                            <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 500;">Reservar</span>
                         </a>
                     </div>
                 </div>
