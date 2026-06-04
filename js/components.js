@@ -77,9 +77,9 @@ function renderDestino(dest) {
                     
                     <!-- Actions Section -->
                     <div style="display: flex; flex-direction: column; gap: 1rem; width: 100%; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 1.25rem;">
-                        <div style="font-size: 0.8rem; color: rgba(255,255,255,0.85); line-height: 1.5; text-align: left; font-weight: 400; background: rgba(0,0,0,0.2); padding: 0.75rem 1rem; border-radius: 8px; border-left: 3px solid var(--brand-cyan);">
-                            <span style="color: var(--brand-cyan); font-weight: 800; font-size: 1.1rem; margin-right: 0.2rem; transform: translateY(2px); display: inline-block;">*</span>
-                            Estimación con tráfico favorable. El precio final lo determina el taxímetro oficial. Consúltales sin compromiso.
+                        <div style="font-size: 0.8rem; color: rgba(255,255,255,0.85); line-height: 1.25; text-align: left; font-weight: 400; background: rgba(0,0,0,0.2); padding: 0.5rem 0.75rem; border-radius: 12px; border-left: 3px solid var(--brand-cyan); display: flex; align-items: flex-start; gap: 0.4rem;">
+                            <span style="color: var(--brand-cyan); font-weight: 800; font-size: 1.1rem; line-height: 1; transform: translateY(2px);">*</span>
+                            <span style="flex: 1;">Estimación con tráfico favorable. El precio final lo determina el taxímetro oficial. Consúltales sin compromiso.</span>
                         </div>
                         <div style="display: flex; justify-content: center; gap: 2.5rem; width: 100%; margin-top: 0.5rem;">
                             <a href="tel:+34956212121" style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem; text-decoration: none;">
