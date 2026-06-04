@@ -74,43 +74,35 @@ function renderDestino(dest) {
                     </div>
                 </div>
                 
-                <!-- Opción Cercanías (Rojo) -->
-                <div style="background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 12px; padding: 0.8rem 1rem;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem;">
-                        <div style="display: flex; align-items: center; gap: 0.6rem;">
-                            <div style="background: #ef4444; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center;"><i data-lucide="train" style="width:14px; height:14px; color: white;"></i></div>
-                            <div>
-                                <div style="font-size: 0.95rem; font-weight: 600; color: white;">Cercanías</div>
-                                <div style="font-size: 0.75rem; color: #fca5a5;">${dest.trainTime ? dest.trainTime + ' aprox.' : '-- min'}</div>
-                            </div>
-                        </div>
-                        <div style="text-align: right;">
-                            <div style="font-size: 1.1rem; font-weight: 700; color: #fecaca; line-height: 1;">${dest.trainPrice || '0€'}</div>
+                <!-- Opción Cercanías (Rojo) - Formato Compacto -->
+                <a href="#" style="display: flex; justify-content: space-between; align-items: center; background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 12px; padding: 0.6rem 0.8rem; text-decoration: none;">
+                    <div style="display: flex; align-items: center; gap: 0.6rem;">
+                        <div style="background: #ef4444; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center;"><i data-lucide="train" style="width:14px; height:14px; color: white;"></i></div>
+                        <div style="display: flex; flex-direction: column; justify-content: center;">
+                            <span style="font-size: 0.85rem; font-weight: 600; color: white; line-height: 1;">Cercanías</span>
+                            <span style="font-size: 0.65rem; color: #fca5a5; margin-top: 0.15rem;">${dest.trainTime ? dest.trainTime : '-- min'}</span>
                         </div>
                     </div>
-                    <div style="display: flex; gap: 0.5rem; width: 100%;">
-                        <a href="#" class="md3-btn" style="flex: 1; padding: 0.6rem 0; background: rgba(239, 68, 68, 0.15); color: #fecaca; border: 1px solid rgba(239, 68, 68, 0.4);"><i data-lucide="info" style="width:16px; height:16px;"></i> Más info</a>
+                    <div style="display: flex; align-items: center; gap: 0.4rem;">
+                        <span style="font-size: 0.95rem; font-weight: 700; color: #fecaca;">${dest.trainPrice || '0€'}</span>
+                        <i data-lucide="chevron-right" style="width: 16px; height: 16px; color: #fca5a5;"></i>
                     </div>
-                </div>
+                </a>
 
-                <!-- Opción Autobús (Amarillo) -->
-                <div style="background: rgba(234, 179, 8, 0.08); border: 1px solid rgba(234, 179, 8, 0.3); border-radius: 12px; padding: 0.8rem 1rem;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem;">
-                        <div style="display: flex; align-items: center; gap: 0.6rem;">
-                            <div style="background: #eab308; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center;"><i data-lucide="bus" style="width:14px; height:14px; color: #111827;"></i></div>
-                            <div>
-                                <div style="font-size: 0.95rem; font-weight: 600; color: white;">Autobús</div>
-                                <div style="font-size: 0.75rem; color: #fde047;">${dest.busTime ? dest.busTime + ' aprox.' : '-- min'}</div>
-                            </div>
-                        </div>
-                        <div style="text-align: right;">
-                            <div style="font-size: 1.1rem; font-weight: 700; color: #fef08a; line-height: 1;">${dest.busPrice || '0€'}</div>
+                <!-- Opción Autobús (Amarillo) - Formato Compacto -->
+                <a href="#" style="display: flex; justify-content: space-between; align-items: center; background: rgba(234, 179, 8, 0.08); border: 1px solid rgba(234, 179, 8, 0.3); border-radius: 12px; padding: 0.6rem 0.8rem; text-decoration: none;">
+                    <div style="display: flex; align-items: center; gap: 0.6rem;">
+                        <div style="background: #eab308; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center;"><i data-lucide="bus" style="width:14px; height:14px; color: #111827;"></i></div>
+                        <div style="display: flex; flex-direction: column; justify-content: center;">
+                            <span style="font-size: 0.85rem; font-weight: 600; color: white; line-height: 1;">Autobús</span>
+                            <span style="font-size: 0.65rem; color: #fde047; margin-top: 0.15rem;">${dest.busTime ? dest.busTime : '-- min'}</span>
                         </div>
                     </div>
-                    <div style="display: flex; gap: 0.5rem; width: 100%;">
-                        <a href="#" class="md3-btn" style="flex: 1; padding: 0.6rem 0; background: rgba(234, 179, 8, 0.15); color: #fef08a; border: 1px solid rgba(234, 179, 8, 0.4);"><i data-lucide="info" style="width:16px; height:16px;"></i> Más info</a>
+                    <div style="display: flex; align-items: center; gap: 0.4rem;">
+                        <span style="font-size: 0.95rem; font-weight: 700; color: #fef08a;">${dest.busPrice || '0€'}</span>
+                        <i data-lucide="chevron-right" style="width: 16px; height: 16px; color: #fde047;"></i>
                     </div>
-                </div>
+                </a>
         </div>
     </details>
     `;
