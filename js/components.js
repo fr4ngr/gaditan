@@ -74,19 +74,41 @@ function renderDestino(dest) {
                     </div>
                 </div>
                 
-                <!-- Opciones Transporte Público -->
-                <div style="display: flex; gap: 0.5rem; width: 100%;">
-                    <div class="md3-btn" style="flex: 1; padding: 0.5rem 0.5rem; background: rgba(255,255,255,0.03); color: white; border: 1px solid rgba(255,255,255,0.08); flex-direction: column; gap: 0.2rem; align-items: center; justify-content: center; height: auto; pointer-events: none;">
-                        <div style="display: flex; align-items: center; gap: 0.3rem; font-size: 0.85rem; font-weight: 600;">
-                            <i data-lucide="train" style="width:14px; height:14px; color: #ef4444;"></i> Cercanías
+                <!-- Opción Cercanías (Rojo) -->
+                <div style="background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 12px; padding: 0.8rem 1rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem;">
+                        <div style="display: flex; align-items: center; gap: 0.6rem;">
+                            <div style="background: #ef4444; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center;"><i data-lucide="train" style="width:14px; height:14px; color: white;"></i></div>
+                            <div>
+                                <div style="font-size: 0.95rem; font-weight: 600; color: white;">Cercanías</div>
+                                <div style="font-size: 0.75rem; color: #fca5a5;">${dest.trainTime ? dest.trainTime + ' aprox.' : '-- min'}</div>
+                            </div>
                         </div>
-                        <div style="font-size: 0.65rem; color: var(--text-muted); font-weight: 400;">${dest.trainPrice || '0€'} • ${dest.trainTime || '-- min'}</div>
+                        <div style="text-align: right;">
+                            <div style="font-size: 1.1rem; font-weight: 700; color: #fecaca; line-height: 1;">${dest.trainPrice || '0€'}</div>
+                        </div>
                     </div>
-                    <div class="md3-btn" style="flex: 1; padding: 0.5rem 0.5rem; background: rgba(255,255,255,0.03); color: white; border: 1px solid rgba(255,255,255,0.08); flex-direction: column; gap: 0.2rem; align-items: center; justify-content: center; height: auto; pointer-events: none;">
-                        <div style="display: flex; align-items: center; gap: 0.3rem; font-size: 0.85rem; font-weight: 600;">
-                            <i data-lucide="bus" style="width:14px; height:14px; color: #3b82f6;"></i> Autobús
+                    <div style="display: flex; gap: 0.5rem; width: 100%;">
+                        <a href="#" class="md3-btn" style="flex: 1; padding: 0.6rem 0; background: rgba(239, 68, 68, 0.15); color: #fecaca; border: 1px solid rgba(239, 68, 68, 0.4);"><i data-lucide="info" style="width:16px; height:16px;"></i> Más info</a>
+                    </div>
+                </div>
+
+                <!-- Opción Autobús (Amarillo) -->
+                <div style="background: rgba(234, 179, 8, 0.08); border: 1px solid rgba(234, 179, 8, 0.3); border-radius: 12px; padding: 0.8rem 1rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem;">
+                        <div style="display: flex; align-items: center; gap: 0.6rem;">
+                            <div style="background: #eab308; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center;"><i data-lucide="bus" style="width:14px; height:14px; color: #111827;"></i></div>
+                            <div>
+                                <div style="font-size: 0.95rem; font-weight: 600; color: white;">Autobús</div>
+                                <div style="font-size: 0.75rem; color: #fde047;">${dest.busTime ? dest.busTime + ' aprox.' : '-- min'}</div>
+                            </div>
                         </div>
-                        <div style="font-size: 0.65rem; color: var(--text-muted); font-weight: 400;">${dest.busPrice || '0€'} • ${dest.busTime || '-- min'}</div>
+                        <div style="text-align: right;">
+                            <div style="font-size: 1.1rem; font-weight: 700; color: #fef08a; line-height: 1;">${dest.busPrice || '0€'}</div>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem; width: 100%;">
+                        <a href="#" class="md3-btn" style="flex: 1; padding: 0.6rem 0; background: rgba(234, 179, 8, 0.15); color: #fef08a; border: 1px solid rgba(234, 179, 8, 0.4);"><i data-lucide="info" style="width:16px; height:16px;"></i> Más info</a>
                     </div>
                 </div>
         </div>
