@@ -53,10 +53,19 @@ function renderDestino(dest) {
                             <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.3rem;">aprox. ${dest.time ? '• ' + dest.time : ''}</div>
                         </div>
                     </div>
-                    <div style="display: flex; gap: 0.4rem; width: 100%;">
-                        <a href="tel:+34956212121" class="md3-btn md3-primary" style="flex: 1; padding: 0.5rem 0; font-size: 0.8rem; white-space: nowrap;"><i data-lucide="phone" style="width:14px; height:14px;"></i> Llamar</a>
-                        <a href="https://wa.me/34956212121" class="md3-btn" style="flex: 1; padding: 0.5rem 0; font-size: 0.8rem; background: rgba(37, 211, 102, 0.15); color: #86efac; border: 1px solid rgba(37, 211, 102, 0.3); white-space: nowrap;"><i data-lucide="message-circle" style="width:14px; height:14px;"></i> WhatsApp</a>
-                        <a href="#reserva" class="md3-btn" style="flex: 1; padding: 0.5rem 0; font-size: 0.8rem; background: rgba(255, 255, 255, 0.1); color: white; border: 1px solid rgba(255, 255, 255, 0.2); white-space: nowrap;"><i data-lucide="calendar" style="width:14px; height:14px;"></i> Reservar</a>
+                    <div style="display: flex; justify-content: space-around; width: 100%; padding-top: 0.5rem;">
+                        <a href="tel:+34956212121" style="display: flex; flex-direction: column; align-items: center; gap: 0.4rem; text-decoration: none;">
+                            <div class="circle-btn" style="background: radial-gradient(circle at 30% 30%, #06b6d4, #0369a1); box-shadow: 0 4px 15px rgba(6, 182, 212, 0.4);"><i data-lucide="phone" style="width:20px; height:20px;"></i></div>
+                            <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 500;">Llamar</span>
+                        </a>
+                        <a href="https://wa.me/34956212121" style="display: flex; flex-direction: column; align-items: center; gap: 0.4rem; text-decoration: none;">
+                            <div class="circle-btn btn-green"><i data-lucide="message-circle" style="width:20px; height:20px;"></i></div>
+                            <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 500;">WhatsApp</span>
+                        </a>
+                        <a href="#reserva" style="display: flex; flex-direction: column; align-items: center; gap: 0.4rem; text-decoration: none;">
+                            <div class="circle-btn" style="background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2);"><i data-lucide="calendar" style="width:20px; height:20px;"></i></div>
+                            <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 500;">Reservar</span>
+                        </a>
                     </div>
                 </div>
                 
