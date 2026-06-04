@@ -133,6 +133,35 @@ const mapManager = (() => {
         return item;
     };
 
+    const buildPlainListItem = (p) => {
+        const item = document.createElement('div');
+        item.style.cssText = `
+            padding: 0.8rem 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+            cursor: pointer; transition: padding-left 0.2s ease;
+        `;
+        item.onmouseover = () => item.style.paddingLeft = '5px';
+        item.onmouseout = () => item.style.paddingLeft = '0px';
+        item.innerHTML = `
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <i data-lucide="map-pin" style="color: var(--brand-cyan); width: 16px; height: 16px; flex-shrink: 0;"></i>
+                <div>
+                    <div style="color: #fff; font-size: 0.95rem; font-weight: 500;">${p.name}</div>
+                    <div style="color: var(--text-muted); font-size: 0.8rem;">${p.address}</div>
+                </div>
+            </div>
+        `;
+        item.addEventListener('click', () => {
+            document.getElementById('map').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            map.flyTo([p.lat, p.lon], 17);
+            markersLayer.eachLayer(layer => {
+                if (layer.getLatLng().lat === p.lat && layer.getLatLng().lng === p.lon) {
+                    layer.openPopup();
+                }
+            });
+        });
+        return item;
+    };
+
     const renderList = (paradas) => {
         const container = document.getElementById('paradas-list-container');
         if (!container) return;
@@ -142,7 +171,7 @@ const mapManager = (() => {
     };
 
     let currentPage = 1;
-    const itemsPerPage = 3;
+    const itemsPerPage = 5;
 
     const renderPaginatedList = (paradas) => {
         const container = document.getElementById('paradas-list-container');
@@ -153,30 +182,32 @@ const mapManager = (() => {
         const start = (currentPage - 1) * itemsPerPage;
         const pageItems = paradas.slice(start, start + itemsPerPage);
 
-        pageItems.forEach(p => container.appendChild(buildListItem(p)));
+        // Render clean text items without glass wrapper
+        const listWrapper = document.createElement('div');
+        listWrapper.style.cssText = "margin-bottom: 1rem;";
+        pageItems.forEach(p => listWrapper.appendChild(buildPlainListItem(p)));
+        container.appendChild(listWrapper);
 
         // Paginador
         if (totalPages > 1) {
             const pager = document.createElement('div');
-            pager.style.cssText = "display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; padding: 0.5rem; background: rgba(255,255,255,0.05); border-radius: 999px; border: 1px solid var(--glass-border);";
+            pager.style.cssText = "display: flex; justify-content: center; align-items: center; gap: 1.5rem; margin-top: 0.5rem; padding: 0.5rem; background: rgba(255,255,255,0.05); border-radius: 999px; border: 1px solid var(--glass-border); width: fit-content; margin-left: auto; margin-right: auto;";
             
             const btnPrev = document.createElement('button');
-            btnPrev.className = "md3-btn md3-tonal";
-            btnPrev.style.cssText = "padding: 0.5rem; min-width: 40px; justify-content: center; border-radius: 50%; opacity: " + (currentPage === 1 ? "0.3" : "1");
-            btnPrev.innerHTML = `<i data-lucide="chevron-left" style="margin:0"></i>`;
+            btnPrev.style.cssText = "flex: none; width: 44px; height: 44px; padding: 0; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: var(--glass-border); border: none; color: #fff; cursor: pointer; transition: opacity 0.2s; opacity: " + (currentPage === 1 ? "0.3" : "1");
+            btnPrev.innerHTML = `<i data-lucide="chevron-left" style="margin:0; pointer-events: none;"></i>`;
             btnPrev.disabled = currentPage === 1;
-            btnPrev.onclick = () => { currentPage--; renderPaginatedList(paradas); };
+            btnPrev.onclick = () => { if(currentPage > 1) { currentPage--; renderPaginatedList(paradas); } };
             
             const info = document.createElement('span');
-            info.style.cssText = "color: var(--text-muted); font-size: 0.85rem; font-weight: 600;";
+            info.style.cssText = "color: var(--text-muted); font-size: 0.9rem; font-weight: 600; min-width: 70px; text-align: center;";
             info.innerText = `Pág ${currentPage} de ${totalPages}`;
 
             const btnNext = document.createElement('button');
-            btnNext.className = "md3-btn md3-tonal";
-            btnNext.style.cssText = "padding: 0.5rem; min-width: 40px; justify-content: center; border-radius: 50%; opacity: " + (currentPage === totalPages ? "0.3" : "1");
-            btnNext.innerHTML = `<i data-lucide="chevron-right" style="margin:0"></i>`;
+            btnNext.style.cssText = "flex: none; width: 44px; height: 44px; padding: 0; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: var(--glass-border); border: none; color: #fff; cursor: pointer; transition: opacity 0.2s; opacity: " + (currentPage === totalPages ? "0.3" : "1");
+            btnNext.innerHTML = `<i data-lucide="chevron-right" style="margin:0; pointer-events: none;"></i>`;
             btnNext.disabled = currentPage === totalPages;
-            btnNext.onclick = () => { currentPage++; renderPaginatedList(paradas); };
+            btnNext.onclick = () => { if(currentPage < totalPages) { currentPage++; renderPaginatedList(paradas); } };
 
             pager.appendChild(btnPrev);
             pager.appendChild(info);
