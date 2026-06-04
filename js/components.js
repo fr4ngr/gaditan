@@ -113,11 +113,9 @@ function renderDestino(dest) {
                             <div style="font-size: 1.2rem; font-weight: 700; color: white; display: flex; align-items: center; gap: 0.4rem;">
                                 <div style="background: #7b48fa; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center;"><i data-lucide="car" style="width:14px; height:14px; color: white;"></i></div>
                                 cadiz.cab
+                                <div style="background: #eab308; color: #111827; font-size: 0.55rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; padding: 0.2rem 0.4rem; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); margin-left: 0.2rem; transform: translateY(-1px);">PREMIUM</div>
                             </div>
                             <div style="font-size: 0.85rem; color: #a78bfa; font-weight: 500; margin-top: 0.1rem; margin-left: 1.9rem; letter-spacing: 0.5px;">Vehículos VTC</div>
-                        </div>
-                        <div style="text-align: right; display: flex; flex-direction: column; align-items: flex-end;">
-                            <div style="background: #eab308; color: #111827; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; padding: 0.25rem 0.6rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">PREMIUM</div>
                         </div>
                     </div>
                     <div style="display: flex; gap: 0.5rem; width: 100%; border-top: 1px solid rgba(123, 72, 250, 0.2); padding-top: 1.25rem;">
