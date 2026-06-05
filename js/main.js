@@ -230,21 +230,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (val === 'Sí') container.classList.add('active-chip');
                 else container.classList.remove('active-chip');
             } else if (type === 'payment') {
+                const iconCash = container.querySelector('.icon-cash');
+                const iconCard = container.querySelector('.icon-card');
                 if (val === 'Tarjeta') {
-                    icon.setAttribute('data-lucide', 'credit-card');
+                    if(iconCash) iconCash.style.display = 'none';
+                    if(iconCard) iconCard.style.display = 'inline-block';
                     textSpan.textContent = 'Tarjeta';
                     container.classList.add('active-chip');
                 } else if (val === 'Efectivo') {
-                    icon.setAttribute('data-lucide', 'banknote');
+                    if(iconCash) iconCash.style.display = 'inline-block';
+                    if(iconCard) iconCard.style.display = 'none';
                     textSpan.textContent = 'Efectivo';
                     container.classList.remove('active-chip');
-                } else {
-                    icon.setAttribute('data-lucide', 'banknote');
-                    textSpan.textContent = 'Indiferente';
-                    container.classList.remove('active-chip');
-                }
-                if (window.lucide) {
-                    lucide.createIcons();
                 }
             }
         });
