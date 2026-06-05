@@ -172,7 +172,11 @@ export function setupPhotonAutocomplete(inputId, suggestionsId, onSelect, strict
         const val = this.value.trim();
         suggestionsBox.innerHTML = '';
         
-        if (val.length < 3) {
+        // Evitar búsquedas inútiles de palabras genéricas sueltas (ej: "hotel", "calle")
+        const genericWords = ['hotel', 'calle', 'avenida', 'plaza', 'paseo', 'hospital', 'estacion', 'estación', 'aeropuerto', 'colegio', 'bar', 'restaurante', 'playa'];
+        const isGeneric = genericWords.includes(val.toLowerCase());
+        
+        if (val.length < 3 || isGeneric) {
             suggestionsBox.classList.add('hidden');
             onSelect(null);
             return;
