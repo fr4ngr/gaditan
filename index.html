@@ -459,57 +459,21 @@
                                 </div>
                             </div>
 
-                            <div class="form-row mobile-stack" style="display: flex; gap: 1rem; flex-wrap: wrap;">
-                                <div class="form-group" style="flex: 1; min-width: 150px;">
-                                    <label for="b-passengers"><span>Pasajeros</span></label>
-                                    <div class="input-icon-wrapper">
-                                        <i data-lucide="users"></i>
-                                        <select id="b-passengers" class="glass-input with-icon" style="appearance: none; -webkit-appearance: none; cursor: pointer;">
-                                            <option value="1">1 Pasajero</option>
-                                            <option value="2">2 Pasajeros</option>
-                                            <option value="3">3 Pasajeros</option>
-                                            <option value="4">4 Pasajeros</option>
-                                        </select>
-                                        <i data-lucide="chevron-down" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); opacity: 0.5; pointer-events: none;"></i>
-                                    </div>
-                                </div>
-                                <div class="form-group" style="flex: 1; min-width: 150px;">
-                                    <label for="b-luggage"><span>Maletas grandes</span></label>
-                                    <div class="input-icon-wrapper">
-                                        <i data-lucide="briefcase"></i>
-                                        <select id="b-luggage" class="glass-input with-icon" style="appearance: none; -webkit-appearance: none; cursor: pointer;">
-                                            <option value="0">Sin maletas</option>
-                                            <option value="1">1 Maleta</option>
-                                            <option value="2">2 Maletas</option>
-                                        </select>
-                                        <i data-lucide="chevron-down" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); opacity: 0.5; pointer-events: none;"></i>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="form-row mobile-stack" style="display: flex; gap: 1rem; flex-wrap: wrap;">
-                                <div class="form-group" style="flex: 1; min-width: 150px;">
-                                    <label for="b-pet"><span>Mascota</span></label>
-                                    <div class="input-icon-wrapper">
-                                        <i data-lucide="paw-print"></i>
-                                        <select id="b-pet" class="glass-input with-icon" style="appearance: none; -webkit-appearance: none; cursor: pointer;">
-                                            <option value="No">No</option>
-                                            <option value="Sí">Sí</option>
-                                        </select>
-                                        <i data-lucide="chevron-down" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); opacity: 0.5; pointer-events: none;"></i>
-                                    </div>
-                                </div>
-                                <div class="form-group" style="flex: 1; min-width: 150px;">
-                                    <label for="b-payment"><span>Pago</span></label>
-                                    <div class="input-icon-wrapper">
-                                        <i data-lucide="credit-card"></i>
-                                        <select id="b-payment" class="glass-input with-icon" style="appearance: none; -webkit-appearance: none; cursor: pointer;">
-                                            <option value="Efectivo o Tarjeta">Indiferente</option>
-                                            <option value="Tarjeta">Tarjeta</option>
-                                            <option value="Efectivo">Efectivo</option>
-                                        </select>
-                                        <i data-lucide="chevron-down" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); opacity: 0.5; pointer-events: none;"></i>
-                                    </div>
+                            <div class="form-group options-group">
+                                <label>Opciones Adicionales</label>
+                                <div class="chip-group">
+                                    <button type="button" class="booking-chip" id="chip-passengers" data-type="passengers" data-value="1">
+                                        <i data-lucide="users"></i> <span>1</span>
+                                    </button>
+                                    <button type="button" class="booking-chip" id="chip-luggage" data-type="luggage" data-value="0">
+                                        <i data-lucide="briefcase"></i> <span>0</span>
+                                    </button>
+                                    <button type="button" class="booking-chip" id="chip-pet" data-type="pet" data-value="No">
+                                        <i data-lucide="paw-print"></i> <span style="display:none;">Sí</span>
+                                    </button>
+                                    <button type="button" class="booking-chip" id="chip-payment" data-type="payment" data-value="Indiferente">
+                                        <i data-lucide="banknote"></i> <i data-lucide="credit-card" style="display:none;"></i> <span>Efectivo</span>
+                                    </button>
                                 </div>
                             </div>
                             

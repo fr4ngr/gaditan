@@ -208,6 +208,62 @@ document.addEventListener('DOMContentLoaded', () => {
         setupPhotonAutocomplete('b-dropoff', 'b-dropoff-suggestions', () => {}, false);
     }
     
+    // Lógica de los chips interactivos del formulario
+    const chips = document.querySelectorAll('.booking-chip');
+    chips.forEach(chip => {
+        chip.addEventListener('click', function() {
+            const type = this.dataset.type;
+            const span = this.querySelector('span:not([style*="display: none"]):not([style*="display:none"])') || this.querySelector('span');
+            const icons = this.querySelectorAll('i');
+            
+            if (type === 'passengers') {
+                let val = parseInt(this.dataset.value);
+                val = val >= 4 ? 1 : val + 1;
+                this.dataset.value = val;
+                span.textContent = val;
+                this.classList.add('active-chip');
+                setTimeout(() => this.classList.remove('active-chip'), 200);
+            } else if (type === 'luggage') {
+                let val = parseInt(this.dataset.value);
+                val = val >= 2 ? 0 : val + 1;
+                this.dataset.value = val;
+                span.textContent = val;
+                if(val > 0) this.classList.add('active-chip');
+                else this.classList.remove('active-chip');
+            } else if (type === 'pet') {
+                const isYes = this.dataset.value === 'Sí';
+                this.dataset.value = isYes ? 'No' : 'Sí';
+                span.textContent = isYes ? 'No' : 'Sí';
+                if(!isYes) this.classList.add('active-chip');
+                else this.classList.remove('active-chip');
+            } else if (type === 'payment') {
+                const current = this.dataset.value;
+                let next = 'Tarjeta';
+                if(current === 'Indiferente') next = 'Tarjeta';
+                else if(current === 'Tarjeta') next = 'Efectivo';
+                else next = 'Indiferente';
+                
+                this.dataset.value = next;
+                span.textContent = next === 'Indiferente' ? 'Efectivo' : next;
+                
+                if(next === 'Tarjeta') {
+                    icons[0].style.display = 'none'; // banknote
+                    icons[1].style.display = 'inline-block'; // credit-card
+                    this.classList.add('active-chip');
+                } else if(next === 'Efectivo') {
+                    icons[0].style.display = 'inline-block';
+                    icons[1].style.display = 'none';
+                    this.classList.remove('active-chip');
+                } else {
+                    icons[0].style.display = 'inline-block';
+                    icons[1].style.display = 'inline-block';
+                    span.textContent = 'Indiferente';
+                    this.classList.remove('active-chip');
+                }
+            }
+        });
+    });
+    
     
     // Auto-GPS UX: Pedir ubicación al hacer click en el input de origen, de forma silenciosa
     const originInput = document.getElementById('calc-origin');

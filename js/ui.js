@@ -356,11 +356,16 @@ export function confirmReservation(event) {
     const pickup = document.getElementById('b-pickup').value;
     const dropoff = document.getElementById('b-dropoff').value;
     
-    // Extraer campos opcionales
-    const passengers = document.getElementById('b-passengers') ? document.getElementById('b-passengers').value : "1";
-    const luggage = document.getElementById('b-luggage') ? document.getElementById('b-luggage').value : "0";
-    const pet = document.getElementById('b-pet') ? document.getElementById('b-pet').value : "No";
-    const payment = document.getElementById('b-payment') ? document.getElementById('b-payment').value : "Indiferente";
+    // Extraer campos opcionales de los chips interactivos
+    const chipPassengers = document.getElementById('chip-passengers');
+    const chipLuggage = document.getElementById('chip-luggage');
+    const chipPet = document.getElementById('chip-pet');
+    const chipPayment = document.getElementById('chip-payment');
+    
+    const passengers = chipPassengers ? chipPassengers.dataset.value : "1";
+    const luggage = chipLuggage ? chipLuggage.dataset.value : "0";
+    const pet = chipPet ? chipPet.dataset.value : "No";
+    const payment = chipPayment ? chipPayment.dataset.value : "Indiferente";
     
     const trainContainer = document.getElementById('b-train-container');
     const trainInput = document.getElementById('b-train');
