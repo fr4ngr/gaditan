@@ -151,7 +151,7 @@ export function toggleCalcRenfe() {
 export function updateCalcLuggage(delta) {
     let newL = calcState.luggage + delta;
     if (newL < 0) newL = 0;
-    if (newL > 10) newL = 10;
+    if (newL > 2) newL = 2;
     calcState.luggage = newL;
     document.getElementById('calc-luggage').innerText = newL;
     const container = document.getElementById('calc-maleta-container');
@@ -169,7 +169,7 @@ export function updateBookingStepper(type, delta) {
     const container = document.getElementById('container-' + type);
     
     let current = parseInt(input.value);
-    let max = type === 'passengers' ? 8 : 10;
+    let max = type === 'passengers' ? 4 : (type === 'luggage' ? 2 : 10);
     let min = type === 'passengers' ? 1 : 0;
     
     let next = current + delta;
