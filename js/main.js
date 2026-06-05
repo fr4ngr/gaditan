@@ -206,6 +206,16 @@ document.addEventListener('DOMContentLoaded', () => {
         
         setupPhotonAutocomplete('b-pickup', 'b-pickup-suggestions', (data) => {
             calcContext.bookingOrigin = data;
+            const numInput = document.getElementById('b-pickup-num');
+            if (numInput) {
+                if (data && data.isStreet) {
+                    numInput.setAttribute('required', 'true');
+                    numInput.placeholder = "Nº*";
+                } else {
+                    numInput.removeAttribute('required');
+                    numInput.placeholder = "Nº";
+                }
+            }
             checkTrain();
         }, true);
         bPickupInput.addEventListener('input', checkTrain);
@@ -213,6 +223,16 @@ document.addEventListener('DOMContentLoaded', () => {
     if (document.getElementById('b-dropoff')) {
         setupPhotonAutocomplete('b-dropoff', 'b-dropoff-suggestions', (data) => {
             calcContext.bookingDest = data;
+            const numInput = document.getElementById('b-dropoff-num');
+            if (numInput) {
+                if (data && data.isStreet) {
+                    numInput.setAttribute('required', 'true');
+                    numInput.placeholder = "Nº*";
+                } else {
+                    numInput.removeAttribute('required');
+                    numInput.placeholder = "Nº";
+                }
+            }
         }, false);
     }
     

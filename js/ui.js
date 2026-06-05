@@ -284,11 +284,13 @@ export function setupPhotonAutocomplete(inputId, suggestionsId, onSelect, strict
                         div.innerHTML = displayName;
                         div.addEventListener('click', () => {
                             input.value = `${name}, ${city || 'Cádiz'}`.replace(/, $/, "");
+                            const isStreet = feature.properties.osm_key === 'highway' || feature.properties.type === 'street' || /calle|avenida|plaza|paseo|avda|c\/|pza/i.test(name);
                             onSelect({
                                 name: name,
                                 city: city || 'Cádiz',
                                 lat: feature.geometry.coordinates[1],
-                                lon: feature.geometry.coordinates[0]
+                                lon: feature.geometry.coordinates[0],
+                                isStreet: isStreet
                             });
                             suggestionsBox.classList.add('hidden');
                         });
@@ -384,8 +386,18 @@ export async function confirmReservation(event) {
     const date = document.getElementById('b-date').value;
     const time = document.getElementById('b-time').value;
     const phone = document.getElementById('b-phone').value;
-    const pickup = document.getElementById('b-pickup').value;
-    const dropoff = document.getElementById('b-dropoff').value;
+    
+    let pickup = document.getElementById('b-pickup').value;
+    const pickupNumEl = document.getElementById('b-pickup-num');
+    if (pickupNumEl && pickupNumEl.value.trim() !== '') {
+        pickup += `, Nº ${pickupNumEl.value.trim()}`;
+    }
+    
+    let dropoff = document.getElementById('b-dropoff').value;
+    const dropoffNumEl = document.getElementById('b-dropoff-num');
+    if (dropoffNumEl && dropoffNumEl.value.trim() !== '') {
+        dropoff += `, Nº ${dropoffNumEl.value.trim()}`;
+    }
     
     // Extraer campos opcionales
     const chipPassengers = document.getElementById('chip-passengers');
@@ -461,7 +473,8 @@ export async function confirmReservation(event) {
         document.getElementById('summary-origin').innerText = pickup;
         document.getElementById('summary-dest').innerText = dropoff;
         document.getElementById('summary-datetime').innerText = `${date} a las ${time}`;
-        document.getElementById('summary-details').innerText = `${passengers} pax, ${luggage} maletas, pago en ${payment}`;
+        let petText = (pet === 'Sí' || pet === 'S' || pet === 'Si' || pet === 'si') ? ', con mascota' : '';
+        document.getElementById('summary-details').innerText = `${passengers} pax, ${luggage} maletas${petText}, pago en ${payment}`;
         document.getElementById('summary-price').innerText = priceResult.price.toFixed(2).replace('.', ',') + '€';
         
         // Ocultar form, mostrar funnel
