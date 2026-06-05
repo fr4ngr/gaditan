@@ -418,17 +418,19 @@
                             <div class="form-row" style="display: flex; gap: 1rem; flex-wrap: nowrap;">
                                 <div class="form-group" style="flex: 3; min-width: 0;">
                                     <label for="b-date"><span data-translate="form-date">Fecha</span></label>
-                                    <div class="input-icon-wrapper">
-                                        <i data-lucide="calendar"></i>
-                                        <input type="date" id="b-date" required aria-required="true" class="glass-input with-icon" itemprop="pickupTime">
-                                    </div>
+                                      <div class="input-icon-wrapper">
+                                          <i data-lucide="calendar"></i>
+                                          <input type="date" id="b-date" required aria-required="true" class="glass-input with-icon" itemprop="pickupTime">
+                                          <div id="b-date-display" style="position: absolute; inset: 0; display: none; align-items: center; justify-content: center; pointer-events: none; color: var(--text-main); font-size: 1.05rem; font-family: 'Outfit', sans-serif; font-weight: 500;"></div>
+                                      </div>
                                 </div>
                                 <div class="form-group" style="flex: 2; min-width: 0;">
                                     <label for="b-time"><span data-translate="form-time">Hora</span></label>
-                                    <div class="input-icon-wrapper">
-                                        <i data-lucide="clock"></i>
-                                        <input type="time" id="b-time" required aria-required="true" class="glass-input with-icon">
-                                    </div>
+                                      <div class="input-icon-wrapper">
+                                          <i data-lucide="clock"></i>
+                                          <input type="time" id="b-time" required aria-required="true" class="glass-input with-icon">
+                                          <div id="b-time-display" style="position: absolute; inset: 0; display: none; align-items: center; justify-content: center; pointer-events: none; color: var(--text-main); font-size: 1.05rem; font-family: 'Outfit', sans-serif; font-weight: 500;"></div>
+                                      </div>
                                 </div>
                             </div>
                             

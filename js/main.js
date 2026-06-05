@@ -74,13 +74,22 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         
         dateInput.addEventListener('change', function() {
-            const icon = this.previousElementSibling;
+            const icon = this.parentElement.querySelector('svg') || this.parentElement.querySelector('i');
+            const display = document.getElementById('b-date-display');
             if (this.value) {
                 this.classList.remove('with-icon');
-                if (icon && icon.tagName === 'I') icon.style.display = 'none';
+                this.style.color = 'transparent';
+                if (icon) icon.style.display = 'none';
+                if (display) {
+                    const parts = this.value.split('-');
+                    if (parts.length === 3) display.textContent = `${parts[2]}/${parts[1]}/${parts[0]}`;
+                    display.style.display = 'flex';
+                }
             } else {
                 this.classList.add('with-icon');
-                if (icon && icon.tagName === 'I') icon.style.display = 'block';
+                this.style.color = '';
+                if (icon) icon.style.display = 'block';
+                if (display) display.style.display = 'none';
             }
         });
     }
@@ -92,13 +101,21 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         
         timeInput.addEventListener('change', function() {
-            const icon = this.previousElementSibling;
+            const icon = this.parentElement.querySelector('svg') || this.parentElement.querySelector('i');
+            const display = document.getElementById('b-time-display');
             if (this.value) {
                 this.classList.remove('with-icon');
-                if (icon && icon.tagName === 'I') icon.style.display = 'none';
+                this.style.color = 'transparent';
+                if (icon) icon.style.display = 'none';
+                if (display) {
+                    display.textContent = this.value + 'h';
+                    display.style.display = 'flex';
+                }
             } else {
                 this.classList.add('with-icon');
-                if (icon && icon.tagName === 'I') icon.style.display = 'block';
+                this.style.color = '';
+                if (icon) icon.style.display = 'block';
+                if (display) display.style.display = 'none';
             }
         });
     }
