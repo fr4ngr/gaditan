@@ -1,4 +1,4 @@
-﻿export const translations = {
+export const translations = {
     es: {
         "nav-prices": "Precios",
         "nav-booking": "Reservar",
@@ -55,8 +55,8 @@
         "dest-sevilla-title": "Aeropuerto de Sevilla",
         "dest-sevilla-time": "1h 15 mins",
         "booking-title": "Reserva tu Taxi",
-        "form-name": "Nombre",
-        "form-name-placeholder": "Tu nombre",
+        "form-name": "Nombre y Apellidos",
+        "form-name-placeholder": "Tu nombre y apellidos",
         "form-date": "Fecha",
         "form-time": "Hora",
         "form-pickup": "Desde",
@@ -146,8 +146,8 @@
         "dest-sevilla-title": "Seville Airport",
         "dest-sevilla-time": "1h 15 mins",
         "booking-title": "Book your Taxi",
-        "form-name": "Name",
-        "form-name-placeholder": "Your name",
+        "form-name": "Full Name",
+        "form-name-placeholder": "Your full name",
         "form-date": "Date",
         "form-time": "Time",
         "form-pickup": "From",
