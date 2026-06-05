@@ -490,8 +490,10 @@ input[type="date"], input[type="time"] { -webkit-appearance: none; -moz-appearan
 
 .options-group { margin-top: 1rem; }
 .options-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; font-size: 0.9rem; color: var(--text-muted); }
-.chip-group { display: flex; flex-wrap: nowrap; gap: 0.2rem; align-items: flex-start; }
+.chip-group { display: flex; flex-wrap: nowrap; gap: 0.4rem; align-items: flex-start; }
 .chip-wrapper { display: flex; flex-direction: column; align-items: center; flex: 1; gap: 0.2rem; min-width: 0; }
+.chip-wrapper:nth-child(1), .chip-wrapper:nth-child(2) { flex: 1.15; }
+.chip-wrapper:nth-child(3) { flex: 0.7; }
 .chip-label { font-size: 0.9rem; font-weight: 500; color: var(--brand-cyan); text-align: left; width: 100%; margin-bottom: 0.1rem; }
 .booking-chip {
     width: 100%;
@@ -503,7 +505,7 @@ input[type="date"], input[type="time"] { -webkit-appearance: none; -moz-appearan
     text-align: center; white-space: nowrap;
 }
 .booking-chip:active { transform: scale(0.95); }
-.booking-chip i { width: 12px; height: 12px; opacity: 0.8; }
+.booking-chip i { width: 10px; height: 10px; opacity: 0.8; }
 .booking-chip.active-chip {
     background: rgba(6, 182, 212, 0.15);
     border-color: var(--brand-cyan);
@@ -1069,15 +1071,16 @@ details.native-accordion.closing .native-content {
     gap: 0 !important;
     display: flex;
     align-items: stretch;
+    height: 42px;
 }
 .stepper-btn-full {
     background: rgba(0, 0, 0, 0.15);
     border: none;
     color: var(--text-main);
-    width: 28px;
-    min-width: 28px;
+    width: 24px;
+    min-width: 24px;
     height: auto;
-    min-height: 40px;
+    min-height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1110,7 +1113,7 @@ details.native-accordion.closing .native-content {
 .pet-full-switch {
     position: relative;
     width: 100%;
-    height: 40px;
+    height: 42px;
     border-radius: 12px;
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid var(--glass-border);
