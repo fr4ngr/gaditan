@@ -382,7 +382,8 @@ export function geolocateOrigin() {
 
 export async function confirmReservation(event) {
     event.preventDefault();
-    const name = document.getElementById('b-name').value;
+    let name = document.getElementById('b-name').value;
+    name = name.replace(/\b\w/g, c => c.toUpperCase());
     const date = document.getElementById('b-date').value;
     const time = document.getElementById('b-time').value;
     const phone = document.getElementById('b-phone').value;
