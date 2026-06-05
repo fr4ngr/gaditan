@@ -432,28 +432,18 @@
                                 </div>
                             </div>
                             
-                            <!-- Timeline Origin to Destination -->
-                            <div class="route-timeline-container">
-                                <div class="route-timeline">
-                                    <div class="timeline-dot origin"></div>
-                                    <div class="timeline-line"></div>
-                                    <div class="timeline-dot destination"></div>
+                            <div class="form-group">
+                                <label for="b-pickup"><span data-translate="form-pickup">Desde (Origen)</span></label>
+                                <div class="input-icon-wrapper">
+                                    <i data-lucide="map-pin"></i>
+                                    <input type="text" id="b-pickup" autocomplete="street-address" placeholder="Ej. Hotel Playa Victoria" data-translate-placeholder="form-pickup-placeholder" required aria-required="true" class="glass-input with-icon" itemprop="pickupLocation">
                                 </div>
-                                <div class="route-fields">
-                                    <div class="form-group">
-                                        <label for="b-pickup"><span data-translate="form-pickup">Desde (Origen)</span></label>
-                                        <div class="input-icon-wrapper">
-                                            <i data-lucide="map-pin"></i>
-                                            <input type="text" id="b-pickup" autocomplete="street-address" placeholder="Ej. Hotel Playa Victoria" data-translate-placeholder="form-pickup-placeholder" required aria-required="true" class="glass-input with-icon" itemprop="pickupLocation">
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="b-dropoff"><span data-translate="form-dropoff">Hasta (Destino)</span></label>
-                                        <div class="input-icon-wrapper">
-                                            <i data-lucide="map"></i>
-                                            <input type="text" id="b-dropoff" autocomplete="street-address" placeholder="Ej. Aeropuerto de Jerez" data-translate-placeholder="form-dropoff-placeholder" required aria-required="true" class="glass-input with-icon" itemprop="dropoffLocation">
-                                        </div>
-                                    </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="b-dropoff"><span data-translate="form-dropoff">Hasta (Destino)</span></label>
+                                <div class="input-icon-wrapper">
+                                    <i data-lucide="map"></i>
+                                    <input type="text" id="b-dropoff" autocomplete="street-address" placeholder="Ej. Aeropuerto de Jerez" data-translate-placeholder="form-dropoff-placeholder" required aria-required="true" class="glass-input with-icon" itemprop="dropoffLocation">
                                 </div>
                             </div>
                             
