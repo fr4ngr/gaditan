@@ -33,7 +33,7 @@ function renderDestino(dest) {
                     <span class="mini-dest-price" style="line-height: 1;">${dest.price}</span>
                     <span style="font-size: 1.2rem; color: var(--brand-cyan); font-weight: 800; transform: translateY(2px);">*</span>
                 </div>
-                ${dest.time ? `<div style="font-size: 0.75rem; color: var(--text-muted); display: flex; align-items: center; justify-content: flex-end; gap: 0.25rem; margin-top: 0.3rem;"><i data-lucide="clock" style="width: 12px; height: 12px;"></i> ${dest.time}</div>` : ''}
+                ${dest.time ? `<div style="font-size: 0.75rem; color: var(--text-muted); display: flex; align-items: center; justify-content: flex-end; gap: 0.25rem; margin-top: 0.3rem; white-space: nowrap;"><i data-lucide="clock" style="width: 12px; height: 12px;"></i> ${dest.time}</div>` : ''}
             </div>
             <button class="mini-dest-close-btn" aria-label="Cerrar" style="pointer-events: none;" onclick="event.preventDefault(); this.closest('details').removeAttribute('open');">
                 <i data-lucide="x" style="width: 18px; height: 18px; pointer-events: none;"></i>
@@ -57,7 +57,7 @@ function renderDestino(dest) {
                                 <span style="font-size: 1.5rem; font-weight: 800; color: white;">${dest.price}</span>
                                 <span style="font-size: 1.5rem; color: var(--brand-cyan); font-weight: 800; transform: translateY(2px);">*</span>
                             </div>
-                            ${dest.time ? `<div style="font-size: 0.85rem; color: var(--text-muted); font-weight: 500; display: flex; align-items: center; gap: 0.3rem;">
+                            ${dest.time ? `<div style="font-size: 0.85rem; color: var(--text-muted); font-weight: 500; display: flex; align-items: center; gap: 0.3rem; white-space: nowrap;">
                                 <i data-lucide="clock" style="width: 14px; height: 14px;"></i> ${dest.time}
                             </div>` : ''}
                         </div>
