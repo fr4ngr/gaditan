@@ -188,7 +188,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // La inicialización del mapa de paradas ahora se gestiona en mapManager.js
 
-    setupPhotonAutocomplete('calc-origin', 'origin-suggestions', (data) => calcContext.selectedOrigin = data, true);
+    setupPhotonAutocomplete('calc-origin', 'origin-suggestions', (data) => calcContext.selectedOrigin = data, false);
     setupPhotonAutocomplete('calc-destination', 'dest-suggestions', (data) => calcContext.selectedDest = data, false);
     
     // Autocompletado para el formulario de reservas
