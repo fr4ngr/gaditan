@@ -360,12 +360,12 @@ export function confirmReservation(event) {
     const chipPassengers = document.getElementById('chip-passengers');
     const chipLuggage = document.getElementById('chip-luggage');
     const chipPet = document.getElementById('chip-pet');
-    const chipPayment = document.getElementById('chip-payment');
+    const paymentElement = document.getElementById('b-payment');
     
     const passengers = chipPassengers ? chipPassengers.value : "1";
     const luggage = chipLuggage ? chipLuggage.value : "0";
     const pet = chipPet ? chipPet.value : "No";
-    const payment = chipPayment ? chipPayment.value : "Indiferente";
+    const payment = paymentElement ? paymentElement.value : "Efectivo";
     
     const trainContainer = document.getElementById('b-train-container');
     const trainInput = document.getElementById('b-train');
