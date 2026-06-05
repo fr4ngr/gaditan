@@ -598,16 +598,13 @@ export async function confirmReservation(event) {
             : `Taxi booking request - ${name} - ${date}`;
         
         const body = state.currentLanguage === 'es'
-            ? `¡Hola equipo de Radio Taxi Cádiz!\n\nSoy ${name} y necesito reservar un taxi con los siguientes detalles:\n\n📱 Teléfono: ${phone}\n📍 Recogida: ${pickup}\n🏁 Destino: ${dropoff}\n📅 Día: ${date}\n🕒 Hora: ${time}${trainNumberText}\n\n👥 Pasajeros: ${passengers}\n🧳 Maletas: ${luggage}\n🐕 Mascota: ${pet}\n💳 Pago: ${payment}\n\nQuedo a la espera de vuestra confirmación. ¡Muchas gracias y un saludo!\n\nAtentamente,\n${name}`
-            : `Hello Radio Taxi Cádiz team!\n\nMy name is ${name} and I would like to book a taxi with the following details:\n\n📱 Phone: ${phone}\n📍 Pickup: ${pickup}\n🏁 Destination: ${dropoff}\n📅 Date: ${date}\n🕒 Time: ${time}${trainNumberText}\n\n👥 Passengers: ${passengers}\n🧳 Luggage: ${luggage}\n🐕 Pet: ${pet === 'Sí' ? 'Yes' : 'No'}\n💳 Payment: ${payment === 'Efectivo o Tarjeta' ? 'Any' : (payment === 'Tarjeta' ? 'Card' : 'Cash')}\n\nI look forward to your confirmation. Thank you very much!\n\nBest regards,\n${name}`;
+            ? `¡Hola equipo de Radio Taxi Cádiz!\n\nSoy ${name} y necesito reservar un taxi con los siguientes detalles:\n\n📱 Teléfono: ${phone}\n📍 Recogida: ${pickup}\n🏁 Destino: ${dropoff}\n📅 Día: ${date}\n⏰ Hora: ${time}${trainNumberText}\n\n👥 Pasajeros: ${passengers}\n🧳 Maletas: ${luggage}\n🐾 Mascota: ${pet}\n💳 Pago: ${payment}\n\nQuedo a la espera de vuestra confirmación. ¡Muchas gracias y un saludo!\n\nAtentamente,\n${name}`
+            : `Hello Radio Taxi Cádiz team!\n\nMy name is ${name} and I would like to book a taxi with the following details:\n\n📱 Phone: ${phone}\n📍 Pickup: ${pickup}\n🏁 Destination: ${dropoff}\n📅 Date: ${date}\n⏰ Time: ${time}${trainNumberText}\n\n👥 Passengers: ${passengers}\n🧳 Luggage: ${luggage}\n🐾 Pet: ${pet === 'Sí' ? 'Yes' : 'No'}\n💳 Payment: ${payment === 'Efectivo o Tarjeta' ? 'Any' : (payment === 'Tarjeta' ? 'Card' : 'Cash')}\n\nI look forward to your confirmation. Thank you very much!\n\nBest regards,\n${name}`;
         
-        document.getElementById('btn-confirm-email').onclick = function() {
-            window.location.href = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-        };
-        
-        document.getElementById('btn-confirm-whatsapp').onclick = function() {
-            window.open(`https://wa.me/34956212121?text=${encodeURIComponent(body)}`, '_blank');
-        };
+        const radioWaBtn = document.getElementById('btn-radio-whatsapp');
+        if (radioWaBtn) {
+            radioWaBtn.href = `https://wa.me/34956212121?text=${encodeURIComponent(body)}`;
+        }
         
         document.getElementById('btn-edit-booking').onclick = function() {
             document.getElementById('booking-results-funnel').style.display = 'none';
