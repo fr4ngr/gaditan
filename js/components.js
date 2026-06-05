@@ -81,7 +81,7 @@ function renderDestino(dest) {
                             <span style="color: var(--brand-cyan); font-weight: 800; font-size: 1.1rem; line-height: 1; transform: translateY(2px);">*</span>
                             <span style="flex: 1;">Estimación con tráfico favorable. El precio final lo determina el taxímetro oficial. Consúltales sin compromiso.</span>
                         </div>
-                        <div style="display: flex; justify-content: center; gap: 2.5rem; width: 100%; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 0.75rem;">
+                        <div style="display: flex; justify-content: flex-end; gap: 1.5rem; width: 100%; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 0.75rem;">
                             <a href="tel:+34956212121" style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem; text-decoration: none;">
                             <div class="circle-btn" style="background: #0284c7; box-shadow: none; width: 52px; height: 52px;"><i data-lucide="phone" style="width:24px; height:24px;"></i></div>
                             <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 500;">Llamar</span>
