@@ -494,7 +494,7 @@ input[type="date"], input[type="time"] { -webkit-appearance: none; -moz-appearan
 .chip-wrapper { display: flex; flex-direction: column; align-items: center; flex: 1; gap: 0.2rem; min-width: 0; }
 .chip-wrapper:nth-child(1), .chip-wrapper:nth-child(2) { flex: 1.15; }
 .chip-wrapper:nth-child(3) { flex: 0.7; }
-.chip-label { font-size: 0.9rem; font-weight: 500; color: var(--brand-cyan); text-align: left; width: 100%; margin-bottom: 0.1rem; }
+.chip-label { font-size: 0.95rem; font-weight: 600; color: var(--brand-cyan); text-align: left; width: 100%; margin-bottom: 0.6rem; }
 .booking-chip {
     width: 100%;
     display: flex; align-items: center; justify-content: center; gap: 0.4rem;
@@ -505,7 +505,7 @@ input[type="date"], input[type="time"] { -webkit-appearance: none; -moz-appearan
     text-align: center; white-space: nowrap;
 }
 .booking-chip:active { transform: scale(0.95); }
-.booking-chip svg, .pet-full-switch svg { width: 12px !important; height: 12px !important; opacity: 0.8; }
+.booking-chip svg, .pet-full-switch svg { width: 16px !important; height: 16px !important; opacity: 0.8; }
 .booking-chip.active-chip {
     background: rgba(6, 182, 212, 0.15);
     border-color: var(--brand-cyan);
