@@ -498,6 +498,7 @@ input[type="date"], input[type="time"] { -webkit-appearance: none; -moz-appearan
     background: rgba(255, 255, 255, 0.05); border: 1px solid var(--glass-border);
     color: var(--text-main); font-size: 0.85rem; font-family: 'Outfit', sans-serif;
     cursor: pointer; transition: all 0.2s ease;
+    text-align: center; white-space: nowrap;
 }
 .booking-chip:active { transform: scale(0.95); }
 .booking-chip i { width: 14px; height: 14px; opacity: 0.8; }
