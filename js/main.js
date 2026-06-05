@@ -188,8 +188,21 @@ document.addEventListener('DOMContentLoaded', () => {
     setupPhotonAutocomplete('calc-destination', 'dest-suggestions', (data) => calcContext.selectedDest = data, false);
     
     // Autocompletado para el formulario de reservas
-    if (document.getElementById('b-pickup')) {
-        setupPhotonAutocomplete('b-pickup', 'b-pickup-suggestions', () => {}, true);
+    const bPickupInput = document.getElementById('b-pickup');
+    if (bPickupInput) {
+        setupPhotonAutocomplete('b-pickup', 'b-pickup-suggestions', () => {
+            bPickupInput.dispatchEvent(new Event('input', { bubbles: true }));
+        }, true);
+        
+        const bTrainContainer = document.getElementById('b-train-container');
+        bPickupInput.addEventListener('input', function() {
+            const val = this.value.toLowerCase();
+            if (val.includes('renfe') || val.includes('estacion') || val.includes('estación') || val.includes('sevilla') || val.includes('tren')) {
+                bTrainContainer.classList.remove('hidden');
+            } else {
+                bTrainContainer.classList.add('hidden');
+            }
+        });
     }
     if (document.getElementById('b-dropoff')) {
         setupPhotonAutocomplete('b-dropoff', 'b-dropoff-suggestions', () => {}, false);

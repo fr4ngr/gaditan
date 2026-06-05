@@ -356,6 +356,19 @@ export function confirmReservation(event) {
     const pickup = document.getElementById('b-pickup').value;
     const dropoff = document.getElementById('b-dropoff').value;
     
+    // Extraer campos opcionales
+    const passengers = document.getElementById('b-passengers') ? document.getElementById('b-passengers').value : "1";
+    const luggage = document.getElementById('b-luggage') ? document.getElementById('b-luggage').value : "0";
+    const pet = document.getElementById('b-pet') ? document.getElementById('b-pet').value : "No";
+    const payment = document.getElementById('b-payment') ? document.getElementById('b-payment').value : "Indiferente";
+    
+    const trainContainer = document.getElementById('b-train-container');
+    const trainInput = document.getElementById('b-train');
+    let trainNumberText = "";
+    if (trainContainer && !trainContainer.classList.contains('hidden') && trainInput && trainInput.value.trim() !== '') {
+        trainNumberText = `\n🚆 Nº de Tren: ${trainInput.value.trim()}`;
+    }
+    
     if (date) {
         const selectedDate = new Date(date);
         const minDate = new Date();
@@ -385,8 +398,8 @@ export function confirmReservation(event) {
         : `Taxi booking request - ${name} - ${date}`;
     
     const body = state.currentLanguage === 'es'
-        ? `¡Hola equipo de Radio Taxi Cádiz!\n\nSoy ${name} y necesito reservar un taxi con los siguientes detalles:\n\n📱 Teléfono: ${phone}\n📍 Recogida: ${pickup}\n🏁 Destino: ${dropoff}\n📅 Día: ${date}\n🕒 Hora: ${time}\n\nQuedo a la espera de vuestra confirmación. ¡Muchas gracias y un saludo!\n\nAtentamente,\n${name}`
-        : `Hello Radio Taxi Cádiz team!\n\nMy name is ${name} and I would like to book a taxi with the following details:\n\n📱 Phone: ${phone}\n📍 Pickup: ${pickup}\n🏁 Destination: ${dropoff}\n📅 Date: ${date}\n🕒 Time: ${time}\n\nI look forward to your confirmation. Thank you very much!\n\nBest regards,\n${name}`;
+        ? `¡Hola equipo de Radio Taxi Cádiz!\n\nSoy ${name} y necesito reservar un taxi con los siguientes detalles:\n\n📱 Teléfono: ${phone}\n📍 Recogida: ${pickup}\n🏁 Destino: ${dropoff}\n📅 Día: ${date}\n🕒 Hora: ${time}${trainNumberText}\n\n👥 Pasajeros: ${passengers}\n🧳 Maletas: ${luggage}\n🐕 Mascota: ${pet}\n💳 Pago: ${payment}\n\nQuedo a la espera de vuestra confirmación. ¡Muchas gracias y un saludo!\n\nAtentamente,\n${name}`
+        : `Hello Radio Taxi Cádiz team!\n\nMy name is ${name} and I would like to book a taxi with the following details:\n\n📱 Phone: ${phone}\n📍 Pickup: ${pickup}\n🏁 Destination: ${dropoff}\n📅 Date: ${date}\n🕒 Time: ${time}${trainNumberText}\n\n👥 Passengers: ${passengers}\n🧳 Luggage: ${luggage}\n🐕 Pet: ${pet === 'Sí' ? 'Yes' : 'No'}\n💳 Payment: ${payment === 'Efectivo o Tarjeta' ? 'Any' : (payment === 'Tarjeta' ? 'Card' : 'Cash')}\n\nI look forward to your confirmation. Thank you very much!\n\nBest regards,\n${name}`;
     
     window.location.href = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     return false;
