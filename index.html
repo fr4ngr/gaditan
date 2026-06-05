@@ -462,6 +462,7 @@
                             <div class="form-group options-group" style="margin-top: 1.5rem;">
                                 <div class="chip-group">
                                     <div class="chip-wrapper">
+                                        <span class="chip-label" data-translate="chip-passengers-label">Viajeros</span>
                                         <div class="booking-chip stepper-chip-container" id="container-passengers">
                                             <button type="button" class="stepper-btn-full" onclick="updateBookingStepper('passengers', -1)">-</button>
                                             <div class="stepper-content">
@@ -470,9 +471,9 @@
                                             <button type="button" class="stepper-btn-full" onclick="updateBookingStepper('passengers', 1)">+</button>
                                             <input type="hidden" id="chip-passengers" value="1">
                                         </div>
-                                        <span class="chip-label" data-translate="chip-passengers-label">Viajeros</span>
                                     </div>
                                     <div class="chip-wrapper">
+                                        <span class="chip-label" data-translate="chip-luggage-label">Maletas</span>
                                         <div class="booking-chip stepper-chip-container" id="container-luggage">
                                             <button type="button" class="stepper-btn-full" onclick="updateBookingStepper('luggage', -1)">-</button>
                                             <div class="stepper-content">
@@ -481,16 +482,15 @@
                                             <button type="button" class="stepper-btn-full" onclick="updateBookingStepper('luggage', 1)">+</button>
                                             <input type="hidden" id="chip-luggage" value="0">
                                         </div>
-                                        <span class="chip-label" data-translate="chip-luggage-label">Maletas</span>
                                     </div>
                                     <div class="chip-wrapper">
+                                        <span class="chip-label" data-translate="chip-pet-label">Mascota</span>
                                         <div class="pet-full-switch" id="container-pet" onclick="toggleBookingPet()">
                                             <div class="pet-switch-thumb"></div>
                                             <div class="pet-switch-label label-no"><i data-lucide="x" style="width:14px;height:14px;"></i> No</div>
                                             <div class="pet-switch-label label-yes"><i data-lucide="paw-print" style="width:14px;height:14px;"></i> Sí</div>
                                             <input type="hidden" id="chip-pet" value="No">
                                         </div>
-                                        <span class="chip-label" data-translate="chip-pet-label">Mascota</span>
                                     </div>
                                 </div>
                             </div>
