@@ -163,6 +163,47 @@ export function updateCalcLuggage(delta) {
     updateCalcPriceUI();
 }
 
+export function updateBookingStepper(type, delta) {
+    const input = document.getElementById('chip-' + type);
+    const valText = document.getElementById('val-' + type);
+    const container = document.getElementById('container-' + type);
+    
+    let current = parseInt(input.value);
+    let max = type === 'passengers' ? 8 : 10;
+    let min = type === 'passengers' ? 1 : 0;
+    
+    let next = current + delta;
+    if (next < min) next = min;
+    if (next > max) next = max;
+    
+    input.value = next;
+    valText.innerText = next;
+    
+    if (type === 'passengers') {
+        if (next > 1) container.classList.add('active-chip');
+        else container.classList.remove('active-chip');
+    } else if (type === 'luggage') {
+        if (next > 0) container.classList.add('active-chip');
+        else container.classList.remove('active-chip');
+    }
+}
+
+export function toggleBookingPet() {
+    const input = document.getElementById('chip-pet');
+    const valText = document.getElementById('val-pet');
+    const container = document.getElementById('container-pet');
+    
+    if (input.value === 'No') {
+        input.value = 'Sí';
+        valText.innerText = 'Sí';
+        container.classList.add('active-chip');
+    } else {
+        input.value = 'No';
+        valText.innerText = 'No';
+        container.classList.remove('active-chip');
+    }
+}
+
 export function setupPhotonAutocomplete(inputId, suggestionsId, onSelect, strictCadiz = false) {
     const input = document.getElementById(inputId);
     const suggestionsBox = document.getElementById(suggestionsId);

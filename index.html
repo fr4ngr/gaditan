@@ -462,35 +462,31 @@
                             <div class="form-group options-group" style="margin-top: 1.5rem;">
                                 <div class="chip-group">
                                     <div class="chip-wrapper">
-                                        <div class="booking-chip select-chip" id="container-passengers">
-                                            <i data-lucide="users" class="chip-icon"></i> <span class="chip-text">1</span>
-                                            <select class="hidden-select" id="chip-passengers" data-type="passengers">
-                                                <option value="1">1 Pasajero</option>
-                                                <option value="2">2 Pasajeros</option>
-                                                <option value="3">3 Pasajeros</option>
-                                                <option value="4">4 Pasajeros</option>
-                                            </select>
+                                        <div class="booking-chip" id="container-passengers" style="gap: 0.6rem; justify-content: space-between;">
+                                            <button type="button" class="stepper-btn" onclick="updateBookingStepper('passengers', -1)">-</button>
+                                            <div style="display: flex; align-items: center; gap: 0.3rem;">
+                                                <i data-lucide="users" class="chip-icon"></i> <span class="chip-text" id="val-passengers">1</span>
+                                            </div>
+                                            <button type="button" class="stepper-btn" onclick="updateBookingStepper('passengers', 1)">+</button>
+                                            <input type="hidden" id="chip-passengers" value="1">
                                         </div>
                                         <span class="chip-label" data-translate="chip-passengers-label">Viajeros</span>
                                     </div>
                                     <div class="chip-wrapper">
-                                        <div class="booking-chip select-chip" id="container-luggage">
-                                            <i data-lucide="briefcase" class="chip-icon"></i> <span class="chip-text">0</span>
-                                            <select class="hidden-select" id="chip-luggage" data-type="luggage">
-                                                <option value="0">Sin maletas</option>
-                                                <option value="1">1 Maleta</option>
-                                                <option value="2">2 Maletas</option>
-                                            </select>
+                                        <div class="booking-chip" id="container-luggage" style="gap: 0.6rem; justify-content: space-between;">
+                                            <button type="button" class="stepper-btn" onclick="updateBookingStepper('luggage', -1)">-</button>
+                                            <div style="display: flex; align-items: center; gap: 0.3rem;">
+                                                <i data-lucide="briefcase" class="chip-icon"></i> <span class="chip-text" id="val-luggage">0</span>
+                                            </div>
+                                            <button type="button" class="stepper-btn" onclick="updateBookingStepper('luggage', 1)">+</button>
+                                            <input type="hidden" id="chip-luggage" value="0">
                                         </div>
                                         <span class="chip-label" data-translate="chip-luggage-label">Maletas</span>
                                     </div>
                                     <div class="chip-wrapper">
-                                        <div class="booking-chip select-chip" id="container-pet">
-                                            <i data-lucide="paw-print" class="chip-icon"></i> <span class="chip-text">No</span>
-                                            <select class="hidden-select" id="chip-pet" data-type="pet">
-                                                <option value="No">Sin mascota</option>
-                                                <option value="Sí">Con mascota</option>
-                                            </select>
+                                        <div class="booking-chip toggle-chip" id="container-pet" onclick="toggleBookingPet()">
+                                            <i data-lucide="paw-print" class="chip-icon"></i> <span class="chip-text" id="val-pet">No</span>
+                                            <input type="hidden" id="chip-pet" value="No">
                                         </div>
                                         <span class="chip-label" data-translate="chip-pet-label">Mascota</span>
                                     </div>

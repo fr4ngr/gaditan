@@ -1015,3 +1015,20 @@ details.native-accordion.closing .native-content {
     padding-top: 0;
     padding-bottom: 0;
 }
+.stepper-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: var(--text-main);
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1.1rem;
+    line-height: 1;
+    transition: background 0.2s;
+}
+.stepper-btn:hover { background: rgba(255, 255, 255, 0.2); }
+.stepper-btn:active { transform: scale(0.9); }

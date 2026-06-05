@@ -13,7 +13,9 @@ import {
     updateCalcLuggage,
     setupPhotonAutocomplete,
     geolocateOrigin,
-    confirmReservation
+    confirmReservation,
+    updateBookingStepper,
+    toggleBookingPet
 } from './ui.js';
 
 window.calculateRoute = calculateRoute;
@@ -27,6 +29,8 @@ window.toggleCalcRenfe = toggleCalcRenfe;
 window.updateCalcLuggage = updateCalcLuggage;
 window.geolocateOrigin = geolocateOrigin;
 window.confirmReservation = confirmReservation;
+window.updateBookingStepper = updateBookingStepper;
+window.toggleBookingPet = toggleBookingPet;
 
 document.addEventListener('DOMContentLoaded', () => {
     if (typeof lucide !== 'undefined') {
@@ -211,33 +215,6 @@ document.addEventListener('DOMContentLoaded', () => {
             calcContext.bookingDest = data;
         }, false);
     }
-    
-    // Lógica de los selects ocultos en los chips
-    const hiddenSelects = document.querySelectorAll('.hidden-select');
-    hiddenSelects.forEach(select => {
-        select.addEventListener('change', function() {
-            const type = this.dataset.type;
-            const val = this.value;
-            const container = this.closest('.select-chip');
-            const textSpan = container.querySelector('.chip-text');
-            const icon = container.querySelector('.chip-icon');
-            
-            if (type === 'passengers') {
-                textSpan.textContent = val;
-                if (val > 1) container.classList.add('active-chip');
-                else container.classList.remove('active-chip');
-            } else if (type === 'luggage') {
-                textSpan.textContent = val;
-                if (val > 0) container.classList.add('active-chip');
-                else container.classList.remove('active-chip');
-            } else if (type === 'pet') {
-                textSpan.textContent = val === 'Sí' ? 'Sí' : 'No';
-                if (val === 'Sí') container.classList.add('active-chip');
-                else container.classList.remove('active-chip');
-            }
-        });
-    });
-    
     
     // Auto-GPS UX: Pedir ubicación al hacer click en el input de origen, de forma silenciosa
     const originInput = document.getElementById('calc-origin');
