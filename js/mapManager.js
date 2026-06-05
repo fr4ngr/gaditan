@@ -213,7 +213,7 @@ const mapManager = (() => {
                 </div>
                 <!-- Actions Section -->
                 <div style="display: flex; flex-direction: column; gap: 0.85rem; width: 100%;">
-                    <div style="display: flex; justify-content: flex-end; gap: 1.5rem; width: 100%; padding-top: 0.25rem;">
+                    <div style="display: flex; justify-content: center; gap: 2.5rem; width: 100%; padding-top: 0.25rem;">
                         <a href="tel:+34956212121" style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem; text-decoration: none;">
                             <div class="circle-btn" style="background: #0284c7; box-shadow: none; width: 52px; height: 52px;"><i data-lucide="phone" style="width:24px; height:24px; color: white;"></i></div>
                             <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 500;">Llamar</span>
