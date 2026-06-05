@@ -72,12 +72,34 @@ document.addEventListener('DOMContentLoaded', () => {
         dateInput.addEventListener('click', function() {
             if (this.showPicker) this.showPicker();
         });
+        
+        dateInput.addEventListener('change', function() {
+            const icon = this.previousElementSibling;
+            if (this.value) {
+                this.classList.remove('with-icon');
+                if (icon && icon.tagName === 'I') icon.style.display = 'none';
+            } else {
+                this.classList.add('with-icon');
+                if (icon && icon.tagName === 'I') icon.style.display = 'block';
+            }
+        });
     }
 
     const timeInput = document.getElementById('b-time');
     if (timeInput) {
         timeInput.addEventListener('click', function() {
             if (this.showPicker) this.showPicker();
+        });
+        
+        timeInput.addEventListener('change', function() {
+            const icon = this.previousElementSibling;
+            if (this.value) {
+                this.classList.remove('with-icon');
+                if (icon && icon.tagName === 'I') icon.style.display = 'none';
+            } else {
+                this.classList.add('with-icon');
+                if (icon && icon.tagName === 'I') icon.style.display = 'block';
+            }
         });
     }
 
