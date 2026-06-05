@@ -109,7 +109,7 @@ function renderDestino(dest) {
                 <div style="background: rgba(123, 72, 250, 0.08); border: 1px solid rgba(123, 72, 250, 0.3); border-radius: 16px; padding: 1.25rem; display: flex; flex-direction: column; gap: 0.85rem;">
                     <div style="display: flex; justify-content: space-between; align-items: flex-start; width: 100%;">
                         <div style="width: 100%;">
-                            <div style="font-size: 0.65rem; color: #eab308; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.4rem; font-weight: 600;">Servicio prestado por</div>
+                            <div style="font-size: 0.65rem; color: #eab308; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.4rem; font-weight: 600; display: flex; align-items: center; gap: 0.3rem;"><i data-lucide="star" style="width:12px; height:12px; fill: currentColor;"></i> Servicio prestado por</div>
                             <div style="font-size: 1.2rem; font-weight: 700; color: white; display: flex; align-items: center; gap: 0.4rem; width: 100%;">
                                 <div style="background: #7b48fa; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center;"><i data-lucide="car" style="width:14px; height:14px; color: white;"></i></div>
                                 cadiz.cab
