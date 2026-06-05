@@ -390,13 +390,25 @@ export async function confirmReservation(event) {
     let pickup = document.getElementById('b-pickup').value;
     const pickupNumEl = document.getElementById('b-pickup-num');
     if (pickupNumEl && pickupNumEl.value.trim() !== '') {
-        pickup += `, Nº ${pickupNumEl.value.trim()}`;
+        const parts = pickup.split(', ');
+        if (parts.length > 1) {
+            const city = parts.pop();
+            pickup = parts.join(', ') + `, Nº ${pickupNumEl.value.trim()}, ` + city;
+        } else {
+            pickup += `, Nº ${pickupNumEl.value.trim()}`;
+        }
     }
     
     let dropoff = document.getElementById('b-dropoff').value;
     const dropoffNumEl = document.getElementById('b-dropoff-num');
     if (dropoffNumEl && dropoffNumEl.value.trim() !== '') {
-        dropoff += `, Nº ${dropoffNumEl.value.trim()}`;
+        const parts = dropoff.split(', ');
+        if (parts.length > 1) {
+            const city = parts.pop();
+            dropoff = parts.join(', ') + `, Nº ${dropoffNumEl.value.trim()}, ` + city;
+        } else {
+            dropoff += `, Nº ${dropoffNumEl.value.trim()}`;
+        }
     }
     
     // Extraer campos opcionales
