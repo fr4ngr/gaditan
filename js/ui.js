@@ -1,5 +1,6 @@
 import { translations, state, routeState, routeData, calcState, calcContext } from './config.js';
-import { updatePriceUI, updateCalcPriceUI, calculateRoute } from './pricing.js';
+import { updatePriceUI, updateCalcPriceUI, calculateRoute, getRouteDetails, calculatePrice, isInterurban } from './pricing.js';
+import { geocodeString } from './api.js';
 
 export function updateDynamicAd() {
     const adTitle = document.getElementById('ad-title');
@@ -347,7 +348,7 @@ export function geolocateOrigin() {
     });
 }
 
-export function confirmReservation(event) {
+export async function confirmReservation(event) {
     event.preventDefault();
     const name = document.getElementById('b-name').value;
     const date = document.getElementById('b-date').value;
@@ -356,7 +357,7 @@ export function confirmReservation(event) {
     const pickup = document.getElementById('b-pickup').value;
     const dropoff = document.getElementById('b-dropoff').value;
     
-    // Extraer campos opcionales de los selects ocultos
+    // Extraer campos opcionales
     const chipPassengers = document.getElementById('chip-passengers');
     const chipLuggage = document.getElementById('chip-luggage');
     const chipPet = document.getElementById('chip-pet');
@@ -369,15 +370,17 @@ export function confirmReservation(event) {
     
     const trainContainer = document.getElementById('b-train-container');
     const trainInput = document.getElementById('b-train');
+    let hasRenfe = false;
     let trainNumberText = "";
     if (trainContainer && !trainContainer.classList.contains('hidden') && trainInput && trainInput.value.trim() !== '') {
+        hasRenfe = true;
         trainNumberText = `\n🚆 Nº de Tren: ${trainInput.value.trim()}`;
     }
     
     if (date) {
         const selectedDate = new Date(date);
         const minDate = new Date();
-        minDate.setDate(minDate.getDate() + 1); // Empezar mañana (para que las 48h abarquen pasado mañana)
+        minDate.setDate(minDate.getDate() + 1); // 48h aprox
         minDate.setHours(23, 59, 59, 999);
         
         if (selectedDate <= minDate) {
@@ -389,25 +392,138 @@ export function confirmReservation(event) {
         }
     }
     
-    const confirmMsg = state.currentLanguage === 'es' 
-        ? "Aviso importante: Tienes que esperar a que te confirmemos la reserva. ¿Estás de acuerdo?" 
-        : "Important notice: You must wait for us to confirm your booking. Do you agree?";
-    
-    if (!window.confirm(confirmMsg)) {
+    // Validar direcciones
+    if(!pickup || !dropoff) {
+        alert("Por favor introduce origen y destino.");
         return false;
     }
+
+    const formSubmitBtn = document.getElementById('booking-submit-btn');
+    const originalBtnText = formSubmitBtn.innerHTML;
+    formSubmitBtn.innerHTML = '<i data-lucide="loader-2" class="spin" style="animation: spin 1s linear infinite;"></i> Procesando...';
+    formSubmitBtn.disabled = true;
     
-    const email = "contacto@radiotaxicadiz.es";
-    const subject = state.currentLanguage === 'es' 
-        ? `Solicitud de reserva de Taxi - ${name} - ${date}`
-        : `Taxi booking request - ${name} - ${date}`;
+    try {
+        let exactOrigin = calcContext.bookingOrigin;
+        if (!exactOrigin || exactOrigin.name !== pickup.split(',')[0]) {
+            exactOrigin = await geocodeString(pickup, true) || { name: pickup, city: 'Cádiz', lat: 36.52, lon: -6.29 };
+        }
+        
+        let exactDest = calcContext.bookingDest;
+        if (!exactDest || exactDest.name !== dropoff.split(',')[0]) {
+            exactDest = await geocodeString(dropoff, false) || { name: dropoff, city: 'Cádiz', lat: 36.52, lon: -6.29 };
+        }
+
+        // Determinar hora y si es festivo
+        const selectedDateTime = new Date(`${date}T${time}`);
+        const hour = selectedDateTime.getHours();
+        const isNight = (hour >= 21 || hour < 7);
+        const dayOfWeek = selectedDateTime.getDay();
+        const isFestivo = (dayOfWeek === 0 || dayOfWeek === 6); // Sabado o Domingo
+        
+        const isInter = isInterurban(exactDest);
+        const routeDetails = await getRouteDetails(exactOrigin, exactDest);
+        const priceResult = calculatePrice(routeDetails, isNight, isFestivo, hasRenfe, parseInt(luggage));
+        
+        // Rellenar UI del funnel
+        document.getElementById('summary-origin').innerText = pickup;
+        document.getElementById('summary-dest').innerText = dropoff;
+        document.getElementById('summary-datetime').innerText = `${date} a las ${time}`;
+        document.getElementById('summary-details').innerText = `${passengers} pax, ${luggage} maletas, pago en ${payment}`;
+        document.getElementById('summary-price').innerText = priceResult.price.toFixed(2).replace('.', ',') + '€';
+        
+        // Ocultar form, mostrar funnel
+        document.getElementById('booking-form').style.display = 'none';
+        document.getElementById('booking-results-funnel').style.display = 'block';
+        
+        // Mostrar / Ocultar Transporte Público
+        const ptCard = document.getElementById('public-transport-card');
+        if (ptCard) {
+            if (isInter && exactDest.city) {
+                const cityName = exactDest.city.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+                if (['san fernando', 'puerto real', 'el puerto de santa maria', 'el puerto de santa maría', 'jerez de la frontera', 'jerez'].includes(cityName)) {
+                    document.getElementById('pt-title').innerText = 'Cercanías Renfe';
+                    document.getElementById('pt-desc').innerText = `Alternativa económica para ir a ${exactDest.city} desde Cádiz.`;
+                    document.getElementById('pt-header').style.background = '#22c55e';
+                    ptCard.style.display = 'flex';
+                } else if (['chiclana', 'chiclana de la frontera'].includes(cityName)) {
+                    document.getElementById('pt-title').innerText = 'Trambahía';
+                    document.getElementById('pt-desc').innerText = `El Trambahía conecta Cádiz directamente con Chiclana.`;
+                    document.getElementById('pt-header').style.background = '#0284c7';
+                    ptCard.style.display = 'flex';
+                } else {
+                    ptCard.style.display = 'none';
+                }
+            } else {
+                ptCard.style.display = 'none';
+            }
+        }
+        
+        // Asignar funciones de botones
+        const email = "contacto@radiotaxicadiz.es";
+        const subject = state.currentLanguage === 'es' 
+            ? `Solicitud de reserva de Taxi - ${name} - ${date}`
+            : `Taxi booking request - ${name} - ${date}`;
+        
+        const body = state.currentLanguage === 'es'
+            ? `¡Hola equipo de Radio Taxi Cádiz!\n\nSoy ${name} y necesito reservar un taxi con los siguientes detalles:\n\n📱 Teléfono: ${phone}\n📍 Recogida: ${pickup}\n🏁 Destino: ${dropoff}\n📅 Día: ${date}\n🕒 Hora: ${time}${trainNumberText}\n\n👥 Pasajeros: ${passengers}\n🧳 Maletas: ${luggage}\n🐕 Mascota: ${pet}\n💳 Pago: ${payment}\n\nQuedo a la espera de vuestra confirmación. ¡Muchas gracias y un saludo!\n\nAtentamente,\n${name}`
+            : `Hello Radio Taxi Cádiz team!\n\nMy name is ${name} and I would like to book a taxi with the following details:\n\n📱 Phone: ${phone}\n📍 Pickup: ${pickup}\n🏁 Destination: ${dropoff}\n📅 Date: ${date}\n🕒 Time: ${time}${trainNumberText}\n\n👥 Passengers: ${passengers}\n🧳 Luggage: ${luggage}\n🐕 Pet: ${pet === 'Sí' ? 'Yes' : 'No'}\n💳 Payment: ${payment === 'Efectivo o Tarjeta' ? 'Any' : (payment === 'Tarjeta' ? 'Card' : 'Cash')}\n\nI look forward to your confirmation. Thank you very much!\n\nBest regards,\n${name}`;
+        
+        document.getElementById('btn-confirm-email').onclick = function() {
+            window.location.href = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        };
+        
+        document.getElementById('btn-confirm-whatsapp').onclick = function() {
+            window.open(`https://wa.me/34956212121?text=${encodeURIComponent(body)}`, '_blank');
+        };
+        
+        document.getElementById('btn-edit-booking').onclick = function() {
+            document.getElementById('booking-results-funnel').style.display = 'none';
+            document.getElementById('booking-form').style.display = 'block';
+        };
+
+        // Renderizar Mapa
+        if (!state.bookingMapInstance) {
+            state.bookingMapInstance = L.map('booking-map').setView([36.52, -6.29], 13);
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
+                subdomains: 'abcd',
+                maxZoom: 19
+            }).addTo(state.bookingMapInstance);
+            state.bookingMapLayerGroup = L.featureGroup().addTo(state.bookingMapInstance);
+        } else {
+            state.bookingMapLayerGroup.clearLayers();
+        }
+        
+        const originMarker = L.marker([exactOrigin.lat, exactOrigin.lon]).bindPopup("Origen");
+        const destMarker = L.marker([exactDest.lat, exactDest.lon]).bindPopup("Destino");
+        state.bookingMapLayerGroup.addLayer(originMarker);
+        state.bookingMapLayerGroup.addLayer(destMarker);
+        
+        if (routeDetails.geometry) {
+            const routeLine = L.geoJSON(routeDetails.geometry, {
+                style: {
+                    color: '#00d2ff',
+                    weight: 4,
+                    opacity: 0.8
+                }
+            });
+            state.bookingMapLayerGroup.addLayer(routeLine);
+        }
+        
+        setTimeout(() => {
+            state.bookingMapInstance.invalidateSize();
+            state.bookingMapInstance.fitBounds(state.bookingMapLayerGroup.getBounds(), { padding: [20, 20] });
+        }, 100);
+
+    } catch (e) {
+        console.error(e);
+        alert("Hubo un problema al procesar la ruta. Verifica las direcciones.");
+    } finally {
+        formSubmitBtn.innerHTML = originalBtnText;
+        formSubmitBtn.disabled = false;
+        if(window.lucide) window.lucide.createIcons();
+    }
     
-    const body = state.currentLanguage === 'es'
-        ? `¡Hola equipo de Radio Taxi Cádiz!\n\nSoy ${name} y necesito reservar un taxi con los siguientes detalles:\n\n📱 Teléfono: ${phone}\n📍 Recogida: ${pickup}\n🏁 Destino: ${dropoff}\n📅 Día: ${date}\n🕒 Hora: ${time}${trainNumberText}\n\n👥 Pasajeros: ${passengers}\n🧳 Maletas: ${luggage}\n🐕 Mascota: ${pet}\n💳 Pago: ${payment}\n\nQuedo a la espera de vuestra confirmación. ¡Muchas gracias y un saludo!\n\nAtentamente,\n${name}`
-        : `Hello Radio Taxi Cádiz team!\n\nMy name is ${name} and I would like to book a taxi with the following details:\n\n📱 Phone: ${phone}\n📍 Pickup: ${pickup}\n🏁 Destination: ${dropoff}\n📅 Date: ${date}\n🕒 Time: ${time}${trainNumberText}\n\n👥 Passengers: ${passengers}\n🧳 Luggage: ${luggage}\n🐕 Pet: ${pet === 'Sí' ? 'Yes' : 'No'}\n💳 Payment: ${payment === 'Efectivo o Tarjeta' ? 'Any' : (payment === 'Tarjeta' ? 'Card' : 'Cash')}\n\nI look forward to your confirmation. Thank you very much!\n\nBest regards,\n${name}`;
-    
-    window.location.href = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     return false;
 }
-
-

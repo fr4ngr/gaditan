@@ -1,4 +1,4 @@
-// js/api.js
+﻿// js/api.js
 
 export async function getOSRMRoute(originCoords, destCoords) {
     const url = `https://router.project-osrm.org/route/v1/driving/${originCoords.lon},${originCoords.lat};${destCoords.lon},${destCoords.lat}?overview=simplified&geometries=geojson`;
@@ -59,4 +59,27 @@ export async function getExactCoordinate(baseObj, numberStr) {
         console.error("Error in getExactCoordinate:", e);
     }
     return baseObj; 
+}
+
+export async function geocodeString(query, strictCadiz = false) {
+    try {
+        let url = "https://photon.komoot.io/api/?q=${encodeURIComponent(query)}&lat=36.52&lon=-6.29&limit=1";
+        if (strictCadiz) {
+            url += "&bbox=-6.32,36.48,-6.25,36.54";
+        }
+        const res = await fetch(url);
+        const data = await res.json();
+        if (data.features && data.features.length > 0) {
+            const props = data.features[0].properties;
+            return {
+                name: props.name || props.street || query,
+                city: props.city || props.town || props.village || 'Cádiz',
+                lat: data.features[0].geometry.coordinates[1],
+                lon: data.features[0].geometry.coordinates[0]
+            };
+        }
+    } catch(e) {
+        console.error(e);
+    }
+    return null;
 }

@@ -502,9 +502,104 @@
                             </div>
                             
                             <button type="submit" class="md3-btn booking-submit-fab" id="booking-submit-btn" data-translate="form-submit">
-                                Solicitar Reserva
+                                Continuar
                             </button>
                         </form>
+
+                        <!-- RESULTADOS DEL EMBUDO DE RESERVA -->
+                        <div id="booking-results-funnel" style="display: none; animation: fadeIn 0.5s ease forwards;">
+                            <h3 style="text-align: center; color: var(--text-main); margin-bottom: 1rem; font-size: 1.5rem;" data-translate="booking_summary_title">Resumen de tu Viaje</h3>
+                            
+                            <!-- Mapa del trayecto -->
+                            <div id="booking-map" style="width: 100%; height: 200px; border-radius: 12px; margin-bottom: 1.5rem; border: 1px solid var(--glass-border); z-index: 1;"></div>
+                            
+                            <!-- Tarjeta Principal: Taxi Oficial -->
+                            <div class="glass" style="padding: 1.5rem; border-radius: 12px; border: 1px solid var(--brand-cyan); box-shadow: 0 5px 20px rgba(6, 182, 212, 0.15); margin-bottom: 1.5rem;">
+                                <h4 style="color: var(--brand-cyan); margin-top: 0; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; font-size: 1.2rem;">
+                                    <i data-lucide="shield-check" style="color: var(--brand-cyan);"></i> <span data-translate="official_taxi">Taxi Oficial de Cádiz</span>
+                                </h4>
+                                
+                                <div style="font-size: 0.95rem; color: var(--text-muted); display: grid; gap: 0.8rem; margin-bottom: 1.5rem;">
+                                    <div style="display: flex; gap: 0.5rem;"><i data-lucide="map-pin" size="16"></i> <span><strong data-translate="summary_origin">Origen:</strong> <span id="summary-origin"></span></span></div>
+                                    <div style="display: flex; gap: 0.5rem;"><i data-lucide="map" size="16"></i> <span><strong data-translate="summary_dest">Destino:</strong> <span id="summary-dest"></span></span></div>
+                                    <div style="display: flex; gap: 0.5rem;"><i data-lucide="calendar-clock" size="16"></i> <span><strong data-translate="summary_datetime">Cuándo:</strong> <span id="summary-datetime"></span></span></div>
+                                    <div style="display: flex; gap: 0.5rem;"><i data-lucide="info" size="16"></i> <span><strong data-translate="summary_details">Detalles:</strong> <span id="summary-details"></span></span></div>
+                                </div>
+                                
+                                <div style="text-align: center; margin-bottom: 1.5rem; padding: 1rem; background: rgba(0,0,0,0.2); border-radius: 8px;">
+                                    <div style="font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;" data-translate="summary_price_est">Precio Estimado</div>
+                                    <div id="summary-price" style="font-size: 2.8rem; font-weight: 800; color: var(--brand-cyan); margin: 0.5rem 0;">0,00€</div>
+                                    <div style="font-size: 0.8rem; color: var(--text-muted);" data-translate="calc-disclaimer">*El taxímetro determina el importe final</div>
+                                </div>
+                                
+                                <div style="display: flex; gap: 1rem; flex-direction: column;">
+                                    <button id="btn-confirm-whatsapp" class="md3-btn" style="background: #25D366; width: 100%; justify-content: center;">
+                                        <i data-lucide="message-circle"></i> <span data-translate="btn_book_wa">Reservar por WhatsApp</span>
+                                    </button>
+                                    <button id="btn-confirm-email" class="md3-btn" style="background: rgba(255,255,255,0.1); width: 100%; justify-content: center; box-shadow: none;">
+                                        <i data-lucide="mail"></i> <span data-translate="btn_book_email">Reservar por Correo</span>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div style="text-align: center; margin-bottom: 2rem;">
+                                <button id="btn-edit-booking" type="button" style="background: none; border: none; color: var(--text-muted); text-decoration: underline; cursor: pointer; font-family: 'Outfit', sans-serif; font-size: 1rem;">
+                                    <span data-translate="btn_edit_booking">← Volver para modificar datos</span>
+                                </button>
+                            </div>
+                            
+                            <h4 style="color: var(--text-main); margin-bottom: 1rem; font-size: 1.2rem; text-align: center;" data-translate="other_alternatives">Otras Alternativas</h4>
+                            
+                            <!-- Tarjeta Radio Taxi -->
+                            <div class="destination-card" style="margin-bottom: 1rem; display: flex; flex-direction: column;">
+                                <div class="dest-image" style="height: 120px; background: linear-gradient(135deg, rgba(30,58,138,0.8), rgba(15,23,42,0.9)); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden;">
+                                    <div style="position: absolute; width: 150px; height: 150px; background: radial-gradient(circle, var(--brand-cyan) 0%, transparent 70%); opacity: 0.2; top: -50px; right: -50px; filter: blur(20px);"></div>
+                                    <h3 style="color: white; font-size: 1.8rem; font-weight: 800; text-align: center; z-index: 1; letter-spacing: 1px; text-shadow: 0 2px 10px rgba(0,0,0,0.5);">RADIO TAXI<br><span style="color: var(--brand-cyan); font-size: 1.2rem;">CÁDIZ</span></h3>
+                                </div>
+                                <div class="dest-content" style="flex: 1; display: flex; flex-direction: column; justify-content: space-between;">
+                                    <div>
+                                        <h4 class="dest-title">956 21 21 21</h4>
+                                        <p class="dest-desc">Servicio de emisora oficial 24 horas. Alternativa rápida si prefieres llamar.</p>
+                                    </div>
+                                    <a href="tel:+34956212121" class="btn btn-glow" style="width: 100%; display: flex; justify-content: center; gap: 0.5rem; margin-top: 1rem;">
+                                        <i data-lucide="phone"></i> Llamar ahora
+                                    </a>
+                                </div>
+                            </div>
+                            
+                            <!-- Tarjeta VTC -->
+                            <div class="destination-card" style="margin-bottom: 1rem; display: flex; flex-direction: column;">
+                                <div class="dest-image" style="height: 100px; background: #111; display: flex; align-items: center; justify-content: center;">
+                                    <h3 style="color: white; font-weight: 600; font-size: 1.5rem; letter-spacing: 2px;">CADIZ<span style="color: var(--brand-cyan);">.CAB</span></h3>
+                                </div>
+                                <div class="dest-content" style="flex: 1; display: flex; flex-direction: column; justify-content: space-between;">
+                                    <div>
+                                        <h4 class="dest-title">VTC Premium</h4>
+                                        <p class="dest-desc">Servicio privado de furgonetas hasta 8 plazas. Ideal para grupos grandes o servicios concertados.</p>
+                                    </div>
+                                    <a href="https://cadiz.cab" target="_blank" class="btn" style="width: 100%; display: flex; justify-content: center; gap: 0.5rem; background: rgba(255,255,255,0.1); margin-top: 1rem; box-shadow: none;">
+                                        <i data-lucide="external-link"></i> Visitar web
+                                    </a>
+                                </div>
+                            </div>
+                            
+                            <!-- Tarjeta Transporte Público (Dinámica) -->
+                            <div id="public-transport-card" class="destination-card" style="display: none; margin-bottom: 1rem; flex-direction: column;">
+                                <div class="dest-image" id="pt-header" style="height: 100px; background: #22c55e; display: flex; align-items: center; justify-content: center;">
+                                    <i data-lucide="train" style="color: white; width: 40px; height: 40px;" id="pt-icon"></i>
+                                </div>
+                                <div class="dest-content" style="flex: 1; display: flex; flex-direction: column; justify-content: space-between;">
+                                    <div>
+                                        <h4 class="dest-title" id="pt-title">Cercanías Renfe</h4>
+                                        <p class="dest-desc" id="pt-desc">Alternativa económica en transporte público para este trayecto.</p>
+                                    </div>
+                                    <a href="#" target="_blank" id="pt-link" class="btn" style="width: 100%; display: flex; justify-content: center; gap: 0.5rem; background: rgba(255,255,255,0.1); margin-top: 1rem; box-shadow: none;">
+                                        <i data-lucide="external-link"></i> Ver horarios
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
             </div>
         </section>
