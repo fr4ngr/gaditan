@@ -568,29 +568,6 @@ export async function confirmReservation(event) {
         document.getElementById('booking-form').style.display = 'none';
         document.getElementById('booking-results-funnel').style.display = 'block';
         
-        // Mostrar / Ocultar Transporte Público
-        const ptCard = document.getElementById('public-transport-card');
-        if (ptCard) {
-            if (isInter && exactDest.city) {
-                const cityName = exactDest.city.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-                if (['san fernando', 'puerto real', 'el puerto de santa maria', 'el puerto de santa maría', 'jerez de la frontera', 'jerez'].includes(cityName)) {
-                    document.getElementById('pt-title').innerText = 'Cercanías Renfe';
-                    document.getElementById('pt-desc').innerText = `Alternativa económica para ir a ${exactDest.city} desde Cádiz.`;
-                    document.getElementById('pt-header').style.background = '#22c55e';
-                    ptCard.style.display = 'flex';
-                } else if (['chiclana', 'chiclana de la frontera'].includes(cityName)) {
-                    document.getElementById('pt-title').innerText = 'Trambahía';
-                    document.getElementById('pt-desc').innerText = `El Trambahía conecta Cádiz directamente con Chiclana.`;
-                    document.getElementById('pt-header').style.background = '#0284c7';
-                    ptCard.style.display = 'flex';
-                } else {
-                    ptCard.style.display = 'none';
-                }
-            } else {
-                ptCard.style.display = 'none';
-            }
-        }
-        
         // Asignar funciones de botones
         const email = "contacto@radiotaxicadiz.es";
         const subject = state.currentLanguage === 'es' 

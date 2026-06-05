@@ -546,82 +546,89 @@
                             </div>
                             
                             <!-- Tarjeta Radio Taxi -->
-                            <div style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 1.25rem; display: flex; flex-direction: column; gap: 0.85rem; margin-bottom: 2.5rem;">
-                                <div style="display: flex; flex-direction: column; gap: 0.6rem;">
-                                    <div style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.2px; font-weight: 600;">Servicio prestado por</div>
-                                    <div style="display: grid; grid-template-columns: 1fr auto; row-gap: 0.1rem; column-gap: 1rem; align-items: center;">
+                            <div style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 1.25rem; display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2rem;">
+                                <!-- Header Tarjeta -->
+                                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
                                         <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                            <div style="background: #eab308; color: #111827; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.75rem;">RT</div>
-                                            <span style="font-size: 1.15rem; font-weight: 700; color: white;">Radio Taxi</span>
+                                            <div style="background: #eab308; color: #111827; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.8rem;">RT</div>
+                                            <span style="font-size: 1.2rem; font-weight: 800; color: white;">Radio Taxi</span>
                                         </div>
-                                        <div style="display: flex; align-items: baseline; gap: 0.15rem; justify-self: end;">
-                                            <span id="summary-radio-price" style="font-size: 1.3rem; font-weight: 800; color: white;">0,00€</span>
-                                            <span style="font-size: 1.3rem; color: var(--brand-cyan); font-weight: 800; transform: translateY(2px);">*</span>
-                                        </div>
-                                        <div style="font-size: 0.9rem; color: var(--text-muted); font-weight: 500; padding-left: calc(28px + 0.5rem); letter-spacing: 0.5px;">
+                                        <div style="font-size: 0.95rem; color: var(--text-muted); font-weight: 500; padding-left: calc(28px + 0.5rem); letter-spacing: 0.5px;">
                                             956 21 21 21
                                         </div>
-                                        <div id="summary-radio-time" style="font-size: 0.85rem; color: var(--text-muted); font-weight: 500; display: flex; align-items: center; gap: 0.3rem; justify-self: end;">
-                                            <i data-lucide="clock" style="width: 14px; height: 14px;"></i> 0 min
+                                    </div>
+                                    
+                                    <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.3rem;">
+                                        <div style="display: flex; align-items: baseline; gap: 0.15rem;">
+                                            <span id="summary-radio-price" style="font-size: 1.5rem; font-weight: 800; color: white;">29€</span>
+                                            <span style="font-size: 1.5rem; color: var(--brand-cyan); font-weight: 800; transform: translateY(2px);">*</span>
+                                        </div>
+                                        <div id="summary-radio-time" style="font-size: 0.85rem; color: var(--text-muted); font-weight: 500; display: flex; align-items: center; gap: 0.3rem;">
+                                            <i data-lucide="clock" style="width: 14px; height: 14px;"></i> 25 min
                                         </div>
                                     </div>
                                 </div>
-                                <div style="display: flex; flex-direction: column; gap: 0.85rem; width: 100%;">
-                                    <div style="font-size: 0.8rem; color: rgba(255,255,255,0.85); line-height: 1.25; text-align: left; font-weight: 400; background: rgba(0,0,0,0.2); padding: 0.5rem 0.75rem; border-radius: 12px; border-left: 3px solid var(--brand-cyan); display: flex; align-items: flex-start; gap: 0.4rem;">
-                                        <span style="color: var(--brand-cyan); font-weight: 800; font-size: 1.1rem; line-height: 1; transform: translateY(2px);">*</span>
-                                        <span style="flex: 1;">Servicio de emisora oficial 24 horas. Alternativa rápida si prefieres llamar.</span>
-                                    </div>
-                                    <div style="display: flex; justify-content: center; gap: 2.5rem; width: 100%; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 0.75rem;">
-                                        <a href="tel:+34956212121" style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem; text-decoration: none;">
-                                        <div class="circle-btn" style="background: #0284c7; box-shadow: none; width: 52px; height: 52px;"><i data-lucide="phone" style="width:24px; height:24px;"></i></div>
-                                        <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 500; text-transform: uppercase;">Llamar</span>
-                                        </a>
-                                        <a href="whatsapp://send?phone=34956212121" style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem; text-decoration: none;">
-                                        <div class="circle-btn" style="background: #16a34a; box-shadow: none; width: 52px; height: 52px;"><i data-lucide="message-circle" style="width:24px; height:24px;"></i></div>
-                                        <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 500; text-transform: uppercase;">WhatsApp</span>
-                                        </a>
-                                    </div>
+                                
+                                <!-- Alert Text -->
+                                <div style="font-size: 0.85rem; color: rgba(255,255,255,0.9); line-height: 1.4; text-align: left; font-weight: 400; background: rgba(0,0,0,0.3); padding: 0.75rem 1rem; border-radius: 12px; border-left: 3px solid var(--brand-cyan); display: flex; align-items: flex-start; gap: 0.5rem; margin-top: 0.5rem;">
+                                    <span style="color: var(--brand-cyan); font-weight: 800; font-size: 1.1rem; line-height: 1; transform: translateY(2px);">*</span>
+                                    <span style="flex: 1;">Estimación con tráfico favorable. El precio final lo determina el taxímetro oficial. Consúltales sin compromiso.</span>
                                 </div>
-                            </div>
-
-                            <h2 class="section-title" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 0.5rem; font-size: 1.5rem;">
-                                <span data-translate="other_alternatives">Otras Alternativas</span>
-                            </h2>
-                            <p class="section-subtitle" style="text-align: center; color: var(--text-muted); margin-bottom: 1.5rem; font-size: 1rem;" data-translate="other_alternatives_sub">Si necesitas otro tipo de servicio</p>
-
-                            <!-- Tarjeta Cadiz.cab -->
-                            <div style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 1.25rem; display: flex; flex-direction: column; gap: 0.85rem; margin-bottom: 1rem;">
-                                <div style="display: flex; flex-direction: column; gap: 0.6rem;">
-                                    <div style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.2px; font-weight: 600;">Servicio prestado por</div>
-                                    <div style="display: grid; grid-template-columns: 1fr auto; row-gap: 0.1rem; column-gap: 1rem; align-items: center;">
-                                        <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                            <div style="background: #6366f1; color: #ffffff; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.75rem;">CC</div>
-                                            <span style="font-size: 1.15rem; font-weight: 700; color: white;">Cadiz.cab</span>
+                                
+                                <!-- Botones -->
+                                <div style="display: flex; justify-content: center; gap: 3rem; width: 100%; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 1.25rem; margin-top: 0.5rem;">
+                                    <a href="tel:+34956212121" style="display: flex; flex-direction: column; align-items: center; gap: 0.6rem; text-decoration: none;">
+                                        <div class="circle-btn" style="background: #0284c7; box-shadow: none; width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; border-radius: 50%;">
+                                            <i data-lucide="phone" style="width:26px; height:26px; color: white;"></i>
                                         </div>
-                                        <div style="font-size: 0.9rem; color: var(--text-muted); font-weight: 500; padding-left: calc(28px + 0.5rem); letter-spacing: 0.5px; grid-column: 1 / -1; margin-top: 0.5rem;">
-                                            Servicio privado VTC premium de furgonetas hasta 8 plazas. Ideal para grupos grandes o servicios concertados.
+                                        <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 500;">Llamar</span>
+                                    </a>
+                                    <a id="btn-radio-whatsapp" href="whatsapp://send?phone=34956212121" style="display: flex; flex-direction: column; align-items: center; gap: 0.6rem; text-decoration: none;">
+                                        <div class="circle-btn" style="background: #22c55e; box-shadow: none; width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; border-radius: 50%;">
+                                            <i data-lucide="message-circle" style="width:26px; height:26px; color: white;"></i>
                                         </div>
-                                    </div>
-                                </div>
-                                <a href="https://cadiz.cab" target="_blank" class="btn" style="width: 100%; display: flex; justify-content: center; gap: 0.5rem; background: rgba(255,255,255,0.1); margin-top: 0.5rem; box-shadow: none;">
-                                    <i data-lucide="external-link"></i> Visitar web
-                                </a>
-                            </div>
-                            
-                            <!-- Tarjeta Transporte Público (Dinámica) -->
-                            <div id="public-transport-card" class="destination-card" style="display: none; margin-bottom: 1rem; flex-direction: column;">
-                                <div class="dest-image" id="pt-header" style="height: 100px; background: #22c55e; display: flex; align-items: center; justify-content: center;">
-                                    <i data-lucide="train" style="color: white; width: 40px; height: 40px;" id="pt-icon"></i>
-                                </div>
-                                <div class="dest-content" style="flex: 1; display: flex; flex-direction: column; justify-content: space-between;">
-                                    <div>
-                                        <h4 class="dest-title" id="pt-title">Cercanías Renfe</h4>
-                                        <p class="dest-desc" id="pt-desc">Alternativa económica en transporte público para este trayecto.</p>
-                                    </div>
-                                    <a href="#" target="_blank" id="pt-link" class="btn" style="width: 100%; display: flex; justify-content: center; gap: 0.5rem; background: rgba(255,255,255,0.1); margin-top: 1rem; box-shadow: none;">
-                                        <i data-lucide="external-link"></i> Ver horarios
+                                        <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 500;">WhatsApp</span>
                                     </a>
                                 </div>
+                            </div>
+                            
+                            <!-- Divisor -->
+                            <div style="display: flex; align-items: center; gap: 1rem; margin: 2rem 0;">
+                                <div style="flex: 1; height: 1px; background: rgba(255,255,255,0.1);"></div>
+                                <span style="color: var(--text-muted); font-size: 0.7rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;">Otras Alternativas</span>
+                                <div style="flex: 1; height: 1px; background: rgba(255,255,255,0.1);"></div>
+                            </div>
+
+                            <!-- Tarjeta Cadiz.cab -->
+                            <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 16px; padding: 1.25rem; display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2rem;">
+                                <!-- Badge -->
+                                <div style="display: flex; align-items: center; gap: 0.4rem;">
+                                    <i data-lucide="star" style="color: #eab308; width: 14px; height: 14px; fill: #eab308;"></i>
+                                    <span style="color: #eab308; font-size: 0.7rem; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase;">Servicio prestado por</span>
+                                </div>
+                                
+                                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-top: 0.25rem;">
+                                    <div style="display: flex; flex-direction: column; gap: 0.2rem;">
+                                        <div style="display: flex; align-items: center; gap: 0.6rem;">
+                                            <div style="background: #6366f1; color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                                <i data-lucide="car-front" style="width: 18px; height: 18px;"></i>
+                                            </div>
+                                            <span style="font-size: 1.4rem; font-weight: 900; color: white;">cadiz.cab</span>
+                                        </div>
+                                        <div style="font-size: 0.95rem; color: #a5b4fc; font-weight: 500; padding-left: calc(32px + 0.6rem);">
+                                            Vehículos VTC
+                                        </div>
+                                    </div>
+                                    
+                                    <div style="background: #eab308; color: #111827; font-size: 0.65rem; font-weight: 800; padding: 0.3rem 0.6rem; border-radius: 6px; letter-spacing: 1px; text-transform: uppercase; margin-top: 0.25rem;">
+                                        Premium
+                                    </div>
+                                </div>
+                                
+                                <a href="https://cadiz.cab" target="_blank" style="width: 100%; display: flex; justify-content: center; align-items: center; gap: 0.5rem; background: rgba(99, 102, 241, 0.15); color: white; padding: 1rem; border-radius: 12px; margin-top: 0.5rem; text-decoration: none; font-weight: 600; font-size: 1rem; border: 1px solid rgba(99, 102, 241, 0.3); transition: all 0.3s ease;">
+                                    <i data-lucide="calendar-check" style="width: 20px; height: 20px;"></i> Reserva
+                                </a>
                             </div>
                         </div>
 
