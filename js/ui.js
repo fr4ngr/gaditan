@@ -184,7 +184,7 @@ export function setupPhotonAutocomplete(inputId, suggestionsId, onSelect, strict
 
         debounceTimer = setTimeout(async () => {
             try {
-                let url = `https://photon.komoot.io/api/?q=${encodeURIComponent(val)}&lat=36.52&lon=-6.29&limit=5`;
+                let url = `https://photon.komoot.io/api/?q=${encodeURIComponent(val)}&lat=36.52&lon=-6.29&limit=5&lang=${state.currentLanguage || 'es'}`;
                 if (strictCadiz) {
                     url += "&bbox=-6.32,36.48,-6.25,36.54";
                 }
@@ -297,7 +297,7 @@ export function geolocateOrigin() {
         calcState.originLat = lat;
         calcState.originLon = lon;
         try {
-            const res = await fetch("https://photon.komoot.io/reverse?lat=" + lat + "&lon=" + lon);
+            const res = await fetch(`https://photon.komoot.io/reverse?lat=${lat}&lon=${lon}&lang=${state.currentLanguage || 'es'}`);
             const data = await res.json();
             if (data.features && data.features.length > 0) {
                 const props = data.features[0].properties;
