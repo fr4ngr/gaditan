@@ -539,7 +539,7 @@ export async function confirmReservation(event) {
         // Asignar precio dinámico a la tarjeta de Radio Taxi
         const radioPriceEl = document.getElementById('summary-radio-price');
         if (radioPriceEl) {
-            radioPriceEl.innerText = priceResult.price.toFixed(2).replace('.', ',') + '€';
+            radioPriceEl.innerText = priceResult.price.toFixed(0) + '€';
         }
         
         // Actualizar estadísticas OSRM
@@ -569,7 +569,7 @@ export async function confirmReservation(event) {
         document.getElementById('booking-results-funnel').style.display = 'block';
         
         // Asignar funciones de botones
-        const email = "contacto@radiotaxicadiz.es";
+        const email = "reservas@radiotaxicadiz.es";
         const subject = state.currentLanguage === 'es' 
             ? `Solicitud de reserva de Taxi - ${name} - ${date}`
             : `Taxi booking request - ${name} - ${date}`;
@@ -578,9 +578,11 @@ export async function confirmReservation(event) {
             ? `¡Hola equipo de Radio Taxi Cádiz!\n\nSoy ${name} y necesito reservar un taxi con los siguientes detalles:\n\n📱 Teléfono: ${phone}\n📍 Recogida: ${pickup}\n🏁 Destino: ${dropoff}\n📅 Día: ${date}\n⏰ Hora: ${time}${trainNumberText}\n\n👥 Pasajeros: ${passengers}\n🧳 Maletas: ${luggage}\n🐾 Mascota: ${pet}\n💳 Pago: ${payment}\n\nQuedo a la espera de vuestra confirmación. ¡Muchas gracias y un saludo!\n\nAtentamente,\n${name}`
             : `Hello Radio Taxi Cádiz team!\n\nMy name is ${name} and I would like to book a taxi with the following details:\n\n📱 Phone: ${phone}\n📍 Pickup: ${pickup}\n🏁 Destination: ${dropoff}\n📅 Date: ${date}\n⏰ Time: ${time}${trainNumberText}\n\n👥 Passengers: ${passengers}\n🧳 Luggage: ${luggage}\n🐾 Pet: ${pet === 'Sí' ? 'Yes' : 'No'}\n💳 Payment: ${payment === 'Efectivo o Tarjeta' ? 'Any' : (payment === 'Tarjeta' ? 'Card' : 'Cash')}\n\nI look forward to your confirmation. Thank you very much!\n\nBest regards,\n${name}`;
         
-        const radioWaBtn = document.getElementById('btn-radio-whatsapp');
-        if (radioWaBtn) {
-            radioWaBtn.href = `https://wa.me/34956212121?text=${encodeURIComponent(body)}`;
+        const radioEmailBtn = document.getElementById('btn-radio-email');
+        if (radioEmailBtn) {
+            radioEmailBtn.onclick = function() {
+                window.location.href = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            };
         }
         
         document.getElementById('btn-edit-booking').onclick = function() {
