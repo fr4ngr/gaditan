@@ -462,18 +462,38 @@
                             <div class="form-group options-group">
                                 <label>Opciones Adicionales</label>
                                 <div class="chip-group">
-                                    <button type="button" class="booking-chip" id="chip-passengers" data-type="passengers" data-value="1">
-                                        <i data-lucide="users"></i> <span>1</span>
-                                    </button>
-                                    <button type="button" class="booking-chip" id="chip-luggage" data-type="luggage" data-value="0">
-                                        <i data-lucide="briefcase"></i> <span>0</span>
-                                    </button>
-                                    <button type="button" class="booking-chip" id="chip-pet" data-type="pet" data-value="No">
-                                        <i data-lucide="paw-print"></i> <span style="display:none;">Sí</span>
-                                    </button>
-                                    <button type="button" class="booking-chip" id="chip-payment" data-type="payment" data-value="Indiferente">
-                                        <i data-lucide="banknote"></i> <i data-lucide="credit-card" style="display:none;"></i> <span>Efectivo</span>
-                                    </button>
+                                    <div class="booking-chip select-chip" id="container-passengers">
+                                        <i data-lucide="users" class="chip-icon"></i> <span class="chip-text">1</span>
+                                        <select class="hidden-select" id="chip-passengers" data-type="passengers">
+                                            <option value="1">1 Pasajero</option>
+                                            <option value="2">2 Pasajeros</option>
+                                            <option value="3">3 Pasajeros</option>
+                                            <option value="4">4 Pasajeros</option>
+                                        </select>
+                                    </div>
+                                    <div class="booking-chip select-chip" id="container-luggage">
+                                        <i data-lucide="briefcase" class="chip-icon"></i> <span class="chip-text">0</span>
+                                        <select class="hidden-select" id="chip-luggage" data-type="luggage">
+                                            <option value="0">Sin maletas grandes</option>
+                                            <option value="1">1 Maleta grande</option>
+                                            <option value="2">2 Maletas grandes</option>
+                                        </select>
+                                    </div>
+                                    <div class="booking-chip select-chip" id="container-pet">
+                                        <i data-lucide="paw-print" class="chip-icon"></i> <span class="chip-text">No</span>
+                                        <select class="hidden-select" id="chip-pet" data-type="pet">
+                                            <option value="No">Viajo sin mascota</option>
+                                            <option value="Sí">Viajo con mascota</option>
+                                        </select>
+                                    </div>
+                                    <div class="booking-chip select-chip" id="container-payment">
+                                        <i data-lucide="banknote" class="chip-icon"></i> <span class="chip-text">Efectivo</span>
+                                        <select class="hidden-select" id="chip-payment" data-type="payment">
+                                            <option value="Efectivo">Pago en Efectivo</option>
+                                            <option value="Tarjeta">Pago con Tarjeta</option>
+                                            <option value="Indiferente">Pago Indiferente</option>
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
                             
