@@ -318,9 +318,8 @@ export function setupPhotonAutocomplete(inputId, suggestionsId, onSelect, strict
     });
 }
 
-export function geolocateOrigin() {
-    const input = document.getElementById('calc-origin');
-    if (input && input.value.trim() !== '') return;
+export function geolocateOrigin(inputId = 'calc-origin', numInputId = null) {
+    const input = document.getElementById(inputId);
 
     if (!navigator.geolocation) {
         return;
@@ -334,49 +333,88 @@ export function geolocateOrigin() {
     navigator.geolocation.getCurrentPosition(async (position) => {
         const lat = position.coords.latitude;
         const lon = position.coords.longitude;
-        calcState.originLat = lat;
-        calcState.originLon = lon;
+        if (inputId === 'calc-origin') {
+            calcState.originLat = lat;
+            calcState.originLon = lon;
+        }
         try {
             const res = await fetch(`https://photon.komoot.io/reverse?lat=${lat}&lon=${lon}`);
             const data = await res.json();
             if (data.features && data.features.length > 0) {
                 const props = data.features[0].properties;
                 const street = props.street || props.name || "Ubicación actual";
-                if (input && input.value.trim() === '') {
-                    input.value = street;
+                
+                if (input) {
+                    input.value = `${street}, ${props.city || 'Cádiz'}`.replace(/, $/, "");
                 }
-                calcContext.selectedOrigin = {
+                const isStreet = props.osm_key === 'highway' || props.type === 'street' || /calle|avenida|plaza|paseo|avda|c\/|pza/i.test(street);
+                
+                const locData = {
                     name: street,
                     city: props.city || 'Cádiz',
                     lat: lat,
-                    lon: lon
+                    lon: lon,
+                    isStreet: isStreet
                 };
+                
+                if (inputId === 'calc-origin') {
+                    calcContext.selectedOrigin = locData;
+                } else if (inputId === 'b-pickup') {
+                    calcContext.bookingOrigin = locData;
+                }
+                
+                if (numInputId) {
+                    const numInput = document.getElementById(numInputId);
+                    if (numInput) {
+                        if (props.housenumber) {
+                            numInput.value = props.housenumber;
+                        } else {
+                            numInput.value = '';
+                        }
+                        if (isStreet) {
+                            numInput.setAttribute('required', 'true');
+                            numInput.placeholder = "Nº*";
+                        } else {
+                            numInput.removeAttribute('required');
+                            numInput.placeholder = "Nº";
+                        }
+                    }
+                }
+                
+                // Check trains
+                if (inputId === 'b-pickup') {
+                    const bTrainContainer = document.getElementById('b-train-container');
+                    const val = input.value.toLowerCase();
+                    if (val.includes('renfe') || val.includes('estacion') || val.includes('estación') || val.includes('sevilla') || val.includes('tren')) {
+                        if (bTrainContainer) bTrainContainer.classList.remove('hidden');
+                    } else {
+                        if (bTrainContainer) bTrainContainer.classList.add('hidden');
+                    }
+                }
             } else {
                 if (input && input.value.trim() === '') {
                     input.value = lat.toFixed(4) + ", " + lon.toFixed(4);
                 }
-                calcContext.selectedOrigin = {
+                const locData = {
                     name: "Ubicación detectada",
                     city: 'Cádiz',
                     lat: lat,
                     lon: lon
                 };
+                if (inputId === 'calc-origin') calcContext.selectedOrigin = locData;
+                else if (inputId === 'b-pickup') calcContext.bookingOrigin = locData;
             }
         } catch(e) {
-            if (input && input.value.trim() === '') {
-                input.value = "Ubicación detectada";
-            }
-            calcContext.selectedOrigin = {
-                name: "Ubicación detectada",
-                city: 'Cádiz',
-                lat: lat,
-                lon: lon
-            };
+            console.error("GPS Error", e);
+        } finally {
+            if (input && inputId === 'calc-origin') input.placeholder = "Origen (ej. Av. Andalucía)";
+            if (input && inputId === 'b-pickup') input.placeholder = "Ej. Hotel Playa Victoria";
+            if (window.lucide) window.lucide.createIcons();
         }
-        if (input) input.placeholder = "Origen (ej. Av. Andalucía)";
     }, () => {
         // Fallo silencioso si deniega el GPS
-        if (input) input.placeholder = "Origen (ej. Av. Andalucía)";
+        if (input && inputId === 'calc-origin') input.placeholder = "Origen (ej. Av. Andalucía)";
+        if (input && inputId === 'b-pickup') input.placeholder = "Ej. Hotel Playa Victoria";
     });
 }
 

@@ -325,7 +325,7 @@
                             <label for="calc-origin"><span data-translate="form-pickup">Desde (Origen)</span></label>
                             <div style="display: flex; gap: 0.5rem; position: relative; flex-wrap: nowrap;">
                                 <div class="input-icon-wrapper" style="flex: 1; min-width: 0;">
-                                    <i data-lucide="map-pin"></i>
+                                    <i data-lucide="locate" style="cursor: pointer; pointer-events: auto; color: var(--brand-cyan);" onclick="window.geolocateOrigin('calc-origin')"></i>
                                     <input type="text" id="calc-origin" class="glass-input with-icon" placeholder="Origen (ej. Av. Andalucía)" autocomplete="off" style="width: 100%;">
                                     <div id="origin-suggestions" class="autocomplete-suggestions hidden"></div>
                                 </div>
@@ -438,7 +438,7 @@
                                   <label for="b-pickup"><span data-translate="form-pickup">Desde (Origen)</span></label>
                                   <div style="display: flex; gap: 0.5rem; position: relative;">
                                       <div class="input-icon-wrapper" style="position: relative; flex: 1;">
-                                          <i data-lucide="map-pin"></i>
+                                          <i data-lucide="locate" style="cursor: pointer; pointer-events: auto; color: var(--brand-cyan);" onclick="window.geolocateOrigin('b-pickup', 'b-pickup-num')"></i>
                                           <input type="text" id="b-pickup" autocomplete="off" placeholder="Ej. Hotel Playa Victoria" data-translate-placeholder="form-pickup-placeholder" required aria-required="true" class="glass-input with-icon" itemprop="pickupLocation">
                                           <div id="b-pickup-suggestions" class="autocomplete-suggestions hidden"></div>
                                       </div>
