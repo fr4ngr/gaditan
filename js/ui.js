@@ -456,6 +456,8 @@ export async function confirmReservation(event) {
         const priceResult = calculatePrice(routeDetails, isNight, isFestivo, hasRenfe, parseInt(luggage));
         
         // Rellenar UI del funnel
+        document.getElementById('summary-name').innerText = name;
+        document.getElementById('summary-phone').innerText = phone;
         document.getElementById('summary-origin').innerText = pickup;
         document.getElementById('summary-dest').innerText = dropoff;
         document.getElementById('summary-datetime').innerText = `${date} a las ${time}`;
