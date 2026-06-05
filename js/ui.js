@@ -192,15 +192,18 @@ export function toggleBookingPet() {
     const input = document.getElementById('chip-pet');
     const valText = document.getElementById('val-pet');
     const container = document.getElementById('container-pet');
+    const switchEl = document.getElementById('pet-switch');
     
     if (input.value === 'No') {
         input.value = 'Sí';
         valText.innerText = 'Sí';
         container.classList.add('active-chip');
+        if (switchEl) switchEl.classList.add('active');
     } else {
         input.value = 'No';
         valText.innerText = 'No';
         container.classList.remove('active-chip');
+        if (switchEl) switchEl.classList.remove('active');
     }
 }
 

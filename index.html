@@ -484,8 +484,13 @@
                                         <span class="chip-label" data-translate="chip-luggage-label">Maletas</span>
                                     </div>
                                     <div class="chip-wrapper">
-                                        <div class="booking-chip toggle-chip" id="container-pet" onclick="toggleBookingPet()">
-                                            <i data-lucide="paw-print" class="chip-icon"></i> <span class="chip-text" id="val-pet">No</span>
+                                        <div class="booking-chip toggle-chip" id="container-pet" onclick="toggleBookingPet()" style="gap: 0.6rem; justify-content: space-between;">
+                                            <div style="display: flex; align-items: center; gap: 0.3rem;">
+                                                <i data-lucide="paw-print" class="chip-icon"></i> <span class="chip-text" id="val-pet">No</span>
+                                            </div>
+                                            <div class="custom-switch" id="pet-switch">
+                                                <div class="switch-knob"></div>
+                                            </div>
                                             <input type="hidden" id="chip-pet" value="No">
                                         </div>
                                         <span class="chip-label" data-translate="chip-pet-label">Mascota</span>
