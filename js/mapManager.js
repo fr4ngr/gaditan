@@ -166,21 +166,26 @@ const mapManager = (() => {
         const item = document.createElement('div');
         item.style.cssText = `display: flex; flex-direction: column; width: 100%;`;
         
-        // 1. Cabecera (Mini Tarjeta de la Parada)
+        // 1. Cabecera (Mini Tarjeta de la Parada - Estilo Píldora Turquesa)
         let distHtml = '';
-        if (p.distance !== undefined) {
-            distHtml = `<div style="font-size: 0.75rem; color: var(--brand-cyan); font-weight: 600; display: flex; align-items: center; gap: 0.2rem; margin-top: 0.4rem;"><i data-lucide="footprints" style="width:14px; height:14px;"></i> ${formatDistance(p.distance)}</div>`;
-        }
-        const header = `
-            <div class="glass" style="padding: 1.25rem; border-radius: 20px; border: 1px solid var(--glass-border); margin-bottom: 1rem; display: flex; align-items: flex-start; justify-content: space-between;">
-                <div style="display: flex; flex-direction: column; gap: 0.2rem;">
-                    <strong style="color: #fff; font-size: 1.1rem;">${p.name}</strong>
-                    <span style="color: var(--text-muted); font-size: 0.85rem;">${p.address}</span>
-                    ${distHtml}
+        if (currentMode === 'cercana' && p.distance !== undefined) {
+            const timeMins = Math.max(1, Math.ceil(p.distance / 80)); // ~80m por minuto caminando
+            distHtml = `
+                <div style="display: flex; align-items: center; justify-content: center; gap: 1rem; margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid rgba(6, 182, 212, 0.25); width: 90%;">
+                    <div style="font-size: 0.8rem; color: var(--brand-cyan); font-weight: 600; display: flex; align-items: center; gap: 0.35rem;"><i data-lucide="footprints" style="width:15px; height:15px;"></i> ${formatDistance(p.distance)}</div>
+                    <div style="font-size: 0.8rem; color: var(--brand-cyan); font-weight: 600; display: flex; align-items: center; gap: 0.35rem;"><i data-lucide="clock" style="width:15px; height:15px;"></i> ${timeMins} min a pie</div>
                 </div>
-                <button class="md3-btn" onclick="document.getElementById('map').scrollIntoView({ behavior: 'smooth', block: 'center' });" style="padding: 0.5rem 1rem; font-size: 0.85rem; background: rgba(123, 72, 250, 0.15); color: #e9d5ff; border: 1px solid rgba(123, 72, 250, 0.4); border-radius: 999px;">
-                    Ver mapa
-                </button>
+            `;
+        }
+        
+        const header = `
+            <div style="background: rgba(6, 182, 212, 0.08); border: 1px solid rgba(6, 182, 212, 0.4); border-radius: 30px; padding: 1rem 1.5rem; margin-bottom: 1.25rem; box-shadow: 0 4px 20px rgba(6, 182, 212, 0.15); display: flex; flex-direction: column; align-items: center; text-align: center;">
+                <div style="display: flex; align-items: center; gap: 0.5rem; justify-content: center; margin-bottom: 0.2rem;">
+                    <i data-lucide="map-pin" style="color: var(--brand-cyan); width: 18px; height: 18px;"></i>
+                    <strong style="color: #fff; font-size: 1.1rem; font-weight: 700;">${p.name}</strong>
+                </div>
+                <span style="color: rgba(255,255,255,0.7); font-size: 0.85rem;">${p.address}</span>
+                ${distHtml}
             </div>
         `;
 
