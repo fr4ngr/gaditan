@@ -345,6 +345,21 @@ export function confirmReservation(event) {
     const pickup = document.getElementById('b-pickup').value;
     const dropoff = document.getElementById('b-dropoff').value;
     
+    if (date) {
+        const selectedDate = new Date(date);
+        const minDate = new Date();
+        minDate.setDate(minDate.getDate() + 1); // Empezar mañana (para que las 48h abarquen pasado mañana)
+        minDate.setHours(23, 59, 59, 999);
+        
+        if (selectedDate <= minDate) {
+            const alertMsg = state.currentLanguage === 'es'
+                ? "Las reservas online solo pueden realizarse con un mínimo de 48h de antelación. Para reservas urgentes, por favor llame por teléfono."
+                : "Online bookings can only be made with a minimum of 48h notice. For urgent bookings, please call us.";
+            alert(alertMsg);
+            return false;
+        }
+    }
+    
     const confirmMsg = state.currentLanguage === 'es' 
         ? "Aviso importante: Tienes que esperar a que te confirmemos la reserva. ¿Estás de acuerdo?" 
         : "Important notice: You must wait for us to confirm your booking. Do you agree?";
