@@ -23,7 +23,7 @@ function renderDestino(dest) {
     <details class="mini-dest-card native-accordion" style="margin-bottom: 1rem;">
         <summary class="mini-dest-header" style="align-items: center; position: relative; width: 100%; list-style: none;">
             <div class="mini-dest-name" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0.2rem;">
-                <div style="font-size: 0.65rem; color: var(--brand-cyan); font-weight: 800; text-transform: uppercase; letter-spacing: 1px;">DESDE CÁDIZ A</div>
+                <div style="font-size: 0.65rem; color: white; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;">DESDE CÁDIZ A</div>
                 <div style="display: flex; align-items: center; gap: 0.4rem;">
                     <i data-lucide="${dest.icon}" size="16" style="color: var(--brand-cyan);"></i> ${dest.name}
                 </div>
@@ -65,13 +65,13 @@ function renderDestino(dest) {
                     
                     <!-- Alert Text -->
                     <div style="display: flex; align-items: flex-start; gap: 0.5rem; background: rgba(255, 255, 255, 0.05); padding: 0.8rem; border-radius: 8px; font-size: 0.75rem; color: var(--text-muted); line-height: 1.4; border-left: 3px solid var(--brand-cyan);">
-                        <i data-lucide="info" style="min-width: 14px; height: 14px; margin-top: 2px;"></i>
+                        <span style="color: var(--brand-cyan); font-weight: 800; font-size: 1.1rem; line-height: 1; transform: translateY(2px);">*</span>
                         <span style="flex: 1;">Precio estimado con la CALCULADORA DE TAXI de cadiz.taxi con la ruta más corta y las condiciones de tráfico más favorables. Sólo el taxímetro oficial determinará el precio final de tu viaje.</span>
                     </div>
 
                     <!-- Actions Section (Llamar y WhatsApp) -->
                     <div style="display: flex; gap: 0.5rem; width: 100%; margin-top: 0.25rem;">
-                        <a href="tel:+34956212121" style="flex: 1; display: flex; justify-content: center; align-items: center; gap: 0.4rem; background: rgba(255, 255, 255, 0.05); color: white; padding: 0.8rem; border-radius: 9999px; text-decoration: none; font-weight: 600; font-size: 0.95rem; border: 1px solid rgba(255, 255, 255, 0.15); transition: all 0.3s ease;">
+                        <a href="tel:+34956212121" style="flex: 1; display: flex; justify-content: center; align-items: center; gap: 0.4rem; background: #06b6d4; color: white; padding: 0.8rem; border-radius: 9999px; text-decoration: none; font-weight: 600; font-size: 0.95rem; border: none; box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3); transition: all 0.3s ease;">
                             <i data-lucide="phone" style="width: 18px; height: 18px;"></i> Llamar
                         </a>
                         <a href="https://wa.me/34956212121" target="_blank" style="flex: 1; display: flex; justify-content: center; align-items: center; gap: 0.4rem; background: #25D366; color: white; padding: 0.8rem; border-radius: 9999px; text-decoration: none; font-weight: 600; font-size: 0.95rem; border: none; box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3); transition: all 0.3s ease;">

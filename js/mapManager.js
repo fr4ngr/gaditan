@@ -210,7 +210,7 @@ const mapManager = (() => {
 
                 <!-- Actions Section (Llamar y WhatsApp) -->
                 <div style="display: flex; gap: 0.5rem; width: 100%; margin-top: 0.25rem;">
-                    <a href="tel:+34956212121" style="flex: 1; display: flex; justify-content: center; align-items: center; gap: 0.4rem; background: rgba(255, 255, 255, 0.05); color: white; padding: 0.8rem; border-radius: 9999px; text-decoration: none; font-weight: 600; font-size: 0.95rem; border: 1px solid rgba(255, 255, 255, 0.15); transition: all 0.3s ease;">
+                    <a href="tel:+34956212121" style="flex: 1; display: flex; justify-content: center; align-items: center; gap: 0.4rem; background: #06b6d4; color: white; padding: 0.8rem; border-radius: 9999px; text-decoration: none; font-weight: 600; font-size: 0.95rem; border: none; box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3); transition: all 0.3s ease;">
                         <i data-lucide="phone" style="width: 18px; height: 18px;"></i> Llamar
                     </a>
                     <a href="https://wa.me/34956212121" target="_blank" style="flex: 1; display: flex; justify-content: center; align-items: center; gap: 0.4rem; background: #25D366; color: white; padding: 0.8rem; border-radius: 9999px; text-decoration: none; font-weight: 600; font-size: 0.95rem; border: none; box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3); transition: all 0.3s ease;">
