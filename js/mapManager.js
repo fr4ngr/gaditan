@@ -196,7 +196,7 @@ const mapManager = (() => {
             <div style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 1.25rem; display: flex; flex-direction: column; gap: 0.85rem;">
                 <!-- Info Section -->
                 <div style="display: flex; flex-direction: column; gap: 0.6rem;">
-                    <div style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.2px; font-weight: 600;">Servicio prestado por</div>
+                    <div style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.2px; font-weight: 600;">Parada atendida por</div>
                     <div style="display: grid; grid-template-columns: 1fr; row-gap: 0.1rem; column-gap: 1rem; align-items: center;">
                         <div style="display: flex; align-items: center; gap: 0.5rem;">
                             <div style="background: #eab308; color: #111827; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.75rem;">RT</div>
