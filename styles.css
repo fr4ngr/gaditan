@@ -630,6 +630,9 @@ input[type="date"], input[type="time"] { -webkit-appearance: none; -moz-appearan
 
 .dest-from { color: var(--brand-cyan-light); text-transform: uppercase; font-weight: 500; font-size: 0.875rem; margin-bottom: 0.3rem; letter-spacing: 0.05em; }
 
+@media (max-width: 768px) {
+    .mobile-stack { flex-direction: column !important; }
+}
 @media (min-width: 769px) { .mobile-break { display: none; } }
 /* AUTOCOMPLETE STYLES */
 .autocomplete-suggestions {
