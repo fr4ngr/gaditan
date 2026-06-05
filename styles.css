@@ -468,9 +468,8 @@ section { padding: 5rem 0; }
 .input-icon-wrapper { position: relative; width: 100%; display: flex; align-items: center; }
 .input-icon-wrapper i, .input-icon-wrapper svg { position: absolute; left: 1rem; color: var(--text-muted); pointer-events: none; }
 .glass-input.with-icon { padding-left: 3rem; }
-/* Hacer que los iconos de los calendarios sean blancos */
-::-webkit-calendar-picker-indicator { filter: invert(1); opacity: 0.6; cursor: pointer; transition: opacity 0.2s; }
-::-webkit-calendar-picker-indicator:hover { opacity: 1; }
+/* Hacer que los iconos de los calendarios sean blancos (o esconderlos) */
+::-webkit-calendar-picker-indicator { display: none; }
 
 /* Timeline Origen-Destino */
 .route-timeline-container { display: flex; gap: 0.8rem; align-items: stretch; margin: 0.5rem 0; }

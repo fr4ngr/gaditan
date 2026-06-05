@@ -68,7 +68,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const dd = String(d.getDate()).padStart(2, '0');
         const minDate = `${yyyy}-${mm}-${dd}`;
         dateInput.min = minDate;
-        dateInput.value = minDate;
+        
+        dateInput.addEventListener('click', function() {
+            if (this.showPicker) this.showPicker();
+        });
+    }
+
+    const timeInput = document.getElementById('b-time');
+    if (timeInput) {
+        timeInput.addEventListener('click', function() {
+            if (this.showPicker) this.showPicker();
+        });
     }
 
     const faqItems = document.querySelectorAll('.faq-item');
