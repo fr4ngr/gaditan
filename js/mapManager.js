@@ -180,11 +180,12 @@ const mapManager = (() => {
         
         const header = `
             <div style="background: rgba(6, 182, 212, 0.08); border: 1px solid rgba(6, 182, 212, 0.4); border-radius: 30px; padding: 1rem 1.5rem; margin-bottom: 1.25rem; box-shadow: 0 4px 20px rgba(6, 182, 212, 0.15); display: flex; flex-direction: column; align-items: center; text-align: center;">
-                <div style="display: flex; align-items: center; gap: 0.5rem; justify-content: center; margin-bottom: 0.2rem;">
-                    <i data-lucide="map-pin" style="color: var(--brand-cyan); width: 18px; height: 18px;"></i>
+                <span style="font-size: 0.65rem; color: var(--brand-cyan); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.1rem;">Parada de taxi</span>
+                <div style="display: flex; align-items: center; gap: 0.4rem; justify-content: center; margin-bottom: 0.1rem;">
+                    <i data-lucide="map-pin" style="color: var(--brand-cyan); width: 16px; height: 16px;"></i>
                     <strong style="color: #fff; font-size: 1.1rem; font-weight: 700;">${p.name}</strong>
                 </div>
-                <span style="color: rgba(255,255,255,0.7); font-size: 0.85rem;">${p.address}</span>
+                <span style="color: rgba(255,255,255,0.7); font-size: 0.8rem; line-height: 1.2;">${p.address}</span>
                 ${distHtml}
             </div>
         `;
