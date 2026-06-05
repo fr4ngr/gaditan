@@ -217,7 +217,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
             checkTrain();
-        }, true);
+        }, false);
         bPickupInput.addEventListener('input', checkTrain);
     }
     if (document.getElementById('b-dropoff')) {
