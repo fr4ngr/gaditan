@@ -535,15 +535,33 @@ export async function confirmReservation(event) {
         
         let petText = (pet === 'Sí' || pet === 'S' || pet === 'Si' || pet === 'si') ? ', con mascota' : '';
         document.getElementById('summary-details').innerText = `${passengers} pax, ${luggage} maletas${petText}, pago en ${payment}`;
-        document.getElementById('summary-price').innerText = priceResult.price.toFixed(2).replace('.', ',') + '€';
+        
+        // Asignar precio dinámico a la tarjeta de Radio Taxi
+        const radioPriceEl = document.getElementById('summary-radio-price');
+        if (radioPriceEl) {
+            radioPriceEl.innerText = priceResult.price.toFixed(2).replace('.', ',') + '€';
+        }
         
         // Actualizar estadísticas OSRM
         const osrmStatsEl = document.getElementById('summary-osrm-stats');
-        if (osrmStatsEl && routeDetails) {
+        const radioTimeEl = document.getElementById('summary-radio-time');
+        
+        if (routeDetails) {
             const km = routeDetails.finalDistanceKm.toFixed(1).replace('.', ',');
             const mins = Math.ceil(routeDetails.osrmDurationMin);
-            osrmStatsEl.innerText = `Ruta calculada: ${km} km | Tiempo est. ${mins} min`;
-            osrmStatsEl.style.display = 'block';
+            
+            if (osrmStatsEl) {
+                osrmStatsEl.innerText = `Ruta calculada: ${km} km | Tiempo est. ${mins} min`;
+                osrmStatsEl.style.display = 'block';
+            }
+            
+            if (radioTimeEl) {
+                radioTimeEl.innerHTML = `<i data-lucide="clock" style="width: 14px; height: 14px;"></i> ${mins} min`;
+                // Re-inicializar iconos Lucide por si acaso
+                if (window.lucide) {
+                    window.lucide.createIcons();
+                }
+            }
         }
         
         // Ocultar form, mostrar funnel
