@@ -178,14 +178,6 @@ export function updateBookingStepper(type, delta) {
     
     input.value = next;
     valText.innerText = next;
-    
-    if (type === 'passengers') {
-        if (next > 1) container.classList.add('active-chip');
-        else container.classList.remove('active-chip');
-    } else if (type === 'luggage') {
-        if (next > 0) container.classList.add('active-chip');
-        else container.classList.remove('active-chip');
-    }
 }
 
 export function toggleBookingPet() {
