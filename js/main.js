@@ -190,19 +190,18 @@ document.addEventListener('DOMContentLoaded', () => {
     // Autocompletado para el formulario de reservas
     const bPickupInput = document.getElementById('b-pickup');
     if (bPickupInput) {
-        setupPhotonAutocomplete('b-pickup', 'b-pickup-suggestions', () => {
-            bPickupInput.dispatchEvent(new Event('input', { bubbles: true }));
-        }, true);
-        
         const bTrainContainer = document.getElementById('b-train-container');
-        bPickupInput.addEventListener('input', function() {
-            const val = this.value.toLowerCase();
+        const checkTrain = () => {
+            const val = bPickupInput.value.toLowerCase();
             if (val.includes('renfe') || val.includes('estacion') || val.includes('estación') || val.includes('sevilla') || val.includes('tren')) {
                 bTrainContainer.classList.remove('hidden');
             } else {
                 bTrainContainer.classList.add('hidden');
             }
-        });
+        };
+        
+        setupPhotonAutocomplete('b-pickup', 'b-pickup-suggestions', checkTrain, true);
+        bPickupInput.addEventListener('input', checkTrain);
     }
     if (document.getElementById('b-dropoff')) {
         setupPhotonAutocomplete('b-dropoff', 'b-dropoff-suggestions', () => {}, false);
