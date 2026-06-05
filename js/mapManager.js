@@ -151,13 +151,17 @@ const mapManager = (() => {
             </div>
         `;
         item.addEventListener('click', () => {
+            // Pasar a modo 'elegir'
+            setMode('elegir');
+            
+            // Buscar el selector y seleccionar la parada automáticamente
+            const select = document.querySelector('#elegir-select-container select');
+            if (select) {
+                select.value = p.id;
+                select.dispatchEvent(new Event('change'));
+            }
+            
             document.getElementById('map').scrollIntoView({ behavior: 'smooth', block: 'center' });
-            map.flyTo([p.lat, p.lon], 17);
-            markersLayer.eachLayer(layer => {
-                if (layer.getLatLng().lat === p.lat && layer.getLatLng().lng === p.lon) {
-                    layer.openPopup();
-                }
-            });
         });
         return item;
     };
