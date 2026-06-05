@@ -520,13 +520,31 @@ export async function confirmReservation(event) {
         
         // Rellenar UI del funnel
         document.getElementById('summary-name').innerText = name;
-        document.getElementById('summary-phone').innerText = phone;
+        
+        const formattedPhone = phone.replace(/\D/g, '').replace(/(\d{3})(?=\d)/g, '$1 ');
+        document.getElementById('summary-phone').innerText = formattedPhone;
+        
         document.getElementById('summary-origin').innerText = pickup;
         document.getElementById('summary-dest').innerText = dropoff;
-        document.getElementById('summary-datetime').innerText = `${date} a las ${time}`;
+        
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        const lang = state.currentLanguage === 'es' ? 'es-ES' : (state.currentLanguage === 'en' ? 'en-US' : (state.currentLanguage === 'fr' ? 'fr-FR' : (state.currentLanguage === 'de' ? 'de-DE' : navigator.language || 'es-ES')));
+        const formattedDate = selectedDateTime.toLocaleDateString(lang, options);
+        const timeParts = time.split(':');
+        document.getElementById('summary-datetime').innerText = `${formattedDate} - ${timeParts[0]}:${timeParts[1]} h`;
+        
         let petText = (pet === 'Sí' || pet === 'S' || pet === 'Si' || pet === 'si') ? ', con mascota' : '';
         document.getElementById('summary-details').innerText = `${passengers} pax, ${luggage} maletas${petText}, pago en ${payment}`;
         document.getElementById('summary-price').innerText = priceResult.price.toFixed(2).replace('.', ',') + '€';
+        
+        // Actualizar estadísticas OSRM
+        const osrmStatsEl = document.getElementById('summary-osrm-stats');
+        if (osrmStatsEl && routeDetails) {
+            const km = routeDetails.finalDistanceKm.toFixed(1).replace('.', ',');
+            const mins = Math.ceil(routeDetails.osrmDurationMin);
+            osrmStatsEl.innerText = `Ruta calculada: ${km} km | Tiempo est. ${mins} min`;
+            osrmStatsEl.style.display = 'block';
+        }
         
         // Ocultar form, mostrar funnel
         document.getElementById('booking-form').style.display = 'none';
