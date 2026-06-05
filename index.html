@@ -516,21 +516,21 @@
                         <div id="booking-results-funnel" style="display: none; animation: fadeIn 0.5s ease forwards;">
                             <h3 style="text-align: center; color: var(--text-main); margin-bottom: 1rem; font-size: 1.5rem;" data-translate="booking_summary_title">Resumen de tu Viaje</h3>
                             
+                            <div style="font-size: 0.95rem; color: var(--text-main); margin-bottom: 1.5rem; line-height: 1.8; text-align: left; background: rgba(255,255,255,0.03); padding: 1rem; border-radius: 12px; border: 1px solid var(--glass-border);">
+                                <div><strong data-translate="summary_origin">Origen:</strong> <span id="summary-origin" style="color: var(--text-muted);"></span></div>
+                                <div><strong data-translate="summary_dest">Destino:</strong> <span id="summary-dest" style="color: var(--text-muted);"></span></div>
+                                <div><strong data-translate="summary_datetime">Cuándo:</strong> <span id="summary-datetime" style="color: var(--text-muted);"></span></div>
+                                <div><strong data-translate="summary_details">Detalles:</strong> <span id="summary-details" style="color: var(--text-muted);"></span></div>
+                            </div>
+
                             <!-- Mapa del trayecto -->
                             <div id="booking-map" style="width: 100%; height: 200px; border-radius: 12px; margin-bottom: 1.5rem; border: 1px solid var(--glass-border); z-index: 1;"></div>
                             
                             <!-- Tarjeta Principal: Taxi Oficial -->
                             <div class="glass" style="padding: 1.5rem; border-radius: 12px; border: 1px solid var(--brand-cyan); box-shadow: 0 5px 20px rgba(6, 182, 212, 0.15); margin-bottom: 1.5rem;">
-                                <h4 style="color: var(--brand-cyan); margin-top: 0; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; font-size: 1.2rem;">
+                                <h4 style="color: var(--brand-cyan); margin-top: 0; margin-bottom: 1rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; font-size: 1.2rem;">
                                     <i data-lucide="shield-check" style="color: var(--brand-cyan);"></i> <span data-translate="official_taxi">Taxi Oficial de Cádiz</span>
                                 </h4>
-                                
-                                <div style="font-size: 0.95rem; color: var(--text-muted); display: grid; gap: 0.8rem; margin-bottom: 1.5rem;">
-                                    <div style="display: flex; gap: 0.5rem;"><i data-lucide="map-pin" size="16"></i> <span><strong data-translate="summary_origin">Origen:</strong> <span id="summary-origin"></span></span></div>
-                                    <div style="display: flex; gap: 0.5rem;"><i data-lucide="map" size="16"></i> <span><strong data-translate="summary_dest">Destino:</strong> <span id="summary-dest"></span></span></div>
-                                    <div style="display: flex; gap: 0.5rem;"><i data-lucide="calendar-clock" size="16"></i> <span><strong data-translate="summary_datetime">Cuándo:</strong> <span id="summary-datetime"></span></span></div>
-                                    <div style="display: flex; gap: 0.5rem;"><i data-lucide="info" size="16"></i> <span><strong data-translate="summary_details">Detalles:</strong> <span id="summary-details"></span></span></div>
-                                </div>
                                 
                                 <div style="text-align: center; margin-bottom: 1.5rem; padding: 1rem; background: rgba(0,0,0,0.2); border-radius: 8px;">
                                     <div style="font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;" data-translate="summary_price_est">Precio Estimado</div>

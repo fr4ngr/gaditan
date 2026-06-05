@@ -514,7 +514,16 @@ export async function confirmReservation(event) {
 
         // Renderizar Mapa
         if (!state.bookingMapInstance) {
-            state.bookingMapInstance = L.map('booking-map').setView([36.52, -6.29], 13);
+            state.bookingMapInstance = L.map('booking-map', {
+                zoomControl: false,
+                dragging: false,
+                touchZoom: false,
+                scrollWheelZoom: false,
+                doubleClickZoom: false,
+                boxZoom: false,
+                keyboard: false,
+                tap: false
+            }).setView([36.52, -6.29], 13);
             L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
                 attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
                 subdomains: 'abcd',
