@@ -148,6 +148,15 @@ document.addEventListener('DOMContentLoaded', () => {
     setupPhotonAutocomplete('calc-origin', 'origin-suggestions', (data) => calcContext.selectedOrigin = data, true);
     setupPhotonAutocomplete('calc-destination', 'dest-suggestions', (data) => calcContext.selectedDest = data, false);
     
+    // Autocompletado para el formulario de reservas
+    if (document.getElementById('b-pickup')) {
+        setupPhotonAutocomplete('b-pickup', 'b-pickup-suggestions', () => {}, true);
+    }
+    if (document.getElementById('b-dropoff')) {
+        setupPhotonAutocomplete('b-dropoff', 'b-dropoff-suggestions', () => {}, false);
+    }
+    
+    
     // Auto-GPS UX: Pedir ubicación al hacer click en el input de origen, de forma silenciosa
     const originInput = document.getElementById('calc-origin');
     let hasRequestedGPS = false;

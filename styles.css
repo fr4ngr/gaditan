@@ -469,7 +469,10 @@ section { padding: 5rem 0; }
 .input-icon-wrapper i, .input-icon-wrapper svg { position: absolute; left: 1rem; color: var(--text-muted); pointer-events: none; }
 .glass-input.with-icon { padding-left: 3rem; }
 /* Hacer que los iconos de los calendarios sean blancos (o esconderlos) */
-::-webkit-calendar-picker-indicator { display: none; }
+::-webkit-calendar-picker-indicator,
+::-webkit-inner-spin-button,
+::-webkit-clear-button { display: none !important; -webkit-appearance: none !important; }
+input[type="date"], input[type="time"] { -webkit-appearance: none; -moz-appearance: none; appearance: none; }
 
 /* Timeline Origen-Destino */
 .route-timeline-container { display: flex; gap: 0.8rem; align-items: stretch; margin: 0.5rem 0; }
