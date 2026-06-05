@@ -1016,7 +1016,7 @@ details.native-accordion.closing .native-content {
     padding-bottom: 0;
 }
 .stepper-btn {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.25);
     border: none;
     color: var(--text-main);
     width: 24px;
@@ -1030,5 +1030,5 @@ details.native-accordion.closing .native-content {
     line-height: 1;
     transition: background 0.2s;
 }
-.stepper-btn:hover { background: rgba(255, 255, 255, 0.2); }
+.stepper-btn:hover { background: rgba(0, 0, 0, 0.4); }
 .stepper-btn:active { transform: scale(0.9); }
