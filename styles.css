@@ -16,7 +16,7 @@
     --ad-gradient-end: #ea580c;
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
 .hidden {
     display: none !important;
