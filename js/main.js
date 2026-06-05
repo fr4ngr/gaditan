@@ -200,11 +200,16 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         };
         
-        setupPhotonAutocomplete('b-pickup', 'b-pickup-suggestions', checkTrain, true);
+        setupPhotonAutocomplete('b-pickup', 'b-pickup-suggestions', (data) => {
+            calcContext.bookingOrigin = data;
+            checkTrain();
+        }, true);
         bPickupInput.addEventListener('input', checkTrain);
     }
     if (document.getElementById('b-dropoff')) {
-        setupPhotonAutocomplete('b-dropoff', 'b-dropoff-suggestions', () => {}, false);
+        setupPhotonAutocomplete('b-dropoff', 'b-dropoff-suggestions', (data) => {
+            calcContext.bookingDest = data;
+        }, false);
     }
     
     // Lógica de los selects ocultos en los chips
