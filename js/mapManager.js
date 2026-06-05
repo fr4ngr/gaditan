@@ -237,6 +237,24 @@ const mapManager = (() => {
                 <div style="flex: 1; height: 1px; background: linear-gradient(to left, transparent, rgba(255,255,255,0.15));"></div>
             </div>
             
+            <!-- Opción VTC Alternativa -->
+            <div style="background: rgba(123, 72, 250, 0.08); border: 1px solid rgba(123, 72, 250, 0.3); border-radius: 16px; padding: 1.25rem; margin-bottom: 0.8rem; display: flex; flex-direction: column; gap: 0.85rem;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; width: 100%;">
+                    <div style="width: 100%;">
+                        <div style="font-size: 0.65rem; color: #eab308; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.4rem; font-weight: 600;">Servicio prestado por</div>
+                        <div style="font-size: 1.2rem; font-weight: 700; color: white; display: flex; align-items: center; gap: 0.4rem; width: 100%;">
+                            <div style="background: #7b48fa; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center;"><i data-lucide="car" style="width:14px; height:14px; color: white;"></i></div>
+                            cadiz.cab
+                            <div style="background: #eab308; color: #111827; font-size: 0.55rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; padding: 0.2rem 0.4rem; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); margin-left: auto; transform: translateY(-1px);">PREMIUM</div>
+                        </div>
+                        <div style="font-size: 0.85rem; color: #a78bfa; font-weight: 500; margin-top: 0.1rem; margin-left: 1.9rem; letter-spacing: 0.5px;">Vehículos VTC</div>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 0.5rem; width: 100%; border-top: 1px solid rgba(123, 72, 250, 0.2); padding-top: 0.75rem;">
+                    <a href="#" class="md3-btn" style="flex: 1; padding: 0.75rem 0; background: rgba(123, 72, 250, 0.15); color: #e9d5ff; border: 1px solid rgba(123, 72, 250, 0.4); border-radius: 999px; font-weight: 600; display: flex; justify-content: center; align-items: center; gap: 0.5rem; text-decoration: none;"><i data-lucide="calendar-check" style="width:18px; height:18px;"></i> Reserva</a>
+                </div>
+            </div>
+            
             <!-- Opción Autobús -->
             <a href="#" style="display: flex; justify-content: space-between; align-items: center; background: rgba(234, 179, 8, 0.08); border: 1px solid rgba(234, 179, 8, 0.3); border-radius: 9999px; padding: 0.6rem 1rem; text-decoration: none; margin-bottom: 0.5rem;">
                 <div style="display: flex; align-items: center; gap: 0.6rem;">

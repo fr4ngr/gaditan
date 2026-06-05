@@ -119,7 +119,7 @@ function renderDestino(dest) {
                         </div>
                     </div>
                     <div style="display: flex; gap: 0.5rem; width: 100%; border-top: 1px solid rgba(123, 72, 250, 0.2); padding-top: 0.75rem;">
-                        <a href="#" class="md3-btn" style="flex: 1; padding: 0.75rem 0; background: rgba(123, 72, 250, 0.15); color: #e9d5ff; border: 1px solid rgba(123, 72, 250, 0.4); border-radius: 999px; font-weight: 600; display: flex; justify-content: center; align-items: center; gap: 0.5rem; text-decoration: none;"><i data-lucide="calendar-check" style="width:18px; height:18px;"></i> Reservas</a>
+                        <a href="#" class="md3-btn" style="flex: 1; padding: 0.75rem 0; background: rgba(123, 72, 250, 0.15); color: #e9d5ff; border: 1px solid rgba(123, 72, 250, 0.4); border-radius: 999px; font-weight: 600; display: flex; justify-content: center; align-items: center; gap: 0.5rem; text-decoration: none;"><i data-lucide="calendar-check" style="width:18px; height:18px;"></i> Reserva</a>
                     </div>
                 </div>
                 
