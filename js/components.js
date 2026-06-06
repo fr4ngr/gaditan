@@ -182,7 +182,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 // Si ya está abierta, la cerramos suavemente
                 closeDetailsSmoothly(details);
             } else {
-                // 1. Cerramos las demás tarjetas del mismo grupo (acordeón real)
+                // Guardamos la posición original en la pantalla
+                const targetTop = details.getBoundingClientRect().top;
+                
+                // 1. Cerramos las demás tarjetas del mismo grupo
                 const gridName = details.closest('.mini-dest-grid')?.id;
                 if (gridName) {
                     const others = document.querySelectorAll(`#${gridName} details.native-accordion[open]`);
@@ -194,21 +197,24 @@ document.addEventListener("DOMContentLoaded", () => {
                 // 2. Abrimos esta tarjeta
                 openDetailsSmoothly(details);
                 
-                // 3. Compensamos el salto visual desplazando la pantalla suavemente
-                // Le damos un pequeño tiempo para que el DOM registre el atributo 'open'
-                setTimeout(() => {
-                    const rect = details.getBoundingClientRect();
-                    const isOutside = (rect.top < 100) || (rect.bottom > window.innerHeight - 100);
+                // 3. Loop de anclaje: mantenemos la tarjeta exactamente donde el usuario hizo clic
+                // durante los 350ms que dura la animación CSS de colapso de las demás tarjetas
+                const startTime = performance.now();
+                function anchorScroll() {
+                    const currentTop = details.getBoundingClientRect().top;
+                    const diff = currentTop - targetTop;
                     
-                    // Solo scrolleamos si la tarjeta va a quedar muy arriba o muy abajo por culpa del cierre de la anterior
-                    if (isOutside || true) {
-                        const topOffset = details.getBoundingClientRect().top + window.scrollY - (window.innerHeight / 2) + (rect.height / 2);
-                        window.scrollTo({
-                            top: topOffset,
-                            behavior: 'smooth'
-                        });
+                    if (Math.abs(diff) > 0.5) {
+                        // Si la tarjeta se ha movido (porque algo encima se ha cerrado), 
+                        // compensamos moviendo la "cámara" (scroll) exactamente los mismos píxeles
+                        window.scrollBy(0, diff);
                     }
-                }, 50);
+                    
+                    if (performance.now() - startTime < 350) {
+                        requestAnimationFrame(anchorScroll);
+                    }
+                }
+                requestAnimationFrame(anchorScroll);
             }
         });
     });
