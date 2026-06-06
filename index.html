@@ -819,47 +819,43 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
-<!-- Glow Up Observer para Móviles -->
+<!-- Glow Up Observer -->
 <script>
   document.addEventListener('DOMContentLoaded', () => {
-      const isMobile = window.matchMedia("(max-width: 768px)").matches || ('ontouchstart' in window);
-      
-      if (isMobile) {
-          const observer = new IntersectionObserver((entries) => {
-              entries.forEach(entry => {
-                  if (entry.isIntersecting) {
-                      entry.target.classList.add('glow-active');
-                  } else {
-                      entry.target.classList.remove('glow-active');
+      const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+              if (entry.isIntersecting) {
+                  entry.target.classList.add('glow-active');
+              } else {
+                  entry.target.classList.remove('glow-active');
+              }
+          });
+      }, {
+          root: null,
+          rootMargin: '-40% 0px -40% 0px',
+          threshold: 0
+      });
+
+      // Observar las estáticas iniciales
+      document.querySelectorAll('.cadizcab-card-hover, .pildora-hover').forEach(card => {
+          observer.observe(card);
+      });
+
+      // Observar las creadas dinámicamente en el mapa
+      const mutationObserver = new MutationObserver((mutations) => {
+          mutations.forEach(mutation => {
+              mutation.addedNodes.forEach(node => {
+                  if (node.nodeType === 1) { 
+                      if (node.classList && (node.classList.contains('cadizcab-card-hover') || node.classList.contains('pildora-hover'))) {
+                          observer.observe(node);
+                      }
+                      const childCards = node.querySelectorAll ? node.querySelectorAll('.cadizcab-card-hover, .pildora-hover') : [];
+                      childCards.forEach(card => observer.observe(card));
                   }
               });
-          }, {
-              root: null,
-              rootMargin: '-35% 0px -35% 0px',
-              threshold: 0
           });
-
-          // Observar las estáticas iniciales
-          document.querySelectorAll('.cadizcab-card-hover, .pildora-hover').forEach(card => {
-              observer.observe(card);
-          });
-
-          // Observar las creadas dinámicamente en el mapa
-          const mutationObserver = new MutationObserver((mutations) => {
-              mutations.forEach(mutation => {
-                  mutation.addedNodes.forEach(node => {
-                      if (node.nodeType === 1) { 
-                          if (node.classList && (node.classList.contains('cadizcab-card-hover') || node.classList.contains('pildora-hover'))) {
-                              observer.observe(node);
-                          }
-                          const childCards = node.querySelectorAll ? node.querySelectorAll('.cadizcab-card-hover, .pildora-hover') : [];
-                          childCards.forEach(card => observer.observe(card));
-                      }
-                  });
-              });
-          });
-          mutationObserver.observe(document.body, { childList: true, subtree: true });
-      }
+      });
+      mutationObserver.observe(document.body, { childList: true, subtree: true });
   });
 </script>
 </body>
