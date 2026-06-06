@@ -182,39 +182,33 @@ document.addEventListener("DOMContentLoaded", () => {
                 // Si ya está abierta, la cerramos suavemente
                 closeDetailsSmoothly(details);
             } else {
-                // Guardamos la posición original en la pantalla
-                const targetTop = details.getBoundingClientRect().top;
+                // Guardamos la posición original en la pantalla del elemento pulsado
+                const rectBefore = details.getBoundingClientRect().top;
                 
-                // 1. Cerramos las demás tarjetas del mismo grupo
+                // 1. Cerramos las demás tarjetas del mismo grupo de forma INSTANTÁNEA
                 const gridName = details.closest('.mini-dest-grid')?.id;
                 if (gridName) {
                     const others = document.querySelectorAll(`#${gridName} details.native-accordion[open]`);
                     others.forEach(other => {
-                        if (other !== details) closeDetailsSmoothly(other);
+                        if (other !== details) {
+                            // Cierre instantáneo, sin animación, para poder calcular el salto exacto
+                            other.removeAttribute('open');
+                            other.classList.remove('closing');
+                        }
                     });
                 }
                 
-                // 2. Abrimos esta tarjeta
-                openDetailsSmoothly(details);
+                // 2. Calculamos cuánto ha saltado la pantalla tras el cierre instantáneo
+                const rectAfter = details.getBoundingClientRect().top;
+                const diff = rectAfter - rectBefore;
                 
-                // 3. Loop de anclaje: mantenemos la tarjeta exactamente donde el usuario hizo clic
-                // durante los 350ms que dura la animación CSS de colapso de las demás tarjetas
-                const startTime = performance.now();
-                function anchorScroll() {
-                    const currentTop = details.getBoundingClientRect().top;
-                    const diff = currentTop - targetTop;
-                    
-                    if (Math.abs(diff) > 0.5) {
-                        // Si la tarjeta se ha movido (porque algo encima se ha cerrado), 
-                        // compensamos moviendo la "cámara" (scroll) exactamente los mismos píxeles
-                        window.scrollBy(0, diff);
-                    }
-                    
-                    if (performance.now() - startTime < 350) {
-                        requestAnimationFrame(anchorScroll);
-                    }
+                // 3. Compensamos el scroll de forma síncrona en el mismo frame
+                if (Math.abs(diff) > 0) {
+                    window.scrollBy(0, diff);
                 }
-                requestAnimationFrame(anchorScroll);
+                
+                // 4. Abrimos esta tarjeta suavemente
+                openDetailsSmoothly(details);
             }
         });
     });
