@@ -203,8 +203,17 @@ document.addEventListener("DOMContentLoaded", () => {
                 const diff = rectAfter - rectBefore;
                 
                 // 3. Compensamos el scroll de forma síncrona en el mismo frame
+                // IMPORTANTE: Desactivar scroll-behavior smooth de CSS para que el salto sea invisible
                 if (Math.abs(diff) > 0) {
+                    const originalScrollBehavior = document.documentElement.style.scrollBehavior;
+                    document.documentElement.style.scrollBehavior = 'auto';
+                    
                     window.scrollBy(0, diff);
+                    
+                    // Restauramos en el siguiente frame
+                    requestAnimationFrame(() => {
+                        document.documentElement.style.scrollBehavior = originalScrollBehavior;
+                    });
                 }
                 
                 // 4. Abrimos esta tarjeta suavemente
