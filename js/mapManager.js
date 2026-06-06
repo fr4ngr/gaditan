@@ -159,6 +159,10 @@ const mapManager = (() => {
             </div>
         `;
         item.addEventListener('click', () => {
+            // Desactivamos temporalmente el scroll suave global para evitar el salto raro al encogerse la web
+            const originalScrollBehavior = document.documentElement.style.scrollBehavior;
+            document.documentElement.style.scrollBehavior = 'auto';
+            
             // Pasar a modo 'elegir'
             setMode('elegir');
             
@@ -169,7 +173,13 @@ const mapManager = (() => {
                 select.dispatchEvent(new Event('change'));
             }
             
-            document.getElementById('map').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            // Salto de cámara instantáneo al mapa (bloque centro) para un corte limpio
+            document.getElementById('map').scrollIntoView({ behavior: 'auto', block: 'center' });
+            
+            // Restauramos el scroll suave en el siguiente frame
+            requestAnimationFrame(() => {
+                document.documentElement.style.scrollBehavior = originalScrollBehavior;
+            });
         });
         return item;
     };
