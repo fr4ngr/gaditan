@@ -230,7 +230,7 @@ const mapManager = (() => {
             </div>
             
             <!-- Separador de Alternativas -->
-            <div style="display: flex; align-items: center; margin: 1.5rem 0 1rem 0; opacity: 0.8;">
+            <div style="display: flex; align-items: center; margin: 0.5rem 0; opacity: 0.8;">
                 <div style="flex: 1; height: 1px; background: rgba(255,255,255,0.1);"></div>
                 <span style="padding: 0 0.8rem; font-size: 0.65rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;">Otras Alternativas</span>
                 <div style="flex: 1; height: 1px; background: rgba(255,255,255,0.1);"></div>
