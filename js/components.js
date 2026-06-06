@@ -231,7 +231,29 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function openDetailsSmoothly(details) {
-        details.setAttribute('open', '');
+        const content = details.querySelector('.native-content');
+        if (content) {
+            // 1. Congelamos el contenido a tamaño cero mediante estilos en línea
+            content.style.maxHeight = '0px';
+            content.style.opacity = '0';
+            content.style.paddingTop = '0px';
+            content.style.paddingBottom = '0px';
+            
+            // 2. El navegador cambia el display a block, pero invisible gracias al paso 1
+            details.setAttribute('open', '');
+            
+            // 3. Forzamos un repintado/reflow para que el navegador registre el tamaño cero
+            void content.offsetWidth;
+            
+            // 4. Eliminamos los bloqueos. El CSS nativo dice que debe medir 1200px, así que el navegador hace la transición animada desde el 0 que registramos en el paso 3.
+            content.style.maxHeight = '';
+            content.style.opacity = '';
+            content.style.paddingTop = '';
+            content.style.paddingBottom = '';
+        } else {
+            details.setAttribute('open', '');
+        }
+        
         if (typeof lucide !== 'undefined') lucide.createIcons();
     }
 });
