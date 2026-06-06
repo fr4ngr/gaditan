@@ -538,6 +538,21 @@ input[type="date"], input[type="time"] { -webkit-appearance: none; -moz-appearan
     transform: translateY(1px);
 }
 
+/* Efecto Hover para Tarjetas CadizCab */
+.cadizcab-card-hover {
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+    cursor: pointer;
+}
+.cadizcab-card-hover:hover, .cadizcab-card-hover.glow-active {
+    transform: translateY(-4px) !important;
+    box-shadow: 0 15px 40px rgba(123, 72, 250, 0.3) !important;
+    border-color: rgba(123, 72, 250, 0.8) !important;
+    background: linear-gradient(145deg, rgba(123, 72, 250, 0.25), rgba(99, 102, 241, 0.1)) !important;
+}
+.cadizcab-card-hover:active {
+    transform: translateY(1px);
+}
+
 /* ----------------- FLOATING ACTION BUTTONS ----------------- */
 .fab-container {
     position: fixed; bottom: 1.5rem; 
