@@ -94,7 +94,8 @@ const mapManager = (() => {
                     
                     const mapControls = document.querySelector('.map-controls');
                     if (mapControls) {
-                        const offsetPosition = mapControls.getBoundingClientRect().top + window.scrollY - 60;
+                        const headerHeight = document.querySelector('.header')?.offsetHeight || 0;
+                        const offsetPosition = mapControls.getBoundingClientRect().top + window.scrollY - headerHeight - 5;
                         window.scrollTo({ top: offsetPosition, behavior: 'auto' });
                     } else {
                         document.getElementById('map').scrollIntoView({ behavior: 'auto', block: 'start' });
@@ -145,7 +146,8 @@ const mapManager = (() => {
             
             const mapControls = document.querySelector('.map-controls');
             if (mapControls) {
-                const offsetPosition = mapControls.getBoundingClientRect().top + window.scrollY - 60;
+                const headerHeight = document.querySelector('.header')?.offsetHeight || 0;
+                const offsetPosition = mapControls.getBoundingClientRect().top + window.scrollY - headerHeight - 5;
                 window.scrollTo({ top: offsetPosition, behavior: 'auto' });
             } else {
                 document.getElementById('map').scrollIntoView({ behavior: 'auto', block: 'start' });
@@ -203,7 +205,8 @@ const mapManager = (() => {
             const mapControls = document.querySelector('.map-controls');
             if (mapControls) {
                 // Alineamos los botones (Todas/Elegir) a la parte alta de la pantalla
-                const offsetPosition = mapControls.getBoundingClientRect().top + window.scrollY - 60;
+                const headerHeight = document.querySelector('.header')?.offsetHeight || 0;
+                const offsetPosition = mapControls.getBoundingClientRect().top + window.scrollY - headerHeight - 5;
                 window.scrollTo({ top: offsetPosition, behavior: 'auto' });
             } else {
                 document.getElementById('map').scrollIntoView({ behavior: 'auto', block: 'start' });
