@@ -84,7 +84,7 @@ function renderDestino(dest) {
                 </div>
                 
                 <!-- Separador de Alternativas -->
-                <div style="display: flex; align-items: center; gap: 1rem; margin: -0.25rem 0;">
+                <div style="display: flex; align-items: center; gap: 1rem; margin: -0.75rem 0;">
                     <div style="flex: 1; height: 1px; background: rgba(255,255,255,0.1);"></div>
                     <span style="padding: 0 0.8rem; font-size: 0.65rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;">Otras Alternativas</span>
                     <div style="flex: 1; height: 1px; background: rgba(255,255,255,0.1);"></div>
