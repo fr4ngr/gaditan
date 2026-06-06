@@ -173,8 +173,15 @@ const mapManager = (() => {
                 select.dispatchEvent(new Event('change'));
             }
             
-            // Salto de cámara instantáneo al mapa (bloque centro) para un corte limpio
-            document.getElementById('map').scrollIntoView({ behavior: 'auto', block: 'center' });
+            // Salto de cámara instantáneo a los controles del mapa para mostrar más contenido abajo
+            const mapControls = document.querySelector('.map-controls');
+            if (mapControls) {
+                // Alineamos los botones (Todas/Elegir) a la parte alta de la pantalla
+                const offsetPosition = mapControls.getBoundingClientRect().top + window.scrollY - 60;
+                window.scrollTo({ top: offsetPosition, behavior: 'auto' });
+            } else {
+                document.getElementById('map').scrollIntoView({ behavior: 'auto', block: 'start' });
+            }
             
             // Restauramos el scroll suave en el siguiente frame
             requestAnimationFrame(() => {
