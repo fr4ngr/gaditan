@@ -1196,7 +1196,7 @@ select:-webkit-autofill:focus {
 
 /* Efecto Hover para Tarjetas CadizCab */
 .cadizcab-card-hover {
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+    transition: all 0.3s ease !important;
     cursor: pointer;
 }
 .cadizcab-card-hover.glow-active {
@@ -1218,7 +1218,7 @@ select:-webkit-autofill:focus {
 
 /* Efecto Hover para Píldoras Cerradas */
 .pildora-hover {
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+    transition: all 0.3s ease !important;
 }
 .pildora-hover.glow-active {
     box-shadow: 0 12px 30px rgba(6, 182, 212, 0.15) !important;
