@@ -89,7 +89,20 @@ const mapManager = (() => {
                         select.value = p.id;
                         select.dispatchEvent(new Event('change'));
                     }
-                    document.getElementById('map').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    const originalScrollBehavior = document.documentElement.style.scrollBehavior;
+                    document.documentElement.style.scrollBehavior = 'auto';
+                    
+                    const mapControls = document.querySelector('.map-controls');
+                    if (mapControls) {
+                        const offsetPosition = mapControls.getBoundingClientRect().top + window.scrollY - 60;
+                        window.scrollTo({ top: offsetPosition, behavior: 'auto' });
+                    } else {
+                        document.getElementById('map').scrollIntoView({ behavior: 'auto', block: 'start' });
+                    }
+                    
+                    requestAnimationFrame(() => {
+                        document.documentElement.style.scrollBehavior = originalScrollBehavior;
+                    });
                 }
             });
         });
@@ -127,7 +140,20 @@ const mapManager = (() => {
         item.innerHTML = getListItemHtml(p);
         
         item.addEventListener('click', () => {
-            document.getElementById('map').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            const originalScrollBehavior = document.documentElement.style.scrollBehavior;
+            document.documentElement.style.scrollBehavior = 'auto';
+            
+            const mapControls = document.querySelector('.map-controls');
+            if (mapControls) {
+                const offsetPosition = mapControls.getBoundingClientRect().top + window.scrollY - 60;
+                window.scrollTo({ top: offsetPosition, behavior: 'auto' });
+            } else {
+                document.getElementById('map').scrollIntoView({ behavior: 'auto', block: 'start' });
+            }
+            
+            requestAnimationFrame(() => {
+                document.documentElement.style.scrollBehavior = originalScrollBehavior;
+            });
             map.flyTo([p.lat, p.lon], 17);
             markersLayer.eachLayer(layer => {
                 if (layer.getLatLng().lat === p.lat && layer.getLatLng().lng === p.lon) {
