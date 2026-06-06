@@ -133,7 +133,7 @@ const mapManager = (() => {
         item.className = 'glass';
         item.style.cssText = `
             display: flex; align-items: center; justify-content: space-between; 
-            padding: 1rem; border-radius: 16px; cursor: pointer; 
+            padding: 1rem; border-radius: 30px; cursor: pointer; 
             transition: background 0.3s ease; border: 1px solid var(--glass-border); margin-bottom: 0.8rem;
         `;
         item.onmouseover = () => item.style.background = 'rgba(255,255,255,0.08)';
@@ -251,7 +251,7 @@ const mapManager = (() => {
         // 2. Tarjeta Radio Taxi + Alternativas
         const content = `
             <!-- Opción Radio Taxi -->
-            <div style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 0.75rem 1rem; display: flex; flex-direction: column; gap: 0.25rem;">
+            <div style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 30px; padding: 0.75rem 1rem; display: flex; flex-direction: column; gap: 0.25rem;">
                 <div style="display: flex; justify-content: space-between; align-items: flex-start; width: 100%;">
                     <div style="width: 100%;">
                         <div style="font-size: 0.6rem; color: #06b6d4; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.1rem; font-weight: 600; display: flex; align-items: center; gap: 0.3rem;">PARADA ATENDIDA POR</div>
@@ -496,7 +496,7 @@ const mapManager = (() => {
                 }).join('');
                 
                 dirContainer.innerHTML = `
-                <div class="glass" style="margin-top: 1rem; padding: 1.5rem; border-radius: 20px;">
+                <div class="glass" style="margin-top: 1rem; padding: 1.5rem; border-radius: 30px;">
                     <h3 style="margin-top: 0; margin-bottom: 1rem; color: #fff; font-size: 1.1rem; display: flex; align-items: center; gap: 0.5rem;">
                         <i data-lucide="navigation" style="color: var(--brand-cyan);"></i> Ruta a pie (${formatDistance(route.distance/1000)} - ${Math.round(route.duration/60)} min)
                     </h3>
