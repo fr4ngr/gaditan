@@ -20,7 +20,7 @@ function renderDestino(dest) {
     // Variable eliminada, el HTML de tiempo se genera directamente abajo
     
     return `
-    <details class="mini-dest-card native-accordion" style="margin-bottom: 1rem;">
+    <details class="mini-dest-card native-accordion pildora-hover" style="margin-bottom: 1rem;">
         <summary class="mini-dest-header" style="align-items: center; position: relative; width: 100%; list-style: none;">
             <div class="mini-dest-name" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0.2rem;">
                 <div style="font-size: 0.65rem; color: white; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;">DESDE CÁDIZ A</div>

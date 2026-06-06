@@ -60,7 +60,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
-    <link rel="stylesheet" href="styles.css?v=20260606">
+    <link rel="stylesheet" href="styles.css?v=20260606b">
 </head>
 <body>
     <!-- Header Glassmorphism -->
@@ -751,7 +751,7 @@
     </div>
 
     <!-- Script genérico (carga diferida de módulos específicos) -->
-    <script src="js/components.js?v=20260606" defer></script>
+    <script src="js/components.js?v=20260606b" defer></script>
     <script src="js/mapManager.js?v=20260606" defer></script>
     <script type="module" src="js/main.js?v=1780571581,83528"></script>
 <script>
@@ -840,7 +840,7 @@ document.addEventListener('DOMContentLoaded', function() {
           });
 
           // Observar las estáticas iniciales
-          document.querySelectorAll('.cadizcab-card-hover').forEach(card => {
+          document.querySelectorAll('.cadizcab-card-hover, .pildora-hover').forEach(card => {
               observer.observe(card);
           });
 
@@ -849,10 +849,10 @@ document.addEventListener('DOMContentLoaded', function() {
               mutations.forEach(mutation => {
                   mutation.addedNodes.forEach(node => {
                       if (node.nodeType === 1) { 
-                          if (node.classList && node.classList.contains('cadizcab-card-hover')) {
+                          if (node.classList && (node.classList.contains('cadizcab-card-hover') || node.classList.contains('pildora-hover'))) {
                               observer.observe(node);
                           }
-                          const childCards = node.querySelectorAll ? node.querySelectorAll('.cadizcab-card-hover') : [];
+                          const childCards = node.querySelectorAll ? node.querySelectorAll('.cadizcab-card-hover, .pildora-hover') : [];
                           childCards.forEach(card => observer.observe(card));
                       }
                   });
