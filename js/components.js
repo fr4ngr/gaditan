@@ -182,8 +182,33 @@ document.addEventListener("DOMContentLoaded", () => {
                 // Si ya está abierta, la cerramos suavemente
                 closeDetailsSmoothly(details);
             } else {
-                // Abrimos esta tarjeta sin cerrar las demás para evitar el salto de layout
+                // 1. Cerramos las demás tarjetas del mismo grupo (acordeón real)
+                const gridName = details.closest('.mini-dest-grid')?.id;
+                if (gridName) {
+                    const others = document.querySelectorAll(`#${gridName} details.native-accordion[open]`);
+                    others.forEach(other => {
+                        if (other !== details) closeDetailsSmoothly(other);
+                    });
+                }
+                
+                // 2. Abrimos esta tarjeta
                 openDetailsSmoothly(details);
+                
+                // 3. Compensamos el salto visual desplazando la pantalla suavemente
+                // Le damos un pequeño tiempo para que el DOM registre el atributo 'open'
+                setTimeout(() => {
+                    const rect = details.getBoundingClientRect();
+                    const isOutside = (rect.top < 100) || (rect.bottom > window.innerHeight - 100);
+                    
+                    // Solo scrolleamos si la tarjeta va a quedar muy arriba o muy abajo por culpa del cierre de la anterior
+                    if (isOutside || true) {
+                        const topOffset = details.getBoundingClientRect().top + window.scrollY - (window.innerHeight / 2) + (rect.height / 2);
+                        window.scrollTo({
+                            top: topOffset,
+                            behavior: 'smooth'
+                        });
+                    }
+                }, 50);
             }
         });
     });
