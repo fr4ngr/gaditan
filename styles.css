@@ -1199,27 +1199,41 @@ select:-webkit-autofill:focus {
     transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
     cursor: pointer;
 }
-.cadizcab-card-hover:hover, .cadizcab-card-hover.glow-active {
-    transform: translateY(-4px) !important;
+.cadizcab-card-hover.glow-active {
     box-shadow: 0 15px 40px rgba(123, 72, 250, 0.3) !important;
     border-color: rgba(123, 72, 250, 0.8) !important;
     background: linear-gradient(145deg, rgba(123, 72, 250, 0.25), rgba(99, 102, 241, 0.1)) !important;
 }
-.cadizcab-card-hover:active {
-    transform: translateY(1px) !important;
+@media (hover: hover) {
+    .cadizcab-card-hover:hover {
+        transform: translateY(-4px) !important;
+        box-shadow: 0 15px 40px rgba(123, 72, 250, 0.3) !important;
+        border-color: rgba(123, 72, 250, 0.8) !important;
+        background: linear-gradient(145deg, rgba(123, 72, 250, 0.25), rgba(99, 102, 241, 0.1)) !important;
+    }
+    .cadizcab-card-hover:active {
+        transform: translateY(1px) !important;
+    }
 }
 
 /* Efecto Hover para Píldoras Cerradas */
 .pildora-hover {
     transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
 }
-.pildora-hover:hover, .pildora-hover.glow-active {
-    transform: translateY(-4px) !important;
+.pildora-hover.glow-active {
     box-shadow: 0 12px 30px rgba(6, 182, 212, 0.15) !important;
     border-color: rgba(6, 182, 212, 0.4) !important;
     background: rgba(17, 24, 39, 0.85) !important;
 }
-.pildora-hover:active {
-    transform: translateY(-2px) !important;
-    box-shadow: 0 8px 20px rgba(6, 182, 212, 0.1) !important;
+@media (hover: hover) {
+    .pildora-hover:hover {
+        transform: translateY(-4px) !important;
+        box-shadow: 0 12px 30px rgba(6, 182, 212, 0.15) !important;
+        border-color: rgba(6, 182, 212, 0.4) !important;
+        background: rgba(17, 24, 39, 0.85) !important;
+    }
+    .pildora-hover:active {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 8px 20px rgba(6, 182, 212, 0.1) !important;
+    }
 }
