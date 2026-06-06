@@ -237,8 +237,7 @@ const mapManager = (() => {
         }
         
         const header = `
-            <div style="background: linear-gradient(135deg, rgba(6, 182, 212, 0.25), rgba(6, 182, 212, 0.1)); border: 1px solid rgba(6, 182, 212, 0.6); border-radius: 30px; padding: 1rem 1.5rem; margin-bottom: 1.25rem; box-shadow: 0 4px 25px rgba(6, 182, 212, 0.25); display: flex; flex-direction: column; align-items: center; text-align: center; position: relative; overflow: hidden;">
-                <div style="position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, #06b6d4, transparent);"></div>
+            <div style="background: rgba(6, 182, 212, 0.12); border: 1px solid rgba(6, 182, 212, 0.25); border-radius: 30px; padding: 1rem 1.5rem; margin-bottom: 1.25rem; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15); display: flex; flex-direction: column; align-items: center; text-align: center;">
                 <span style="font-size: 0.65rem; color: var(--brand-cyan); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.1rem;">Parada de taxi</span>
                 <div style="display: flex; align-items: center; gap: 0.4rem; justify-content: center; margin-bottom: 0.1rem;">
                     <i data-lucide="map-pin" style="color: var(--brand-cyan); width: 16px; height: 16px;"></i>
