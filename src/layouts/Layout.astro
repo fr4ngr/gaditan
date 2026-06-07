@@ -15,11 +15,14 @@ import '../styles/styles.css';
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://cadiz.taxi/">
     
+    <!-- Lucide Icons -->
     <script>
-      import * as lucide from 'lucide';
-      window.lucide = lucide;
-      lucide.createIcons();
+      import { createIcons, icons } from 'lucide';
+      const patchedCreateIcons = (args) => createIcons(args || { icons });
+      window.lucide = { createIcons: patchedCreateIcons, icons };
+      patchedCreateIcons();
     </script>
+    
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
@@ -112,7 +115,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.querySelectorAll('details.native-accordion[open]').forEach(function(other) {
                     if (other !== details) other.removeAttribute('open');
                 });
-                if (typeof lucide !== 'undefined') lucide.createIcons();
+                if (window.lucide) window.lucide.createIcons({ icons: window.lucide.icons });
             }
         });
     });
@@ -135,7 +138,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (toggle) toggle.classList.add('open');
                 if (content) content.classList.add('open');
             }
-            if (typeof lucide !== 'undefined') lucide.createIcons();
+            if (window.lucide) window.lucide.createIcons({ icons: window.lucide.icons });
         });
     });
 });
@@ -181,4 +184,3 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 </body>
 </html>
-
