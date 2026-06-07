@@ -1,4 +1,4 @@
-// Gestor del Mapa Interactivo (Leaflet + OSRM)
+﻿// Gestor del Mapa Interactivo (Leaflet + OSRM)
 const mapManager = (() => {
     let map = null;
     let markersLayer = null;
@@ -248,17 +248,17 @@ const mapManager = (() => {
             </div>
         `;
 
-        // 2. Tarjeta Radio Taxi + Alternativas
+        // 2. Tarjeta Taxis Oficiales + Alternativas
         const content = `
-            <!-- Opción Radio Taxi -->
+            <!-- Opción Taxis Oficiales -->
             <div style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 30px; padding: 0.75rem 1rem; display: flex; flex-direction: column; gap: 0.25rem;">
                 <div style="display: flex; justify-content: space-between; align-items: flex-start; width: 100%;">
                     <div style="width: 100%;">
                         <div style="font-size: 0.65rem; color: #06b6d4; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.25rem; font-weight: 600; display: flex; align-items: center; gap: 0.3rem;">PARADA ATENDIDA POR</div>
                         <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
                             <div style="display: flex; align-items: center; gap: 0.6rem;">
-                                <div style="background: #eab308; color: #111827; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.65rem;">RT</div>
-                                <div style="color: #fff; font-weight: 600; font-size: 1.1rem;">Radio Taxi</div>
+                                <div style="background: #eab308; color: #111827; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.65rem;">TO</div>
+                                <div style="color: #fff; font-weight: 600; font-size: 1.1rem;">Taxis Oficiales</div>
                             </div>
                             <div style="display: flex; gap: 0.6rem;">
                                 <a href="tel:+34956212121" aria-label="Llamar" style="width: 44px; height: 44px; border-radius: 50%; background: #06b6d4; display: flex; align-items: center; justify-content: center; text-decoration: none; transition: all 0.3s ease;">
@@ -632,3 +632,4 @@ const mapManager = (() => {
 document.addEventListener('DOMContentLoaded', () => {
     mapManager.init();
 });
+

@@ -1,4 +1,4 @@
-export const translations = {
+﻿export const translations = {
     es: {
         "nav-prices": "Precios",
         "nav-booking": "Reservar",
@@ -83,7 +83,7 @@ export const translations = {
         "faq-q5": "¿Cómo identifico a un taxista oficial?",
         "faq-a5": "Por normativa municipal, todos los conductores deben exhibir de forma visible su tarjeta identificativa con nombre y número de licencia, garantizando tu seguridad.",
         "footer-desc": "Directorio turístico independiente para la movilidad en la bahía.",
-        "footer-disclaimer": "<strong>Aviso Legal y Exención de Responsabilidad:</strong> cadiz.taxi es un portal web de carácter estrictamente informativo y publicitario, independiente de Radio Taxi Cádiz y del Ayuntamiento de Cádiz. Toda la información proporcionada es orientativa y recopilada de fuentes públicas. No nos hacemos responsables de posibles modificaciones en las tarifas o variaciones. Recomendamos solicitar el precio final al conductor antes de iniciar el trayecto.",
+        "footer-disclaimer": "<strong>Aviso Legal y Exención de Responsabilidad:</strong> cadiz.taxi es un portal web de carácter estrictamente informativo y publicitario, independiente de Taxis Oficiales Cádiz y del Ayuntamiento de Cádiz. Toda la información proporcionada es orientativa y recopilada de fuentes públicas. No nos hacemos responsables de posibles modificaciones en las tarifas o variaciones. Recomendamos solicitar el precio final al conductor antes de iniciar el trayecto.",
         "footer-copyright": "&copy; 2026 Cádiz.Taxi. Diseñado para deslumbrar.",
         "ad-title-morning": "¡Planifica tu mañana en Cádiz!",
         "ad-desc-morning": "Ahorra tiempo y dinero en museos, monumentos y tours guiados. ¡Muévete por la ciudad con el pase turístico oficial!",
@@ -176,7 +176,7 @@ export const translations = {
         "faq-q5": "How do I identify an official taxi driver?",
         "faq-a5": "By municipal law, all drivers must visibly display their identification card with their name and license number, guaranteeing your safety.",
         "footer-desc": "Independent tourist directory for mobility in the bay.",
-        "footer-disclaimer": "<strong>Legal Notice and Disclaimer:</strong> cadiz.taxi is a strictly informative and advertising website, independent from Radio Taxi Cádiz and the Cádiz City Council. All information provided is for guidance only and compiled from public sources. We are not responsible for any changes or variations in fares. We recommend checking the final price with the driver before starting the journey.",
+        "footer-disclaimer": "<strong>Legal Notice and Disclaimer:</strong> cadiz.taxi is a strictly informative and advertising website, independent from Taxis Oficiales Cádiz and the Cádiz City Council. All information provided is for guidance only and compiled from public sources. We are not responsible for any changes or variations in fares. We recommend checking the final price with the driver before starting the journey.",
         "footer-copyright": "&copy; 2026 Cádiz.Taxi. Designed to impress.",
         "ad-title-morning": "Plan your morning in Cádiz!",
         "ad-desc-morning": "Save time and money on museums, monuments, and guided tours. Explore the city with the official tourist pass!",
@@ -238,4 +238,5 @@ export const calcContext = {
     calcMapInstance: null,
     calcMapLayerGroup: null
 };
+
 
