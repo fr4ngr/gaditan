@@ -1276,8 +1276,8 @@ select:-webkit-autofill:focus {
 .sticky-sponsor-bar {
     display: flex; align-items: center; justify-content: space-between;
     padding: 0.6rem 1.25rem;
-    background: linear-gradient(90deg, rgba(30,41,59,0.95) 0%, rgba(15,23,42,0.95) 100%);
-    border-bottom: 1px solid rgba(255,255,255,0.05);
+    background: linear-gradient(90deg, rgba(88, 28, 135, 0.95) 0%, rgba(76, 29, 149, 0.95) 100%);
+    border-bottom: 1px solid rgba(167, 139, 250, 0.2);
     text-decoration: none;
     transition: all 0.2s;
 }
