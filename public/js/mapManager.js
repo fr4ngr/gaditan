@@ -112,7 +112,8 @@ const mapManager = (() => {
     const getListItemHtml = (p) => {
         let distHtml = '';
         if (p.distance !== undefined) {
-            distHtml = `<div style="font-size: 0.75rem; color: var(--brand-cyan); font-weight: 600; display: flex; align-items: center; gap: 0.2rem;"><i data-lucide="footprints" style="width:14px; height:14px;"></i> ${formatDistance(p.distance)}</div>`;
+            const timeMins = Math.max(1, Math.ceil(p.distance / 0.08)); // estimación rápida para lista
+            distHtml = `<div style="font-size: 0.75rem; color: var(--brand-cyan); font-weight: 600; display: flex; align-items: center; gap: 0.4rem;"><i data-lucide="footprints" style="width:14px; height:14px;"></i> ${formatDistance(p.distance)} &bull; ${timeMins} min a pie</div>`;
         }
         return `
             <div style="display: flex; flex-direction: column; gap: 0.2rem;">
@@ -227,11 +228,10 @@ const mapManager = (() => {
         // 1. Cabecera (Mini Tarjeta de la Parada - Estilo Píldora Turquesa)
         let distHtml = '';
         if (currentMode === 'cercana' && p.distance !== undefined) {
-            const timeMins = Math.max(1, Math.ceil(p.distance / 80)); // ~80m por minuto caminando
+            // Placeholder que se actualiza con datos reales de OSRM
             distHtml = `
-                <div style="display: flex; align-items: center; justify-content: center; gap: 1rem; margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid rgba(6, 182, 212, 0.25); width: 90%;">
-                    <div style="font-size: 0.8rem; color: var(--brand-cyan); font-weight: 600; display: flex; align-items: center; gap: 0.35rem;"><i data-lucide="footprints" style="width:15px; height:15px;"></i> ${formatDistance(p.distance)}</div>
-                    <div style="font-size: 0.8rem; color: var(--brand-cyan); font-weight: 600; display: flex; align-items: center; gap: 0.35rem;"><i data-lucide="clock" style="width:15px; height:15px;"></i> ${timeMins} min a pie</div>
+                <div id="walk-info-pill" style="display: flex; align-items: center; justify-content: center; gap: 1rem; margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid rgba(6, 182, 212, 0.25); width: 90%;">
+                    <div style="font-size: 0.8rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.35rem;"><i data-lucide="loader-2" style="width:14px; height:14px; animation: spin 1s linear infinite;"></i> Calculando ruta...</div>
                 </div>
             `;
         }
@@ -604,6 +604,38 @@ const mapManager = (() => {
                         [masCercana.lat, masCercana.lon]
                     ]);
                     map.fitBounds(bounds, { padding: [50, 50], maxZoom: 16 });
+
+                    // Obtener distancia y tiempo REAL caminando desde OSRM
+                    fetch(`https://router.project-osrm.org/route/v1/foot/${lon},${lat};${masCercana.lon},${masCercana.lat}?overview=false`)
+                        .then(r => r.json())
+                        .then(data => {
+                            if (data.code === 'Ok' && data.routes && data.routes[0]) {
+                                const walkDist = data.routes[0].legs[0].distance; // metros
+                                const walkSecs = data.routes[0].legs[0].duration; // segundos
+                                const walkMins = Math.max(1, Math.round(walkSecs / 60));
+                                const distStr = walkDist < 1000 ? Math.round(walkDist) + ' m' : (walkDist / 1000).toFixed(1) + ' km';
+                                const pill = document.getElementById('walk-info-pill');
+                                if (pill) {
+                                    pill.innerHTML = `
+                                        <div style="font-size: 0.8rem; color: var(--brand-cyan); font-weight: 600; display: flex; align-items: center; gap: 0.35rem;"><i data-lucide="footprints" style="width:15px; height:15px;"></i> ${distStr}</div>
+                                        <div style="font-size: 0.8rem; color: var(--brand-cyan); font-weight: 600; display: flex; align-items: center; gap: 0.35rem;"><i data-lucide="clock" style="width:15px; height:15px;"></i> ${walkMins} min a pie</div>
+                                    `;
+                                    if (typeof lucide !== 'undefined') lucide.createIcons();
+                                }
+                            }
+                        })
+                        .catch(() => {
+                            // Si falla OSRM, mostramos la estimación con aviso
+                            const timeMins = Math.max(1, Math.ceil(masCercana.distance / 0.08));
+                            const pill = document.getElementById('walk-info-pill');
+                            if (pill) {
+                                pill.innerHTML = `
+                                    <div style="font-size: 0.8rem; color: var(--brand-cyan); font-weight: 600; display: flex; align-items: center; gap: 0.35rem;"><i data-lucide="footprints" style="width:15px; height:15px;"></i> ${formatDistance(masCercana.distance)}</div>
+                                    <div style="font-size: 0.8rem; color: var(--brand-cyan); font-weight: 600; display: flex; align-items: center; gap: 0.35rem;"><i data-lucide="clock" style="width:15px; height:15px;"></i> ~${timeMins} min a pie</div>
+                                `;
+                                if (typeof lucide !== 'undefined') lucide.createIcons();
+                            }
+                        });
 
                 }, (error) => {
                     console.error("Error geolocating:", error);
