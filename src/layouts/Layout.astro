@@ -1,0 +1,184 @@
+---
+import '../styles/styles.css';
+---
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taxi Cádiz | Teléfonos, Reservas y Precios</title>
+    <meta name="description" content="Guía turística y directorio independiente de Taxis en Cádiz. Encuentra teléfonos, tarifas estimadas a aeropuertos y paradas principales.">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="Taxi Cádiz | Guía Local y Traslados">
+    <meta property="og:description" content="Directorio rápido para pedir tu taxi en Cádiz. Teléfonos directos, precios a aeropuertos y puerto de cruceros.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://cadiz.taxi/">
+    
+    <script>
+      import * as lucide from 'lucide';
+      window.lucide = lucide;
+      lucide.createIcons();
+    </script>
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+    <!-- Schema.org Data for SEO -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "TaxiService",
+      "name": "Cádiz Taxi - Teléfonos y Tarifas Oficiales",
+      "image": "https://cadiz.taxi/logo.png",
+      "url": "https://cadiz.taxi/",
+      "telephone": "+34956212121",
+      "priceRange": "€€",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Cádiz",
+        "addressRegion": "Andalucía",
+        "addressCountry": "ES"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 36.52,
+        "longitude": -6.29
+      },
+      "openingHoursSpecification": {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday",
+          "Sunday"
+        ],
+        "opens": "00:00",
+        "closes": "23:59"
+      }
+    }
+    </script>
+    
+    <!-- Tipografía Premium: Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+</head>
+<body>
+    <slot />
+    <!-- Script genérico (carga diferida de módulos específicos) -->
+    <script src="js/mapData.js?v=20260606d" defer></script>
+    <script src="js/components.js?v=20260606n" defer></script>
+    <script src="js/mapManager.js?v=20260606q" defer></script>
+    <script type="module" src="js/main.js?v=1780571581,83528"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    
+    // Función para cerrar una tarjeta
+    function closeCard(card) {
+        var content = card.querySelector('.dest-actions-content');
+        var toggle  = card.querySelector('.dest-action-toggle');
+        
+        card.classList.remove('expanded');
+        if (toggle) toggle.classList.remove('open');
+        if (content) {
+            content.classList.remove('open');
+            // CSS Grid se encarga del resto
+        }
+    }
+
+    // Lógica para acordeones nativos (<details>)
+    document.addEventListener('click', function(e) {
+        // Cerrar si se clica fuera de cualquier tarjeta
+        if (!e.target.closest('.mini-dest-card')) {
+            document.querySelectorAll('details.native-accordion[open]').forEach(function(card) {
+                card.removeAttribute('open');
+            });
+            // (Mantenemos por compatibilidad con antiguas si quedan)
+            document.querySelectorAll('.mini-dest-card.expanded').forEach(function(card) {
+                closeCard(card);
+            });
+        }
+    });
+
+    // Cuando se abre un acordeón nativo, cerrar los demás
+    document.querySelectorAll('details.native-accordion').forEach(function(details) {
+        details.addEventListener('toggle', function(e) {
+            if (details.open) {
+                document.querySelectorAll('details.native-accordion[open]').forEach(function(other) {
+                    if (other !== details) other.removeAttribute('open');
+                });
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+            }
+        });
+    });
+
+    // Lógica principal de cada tarjeta antigua (no nativa)
+    document.querySelectorAll('div.mini-dest-card').forEach(function(card) {
+        card.addEventListener('click', function(e) {
+            if (e.target.closest('a') || e.target.closest('.dest-actions-content')) return;
+            var content = card.querySelector('.dest-actions-content');
+            var toggle  = card.querySelector('.dest-action-toggle');
+            var isOpen = content && content.classList.contains('open');
+
+            if (isOpen) {
+                closeCard(card);
+            } else {
+                document.querySelectorAll('div.mini-dest-card.expanded').forEach(function(otherCard) {
+                    if (otherCard !== card) closeCard(otherCard);
+                });
+                card.classList.add('expanded');
+                if (toggle) toggle.classList.add('open');
+                if (content) content.classList.add('open');
+            }
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        });
+    });
+});
+</script>
+<!-- Glow Up Observer -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+      const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+              if (entry.isIntersecting) {
+                  entry.target.classList.add('glow-active');
+              } else {
+                  entry.target.classList.remove('glow-active');
+              }
+          });
+      }, {
+          root: null,
+          rootMargin: '-64% 0px -34% 0px',
+          threshold: 0
+      });
+
+      // Observar las estáticas iniciales
+      document.querySelectorAll('.cadizcab-card-hover, .pildora-hover').forEach(card => {
+          observer.observe(card);
+      });
+
+      // Observar las creadas dinámicamente en el mapa
+      const mutationObserver = new MutationObserver((mutations) => {
+          mutations.forEach(mutation => {
+              mutation.addedNodes.forEach(node => {
+                  if (node.nodeType === 1) { 
+                      if (node.classList && (node.classList.contains('cadizcab-card-hover') || node.classList.contains('pildora-hover'))) {
+                          observer.observe(node);
+                      }
+                      const childCards = node.querySelectorAll ? node.querySelectorAll('.cadizcab-card-hover, .pildora-hover') : [];
+                      childCards.forEach(card => observer.observe(card));
+                  }
+              });
+          });
+      });
+      mutationObserver.observe(document.body, { childList: true, subtree: true });
+  });
+</script>
+</body>
+</html>
+

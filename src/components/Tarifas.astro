@@ -1,0 +1,144 @@
+        <!-- Precios -->
+        <section class="pricing-section" id="tarifas">
+            <div class="container">
+                <h2 class="section-title" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                    <span data-translate="pricing-title">Tarifas Oficiales</span>
+                    <i data-lucide="badge-check" style="color: var(--brand-blue); fill: var(--brand-blue); stroke: #0f172a;" size="36"></i>
+                </h2>
+                <p class="section-subtitle" style="text-align: center; color: var(--text-muted); margin-bottom: 2.5rem; font-size: 1.1rem;">Precios regulados y garantizados por el Ayuntamiento de Cádiz</p>
+                <h3 class="subsection-title" style="margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                    <i data-lucide="building-2" size="28" style="color: var(--brand-cyan);"></i> 
+                    <span data-translate="urban-fares-title">Viaje Urbano</span>
+                </h3>
+                <div class="table-responsive glass" style="margin-bottom: 1.5rem; overflow-x: auto;">
+                            <table class="glass-table">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>
+                                            <div style="display: flex; flex-direction: column; align-items: center; gap: 0.3rem;">
+                                                <i data-lucide="sun" size="24" style="color: var(--brand-cyan);"></i>
+                                                <span data-translate="day-fare">Día</span>
+                                                <span class="table-schedule" style="margin-top:0;" data-translate="day-fare-sub">L-V (7h - 21h)</span>
+                                            </div>
+                                        </th>
+                                        <th>
+                                            <div style="display: flex; flex-direction: column; align-items: center; gap: 0.3rem;">
+                                                <i data-lucide="moon" size="24" style="color: var(--brand-blue);"></i>
+                                                <span data-translate="night-fare">Noche</span>
+                                                <span class="table-schedule" style="margin-top:0;" data-translate="night-fare-sub">Noches y Festivos</span>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong data-translate="min-fare">Carrera mínima</strong></td>
+                                        <td>3,56&nbsp;€</td>
+                                        <td>4,43&nbsp;€</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong data-translate="flag-drop">Bajada de bandera</strong></td>
+                                        <td>1,39&nbsp;€</td>
+                                        <td>1,73&nbsp;€</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong data-translate="price-km">Precio kilómetro</strong></td>
+                                        <td>0,70&nbsp;€</td>
+                                        <td>0,90&nbsp;€</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong data-translate="waiting-hour">Hora de espera</strong></td>
+                                        <td>18,97&nbsp;€</td>
+                                        <td>23,66&nbsp;€</td>
+                                    </tr>
+                                    <tr style="background: rgba(255,255,255,0.02);">
+                                        <td colspan="3" style="text-align: center; vertical-align: middle; font-weight: 700; color: var(--brand-cyan); padding-top: 0.8rem; padding-bottom: 0.6rem; border-bottom: none; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;" data-translate="supplements-title">Suplementos</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div style="display: flex; align-items: center; gap: 0.4rem;">
+                                                <strong data-translate="supp-train">Salida Renfe</strong>
+                                            </div>
+                                        </td>
+                                        <td colspan="2" style="text-align: center; vertical-align: middle;">0,82&nbsp;€</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div style="display: flex; align-items: center; gap: 0.4rem;">
+                                                <strong data-translate="supp-luggage">Maleta grande</strong>
+                                            </div>
+                                        </td>
+                                        <td colspan="2" style="text-align: center; vertical-align: middle;">0,51&nbsp;€</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                <div class="source-info" style="font-size: 0.85rem; color: var(--brand-cyan-light); opacity: 0.7; text-align: right; padding: 0 0.5rem; margin-top: -0.5rem; margin-bottom: 1rem; font-style: italic;">
+                    FUENTE: Boletín Oficial de la Junta de Andalucía. Boletín número 10 de 16/01/2026
+                </div>
+                <div class="supplements-info" style="font-size: 0.95rem; color: var(--text-muted); opacity: 0.85; line-height: 1.5; margin-bottom: 3rem; padding: 0 0.5rem;" data-translate="supp-info-text">
+                    <p style="margin-bottom: 0.5rem;"><strong>Salida Renfe:</strong> Se aplica exclusivamente a viajes con origen en la parada de la estación. No se cobra si tu destino es la estación.</p>
+                    <p><strong>Maletas:</strong> Aplicable a bultos que superen los 60 cm. Totalmente exentos: sillas de ruedas, andadores y carritos de bebé/compra.</p>
+                </div>
+
+                <div class="fare-group" style="text-align: center;">
+                    <h3 class="subsection-title fare-toggle" style="margin-bottom: 1.5rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; user-select: none;">
+                        <i data-lucide="tree-pine" size="28" style="color: var(--brand-cyan);"></i>
+                        <span data-translate="interurban-fares-title">Viaje Interurbano</span>
+                        <i data-lucide="chevron-down" class="fare-icon" style="transition: transform 0.3s; transform: rotate(0deg); color: var(--brand-cyan);"></i>
+                    </h3>
+                    <div class="fare-content" style="overflow: hidden; transition: max-height 0.4s ease; max-height: 0px;">
+                        <div class="table-responsive glass" style="margin-bottom: 1.5rem; overflow-x: auto;">
+                            <table class="glass-table">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>
+                                            <div style="display: flex; flex-direction: column; align-items: center; gap: 0.3rem;">
+                                                <i data-lucide="sun" size="24" style="color: var(--brand-cyan);"></i>
+                                                <span data-translate="day-fare">Día</span>
+                                                <span class="table-schedule" style="margin-top:0;" data-translate="inter-day-fare-sub">L-V (6h - 22h)</span>
+                                            </div>
+                                        </th>
+                                        <th>
+                                            <div style="display: flex; flex-direction: column; align-items: center; gap: 0.3rem;">
+                                                <i data-lucide="moon" size="24" style="color: var(--brand-blue);"></i>
+                                                <span data-translate="night-fare">Noche</span>
+                                                <span class="table-schedule" style="margin-top:0;" data-translate="inter-night-fare-sub">Noches y Festivos</span>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong data-translate="min-fare">Carrera mínima</strong></td>
+                                        <td>3,83&nbsp;€</td>
+                                        <td>4,51&nbsp;€</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong data-translate="flag-drop">Bajada de bandera</strong></td>
+                                        <td>3,66&nbsp;€</td>
+                                        <td>3,60&nbsp;€</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong data-translate="price-km">Precio kilómetro</strong></td>
+                                        <td>0,71&nbsp;€</td>
+                                        <td>0,82&nbsp;€</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong data-translate="waiting-hour">Hora de espera</strong></td>
+                                        <td>17,57&nbsp;€</td>
+                                        <td>20,71&nbsp;€</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="source-info" style="font-size: 0.85rem; color: var(--brand-cyan-light); opacity: 0.7; text-align: right; padding: 0 0.5rem; margin-bottom: 2rem; font-style: italic;">
+                            FUENTE: Boletín Oficial de la Junta de Andalucía. Boletín número 49 de 12/03/2026
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </section>

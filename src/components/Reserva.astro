@@ -1,0 +1,244 @@
+        <section class="booking-section" id="reservas" itemscope itemtype="http://schema.org/TaxiReservation">
+            <div class="container">
+                <h2 class="section-title" data-translate="booking-title" itemprop="name">Reserva tu Taxi</h2>
+                
+                <p class="section-subtitle">Asegura tu viaje con antelación rellenando este breve formulario</p>
+                <div class="booking-card glass" style="margin: 0 auto;">
+                        <form id="booking-form" class="booking-form" onsubmit="return confirmReservation(event)" aria-label="Formulario de reserva de taxi">
+                            <div class="form-row mobile-stack" style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                                <div class="form-group" style="flex: 1; min-width: 150px;">
+                                    <label for="b-name"><span data-translate="form-name">Nombre y Apellidos</span></label>
+                                    <div class="input-icon-wrapper">
+                                        <i data-lucide="user"></i>
+                                        <input type="text" id="b-name" autocomplete="name" autocapitalize="words" style="text-transform: capitalize;" placeholder="Nombre y Apellidos" data-translate-placeholder="form-name-placeholder" required aria-required="true" class="glass-input with-icon" itemprop="underName">
+                                    </div>
+                                </div>
+                                <div class="form-group" style="flex: 1; min-width: 150px;">
+                                    <label for="b-phone"><span data-translate="form-phone">Teléfono</span></label>
+                                    <div class="input-icon-wrapper">
+                                        <i data-lucide="smartphone"></i>
+                                        <input type="tel" id="b-phone" autocomplete="tel" placeholder="Móvil" required aria-required="true" class="glass-input with-icon">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-row" style="display: flex; gap: 1rem; flex-wrap: nowrap;">
+                                <div class="form-group" style="flex: 1; min-width: 0;">
+                                    <label for="b-date"><span data-translate="form-date">Fecha</span></label>
+                                      <div class="input-icon-wrapper">
+                                          <i data-lucide="calendar"></i>
+                                          <input type="date" id="b-date" required aria-required="true" class="glass-input with-icon" itemprop="pickupTime">
+                                          <div id="b-date-display" style="position: absolute; inset: 0; display: none; align-items: center; justify-content: center; pointer-events: none; color: var(--text-main); font-size: 1.05rem; font-family: 'Outfit', sans-serif; font-weight: 500;"></div>
+                                      </div>
+                                </div>
+                                <div class="form-group" style="flex: 1; min-width: 0;">
+                                    <label for="b-time"><span data-translate="form-time">Hora</span></label>
+                                      <div class="input-icon-wrapper">
+                                          <i data-lucide="clock"></i>
+                                          <input type="time" id="b-time" required aria-required="true" class="glass-input with-icon">
+                                          <div id="b-time-display" style="position: absolute; inset: 0; display: none; align-items: center; justify-content: center; pointer-events: none; color: var(--text-main); font-size: 1.05rem; font-family: 'Outfit', sans-serif; font-weight: 500;"></div>
+                                      </div>
+                                </div>
+                            </div>
+                            
+                              <div class="form-group">
+                                  <label for="b-pickup"><span data-translate="form-pickup">Desde (Origen)</span></label>
+                                  <div style="display: flex; gap: 0.5rem; position: relative;">
+                                      <div class="input-icon-wrapper" style="position: relative; flex: 1;">
+                                          <i data-lucide="locate" style="cursor: pointer; pointer-events: auto; color: var(--brand-cyan);" onclick="window.geolocateOrigin('b-pickup', 'b-pickup-num')"></i>
+                                          <input type="text" id="b-pickup" autocomplete="off" placeholder="Ej. Hotel Playa Victoria" data-translate-placeholder="form-pickup-placeholder" required aria-required="true" class="glass-input with-icon" itemprop="pickupLocation">
+                                          <div id="b-pickup-suggestions" class="autocomplete-suggestions hidden"></div>
+                                      </div>
+                                      <div style="width: 56px;">
+                                          <input type="text" id="b-pickup-num" class="glass-input" placeholder="Nº" style="width: 56px; height: 56px; padding: 0; text-align: center; border-radius: 50%;">
+                                      </div>
+                                  </div>
+                              </div>
+                              <div class="form-group">
+                                  <label for="b-dropoff"><span data-translate="form-dropoff">Hasta (Destino)</span></label>
+                                  <div style="display: flex; gap: 0.5rem; position: relative;">
+                                      <div class="input-icon-wrapper" style="position: relative; flex: 1;">
+                                          <i data-lucide="map"></i>
+                                          <input type="text" id="b-dropoff" autocomplete="off" placeholder="Ej. Aeropuerto de Jerez" data-translate-placeholder="form-dropoff-placeholder" required aria-required="true" class="glass-input with-icon" itemprop="dropoffLocation">
+                                          <div id="b-dropoff-suggestions" class="autocomplete-suggestions hidden"></div>
+                                      </div>
+                                      <div style="width: 56px;">
+                                          <input type="text" id="b-dropoff-num" class="glass-input" placeholder="Nº" style="width: 56px; height: 56px; padding: 0; text-align: center; border-radius: 50%;">
+                                      </div>
+                                  </div>
+                              </div>
+
+                            <div class="form-group hidden" id="b-train-container">
+                                <label for="b-train"><span>Número de Tren</span></label>
+                                <div class="input-icon-wrapper">
+                                    <i data-lucide="train"></i>
+                                    <input type="text" id="b-train" placeholder="Ej. Alvia 02144" class="glass-input with-icon">
+                                </div>
+                            </div>
+
+                            <div class="form-group options-group" style="margin-top: 1.5rem;">
+                                <div class="chip-group">
+                                    <div class="chip-wrapper">
+                                        <span class="chip-label" data-translate="chip-passengers-label">Viajeros</span>
+                                        <div class="booking-chip stepper-chip-container" id="container-passengers">
+                                            <button type="button" class="stepper-btn-full" onclick="updateBookingStepper('passengers', -1)">-</button>
+                                            <div class="stepper-content">
+                                                <i data-lucide="users" class="chip-icon"></i> <span class="chip-text" id="val-passengers">1</span>
+                                            </div>
+                                            <button type="button" class="stepper-btn-full" onclick="updateBookingStepper('passengers', 1)">+</button>
+                                            <input type="hidden" id="chip-passengers" value="1">
+                                        </div>
+                                    </div>
+                                    <div class="chip-wrapper">
+                                        <span class="chip-label" data-translate="chip-luggage-label">Maleta grande</span>
+                                        <div class="booking-chip stepper-chip-container" id="container-luggage">
+                                            <button type="button" class="stepper-btn-full" onclick="updateBookingStepper('luggage', -1)">-</button>
+                                            <div class="stepper-content">
+                                                <i data-lucide="briefcase" class="chip-icon"></i> <span class="chip-text" id="val-luggage">0</span>
+                                            </div>
+                                            <button type="button" class="stepper-btn-full" onclick="updateBookingStepper('luggage', 1)">+</button>
+                                            <input type="hidden" id="chip-luggage" value="0">
+                                        </div>
+                                    </div>
+                                    <div class="chip-wrapper">
+                                        <span class="chip-label" data-translate="chip-pet-label">Mascota</span>
+                                        <div class="pet-full-switch" id="container-pet" onclick="toggleBookingPet()">
+                                            <div class="pet-switch-thumb"></div>
+                                            <div class="pet-switch-label label-no"><i data-lucide="x" style="width:14px;height:14px;"></i> No</div>
+                                            <div class="pet-switch-label label-yes"><i data-lucide="paw-print" style="width:14px;height:14px;"></i> Sí</div>
+                                            <input type="hidden" id="chip-pet" value="No">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group" style="margin-top: 1rem;">
+                                <label for="b-payment"><span>Forma de Pago</span></label>
+                                <div class="input-icon-wrapper">
+                                    <i data-lucide="credit-card"></i>
+                                    <select id="b-payment" class="glass-input with-icon" style="appearance: none; -webkit-appearance: none; cursor: pointer;">
+                                        <option value="Efectivo">Pago en Efectivo</option>
+                                        <option value="Tarjeta">Pago con Tarjeta</option>
+                                    </select>
+                                    <i data-lucide="chevron-down" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); opacity: 0.5; pointer-events: none;"></i>
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="md3-btn booking-submit-fab" id="booking-submit-btn" data-translate="form-submit">
+                                Continuar
+                            </button>
+                        </form>
+
+                        <!-- RESULTADOS DEL EMBUDO DE RESERVA -->
+                        <div id="booking-results-funnel" style="display: none; animation: fadeIn 0.5s ease forwards;">
+                            <h3 style="text-align: center; color: var(--brand-cyan); margin-bottom: 1rem; font-size: 1.5rem;" data-translate="booking_summary_title">Resumen de tu Reserva</h3>
+                            
+                            <div style="font-size: 0.95rem; color: var(--text-main); margin-bottom: 1.5rem; line-height: 1.8; text-align: left; background: rgba(255,255,255,0.03); padding: 1rem; border-radius: 12px; border: 1px solid var(--glass-border);">
+                                <div><strong data-translate="summary_name">Nombre:</strong> <span id="summary-name" style="color: var(--text-muted);"></span></div>
+                                <div><strong data-translate="summary_phone">Móvil:</strong> <span id="summary-phone" style="color: var(--text-muted);"></span></div>
+                                <div><strong data-translate="summary_origin">Origen:</strong> <span id="summary-origin" style="color: var(--text-muted);"></span></div>
+                                <div><strong data-translate="summary_dest">Destino:</strong> <span id="summary-dest" style="color: var(--text-muted);"></span></div>
+                                <div><strong data-translate="summary_datetime">Cuándo:</strong> <span id="summary-datetime" style="color: var(--text-muted);"></span></div>
+                                <div><strong data-translate="summary_details">Detalles:</strong> <span id="summary-details" style="color: var(--text-muted);"></span></div>
+                            </div>
+
+                            <!-- Mapa del trayecto -->
+                            <div id="booking-map" style="width: 100%; height: 200px; border-radius: 12px; margin-bottom: 0.5rem; border: 1px solid var(--glass-border); z-index: 1; pointer-events: none;"></div>
+                            <div id="summary-osrm-stats" style="text-align: center; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem; display: none;"></div>
+                            
+                            <div style="text-align: center; margin-bottom: 2.5rem; margin-top: 1.5rem;">
+                                <button id="btn-edit-booking" type="button" style="background: none; border: none; color: var(--text-muted); text-decoration: underline; cursor: pointer; font-family: 'Outfit', sans-serif; font-size: 1rem;">
+                                    <span data-translate="btn_edit_booking">← Volver para modificar datos</span>
+                                </button>
+                            </div>
+                            
+                            <!-- Tarjeta Radio Taxi -->
+                            <div style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 1.25rem; display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2rem;">
+                                <!-- Badge Servicio -->
+                                <div style="display: flex; align-items: center; gap: 0.4rem; margin-bottom: -0.5rem;">
+                                    <span style="color: var(--brand-cyan); font-size: 0.7rem; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase;">Servicio prestado por</span>
+                                </div>
+                                
+                                <!-- Header Tarjeta -->
+                                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                            <div style="background: #eab308; color: #111827; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.8rem;">RT</div>
+                                            <span style="font-size: 1.2rem; font-weight: 800; color: white;">Radio Taxi</span>
+                                        </div>
+                                        <div style="font-size: 0.95rem; color: var(--text-muted); font-weight: 500; padding-left: calc(28px + 0.5rem); letter-spacing: 0.5px;">
+                                            956 21 21 21
+                                        </div>
+                                    </div>
+                                    
+                                    <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.3rem;">
+                                        <div style="display: flex; align-items: baseline; gap: 0.15rem;">
+                                            <span id="summary-radio-price" style="font-size: 1.5rem; font-weight: 800; color: white;">0€</span>
+                                            <span style="font-size: 1.5rem; color: var(--brand-cyan); font-weight: 800; transform: translateY(2px);">*</span>
+                                        </div>
+                                        <div id="summary-radio-time" style="font-size: 0.85rem; color: var(--text-muted); font-weight: 500; display: flex; align-items: center; gap: 0.3rem;">
+                                            <i data-lucide="clock" style="width: 14px; height: 14px;"></i> 0 min
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Alert Text -->
+                                <div style="display: flex; align-items: flex-start; gap: 0.5rem; background: rgba(255, 255, 255, 0.05); padding: 0.8rem; border-radius: 8px; font-size: 0.75rem; color: var(--text-muted); line-height: 1.4; border-left: 3px solid var(--brand-cyan);">
+                                    <span style="color: var(--brand-cyan); font-weight: 800; font-size: 1.1rem; line-height: 1; transform: translateY(2px);">*</span>
+                                    <span style="flex: 1;">Precio estimado con la CALCULADORA DE TAXI de cadiz.taxi con la ruta más corta y las condiciones de tráfico más favorables. Sólo el taxímetro oficial determinará el precio final de tu viaje.</span>
+                                </div>
+                                
+                                <!-- Botones -->
+                                <div style="display: flex; justify-content: center; width: 100%; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 1.25rem; margin-top: 0.5rem;">
+                                    <button id="btn-radio-email" type="button" style="width: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 0.3rem; background: var(--brand-cyan); color: #111827; padding: 0.8rem 1rem; border-radius: 9999px; border: none; cursor: pointer; transition: all 0.3s ease;">
+                                        <div style="display: flex; align-items: center; gap: 0.5rem; font-weight: 800; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 1px;">
+                                            <i data-lucide="mail" style="width: 20px; height: 20px;"></i> Enviar Solicitud
+                                        </div>
+                                        <span style="font-size: 0.7rem; font-weight: 600; opacity: 0.8; text-transform: lowercase;">reservas@radiotaxicadiz.es</span>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Divisor -->
+                            <div style="display: flex; align-items: center; gap: 1rem; margin: -0.35rem 0;">
+                                <div style="flex: 1; height: 1px; background: rgba(255,255,255,0.1);"></div>
+                                <span style="padding: 0 0.8rem; font-size: 0.65rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;">Alternativas Patrocinadas</span>
+                                <div style="flex: 1; height: 1px; background: rgba(255,255,255,0.1);"></div>
+                            </div>
+
+                              <!-- Tarjeta Cadiz.cab -->
+                              <div class="cadizcab-card-hover" style="background: linear-gradient(145deg, rgba(123, 72, 250, 0.15), rgba(99, 102, 241, 0.05)); border: 1px solid rgba(123, 72, 250, 0.4); box-shadow: 0 8px 32px rgba(123, 72, 250, 0.15); border-radius: 16px; padding: 1.25rem; display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2rem; position: relative; overflow: hidden;">
+                                  <!-- Efecto brillo superior -->
+                                  <div style="position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, #7b48fa, transparent);"></div>
+                                <!-- Badge -->
+                                <div style="display: flex; align-items: center; gap: 0.4rem;">
+                                    <i data-lucide="star" style="color: #eab308; width: 14px; height: 14px; fill: #eab308;"></i>
+                                    <span style="color: #eab308; font-size: 0.7rem; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase;">Servicio prestado por</span>
+                                </div>
+                                
+                                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-top: 0.25rem;">
+                                    <div style="display: flex; flex-direction: column; gap: 0.2rem;">
+                                        <div style="display: flex; align-items: center; gap: 0.6rem;">
+                                            <div style="background: #6366f1; color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                                <i data-lucide="car-front" style="width: 18px; height: 18px;"></i>
+                                            </div>
+                                            <span style="font-size: 1.4rem; font-weight: 900; color: white;">cadiz.cab</span>
+                                        </div>
+                                        <div style="font-size: 0.95rem; color: #a5b4fc; font-weight: 500; padding-left: calc(32px + 0.6rem);">
+                                            Vehículos VTC
+                                        </div>
+                                    </div>
+                                    
+                                    <div style="background: #eab308; color: #111827; font-size: 0.65rem; font-weight: 800; padding: 0.3rem 0.6rem; border-radius: 6px; letter-spacing: 1px; text-transform: uppercase; margin-top: 0.25rem;">
+                                        Premium
+                                    </div>
+                                </div>
+                                
+                                <a href="https://cadiz.cab" target="_blank" style="width: 100%; display: flex; justify-content: center; align-items: center; gap: 0.5rem; background: linear-gradient(135deg, #7b48fa, #6366f1); color: white; padding: 1rem; border-radius: 9999px; margin-top: 0.5rem; text-decoration: none; font-weight: 800; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 4px 15px rgba(123, 72, 250, 0.4); border: none; transition: all 0.3s ease;">
+                                    <i data-lucide="calendar-check" style="width: 20px; height: 20px;"></i> Reservar
+                                </a>
+                            </div>
+                        </div>
+
+                    </div>
+            </div>
+        </section>

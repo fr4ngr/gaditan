@@ -1,0 +1,79 @@
+                        <!-- CALCULATOR SECTION -->
+        <section class="calculator-section" id="calculadora" style="padding: 4rem 0;">
+            <div class="container">
+                <h2 class="section-title" data-translate="calc-title">Calculadora Taxi</h2>
+                <p class="section-subtitle" data-translate="calc-subtitle">Calcula el precio estimado de tu trayecto al instante</p>
+                <div class="booking-card glass" style="margin: 0 auto;">
+                    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                        
+                        <!-- Origen con número -->
+                        <div class="form-group" style="gap: 0.25rem;">
+                            <label for="calc-origin"><span data-translate="form-pickup">Desde (Origen)</span></label>
+                            <div style="display: flex; gap: 0.5rem; position: relative; flex-wrap: nowrap;">
+                                <div class="input-icon-wrapper" style="flex: 1; min-width: 0;">
+                                    <i data-lucide="locate" style="cursor: pointer; pointer-events: auto; color: var(--brand-cyan);" onclick="window.geolocateOrigin('calc-origin')"></i>
+                                    <input type="text" id="calc-origin" class="glass-input with-icon" placeholder="Origen (ej. Av. Andalucía)" autocomplete="off" style="width: 100%;">
+                                    <div id="origin-suggestions" class="autocomplete-suggestions hidden"></div>
+                                </div>
+                                <div style="width: 70px; flex-shrink: 0;">
+                                    <input type="text" id="calc-origin-num" class="glass-input" placeholder="Nº" style="width: 100%; text-align: center; padding: 1.2rem;">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Destino con número -->
+                        <div class="form-group" style="gap: 0.25rem;">
+                            <label for="calc-destination"><span data-translate="form-dropoff">Hasta (Destino)</span></label>
+                            <div style="display: flex; gap: 0.5rem; position: relative; flex-wrap: nowrap;">
+                                <div class="input-icon-wrapper" style="flex: 1; min-width: 0;">
+                                    <i data-lucide="flag"></i>
+                                    <input type="text" id="calc-destination" class="glass-input with-icon" placeholder="Destino (ej. Plaza Asdrúbal)" autocomplete="off" style="width: 100%;">
+                                <div id="dest-suggestions" class="autocomplete-suggestions hidden"></div>
+                            </div>
+                            <div style="width: 70px; flex-shrink: 0;">
+                                <input type="text" id="calc-dest-num" class="glass-input" placeholder="Nº" style="width: 100%; text-align: center; padding: 1.2rem;">
+                            </div>
+                        </div>
+
+                        <!-- Botonera Estilo Pill -->
+                        <div style="display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap; margin-top: 0.5rem;">
+                            <button class="pill-toggle active" id="calc-time-toggle" onclick="toggleCalcTime()">
+                                <i data-lucide="sun" size="14"></i> <span id="calc-time-text" data-translate="btn-day">Día</span>
+                            </button>
+                            <button class="pill-toggle" id="calc-festivo-toggle" onclick="toggleCalcFestivo()">
+                                <i data-lucide="calendar" size="14"></i> <span id="calc-festivo-text" data-translate="btn-festivo">Festivo</span>
+                            </button>
+                            <button class="pill-toggle" id="calc-renfe-toggle" onclick="toggleCalcRenfe()">
+                                <i data-lucide="train" size="14"></i> <span data-translate="btn-renfe">Renfe</span>
+                            </button>
+                            <div class="pill-toggle" id="calc-maleta-container" style="padding: 0 0.5rem; display: flex; align-items: center; gap: 0.2rem;"><i data-lucide="briefcase" size="14"></i><button type="button" onclick="updateCalcLuggage(-1)" style="background: none; border: none; color: inherit; padding: 0.2rem 0.4rem; cursor: pointer; font-size: 1.1rem; line-height: 1;">-</button><span id="calc-luggage" style="font-weight: bold; width: 12px; text-align: center;">0</span><button type="button" onclick="updateCalcLuggage(1)" style="background: none; border: none; color: inherit; padding: 0.2rem 0.4rem; cursor: pointer; font-size: 1.1rem; line-height: 1;">+</button></div>
+                        </div>
+                        
+                        <button class="btn btn-glow" style="width: 100%; margin-top: 0.5rem;" onclick="calculateRoute()">
+                            <span data-translate="calc-btn">Calcular Precio</span> <i data-lucide="calculator" size="18"></i>
+                        </button>
+                        
+                                                <!-- Resultado -->
+                        <div id="calc-result" style="display: none; text-align: center; margin-top: 1rem; border-top: 1px solid var(--glass-border); padding-top: 1.5rem;">
+                            <div style="display: flex; justify-content: center; gap: 2rem; margin-bottom: 1rem;">
+                                <p style="color: var(--text-muted); font-size: 0.9rem;"><span data-translate="calc-dist">Distancia:</span> <strong id="calc-dist-val" style="color: #fff;">0 km</strong></p>
+                                <p style="color: var(--text-muted); font-size: 0.9rem;"><span data-translate="calc-time">Tiempo:</span> <strong id="calc-time-val" style="color: #fff;">0 min</strong></p>
+                            </div>
+                            <div style="font-size: 3rem; font-weight: 800; color: var(--brand-cyan);" id="calc-price-val">0,00€</div>
+                            <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.5rem;" data-translate="calc-disclaimer">*Precio estimado. El taxímetro oficial determina el precio exacto.</p>
+                            
+                            <!-- Mapa de la ruta -->
+                            <div id="calc-map" style="width: 100%; height: 250px; border-radius: 10px; margin-top: 1.5rem; border: 1px solid var(--glass-border); display: none;"></div>
+                        </div>
+                        
+                        <!-- Estados (Carga/Error) -->
+                        <div id="calc-loading" style="display: none; text-align: center; margin-top: 1rem; color: var(--text-muted);">
+                            <i data-lucide="loader-2" class="spin" style="animation: spin 1s linear infinite;"></i> <span data-translate="calc-loading">Calculando ruta óptima...</span>
+                        </div>
+                        <div id="calc-error" style="display: none; text-align: center; margin-top: 1rem; color: #ff6b6b; font-size: 0.9rem;">
+                            <i data-lucide="alert-circle" size="14"></i> <span id="calc-error-text">No se pudo encontrar la ruta. Verifica las direcciones.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
