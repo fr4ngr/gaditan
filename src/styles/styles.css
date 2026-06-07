@@ -1275,7 +1275,7 @@ select:-webkit-autofill:focus {
 }
 .sticky-sponsor-bar {
     display: flex; align-items: center; justify-content: space-between;
-    padding: 0.6rem 1.25rem;
+    padding: 0.35rem 1.25rem;
     background: linear-gradient(90deg, rgba(88, 28, 135, 0.95) 0%, rgba(76, 29, 149, 0.95) 100%);
     border-bottom: 1px solid rgba(167, 139, 250, 0.2);
     text-decoration: none;
@@ -1284,11 +1284,11 @@ select:-webkit-autofill:focus {
 .sponsor-text-col {
     display: flex; flex-direction: column; line-height: 1.2; text-align: left;
 }
-.sponsor-main { font-size: 0.85rem; font-weight: 600; color: rgba(255,255,255,0.9); }
+.sponsor-main { font-size: 0.75rem; font-weight: 600; color: rgba(255,255,255,0.9); }
 .sponsor-btn {
     background: linear-gradient(135deg, #7b48fa, #6366f1);
-    color: white; padding: 0.4rem 1rem; border-radius: 9999px;
-    font-weight: 800; font-size: 0.85rem;
+    color: white; padding: 0.25rem 0.8rem; border-radius: 9999px;
+    font-weight: 800; font-size: 0.75rem;
     box-shadow: 0 2px 10px rgba(123, 72, 250, 0.3);
 }
 .sticky-sponsor-bar:active { background: rgba(255,255,255,0.05); }
