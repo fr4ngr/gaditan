@@ -1304,7 +1304,7 @@ select:-webkit-autofill:focus {
 .sticky-rt-icon {
     background: linear-gradient(135deg, #ffffff 38%, #e57373 38%, #e57373 62%, #ffffff 62%); color: #111827; width: 32px; height: 32px;
     border-radius: 50%; display: flex; align-items: center; justify-content: center;
-    font-weight: 900; font-size: 1.15rem; text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff, 0 0 6px #fff;
+    font-weight: 900; font-size: 1.15rem;
 }
 .sticky-rt-text {
     color: #fff; font-weight: 700; font-size: 1.15rem; letter-spacing: -0.02em; display: flex; align-items: center; gap: 0.3rem;
