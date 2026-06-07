@@ -125,7 +125,6 @@ const mapManager = (() => {
                     }
                     const originalScrollBehavior = document.documentElement.style.scrollBehavior;
                     document.documentElement.style.scrollBehavior = 'auto';
-                    
                     const mapControls = document.querySelector('.map-controls');
                     if (mapControls) {
                         const headerHeight = document.querySelector('.header')?.offsetHeight || 0;
@@ -134,14 +133,30 @@ const mapManager = (() => {
                     } else {
                         document.getElementById('map').scrollIntoView({ behavior: 'auto', block: 'start' });
                     }
-                    
                     requestAnimationFrame(() => {
                         document.documentElement.style.scrollBehavior = originalScrollBehavior;
                     });
+                } else if (currentMode === 'elegir') {
+                    // Seleccionar parada directamente desde el mapa en modo elegir
+                    const select = document.querySelector('#elegir-select-container select');
+                    if (select) {
+                        select.value = p.id;
+                        select.dispatchEvent(new Event('change'));
+                    }
+                    // Flash visual en el pin para confirmar selección
+                    const selectedIcon = L.divIcon({
+                        className: 'custom-div-icon',
+                        html: `<div style="background-color: #facc15; width: 28px; height: 28px; border-radius: 50%; border: 3px solid #111827; box-shadow: 0 0 12px rgba(250,204,21,0.7); display: flex; justify-content: center; align-items: center;"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#111827" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path><circle cx="12" cy="10" r="3"></circle></svg></div>`,
+                        iconSize: [28, 28],
+                        iconAnchor: [14, 28]
+                    });
+                    marker.setIcon(selectedIcon);
+                    setTimeout(() => marker.setIcon(customIcon), 1500);
                 }
             });
         });
     };
+
 
     const getListItemHtml = (p) => {
         let distHtml = '';
