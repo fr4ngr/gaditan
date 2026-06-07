@@ -58,6 +58,39 @@ const mapManager = (() => {
 
         markersLayer = L.layerGroup().addTo(map);
 
+        // Control de localización tipo mirilla
+        const LocateControl = L.Control.extend({
+            options: { position: 'topright' },
+            onAdd: function() {
+                const btn = L.DomUtil.create('button', 'map-locate-btn');
+                btn.title = 'Localizar parada más cercana';
+                btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="8"/><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/>
+                    <line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/>
+                    <circle cx="12" cy="12" r="2" fill="currentColor"/>
+                </svg>`;
+                btn.style.cssText = `
+                    background: rgba(15, 23, 42, 0.85);
+                    border: 1px solid rgba(6, 182, 212, 0.4);
+                    border-radius: 50%;
+                    width: 40px; height: 40px;
+                    display: flex; align-items: center; justify-content: center;
+                    cursor: pointer;
+                    color: #06b6d4;
+                    backdrop-filter: blur(10px);
+                    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+                    transition: all 0.2s;
+                    padding: 0;
+                `;
+                btn.onmouseover = () => { btn.style.background = 'rgba(6, 182, 212, 0.2)'; btn.style.borderColor = '#06b6d4'; };
+                btn.onmouseout  = () => { btn.style.background = 'rgba(15, 23, 42, 0.85)'; btn.style.borderColor = 'rgba(6, 182, 212, 0.4)'; };
+                L.DomEvent.on(btn, 'click', L.DomEvent.stopPropagation);
+                L.DomEvent.on(btn, 'click', () => setMode('cercana'));
+                return btn;
+            }
+        });
+        new LocateControl().addTo(map);
+
         document.getElementById('btn-todas').addEventListener('click', () => setMode('todas'));
         document.getElementById('btn-cercana').addEventListener('click', () => setMode('cercana'));
         document.getElementById('btn-elegir').addEventListener('click', () => setMode('elegir'));
@@ -72,6 +105,7 @@ const mapManager = (() => {
         }, { rootMargin: "200px" });
         observer.observe(mapElement);
     };
+
 
     const renderMarkers = (paradas) => {
         markersLayer.clearLayers();
