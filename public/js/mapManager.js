@@ -161,35 +161,40 @@ const mapManager = (() => {
     const getListItemHtml = (p) => {
         let distHtml = '';
         if (p.distance !== undefined) {
-            const timeMins = Math.max(1, Math.ceil(p.distance / 0.08)); // estimación rápida para lista
-            distHtml = `<div style="font-size: 0.75rem; color: var(--brand-cyan); font-weight: 600; display: flex; align-items: center; gap: 0.4rem;"><i data-lucide="footprints" style="width:14px; height:14px;"></i> ${formatDistance(p.distance)} &bull; ${timeMins} min a pie</div>`;
+            const timeMins = Math.max(1, Math.ceil(p.distance / 0.08));
+            distHtml = `<div style="font-size: 0.7rem; color: var(--brand-cyan); font-weight: 600; display: flex; align-items: center; gap: 0.3rem; margin-top: 0.15rem;"><i data-lucide="footprints" style="width:12px; height:12px;"></i> ${formatDistance(p.distance)} &bull; ${timeMins} min a pie</div>`;
         }
         return `
-            <div style="display: flex; flex-direction: column; gap: 0.2rem;">
-                <strong style="color: #fff; font-size: 0.95rem;">${p.name}</strong>
-                <span style="color: var(--text-muted); font-size: 0.8rem;">${p.address}</span>
+            <div style="display: flex; align-items: center; gap: 0.6rem; min-width: 0; flex: 1;">
+                <div style="background: rgba(6,182,212,0.15); border: 1px solid rgba(6,182,212,0.3); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                    <i data-lucide="map-pin" style="width:14px; height:14px; color: var(--brand-cyan);"></i>
+                </div>
+                <div style="display: flex; flex-direction: column; min-width: 0;">
+                    <strong style="color: #fff; font-size: 0.88rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.name}</strong>
+                    <span style="color: var(--text-muted); font-size: 0.72rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.address}</span>
+                    ${distHtml}
+                </div>
             </div>
-            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.4rem;">
-                ${distHtml}
-                <button class="md3-btn" style="padding: 0.4rem 0.8rem; font-size: 0.8rem; background: rgba(123, 72, 250, 0.15); color: #e9d5ff; border: 1px solid rgba(123, 72, 250, 0.4); border-radius: 999px;">
-                    Ver mapa
-                </button>
-            </div>
+            <div style="background: rgba(6,182,212,0.12); border: 1px solid rgba(6,182,212,0.35); width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 1.1rem; font-weight: 700; color: var(--brand-cyan); margin-left: 0.5rem;">+</div>
         `;
     };
 
     const buildListItem = (p) => {
         const item = document.createElement('div');
-        item.className = 'glass';
         item.style.cssText = `
-            display: flex; align-items: center; justify-content: space-between; 
-            padding: 1rem; border-radius: 30px; cursor: pointer; 
-            transition: background 0.3s ease; border: 1px solid var(--glass-border); margin-bottom: 0.8rem;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0.65rem 0.9rem; border-radius: 9999px; cursor: pointer;
+            background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+            margin-bottom: 0.55rem; transition: background 0.25s ease, border-color 0.25s ease, transform 0.2s ease;
+            overflow: hidden;
         `;
-        item.onmouseover = () => item.style.background = 'rgba(255,255,255,0.08)';
-        item.onmouseout = () => item.style.background = 'rgba(255,255,255,0.03)';
+        item.onmouseover = () => { item.style.background = 'rgba(6,182,212,0.08)'; item.style.borderColor = 'rgba(6,182,212,0.3)'; };
+        item.onmouseout  = () => { item.style.background = 'rgba(255,255,255,0.04)'; item.style.borderColor = 'rgba(255,255,255,0.08)'; };
+        item.ontouchstart = () => { item.style.transform = 'scale(0.98)'; };
+        item.ontouchend   = () => { item.style.transform = 'scale(1)'; };
         item.innerHTML = getListItemHtml(p);
-        
+
+
         item.addEventListener('click', () => {
             const originalScrollBehavior = document.documentElement.style.scrollBehavior;
             document.documentElement.style.scrollBehavior = 'auto';
