@@ -1297,3 +1297,19 @@ select:-webkit-autofill:focus {
     .mobile-sticky-bar { display: block; }
     body { padding-bottom: 50px; }
 }
+
+/* Efecto Hover Glow para Tarjeta de Tarifas Urbanas */
+.tarifas-card-hover {
+    transition: all 0.3s ease;
+    cursor: default;
+}
+@media (hover: hover) {
+    .tarifas-card-hover:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 35px rgba(6, 182, 212, 0.2) !important;
+        border-color: rgba(6, 182, 212, 0.5) !important;
+    }
+    .tarifas-card-hover:active {
+        transform: translateY(1px);
+    }
+}
