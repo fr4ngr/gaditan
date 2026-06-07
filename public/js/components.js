@@ -1,4 +1,4 @@
-﻿// DESTINOS DATABASE Y COMPONENTES
+// DESTINOS DATABASE Y COMPONENTES
 const dbDestinos = {
     aeropuertos: [
         { id: "jerez", name: "Aeropuerto de Jerez", price: "55€", icon: "plane", time: "35 min" },
@@ -81,13 +81,6 @@ function renderDestino(dest) {
                             WhatsApp
                         </a>
                     </div>
-                </div>
-                
-                <!-- Separador de Alternativas -->
-                <div style="display: flex; align-items: center; gap: 1rem; margin: -0.35rem 0;">
-                    <div style="flex: 1; height: 1px; background: rgba(255,255,255,0.1);"></div>
-                    <span style="padding: 0 0.8rem; font-size: 0.65rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;">Alternativas Patrocinadas</span>
-                    <div style="flex: 1; height: 1px; background: rgba(255,255,255,0.1);"></div>
                 </div>
                 
                 <!-- Tarjeta Cadiz.cab -->

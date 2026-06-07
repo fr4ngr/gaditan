@@ -1,4 +1,4 @@
-﻿// Gestor del Mapa Interactivo (Leaflet + OSRM)
+// Gestor del Mapa Interactivo (Leaflet + OSRM)
 const mapManager = (() => {
     let map = null;
     let markersLayer = null;
@@ -275,12 +275,7 @@ const mapManager = (() => {
                 </div>
             </div>
             
-            <!-- Separador de Alternativas -->
-            <div style="display: flex; align-items: center; margin: 0.65rem 0; opacity: 0.8;">
-                <div style="flex: 1; height: 1px; background: rgba(255,255,255,0.1);"></div>
-                <span style="padding: 0 0.8rem; font-size: 0.65rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;">Alternativas Patrocinadas</span>
-                <div style="flex: 1; height: 1px; background: rgba(255,255,255,0.1);"></div>
-            </div>
+
             
             <!-- Opción VTC Alternativa -->
             <div class="cadizcab-card-hover" style="background: linear-gradient(145deg, rgba(123, 72, 250, 0.15), rgba(99, 102, 241, 0.05)); border: 1px solid rgba(123, 72, 250, 0.4); box-shadow: 0 8px 32px rgba(123, 72, 250, 0.15); border-radius: 30px; padding: 1.25rem; display: flex; flex-direction: column; gap: 1rem; position: relative; overflow: hidden; margin-bottom: 0.85rem;">
