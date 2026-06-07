@@ -1303,11 +1303,19 @@ select:-webkit-autofill:focus {
     transition: all 0.3s ease;
     cursor: default;
 }
+/* Móvil: glow permanente y sutil (no hay hover en táctil) */
+@media (max-width: 768px) {
+    .tarifas-card-hover {
+        box-shadow: 0 8px 25px rgba(6, 182, 212, 0.15) !important;
+        border-color: rgba(6, 182, 212, 0.35) !important;
+    }
+}
+/* Escritorio: glow al hacer hover */
 @media (hover: hover) {
     .tarifas-card-hover:hover {
         transform: translateY(-3px);
-        box-shadow: 0 12px 35px rgba(6, 182, 212, 0.2) !important;
-        border-color: rgba(6, 182, 212, 0.5) !important;
+        box-shadow: 0 12px 35px rgba(6, 182, 212, 0.25) !important;
+        border-color: rgba(6, 182, 212, 0.55) !important;
     }
     .tarifas-card-hover:active {
         transform: translateY(1px);
