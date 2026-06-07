@@ -83,6 +83,13 @@ function renderDestino(dest) {
                     </div>
                 </div>
                 
+                <!-- Separador ¿PRECIO CERRADO? -->
+                <div style="display: flex; align-items: center; gap: 0.75rem; margin: 0.25rem 0;">
+                    <div style="flex: 1; height: 1px; background: linear-gradient(90deg, transparent, rgba(123,72,250,0.4));"></div>
+                    <span style="font-size: 0.65rem; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: #a78bfa; white-space: nowrap;">¿Precio cerrado?</span>
+                    <div style="flex: 1; height: 1px; background: linear-gradient(90deg, rgba(123,72,250,0.4), transparent);"></div>
+                </div>
+
                 <!-- Tarjeta Cadiz.cab -->
                 <div class="cadizcab-card-hover" style="background: linear-gradient(145deg, rgba(123, 72, 250, 0.15), rgba(99, 102, 241, 0.05)); border: 1px solid rgba(123, 72, 250, 0.4); box-shadow: 0 8px 32px rgba(123, 72, 250, 0.15); border-radius: 30px; padding: 1.25rem; display: flex; flex-direction: column; gap: 1rem; position: relative; overflow: hidden;">
                     <!-- Efecto brillo superior -->
