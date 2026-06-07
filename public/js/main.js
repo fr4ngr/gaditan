@@ -186,48 +186,60 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // ── Animación de entrada + Glow al tap en tarjetas de tarifas ──
+    // ── Animación de entrada + Glow permanente en tarjetas de tarifas ──
     const tarifasCards = document.querySelectorAll('.tarifas-card-hover');
 
-    // 1. Animación de entrada: solo para la tabla urbana (visible desde el inicio)
+    const activateGlow = (card) => {
+        card.classList.add('tarifas-glow-on');
+    };
+
+    const triggerPopIn = (card) => {
+        card.classList.remove('tarifas-pop-in');
+        void card.offsetWidth; // reflow para reiniciar animación
+        card.classList.add('tarifas-pop-in');
+        // Al terminar la animación, activa el glow permanente
+        card.addEventListener('animationend', () => activateGlow(card), { once: true });
+    };
+
+    // 1. Tabla urbana: pop-in al entrar en viewport
     const urbanCard = document.querySelector('.pricing-section .tarifas-card-hover');
     if (urbanCard) {
         const observer = new IntersectionObserver((entries, obs) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    urbanCard.classList.add('tarifas-pop-in');
+                    triggerPopIn(urbanCard);
                     obs.unobserve(entry.target);
                 }
             });
-        }, { threshold: 0.2 });
+        }, { threshold: 0.15 });
         observer.observe(urbanCard);
     }
 
-    // 2. Animación de entrada para la tabla interurbana al abrir el acordeón
+    // 2. Tabla interurbana: pop-in al abrir el acordeón
     fareToggles.forEach(toggle => {
         toggle.addEventListener('click', () => {
             const group = toggle.closest('.fare-group');
             if (group && group.classList.contains('active')) {
                 const interCard = group.querySelector('.tarifas-card-hover');
-                if (interCard) {
-                    interCard.classList.remove('tarifas-pop-in');
-                    // Forzar reflow para reiniciar la animación
-                    void interCard.offsetWidth;
-                    interCard.classList.add('tarifas-pop-in');
+                if (interCard && !interCard.classList.contains('tarifas-glow-on')) {
+                    setTimeout(() => triggerPopIn(interCard), 50);
                 }
             }
         });
     });
 
-    // 3. Glow al tap/clic en todas las tarjetas de tarifas
+    // 3. Tap = refuerzo visual (flash más intenso) + activa glow si aún no está
     tarifasCards.forEach(card => {
-        const triggerGlow = () => {
+        card.addEventListener('touchstart', () => {
+            activateGlow(card);
             card.classList.add('tarifas-tap-active');
-            setTimeout(() => card.classList.remove('tarifas-tap-active'), 600);
-        };
-        card.addEventListener('touchstart', triggerGlow, { passive: true });
-        card.addEventListener('click', triggerGlow);
+            setTimeout(() => card.classList.remove('tarifas-tap-active'), 500);
+        }, { passive: true });
+        card.addEventListener('click', () => {
+            activateGlow(card);
+        });
     });
+
 
     // La inicialización del mapa de paradas ahora se gestiona en mapManager.js
 
