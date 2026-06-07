@@ -180,13 +180,32 @@ document.addEventListener('DOMContentLoaded', function() {
           });
       });
       mutationObserver.observe(document.body, { childList: true, subtree: true });
+
+      // Rotación de texto en sticky bar
+      const phrases = [
+          "VTC: Viaja con precio cerrado",
+          "¿Sin taxis? Pide un VTC ahora",
+          "Servicio premium privado"
+      ];
+      let currentPhrase = 0;
+      const textEl = document.getElementById('sponsor-rotating-text');
+      if(textEl) {
+          setInterval(() => {
+              textEl.style.opacity = '0';
+              setTimeout(() => {
+                  currentPhrase = (currentPhrase + 1) % phrases.length;
+                  textEl.textContent = phrases[currentPhrase];
+                  textEl.style.opacity = '1';
+              }, 400);
+          }, 4000);
+      }
   });
 </script>
     <!-- Mobile Sticky Bottom Bar -->
     <div class="mobile-sticky-bar" id="mobileStickyBar">
         <a href="https://cadiz.cab" target="_blank" class="sticky-sponsor-bar">
             <div class="sponsor-text-col">
-                <span class="sponsor-main" data-translate="sponsor-sticky-sub">VTC: Viaja con precio cerrado</span>
+                <span class="sponsor-main" id="sponsor-rotating-text" style="transition: opacity 0.4s ease-in-out;">VTC: Viaja con precio cerrado</span>
             </div>
             <div class="sponsor-btn" data-translate="sponsor-sticky-btn">cadiz.cab</div>
         </a>
