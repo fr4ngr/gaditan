@@ -383,7 +383,7 @@ const mapManager = (() => {
             <a href="#" style="display: flex; justify-content: space-between; align-items: center; background: rgba(234, 179, 8, 0.08); border: 1px solid rgba(234, 179, 8, 0.3); border-radius: 9999px; padding: 0.6rem 1rem; text-decoration: none; margin-bottom: 0.5rem;">
                 <div style="display: flex; align-items: center; gap: 0.6rem;">
                     <div style="background: #eab308; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center;"><i data-lucide="bus" style="width:14px; height:14px; color: #111827;"></i></div>
-                    <span style="font-size: 0.85rem; font-weight: 600; color: white;">Autobús Interurbano</span>
+                    <span style="font-size: 0.85rem; font-weight: 600; color: white;">Autobús Urbano</span>
                 </div>
                 <div style="display: flex; align-items: center; gap: 0.5rem;">
                     <span style="background: #10b981; color: #022c22; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; padding: 0.25rem 0.5rem; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">ECO</span>
