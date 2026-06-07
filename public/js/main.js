@@ -247,6 +247,26 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    // --- Mobile Sticky Bottom Bar Logic ---
+    const stickyBar = document.getElementById('mobileStickyBar');
+    const heroSection = document.querySelector('.hero');
+    if (stickyBar && heroSection) {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                // If Hero is NOT visible, show the sticky bar
+                if (!entry.isIntersecting) {
+                    stickyBar.classList.add('visible');
+                } else {
+                    stickyBar.classList.remove('visible');
+                }
+            });
+        }, {
+            // Trigger when only 10% of the hero is visible
+            threshold: 0.1
+        });
+        observer.observe(heroSection);
+    }
 });
 
 window.addEventListener('scroll', () => {
