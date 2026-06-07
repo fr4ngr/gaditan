@@ -89,24 +89,33 @@ html { overflow-x: hidden; max-width: 100%; scroll-behavior: smooth; font-size: 
     padding-top: 4rem;
 }
 
-/* El fondo de la cabecera (PC) */
-.hero-bg {
+/* Ambient Glow (Estilo Premium) */
+.hero-glow {
     position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background-image: url('fondo-pc.jpg');
-    background-size: cover;
-    background-position: center;
-    z-index: -2;
-    transform: scale(1.05); /* Para un futuro efecto parallax */
+    top: -30%; left: 50%; width: 100vw; height: 800px; max-width: 1200px;
+    background: radial-gradient(circle at center 30%, rgba(6, 182, 212, 0.25) 0%, rgba(59, 130, 246, 0.1) 40%, transparent 70%);
+    transform: translateX(-50%);
+    z-index: -1;
+    pointer-events: none;
+    filter: blur(50px);
 }
 
-/* Degradado para fundir el fondo con el color base abajo */
-.hero-overlay {
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: linear-gradient(to bottom, rgba(15,23,42,0.3) 0%, rgba(15,23,42,0.8) 70%, var(--bg-base) 100%);
-    z-index: -1;
+.hero-badge {
+    display: inline-flex; align-items: center; gap: 0.6rem;
+    padding: 0.5rem 1rem; border-radius: 30px;
+    background: rgba(6, 182, 212, 0.1);
+    border: 1px solid rgba(6, 182, 212, 0.2);
+    color: var(--brand-cyan-light);
+    font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 0 20px rgba(6, 182, 212, 0.1);
 }
+.pulse-dot {
+    width: 8px; height: 8px; border-radius: 50%; background: var(--brand-cyan-light);
+    box-shadow: 0 0 0 0 rgba(34, 211, 238, 0.7);
+    animation: pulseGlow 2s infinite;
+}
+@keyframes pulseGlow { 0% { box-shadow: 0 0 0 0 rgba(34, 211, 238, 0.7); } 70% { box-shadow: 0 0 0 8px rgba(34, 211, 238, 0); } 100% { box-shadow: 0 0 0 0 rgba(34, 211, 238, 0); } }
 
 .hero-content { position: relative; z-index: 1; max-width: 800px;  margin-top: -5vh; }
 
@@ -569,10 +578,7 @@ input[type="date"], input[type="time"] { -webkit-appearance: none; -moz-appearan
     .hero-content { margin-top: 0; }
     .trust-badges { gap: 0.3rem; }
     .glass-badge { padding: 0.3rem 0.5rem; font-size: 0.7rem; }
-    .hero-bg {
-        background-image: url('fondo-movil.jpg');
-        background-position: center;
-    }
+    .hero-glow { width: 150vw; height: 600px; top: -10%; }
     section { padding: 3.5rem 0; }
     .price-card, .card { padding: 1.5rem; }
     .nav-links { display: none; }
