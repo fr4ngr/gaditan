@@ -579,12 +579,6 @@ const mapManager = (() => {
                     const lat = position.coords.latitude;
                     const lon = position.coords.longitude;
                     
-                    if (lat < 36.47 || lat > 36.56 || lon < -6.33 || lon > -6.23) {
-                        alert("Parece que no te encuentras en Cádiz capital. Mostrando todas las paradas.");
-                        setMode('todas');
-                        return;
-                    }
-
                     userLocation = { lat, lon };
                     
                     if (userMarker) map.removeLayer(userMarker);
