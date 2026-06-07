@@ -1302,12 +1302,12 @@ select:-webkit-autofill:focus {
     display: flex; align-items: center; gap: 0.6rem;
 }
 .sticky-rt-icon {
-    background: #eab308; color: #111827; width: 32px; height: 32px;
+    background: linear-gradient(135deg, #ffffff 42%, #9b111e 42%, #9b111e 58%, #ffffff 58%); color: #111827; width: 32px; height: 32px;
     border-radius: 50%; display: flex; align-items: center; justify-content: center;
-    font-weight: 800; font-size: 0.85rem;
+    font-weight: 900; font-size: 1.1rem; text-shadow: 0px 0px 3px rgba(255,255,255,0.8);
 }
 .sticky-rt-text {
-    color: #fff; font-weight: 700; font-size: 1.15rem; letter-spacing: -0.02em;
+    color: #fff; font-weight: 700; font-size: 1.15rem; letter-spacing: -0.02em; display: flex; align-items: center; gap: 0.3rem;
 }
 .sticky-actions {
     display: flex; gap: 0.8rem;
@@ -1319,8 +1319,8 @@ select:-webkit-autofill:focus {
     box-shadow: 0 4px 15px rgba(0,0,0,0.2);
 }
 .sticky-circle-btn:active { transform: scale(0.92); }
-.sticky-circle-call { background: var(--brand-cyan); color: #111827 !important; }
-.sticky-circle-wa { background: #25D366; color: #fff !important; }
+.sticky-circle-call { background: var(--brand-cyan); color: #fff !important; }
+.sticky-circle-wa { background: #25D366; color: #fff !important; display: none; }
 
 @media (max-width: 768px) {
     .mobile-sticky-bar { display: block; }
