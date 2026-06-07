@@ -251,7 +251,7 @@ const mapManager = (() => {
         // 2. Tarjeta Taxis Oficiales + Alternativas
         const content = `
             <!-- Opción Taxis Oficiales -->
-            <div style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 30px; padding: 0.75rem 1rem; display: flex; flex-direction: column; gap: 0.25rem;">
+            <div style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 30px; padding: 0.75rem 1rem; display: flex; flex-direction: column; gap: 0.25rem; margin-bottom: 0.85rem;">
                 <div style="display: flex; justify-content: space-between; align-items: flex-start; width: 100%;">
                     <div style="width: 100%;">
                         <div style="font-size: 0.65rem; color: #06b6d4; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.25rem; font-weight: 600; display: flex; align-items: center; gap: 0.3rem;">PARADA ATENDIDA POR</div>
