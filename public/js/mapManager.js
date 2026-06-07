@@ -609,33 +609,43 @@ const mapManager = (() => {
                     fetch(`https://router.project-osrm.org/route/v1/foot/${lon},${lat};${masCercana.lon},${masCercana.lat}?overview=false`)
                         .then(r => r.json())
                         .then(data => {
+                            const pill = document.getElementById('walk-info-pill');
+                            if (!pill) return;
+
                             if (data.code === 'Ok' && data.routes && data.routes[0]) {
                                 const walkDist = data.routes[0].legs[0].distance; // metros
                                 const walkSecs = data.routes[0].legs[0].duration; // segundos
-                                const walkMins = Math.max(1, Math.round(walkSecs / 60));
-                                const distStr = walkDist < 1000 ? Math.round(walkDist) + ' m' : (walkDist / 1000).toFixed(1) + ' km';
-                                const pill = document.getElementById('walk-info-pill');
-                                if (pill) {
+                                const speedKmh = (walkDist / 1000) / (walkSecs / 3600);
+
+                                // Validación: velocidad a pie imposible (>8 km/h) = resultado OSRM inválido
+                                // O distancia > 5km = demasiado lejos para ir a pie
+                                if (speedKmh > 8 || walkDist > 5000) {
+                                    const distStr = walkDist < 1000 ? Math.round(walkDist) + ' m' : (walkDist / 1000).toFixed(1) + ' km';
+                                    pill.innerHTML = `
+                                        <div style="font-size: 0.8rem; color: #f59e0b; font-weight: 600; display: flex; align-items: center; gap: 0.35rem;"><i data-lucide="map-pin" style="width:15px; height:15px;"></i> Parada más cercana: ${distStr}</div>
+                                    `;
+                                } else {
+                                    const walkMins = Math.max(1, Math.round(walkSecs / 60));
+                                    const distStr = walkDist < 1000 ? Math.round(walkDist) + ' m' : (walkDist / 1000).toFixed(1) + ' km';
                                     pill.innerHTML = `
                                         <div style="font-size: 0.8rem; color: var(--brand-cyan); font-weight: 600; display: flex; align-items: center; gap: 0.35rem;"><i data-lucide="footprints" style="width:15px; height:15px;"></i> ${distStr}</div>
                                         <div style="font-size: 0.8rem; color: var(--brand-cyan); font-weight: 600; display: flex; align-items: center; gap: 0.35rem;"><i data-lucide="clock" style="width:15px; height:15px;"></i> ${walkMins} min a pie</div>
                                     `;
-                                    if (typeof lucide !== 'undefined') lucide.createIcons();
                                 }
+                                if (typeof lucide !== 'undefined') lucide.createIcons();
                             }
                         })
                         .catch(() => {
-                            // Si falla OSRM, mostramos la estimación con aviso
-                            const timeMins = Math.max(1, Math.ceil(masCercana.distance / 0.08));
+                            // Si falla OSRM, mostramos la distancia en línea recta sin tiempo
                             const pill = document.getElementById('walk-info-pill');
                             if (pill) {
                                 pill.innerHTML = `
-                                    <div style="font-size: 0.8rem; color: var(--brand-cyan); font-weight: 600; display: flex; align-items: center; gap: 0.35rem;"><i data-lucide="footprints" style="width:15px; height:15px;"></i> ${formatDistance(masCercana.distance)}</div>
-                                    <div style="font-size: 0.8rem; color: var(--brand-cyan); font-weight: 600; display: flex; align-items: center; gap: 0.35rem;"><i data-lucide="clock" style="width:15px; height:15px;"></i> ~${timeMins} min a pie</div>
+                                    <div style="font-size: 0.8rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.35rem;"><i data-lucide="map-pin" style="width:15px; height:15px;"></i> Parada más cercana: ${formatDistance(masCercana.distance)}</div>
                                 `;
                                 if (typeof lucide !== 'undefined') lucide.createIcons();
                             }
                         });
+
 
                 }, (error) => {
                     console.error("Error geolocating:", error);
