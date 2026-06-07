@@ -48,7 +48,7 @@ function renderDestino(dest) {
                             <div style="font-size: 0.65rem; color: #06b6d4; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.4rem; font-weight: 600; display: flex; align-items: center; gap: 0.3rem;">Servicio prestado por</div>
                             <div style="font-size: 1.2rem; font-weight: 700; color: white; display: flex; align-items: center; gap: 0.4rem; width: 100%;">
                                 <div style="background: #eab308; color: #111827; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.65rem;">TO</div>
-                                Taxis Oficiales
+                                Taxi Oficial
                             </div>
                         </div>
                         
