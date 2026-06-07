@@ -371,7 +371,14 @@ const mapManager = (() => {
                     <i data-lucide="calendar-check" style="width: 20px; height: 20px;"></i> Reservar
                 </a>
             </div>
-            
+
+            <!-- Separador TRANSPORTE PÚBLICO -->
+            <div style="display: flex; align-items: center; gap: 0.75rem; margin: 0.25rem 0;">
+                <div style="flex: 1; height: 1px; background: linear-gradient(90deg, transparent, rgba(234,179,8,0.4));"></div>
+                <span style="font-size: 0.65rem; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: #fbbf24; white-space: nowrap;">Transporte público</span>
+                <div style="flex: 1; height: 1px; background: linear-gradient(90deg, rgba(234,179,8,0.4), transparent);"></div>
+            </div>
+
             <!-- Opción Autobús -->
             <a href="#" style="display: flex; justify-content: space-between; align-items: center; background: rgba(234, 179, 8, 0.08); border: 1px solid rgba(234, 179, 8, 0.3); border-radius: 9999px; padding: 0.6rem 1rem; text-decoration: none; margin-bottom: 0.5rem;">
                 <div style="display: flex; align-items: center; gap: 0.6rem;">
