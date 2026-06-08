@@ -227,19 +227,35 @@ const mapManager = (() => {
     const buildPlainListItem = (p) => {
         const item = document.createElement('div');
         item.style.cssText = `
-            padding: 0.8rem 0; border-bottom: 1px solid rgba(255,255,255,0.05);
-            cursor: pointer; transition: padding-left 0.2s ease;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0.65rem 0.9rem; border-radius: 9999px; cursor: pointer;
+            background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+            margin-bottom: 0.55rem; transition: background 0.25s ease, border-color 0.25s ease, transform 0.2s ease;
+            overflow: hidden;
         `;
-        item.onmouseover = () => item.style.paddingLeft = '5px';
-        item.onmouseout = () => item.style.paddingLeft = '0px';
+        item.onmouseover = () => { item.style.background = 'rgba(6,182,212,0.08)'; item.style.borderColor = 'rgba(6,182,212,0.3)'; };
+        item.onmouseout  = () => { item.style.background = 'rgba(255,255,255,0.04)'; item.style.borderColor = 'rgba(255,255,255,0.08)'; };
+        item.ontouchstart = () => { item.style.transform = 'scale(0.98)'; };
+        item.ontouchend   = () => { item.style.transform = 'scale(1)'; };
+        
+        let distHtml = '';
+        if (p.distance !== undefined) {
+            const timeMins = Math.max(1, Math.ceil(p.distance / 0.08));
+            distHtml = `<div style="font-size: 0.7rem; color: var(--brand-cyan); font-weight: 600; display: flex; align-items: center; gap: 0.3rem; margin-top: 0.15rem;"><i data-lucide="footprints" style="width:12px; height:12px;"></i> ${formatDistance(p.distance)} &bull; ${timeMins} min a pie</div>`;
+        }
+
         item.innerHTML = `
-            <div style="display: flex; align-items: center; gap: 0.5rem;">
-                <i data-lucide="map-pin" style="color: var(--brand-cyan); width: 16px; height: 16px; flex-shrink: 0;"></i>
-                <div>
-                    <div style="color: #fff; font-size: 0.95rem; font-weight: 500;">${p.name}</div>
-                    <div style="color: var(--text-muted); font-size: 0.8rem;">${p.address}</div>
+            <div style="display: flex; align-items: center; gap: 0.6rem; min-width: 0; flex: 1;">
+                <div style="background: rgba(6,182,212,0.15); border: 1px solid rgba(6,182,212,0.3); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                    <i data-lucide="map-pin" style="width:14px; height:14px; color: var(--brand-cyan);"></i>
+                </div>
+                <div style="display: flex; flex-direction: column; min-width: 0;">
+                    <strong style="color: #fff; font-size: 0.88rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.name}</strong>
+                    <span style="color: var(--text-muted); font-size: 0.72rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.address}</span>
+                    ${distHtml}
                 </div>
             </div>
+            <div style="background: rgba(6,182,212,0.12); border: 1px solid rgba(6,182,212,0.35); width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 1.1rem; font-weight: 700; color: var(--brand-cyan); margin-left: 0.5rem;">+</div>
         `;
         item.addEventListener('click', () => {
             // Desactivamos temporalmente el scroll suave global para evitar el salto raro al encogerse la web
