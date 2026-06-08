@@ -282,7 +282,7 @@ section { padding: 5rem 0; }
 /* Ajustes Responsive para Tablas */
 @media (max-width: 400px) {
     .glass-table th, .glass-table td { padding: 0.5rem 0.5rem; font-size: 0.9rem; }
-    .table-responsive { overflow-x: visible !important; }
+    .table-responsive { overflow-x: visible !important; padding: 1rem !important; }
 }
 
 /* Grid Cards */
