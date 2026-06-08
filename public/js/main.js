@@ -49,16 +49,22 @@ document.addEventListener('DOMContentLoaded', () => {
     initDynamicHeader();
 
     const mainHeader = document.getElementById('main-header');
+    const searchStateArea = document.getElementById('header-state-search');
+    
+    if (searchStateArea) {
+        searchStateArea.addEventListener('click', (e) => {
+            // El área de búsqueda solo intercepta clics cuando está activa (pointer-events: auto)
+            openSearchModal();
+        });
+    }
+
     if (mainHeader) {
         mainHeader.addEventListener('click', (e) => {
-            // No hacer nada si se clica en botones específicos (hamburguesa, lang, etc)
             if (e.target.closest('.hamburger-btn') || 
                 e.target.closest('.lang-dropdown-wrapper') || 
                 e.target.closest('.btn-header-call')) {
                 return;
             }
-            
-            // Si estamos en modo búsqueda abrimos el modal
             if (mainHeader.classList.contains('is-search-mode')) {
                 openSearchModal();
             }
