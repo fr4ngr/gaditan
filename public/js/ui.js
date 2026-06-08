@@ -1,4 +1,4 @@
-﻿import { translations, state, routeState, routeData, calcState, calcContext } from './config.js';
+import { translations, state, routeState, routeData, calcState, calcContext } from './config.js';
 import { updatePriceUI, updateCalcPriceUI, calculateRoute, getRouteDetails, calculatePrice, isInterurban } from './pricing.js';
 import { geocodeString } from './api.js';
 
@@ -22,6 +22,28 @@ export function updateDynamicAd() {
     
     adTitle.innerHTML = translations[state.currentLanguage][titleKey];
     adDesc.innerHTML = translations[state.currentLanguage][descKey];
+}
+
+export function toggleSupplements() {
+    const container = document.getElementById('supplements-container');
+    const btn = document.getElementById('btn-toggle-supplements');
+    const icon = btn.querySelector('i');
+    
+    if (container.classList.contains('hidden')) {
+        container.classList.remove('hidden');
+        btn.classList.add('active');
+        if (icon) {
+            icon.setAttribute('data-lucide', 'chevron-up');
+            if (window.lucide) window.lucide.createIcons();
+        }
+    } else {
+        container.classList.add('hidden');
+        btn.classList.remove('active');
+        if (icon) {
+            icon.setAttribute('data-lucide', 'chevron-down');
+            if (window.lucide) window.lucide.createIcons();
+        }
+    }
 }
 
 export function setLanguage(lang) {
@@ -422,9 +444,37 @@ export async function confirmReservation(event) {
     event.preventDefault();
     let name = document.getElementById('b-name').value;
     name = name.replace(/\b\w/g, c => c.toUpperCase());
-    const date = document.getElementById('b-date').value;
-    const time = document.getElementById('b-time').value;
     const phone = document.getElementById('b-phone').value;
+    
+    const when = document.getElementById('b-when').value;
+    let date = '';
+    let time = '';
+    let selectedDateTime = new Date();
+
+    if (when === 'later') {
+        date = document.getElementById('b-date').value;
+        time = document.getElementById('b-time').value;
+        if (!date || !time) {
+            alert("Por favor introduce fecha y hora.");
+            return false;
+        }
+        selectedDateTime = new Date(`${date}T${time}`);
+        const minDate = new Date();
+        minDate.setDate(minDate.getDate() + 1); // 48h aprox
+        minDate.setHours(23, 59, 59, 999);
+        
+        if (selectedDateTime <= minDate) {
+            const alertMsg = state.currentLanguage === 'es'
+                ? "Las reservas online solo pueden realizarse con un mínimo de 48h de antelación. Para reservas urgentes, por favor llame por teléfono."
+                : "Online bookings can only be made with a minimum of 48h notice. For urgent bookings, please call us.";
+            alert(alertMsg);
+            return false;
+        }
+    } else {
+        // "Ahora mismo"
+        date = selectedDateTime.toISOString().split('T')[0];
+        time = selectedDateTime.toTimeString().split(' ')[0].substring(0, 5);
+    }
     
     let pickup = document.getElementById('b-pickup').value;
     const pickupNumEl = document.getElementById('b-pickup-num');
@@ -464,26 +514,26 @@ export async function confirmReservation(event) {
     const trainContainer = document.getElementById('b-train-container');
     const trainInput = document.getElementById('b-train');
     let hasRenfe = false;
+    let hasPuerto = false;
+    let hasCortadura = false;
+    
+    const pickupLower = pickup.toLowerCase();
+    if (pickupLower.includes('renfe') || pickupLower.includes('estacion') || pickupLower.includes('estación') || pickupLower.includes('sevilla') || pickupLower.includes('tren')) {
+        hasRenfe = true;
+    }
+    if (pickupLower.includes('puerto') || pickupLower.includes('maritimo') || pickupLower.includes('marítimo') || pickupLower.includes('crucero') || pickupLower.includes('terminal')) {
+        hasPuerto = true;
+    }
+    if (pickupLower.includes('cortadura')) {
+        hasCortadura = true;
+    }
+
     let trainNumberText = "";
     if (trainContainer && !trainContainer.classList.contains('hidden') && trainInput && trainInput.value.trim() !== '') {
-        hasRenfe = true;
-        trainNumberText = `\n🚆 Nº de Tren: ${trainInput.value.trim()}`;
+        trainNumberText = `\n🚆 Nº de Tren/Vuelo: ${trainInput.value.trim()}`;
     }
     
-    if (date) {
-        const selectedDate = new Date(date);
-        const minDate = new Date();
-        minDate.setDate(minDate.getDate() + 1); // 48h aprox
-        minDate.setHours(23, 59, 59, 999);
-        
-        if (selectedDate <= minDate) {
-            const alertMsg = state.currentLanguage === 'es'
-                ? "Las reservas online solo pueden realizarse con un mínimo de 48h de antelación. Para reservas urgentes, por favor llame por teléfono."
-                : "Online bookings can only be made with a minimum of 48h notice. For urgent bookings, please call us.";
-            alert(alertMsg);
-            return false;
-        }
-    }
+    const isAdapted = document.getElementById('check-disability') ? document.getElementById('check-disability').checked : false;
     
     // Validar direcciones
     if(!pickup || !dropoff) {
@@ -508,7 +558,6 @@ export async function confirmReservation(event) {
         }
 
         // Determinar hora y si es festivo
-        const selectedDateTime = new Date(`${date}T${time}`);
         const hour = selectedDateTime.getHours();
         const isNight = (hour >= 21 || hour < 7);
         const dayOfWeek = selectedDateTime.getDay();
@@ -516,7 +565,7 @@ export async function confirmReservation(event) {
         
         const isInter = isInterurban(exactDest);
         const routeDetails = await getRouteDetails(exactOrigin, exactDest);
-        const priceResult = calculatePrice(routeDetails, isNight, isFestivo, hasRenfe, parseInt(luggage));
+        const priceResult = calculatePrice(routeDetails, isNight, isFestivo, hasRenfe, hasPuerto, hasCortadura, isAdapted, parseInt(luggage));
         
         // Rellenar UI del funnel
         document.getElementById('summary-name').innerText = name;

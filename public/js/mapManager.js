@@ -272,21 +272,22 @@ const mapManager = (() => {
                 select.dispatchEvent(new Event('change'));
             }
             
-            // Salto de cámara instantáneo a los controles del mapa para mostrar más contenido abajo
-            const mapControls = document.querySelector('.map-controls');
-            if (mapControls) {
-                // Alineamos los botones (Todas/Elegir) a la parte alta de la pantalla
-                const headerHeight = document.querySelector('.header')?.offsetHeight || 0;
-                const offsetPosition = mapControls.getBoundingClientRect().top + window.scrollY - headerHeight - 5;
-                window.scrollTo({ top: offsetPosition, behavior: 'auto' });
-            } else {
-                document.getElementById('map').scrollIntoView({ behavior: 'auto', block: 'start' });
-            }
-            
-            // Restauramos el scroll suave en el siguiente frame
-            requestAnimationFrame(() => {
-                document.documentElement.style.scrollBehavior = originalScrollBehavior;
-            });
+            // Esperar al reflow del DOM para que las alturas se ajusten antes de calcular el scroll
+            setTimeout(() => {
+                const mapControls = document.querySelector('.map-controls');
+                if (mapControls) {
+                    const headerHeight = document.querySelector('.header')?.offsetHeight || 0;
+                    const offsetPosition = mapControls.getBoundingClientRect().top + window.scrollY - headerHeight - 5;
+                    window.scrollTo({ top: offsetPosition, behavior: 'auto' });
+                } else {
+                    document.getElementById('map').scrollIntoView({ behavior: 'auto', block: 'start' });
+                }
+                
+                // Restauramos el scroll suave en el siguiente frame
+                requestAnimationFrame(() => {
+                    document.documentElement.style.scrollBehavior = originalScrollBehavior;
+                });
+            }, 50);
         });
         return item;
     };

@@ -15,7 +15,8 @@ import {
     geolocateOrigin,
     confirmReservation,
     updateBookingStepper,
-    toggleBookingPet
+    toggleBookingPet,
+    toggleSupplements
 } from './ui.js';
 
 window.calculateRoute = calculateRoute;
@@ -31,6 +32,7 @@ window.geolocateOrigin = geolocateOrigin;
 window.confirmReservation = confirmReservation;
 window.updateBookingStepper = updateBookingStepper;
 window.toggleBookingPet = toggleBookingPet;
+window.toggleSupplements = toggleSupplements;
 
 document.addEventListener('DOMContentLoaded', () => {
     if (typeof lucide !== 'undefined') {
@@ -60,6 +62,35 @@ document.addEventListener('DOMContentLoaded', () => {
     const bookingForm = document.getElementById('booking-form');
     if (bookingForm) {
         bookingForm.addEventListener('submit', confirmReservation);
+    }
+    
+    // Listener para el selector de Cuándo (Ahora vs Fecha)
+    const whenSelect = document.getElementById('b-when');
+    const dateContainer = document.getElementById('b-date-container');
+    const timeContainer = document.getElementById('b-time-container');
+    if (whenSelect) {
+        whenSelect.addEventListener('change', function() {
+            if (this.value === 'later') {
+                if (dateContainer) dateContainer.style.display = 'block';
+                if (timeContainer) timeContainer.style.display = 'block';
+            } else {
+                if (dateContainer) dateContainer.style.display = 'none';
+                if (timeContainer) timeContainer.style.display = 'none';
+                // Limpiamos sus valores para que no interfieran
+                const dInput = document.getElementById('b-date');
+                const tInput = document.getElementById('b-time');
+                if(dInput) dInput.value = '';
+                if(tInput) tInput.value = '';
+                const dateDisplay = document.getElementById('b-date-display');
+                if(dateDisplay) dateDisplay.style.display = 'none';
+                if(dInput) {
+                    dInput.classList.add('with-icon');
+                    dInput.style.color = '';
+                    const icon = dInput.parentElement.querySelector('svg') || dInput.parentElement.querySelector('i');
+                    if (icon) icon.style.display = 'block';
+                }
+            }
+        });
     }
     
     // Inicializar campo fecha reservas (mínimo 48h)

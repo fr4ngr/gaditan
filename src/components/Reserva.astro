@@ -21,21 +21,31 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-row" style="display: flex; gap: 1rem; flex-wrap: nowrap;">
+                            <div class="form-group" style="margin-bottom: 1rem;">
+                                <label for="b-when"><span>¿Cuándo vas a viajar?</span></label>
+                                <div class="input-icon-wrapper">
+                                    <i data-lucide="calendar-clock"></i>
+                                    <select id="b-when" class="glass-input with-icon" style="appearance: none; -webkit-appearance: none; cursor: pointer;">
+                                        <option value="now">Ahora mismo</option>
+                                        <option value="later">Elegir Fecha y Hora</option>
+                                    </select>
+                                    <i data-lucide="chevron-down" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); opacity: 0.5; pointer-events: none;"></i>
+                                </div>
+                            </div>
+                            
+                            <div id="datetime-container" class="form-row hidden" style="display: flex; gap: 1rem; flex-wrap: nowrap; margin-bottom: 1rem;">
                                 <div class="form-group" style="flex: 1; min-width: 0;">
                                     <label for="b-date"><span data-translate="form-date">Fecha</span></label>
                                       <div class="input-icon-wrapper">
                                           <i data-lucide="calendar"></i>
-                                          <input type="date" id="b-date" required aria-required="true" class="glass-input with-icon" itemprop="pickupTime">
-                                          <div id="b-date-display" style="position: absolute; inset: 0; display: none; align-items: center; justify-content: center; pointer-events: none; color: var(--text-main); font-size: 1.05rem; font-family: 'Outfit', sans-serif; font-weight: 500;"></div>
+                                          <input type="date" id="b-date" class="glass-input with-icon" itemprop="pickupTime">
                                       </div>
                                 </div>
                                 <div class="form-group" style="flex: 1; min-width: 0;">
                                     <label for="b-time"><span data-translate="form-time">Hora</span></label>
                                       <div class="input-icon-wrapper">
                                           <i data-lucide="clock"></i>
-                                          <input type="time" id="b-time" required aria-required="true" class="glass-input with-icon">
-                                          <div id="b-time-display" style="position: absolute; inset: 0; display: none; align-items: center; justify-content: center; pointer-events: none; color: var(--text-main); font-size: 1.05rem; font-family: 'Outfit', sans-serif; font-weight: 500;"></div>
+                                          <input type="time" id="b-time" class="glass-input with-icon">
                                       </div>
                                 </div>
                             </div>
@@ -68,44 +78,52 @@
                               </div>
 
                             <div class="form-group hidden" id="b-train-container">
-                                <label for="b-train"><span>Número de Tren</span></label>
+                                <label for="b-train"><span>Número de Tren/Vuelo (Opcional)</span></label>
                                 <div class="input-icon-wrapper">
                                     <i data-lucide="train"></i>
                                     <input type="text" id="b-train" placeholder="Ej. Alvia 02144" class="glass-input with-icon">
                                 </div>
                             </div>
 
-                            <div class="form-group options-group" style="margin-top: 1.5rem;">
-                                <div class="chip-group">
-                                    <div class="chip-wrapper">
-                                        <span class="chip-label" data-translate="chip-passengers-label">Viajeros</span>
-                                        <div class="booking-chip stepper-chip-container" id="container-passengers">
-                                            <button type="button" class="stepper-btn-full" onclick="updateBookingStepper('passengers', -1)">-</button>
-                                            <div class="stepper-content">
-                                                <i data-lucide="users" class="chip-icon"></i> <span class="chip-text" id="val-passengers">1</span>
-                                            </div>
-                                            <button type="button" class="stepper-btn-full" onclick="updateBookingStepper('passengers', 1)">+</button>
-                                            <input type="hidden" id="chip-passengers" value="1">
-                                        </div>
+                            <!-- Botón SUPLEMENTOS -->
+                            <div style="margin-top: 1.5rem;">
+                                <button type="button" id="btn-toggle-supplements" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 0.8rem 1rem; border-radius: 12px; cursor: pointer; font-weight: 600; font-family: 'Outfit', sans-serif;">
+                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <i data-lucide="plus-circle" style="color: var(--brand-cyan);"></i> SUPLEMENTOS
                                     </div>
-                                    <div class="chip-wrapper">
-                                        <span class="chip-label" data-translate="chip-luggage-label">Maleta grande</span>
-                                        <div class="booking-chip stepper-chip-container" id="container-luggage">
-                                            <button type="button" class="stepper-btn-full" onclick="updateBookingStepper('luggage', -1)">-</button>
-                                            <div class="stepper-content">
-                                                <i data-lucide="briefcase" class="chip-icon"></i> <span class="chip-text" id="val-luggage">0</span>
+                                    <i data-lucide="chevron-down" id="icon-supplements-chevron"></i>
+                                </button>
+                                
+                                <!-- Contenedor de Suplementos (Oculto por defecto) -->
+                                <div id="supplements-container" class="hidden" style="background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 1rem; margin-top: 0.5rem;">
+                                    <div class="chip-group" style="justify-content: flex-start;">
+                                        <div class="chip-wrapper">
+                                            <span class="chip-label" data-translate="chip-passengers-label">Viajeros</span>
+                                            <div class="booking-chip stepper-chip-container" id="container-passengers">
+                                                <button type="button" class="stepper-btn-full" onclick="updateBookingStepper('passengers', -1)">-</button>
+                                                <div class="stepper-content">
+                                                    <i data-lucide="users" class="chip-icon"></i> <span class="chip-text" id="val-passengers">1</span>
+                                                </div>
+                                                <button type="button" class="stepper-btn-full" onclick="updateBookingStepper('passengers', 1)">+</button>
+                                                <input type="hidden" id="chip-passengers" value="1">
                                             </div>
-                                            <button type="button" class="stepper-btn-full" onclick="updateBookingStepper('luggage', 1)">+</button>
-                                            <input type="hidden" id="chip-luggage" value="0">
                                         </div>
-                                    </div>
-                                    <div class="chip-wrapper">
-                                        <span class="chip-label" data-translate="chip-pet-label">Mascota</span>
-                                        <div class="pet-full-switch" id="container-pet" onclick="toggleBookingPet()">
-                                            <div class="pet-switch-thumb"></div>
-                                            <div class="pet-switch-label label-no"><i data-lucide="x" style="width:14px;height:14px;"></i> No</div>
-                                            <div class="pet-switch-label label-yes"><i data-lucide="paw-print" style="width:14px;height:14px;"></i> Sí</div>
-                                            <input type="hidden" id="chip-pet" value="No">
+                                        <div class="chip-wrapper">
+                                            <span class="chip-label" data-translate="chip-luggage-label">Maletas grandes</span>
+                                            <div class="booking-chip stepper-chip-container" id="container-luggage">
+                                                <button type="button" class="stepper-btn-full" onclick="updateBookingStepper('luggage', -1)">-</button>
+                                                <div class="stepper-content">
+                                                    <i data-lucide="briefcase" class="chip-icon"></i> <span class="chip-text" id="val-luggage">0</span>
+                                                </div>
+                                                <button type="button" class="stepper-btn-full" onclick="updateBookingStepper('luggage', 1)">+</button>
+                                                <input type="hidden" id="chip-luggage" value="0">
+                                            </div>
+                                        </div>
+                                        <div class="chip-wrapper" style="width: 100%; margin-top: 0.5rem;">
+                                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: var(--text-muted); font-size: 0.9rem;">
+                                                <input type="checkbox" id="check-disability" style="accent-color: var(--brand-cyan); width: 16px; height: 16px;">
+                                                Algún pasajero tiene discapacidad (Elimina suplemento plazas)
+                                            </label>
                                         </div>
                                     </div>
                                 </div>
@@ -181,10 +199,10 @@
                                     </div>
                                 </div>
                                 
-                                <!-- Alert Text -->
+                                <!-- Alert Text Precio Cerrado -->
                                 <div style="display: flex; align-items: flex-start; gap: 0.5rem; background: rgba(255, 255, 255, 0.05); padding: 0.8rem; border-radius: 8px; font-size: 0.75rem; color: var(--text-muted); line-height: 1.4; border-left: 3px solid var(--brand-cyan);">
                                     <span style="color: var(--brand-cyan); font-weight: 800; font-size: 1.1rem; line-height: 1; transform: translateY(2px);">*</span>
-                                    <span style="flex: 1;">Precio estimado con la CALCULADORA DE TAXI de cadiz.taxi con la ruta más corta y las condiciones de tráfico más favorables. Sólo el taxímetro oficial determinará el precio final de tu viaje.</span>
+                                    <span style="flex: 1;"><strong>Garantía de Precio Cerrado:</strong> Según la normativa, si contratas el taxi telemáticamente con este precio estimado máximo, <strong>nunca pagarás más</strong>, incluso si hay tráfico lento. Si lo paras en la calle, el taxímetro puede encarecerse por hora de espera.</span>
                                 </div>
                                 
                                 <!-- Botones -->

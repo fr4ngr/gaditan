@@ -1,24 +1,107 @@
-    <!-- Header Glassmorphism -->
-    <header class="header glass-nav">
-        <div class="container header-content">
-            <div class="logo">
-                <img src="logo.png" alt="Cádiz Taxi Logo" class="logo-img">
-                <span class="logo-text">Cádiz.Taxi</span>
-            </div>
-            <div class="header-right">
-                <nav class="nav-links">
-                    <a href="#tarifas" data-translate="nav-prices">Precios</a>
-                    <a href="#reservas" data-translate="nav-booking">Reservar</a>
-                    <a href="#paradas" data-translate="nav-stops">Paradas</a>
-                    <a href="#faq" data-translate="nav-faq">Preguntas</a>
-                </nav>
-                <div class="lang-selector">
-                    <button class="lang-btn active" id="lang-es" aria-label="Español">🇪🇸</button>
-                    <button class="lang-btn" id="lang-en" aria-label="English">🇬🇧</button>
-                </div>
-                <a href="tel:956212121" class="btn-header-call">
-                    <i data-lucide="phone" size="16"></i> <span class="hide-mobile" data-translate="nav-call">Llama Ya</span>
-                </a>
-            </div>
+---
+// src/components/Header.astro
+---
+
+<!-- Header Glassmorphism (Dynamic Island) -->
+<header class="header glass-nav">
+    <div class="container header-content" style="padding: 0;">
+        <div class="logo">
+            <img src="logo.png" alt="Cádiz Taxi Logo" class="logo-img">
+            <span class="logo-text">Cádiz.Taxi</span>
         </div>
-    </header>
+        <div class="header-right">
+            <!-- Desktop Nav -->
+            <nav class="nav-links hide-mobile">
+                <a href="#tarifas" data-translate="nav-prices">Precios</a>
+                <a href="#reservas" data-translate="nav-booking">Reservar</a>
+                <a href="#paradas" data-translate="nav-stops">Paradas</a>
+                <a href="#faq" data-translate="nav-faq">Preguntas</a>
+            </nav>
+            
+            <!-- Language Dropdown -->
+            <div class="lang-dropdown-wrapper">
+                <button class="lang-dropdown-btn" id="lang-toggle">
+                    <span id="current-lang-icon">🇪🇸</span> <i data-lucide="chevron-down" size="14"></i>
+                </button>
+                <div class="lang-menu" id="lang-menu">
+                    <button class="lang-btn active" id="lang-es">🇪🇸 Español</button>
+                    <button class="lang-btn" id="lang-en">🇬🇧 English</button>
+                </div>
+            </div>
+
+            <!-- Call Button -->
+            <a href="tel:956212121" class="btn-header-call hide-mobile">
+                <i data-lucide="phone" size="16"></i> <span data-translate="nav-call">Llama Ya</span>
+            </a>
+
+            <!-- Mobile Hamburger Button -->
+            <button class="hamburger-btn" id="mobile-menu-btn" aria-label="Menú">
+                <i data-lucide="menu" size="24"></i>
+            </button>
+        </div>
+    </div>
+</header>
+
+<!-- Mobile Menu Overlay & Drawer -->
+<div class="mobile-menu-overlay" id="mobile-overlay"></div>
+<div class="mobile-menu-drawer" id="mobile-drawer">
+    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem;">
+        <span style="font-weight: 800; font-size: 1.2rem;">Menú</span>
+        <button id="close-mobile-menu" style="background:transparent; border:none; color:white; padding:0.5rem; border-radius:8px;"><i data-lucide="x" size="24"></i></button>
+    </div>
+    <a href="#tarifas" class="mobile-nav-link" data-translate="nav-prices">Precios Oficiales</a>
+    <a href="#reservas" class="mobile-nav-link" data-translate="nav-booking">Calculadora</a>
+    <a href="#paradas" class="mobile-nav-link" data-translate="nav-stops">Mapa de Paradas</a>
+    <a href="#faq" class="mobile-nav-link" data-translate="nav-faq">Preguntas Frecuentes</a>
+    
+    <a href="tel:956212121" class="btn-header-call" style="justify-content: center; margin-top: auto; padding: 1rem;">
+        <i data-lucide="phone" size="20"></i> <span data-translate="nav-call">Llama Ya</span>
+    </a>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Language Dropdown Logic
+    const langToggle = document.getElementById('lang-toggle');
+    const langMenu = document.getElementById('lang-menu');
+    const currentLangIcon = document.getElementById('current-lang-icon');
+
+    langToggle?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        langMenu?.classList.toggle('show');
+    });
+
+    document.addEventListener('click', () => {
+        langMenu?.classList.remove('show');
+    });
+
+    // Language selection (Visual update, actual translation logic handled elsewhere)
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const isEnglish = btn.id === 'lang-en';
+            if (currentLangIcon) currentLangIcon.textContent = isEnglish ? '🇬🇧' : '🇪🇸';
+            langMenu?.classList.remove('show');
+        });
+    });
+
+    // Mobile Menu Logic
+    const mobileBtn = document.getElementById('mobile-menu-btn');
+    const closeBtn = document.getElementById('close-mobile-menu');
+    const overlay = document.getElementById('mobile-overlay');
+    const drawer = document.getElementById('mobile-drawer');
+    const mobileLinks = document.querySelectorAll('.mobile-nav-link');
+
+    const toggleMenu = () => {
+        overlay?.classList.toggle('show');
+        drawer?.classList.toggle('show');
+    };
+
+    mobileBtn?.addEventListener('click', toggleMenu);
+    closeBtn?.addEventListener('click', toggleMenu);
+    overlay?.addEventListener('click', toggleMenu);
+    
+    mobileLinks.forEach(link => {
+        link.addEventListener('click', toggleMenu);
+    });
+});
+</script>

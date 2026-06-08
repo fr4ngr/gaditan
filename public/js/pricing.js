@@ -47,49 +47,16 @@ export async function getRouteDetails(exactOrigin, exactDest) {
     const isInter = isInterurban(exactDest);
     let finalDistanceKm = 0;
     let finalDurationMin = 0;
-    let urbanKm = 0;
-    let interurbanKm = 0;
     let finalGeometry = null;
 
-    if (isInter) {
-        let bestRoute = null;
-        let minTotalTime = Infinity;
+    // Ya no separamos urbano de interurbano, simplemente sacamos la ruta total
+    const route = await getOSRMRoute(exactOrigin, exactDest);
+    finalDistanceKm = route.distanceKm;
+    finalDurationMin = route.durationMin;
+    finalGeometry = route.geometry;
 
-        for (let exit of EXITS) {
-            const routeToExit = await getOSRMRoute(exactOrigin, exit);
-            const routeToDest = await getOSRMRoute(exit, exactDest);
-            
-            const totalTime = routeToExit.durationMin + routeToDest.durationMin;
-            if (totalTime < minTotalTime) {
-                minTotalTime = totalTime;
-                bestRoute = {
-                    urbanDistance: routeToExit.distanceKm,
-                    interurbanDistance: routeToDest.distanceKm,
-                    totalDuration: totalTime,
-                    geometry: {
-                        type: "LineString",
-                        coordinates: [...routeToExit.geometry.coordinates, ...routeToDest.geometry.coordinates]
-                    }
-                };
-            }
-        }
-        
-        urbanKm = bestRoute.urbanDistance;
-        interurbanKm = bestRoute.interurbanDistance;
-        finalDistanceKm = urbanKm + interurbanKm;
-        finalDurationMin = bestRoute.totalDuration;
-        finalGeometry = bestRoute.geometry;
-    } else {
-        const route = await getOSRMRoute(exactOrigin, exactDest);
-        urbanKm = route.distanceKm;
-        finalDistanceKm = urbanKm;
-        finalDurationMin = route.durationMin;
-        finalGeometry = route.geometry;
-    }
     return {
         isInter,
-        urbanKm,
-        interurbanKm,
         finalDistanceKm,
         osrmDurationMin: finalDurationMin,
         geometry: finalGeometry,
@@ -98,7 +65,7 @@ export async function getRouteDetails(exactOrigin, exactDest) {
     };
 }
 
-export function calculatePrice(routeInfo, isNight, isFestivo, hasRenfe, luggageCount) {
+export function calculatePrice(routeInfo, isNight, isFestivo, hasRenfe, hasPuerto, hasCortadura, isAdapted, luggageCount) {
     const isNightOrFestivo = isNight || isFestivo;
     const uFlag = isNightOrFestivo ? urbanRates.night.flag : urbanRates.day.flag;
     const uKm = isNightOrFestivo ? urbanRates.night.km : urbanRates.day.km;
@@ -106,40 +73,51 @@ export function calculatePrice(routeInfo, isNight, isFestivo, hasRenfe, luggageC
     
     const iKm = isNightOrFestivo ? interurbanRates.night.km : interurbanRates.day.km;
     const iWait = isNightOrFestivo ? interurbanRates.night.waitHour : interurbanRates.day.waitHour;
+    // La tarifa interurbana también puede tener un mínimo de percepción
+    const iMin = isNightOrFestivo ? interurbanRates.night.min : interurbanRates.day.min;
 
     let basePrice = 0;
     let estimatedWaitMins = 0;
     let waitCost = 0;
 
     if (routeInfo.isInter) {
-        const avgUrbanSpeed = isNightOrFestivo ? 25 : 15;
-        const realUrbanDurationMin = (routeInfo.urbanKm / avgUrbanSpeed) * 60;
-        const osrmUrbanEstimate = (routeInfo.urbanKm / 40) * 60; 
-        const urbanWaitMins = Math.max(0, realUrbanDurationMin - osrmUrbanEstimate);
+        // Regla 1: 100% de los km se calculan con Tarifas Interurbanas
+        // Generalmente las tarifas interurbanas no cobran bajada de bandera en carretera, pero si la hay se suma.
+        // Simularemos un recargo mínimo inicial (si aplica) o directamente el km
         
-        const interurbanWaitMins = routeInfo.osrmDurationMin * 0.05;
-        
-        estimatedWaitMins = urbanWaitMins + interurbanWaitMins;
+        // Wait time in interurban
+        const interurbanWaitMins = routeInfo.osrmDurationMin * 0.10; // 10% del tiempo estimado como espera por semáforos/tráfico
+        estimatedWaitMins = interurbanWaitMins;
         waitCost = (estimatedWaitMins / 60) * iWait;
 
-        basePrice = uFlag + (routeInfo.urbanKm * uKm) + (routeInfo.interurbanKm * iKm) + waitCost;
-        const minFare = isNightOrFestivo ? interurbanRates.night.min : interurbanRates.day.min;
-        if (basePrice < minFare) basePrice = minFare;
+        basePrice = (routeInfo.finalDistanceKm * iKm) + waitCost;
+        if (basePrice < iMin) basePrice = iMin; // Mínimo de percepción interurbano (ej: 3.83€)
     } else {
+        // Urbano
         const avgSpeedKmh = isNightOrFestivo ? 25 : 15;
-        const realDurationMin = (routeInfo.urbanKm / avgSpeedKmh) * 60;
+        const realDurationMin = (routeInfo.finalDistanceKm / avgSpeedKmh) * 60;
         
         estimatedWaitMins = Math.max(0, realDurationMin - routeInfo.osrmDurationMin);
         waitCost = (estimatedWaitMins / 60) * uWait;
 
-        basePrice = uFlag + (routeInfo.urbanKm * uKm) + waitCost;
+        basePrice = uFlag + (routeInfo.finalDistanceKm * uKm) + waitCost;
         const minFare = isNightOrFestivo ? urbanRates.night.min : urbanRates.day.min;
         if (basePrice < minFare) basePrice = minFare;
     }
 
-    if (hasRenfe) {
-        basePrice += routeInfo.isInter ? supplements.renfe : 1.30; 
+    // Suplementos (solo en urbano o desde puntos clave)
+    // El suplemento de >4 plazas lo aplicamos si no tiene discapacidad. Pero como no preguntamos plazas > 4 (viajeros son 1-4 en el stepper, max 8),
+    // Si usuarios piden "Vehículo Adaptado" no pagan plus. Asumiremos el suplemento de maletas y renfe/puerto/cortadura.
+    if (hasRenfe && !routeInfo.isInter) {
+        basePrice += 1.30; 
+    } else if (hasRenfe && routeInfo.isInter) {
+        basePrice += 0.82; 
     }
+    
+    // Suplementos Puerto y Cortadura (valores aproximados si no están en config, 1.30 urbano)
+    if (hasPuerto && !routeInfo.isInter) basePrice += 1.30;
+    if (hasCortadura && !routeInfo.isInter) basePrice += 1.30;
+
     if (luggageCount > 0) {
         basePrice += luggageCount * supplements.luggage;
     }
