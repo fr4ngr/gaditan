@@ -15,69 +15,39 @@
             </button>
         </div>
 
-        <!-- Sugerencias (Quick Actions) -->
+        <!-- Sugerencias (Píldoras) -->
         <div class="search-suggestions">
-            <h3 style="font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 1rem; margin-top: 1rem;">Sugerencias Rápidas</h3>
+            <h3 style="font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 1.5rem; margin-top: 1.5rem;">Sugerencias Rápidas</h3>
             
-            <div class="quick-actions-grid">
+            <div class="quick-actions-pills">
                 <!-- Acción: Calculadora -->
-                <button class="quick-action-card" data-target="#reservas">
-                    <div class="qa-icon" style="background: rgba(6, 182, 212, 0.15); color: var(--brand-cyan);">
-                        <i data-lucide="calculator"></i>
-                    </div>
-                    <div class="qa-text">
-                        <span class="qa-title">Calcular un viaje</span>
-                        <span class="qa-desc">Estima el coste de tu trayecto</span>
-                    </div>
-                    <i data-lucide="arrow-up-right" class="qa-arrow"></i>
+                <button class="quick-action-pill" data-target="#reservas">
+                    <i data-lucide="calculator" style="color: var(--brand-cyan);"></i>
+                    <span>Calcular viaje</span>
                 </button>
 
                 <!-- Acción: Maletas -->
-                <button class="quick-action-card" data-target="#reservas" data-action="open-supplements">
-                    <div class="qa-icon" style="background: rgba(168, 85, 247, 0.15); color: #c084fc;">
-                        <i data-lucide="briefcase"></i>
-                    </div>
-                    <div class="qa-text">
-                        <span class="qa-title">Viajar con equipaje</span>
-                        <span class="qa-desc">Añade maletas grandes</span>
-                    </div>
-                    <i data-lucide="arrow-up-right" class="qa-arrow"></i>
+                <button class="quick-action-pill" data-target="#reservas" data-action="open-supplements">
+                    <i data-lucide="briefcase" style="color: #c084fc;"></i>
+                    <span>Añadir maletas</span>
                 </button>
 
                 <!-- Acción: Tarifas -->
-                <button class="quick-action-card" data-target="#tarifas">
-                    <div class="qa-icon" style="background: rgba(16, 185, 129, 0.15); color: #34d399;">
-                        <i data-lucide="receipt"></i>
-                    </div>
-                    <div class="qa-text">
-                        <span class="qa-title">Ver tarifas oficiales</span>
-                        <span class="qa-desc">Precios urbanos e interurbanos</span>
-                    </div>
-                    <i data-lucide="arrow-up-right" class="qa-arrow"></i>
+                <button class="quick-action-pill" data-target="#tarifas">
+                    <i data-lucide="receipt" style="color: #34d399;"></i>
+                    <span>Ver tarifas oficiales</span>
                 </button>
 
                 <!-- Acción: Paradas -->
-                <button class="quick-action-card" data-target="#paradas">
-                    <div class="qa-icon" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24;">
-                        <i data-lucide="map-pin"></i>
-                    </div>
-                    <div class="qa-text">
-                        <span class="qa-title">Encontrar una parada</span>
-                        <span class="qa-desc">Localiza el taxi más cercano</span>
-                    </div>
-                    <i data-lucide="arrow-up-right" class="qa-arrow"></i>
+                <button class="quick-action-pill" data-target="#paradas">
+                    <i data-lucide="map-pin" style="color: #fbbf24;"></i>
+                    <span>Parada más cercana</span>
                 </button>
 
                 <!-- Acción: Renfe -->
-                <button class="quick-action-card" data-target="#reservas" data-action="open-supplements">
-                    <div class="qa-icon" style="background: rgba(239, 68, 68, 0.15); color: #f87171;">
-                        <i data-lucide="train"></i>
-                    </div>
-                    <div class="qa-text">
-                        <span class="qa-title">Recogida en Renfe</span>
-                        <span class="qa-desc">Suplementos de salida</span>
-                    </div>
-                    <i data-lucide="arrow-up-right" class="qa-arrow"></i>
+                <button class="quick-action-pill" data-target="#reservas" data-action="open-supplements">
+                    <i data-lucide="train" style="color: #f87171;"></i>
+                    <span>Recogida en Renfe</span>
                 </button>
             </div>
         </div>
@@ -178,67 +148,34 @@
         background: rgba(255, 255, 255, 0.2);
     }
 
-    .quick-actions-grid {
+    .quick-actions-pills {
         display: flex;
-        flex-direction: column;
+        flex-wrap: wrap;
         gap: 0.8rem;
     }
 
-    .quick-action-card {
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 16px;
-        padding: 1rem;
+    .quick-action-pill {
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 999px;
+        padding: 0.6rem 1rem;
         display: flex;
         align-items: center;
-        gap: 1rem;
+        gap: 0.6rem;
         cursor: pointer;
         transition: all 0.2s ease;
-        text-align: left;
-        width: 100%;
+        color: white;
+        font-family: 'Outfit', sans-serif;
+        font-size: 0.95rem;
     }
 
-    .quick-action-card:hover {
-        background: rgba(255, 255, 255, 0.1);
-        border-color: rgba(255, 255, 255, 0.15);
+    .quick-action-pill i {
+        width: 18px;
+        height: 18px;
+    }
+
+    .quick-action-pill:hover {
+        background: rgba(255, 255, 255, 0.15);
         transform: translateY(-2px);
-    }
-
-    .qa-icon {
-        width: 48px;
-        height: 48px;
-        border-radius: 12px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-shrink: 0;
-    }
-
-    .qa-text {
-        display: flex;
-        flex-direction: column;
-        flex: 1;
-    }
-
-    .qa-title {
-        color: white;
-        font-weight: 600;
-        font-size: 1.05rem;
-    }
-
-    .qa-desc {
-        color: rgba(255, 255, 255, 0.6);
-        font-size: 0.85rem;
-    }
-
-    .qa-arrow {
-        color: rgba(255, 255, 255, 0.3);
-        width: 20px;
-        height: 20px;
-        transition: color 0.2s ease;
-    }
-
-    .quick-action-card:hover .qa-arrow {
-        color: white;
     }
 </style>

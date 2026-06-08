@@ -6,67 +6,124 @@ let headerAnimationInterval;
 let typeWriterTimeout;
 
 export function initDynamicHeader() {
-    const navState = document.getElementById('header-state-nav');
-    const searchState = document.getElementById('header-state-search');
+    const flagIcon = document.getElementById('header-icon-flag');
+    const lupaIcon = document.getElementById('header-icon-lupa');
     const typeText = document.getElementById('header-typing-text');
+    const dynamicBtn = document.getElementById('header-dynamic-btn');
+    const langMenu = document.getElementById('lang-menu');
     
-    if (!navState || !searchState || !typeText) return;
+    if (!navState || !searchState || !typeText || !flagIcon || !lupaIcon || !dynamicBtn) return;
     
     const searches = [
-        "¿Llevas equipaje? 🧳",
-        "¿Recogida en Renfe? 🚆",
-        "¿Buscas tarifas? 💶",
-        "¿Paradas cercanas? 📍"
+        "¿Llevas equipaje?",
+        "¿Recogida en Renfe?",
+        "¿Buscas tarifas?",
+        "¿Paradas cercanas?"
     ];
     
     let currentSearchIdx = 0;
-    let isSearchState = false;
+    let isShowingLupa = false;
 
+    // 1. Animación automática: Alternar entre Bandera y Lupa en el círculo derecho
     headerAnimationInterval = setInterval(() => {
-        // No animar si el menú móvil o algún modal está abierto
         if (document.getElementById('mobile-overlay')?.classList.contains('active') ||
-            document.getElementById('search-modal')?.classList.contains('active')) {
+            document.getElementById('search-modal')?.classList.contains('active') ||
+            searchState.style.opacity === '1') { // Si ya estamos en "Modo Búsqueda"
             return;
         }
 
-        isSearchState = !isSearchState;
+        isShowingLupa = !isShowingLupa;
         
-        if (isSearchState) {
-            // Mostrar estado búsqueda
-            navState.style.opacity = '0';
-            navState.style.transform = 'translateY(-10px)';
-            navState.style.pointerEvents = 'none';
-            
-            searchState.style.opacity = '1';
-            searchState.style.transform = 'translateY(0)';
-            searchState.style.pointerEvents = 'auto';
-            
-            // Efecto máquina de escribir
-            const textToType = searches[currentSearchIdx];
-            typeText.innerText = '';
-            let charIdx = 0;
-            
-            const typeWriter = () => {
-                if (charIdx < textToType.length) {
-                    typeText.innerText += textToType.charAt(charIdx);
-                    charIdx++;
-                    typeWriterTimeout = setTimeout(typeWriter, 50);
-                }
-            };
-            typeWriter();
-            
-            currentSearchIdx = (currentSearchIdx + 1) % searches.length;
+        if (isShowingLupa) {
+            flagIcon.style.transform = 'translateY(-100%)';
+            flagIcon.style.opacity = '0';
+            lupaIcon.style.transform = 'translateY(0)';
+            lupaIcon.style.opacity = '1';
         } else {
-            // Volver al estado normal
-            searchState.style.opacity = '0';
-            searchState.style.transform = 'translateY(10px)';
-            searchState.style.pointerEvents = 'none';
-            
-            navState.style.opacity = '1';
-            navState.style.transform = 'translateY(0)';
-            navState.style.pointerEvents = 'auto';
+            flagIcon.style.transform = 'translateY(0)';
+            flagIcon.style.opacity = '1';
+            lupaIcon.style.transform = 'translateY(100%)';
+            lupaIcon.style.opacity = '0';
         }
-    }, 6000); // Cambiar de estado cada 6 segundos
+    }, 4000); // Cambiar de icono cada 4 segundos
+
+    // 2. Transición a Modo Búsqueda
+    window.triggerSearchMode = function() {
+        if (searchState.style.opacity === '1') return; // Ya está activo
+        
+        // Ocultar nav y mostrar búsqueda
+        navState.style.opacity = '0';
+        navState.style.transform = 'translateY(-10px)';
+        navState.style.pointerEvents = 'none';
+        
+        searchState.style.opacity = '1';
+        searchState.style.transform = 'translateY(0)';
+        searchState.style.pointerEvents = 'auto';
+        
+        // Mantener la lupa visible a la derecha
+        flagIcon.style.transform = 'translateY(-100%)';
+        flagIcon.style.opacity = '0';
+        lupaIcon.style.transform = 'translateY(0)';
+        lupaIcon.style.opacity = '1';
+        
+        // Efecto máquina de escribir
+        const textToType = searches[currentSearchIdx];
+        typeText.innerText = '';
+        let charIdx = 0;
+        
+        if (typeWriterTimeout) clearTimeout(typeWriterTimeout);
+        
+        const typeWriter = () => {
+            if (charIdx < textToType.length) {
+                typeText.innerText += textToType.charAt(charIdx);
+                charIdx++;
+                typeWriterTimeout = setTimeout(typeWriter, 50);
+            }
+        };
+        typeWriter();
+        
+        currentSearchIdx = (currentSearchIdx + 1) % searches.length;
+    };
+
+    // 3. Restaurar Modo Nav
+    window.restoreNavMode = function() {
+        searchState.style.opacity = '0';
+        searchState.style.transform = 'translateY(10px)';
+        searchState.style.pointerEvents = 'none';
+        
+        navState.style.opacity = '1';
+        navState.style.transform = 'translateY(0)';
+        navState.style.pointerEvents = 'auto';
+        
+        isShowingLupa = false;
+        flagIcon.style.transform = 'translateY(0)';
+        flagIcon.style.opacity = '1';
+        lupaIcon.style.transform = 'translateY(100%)';
+        lupaIcon.style.opacity = '0';
+    };
+    
+    // 4. Lógica del botón dinámico
+    dynamicBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (isShowingLupa || searchState.style.opacity === '1') {
+            // Si hay lupa visible, activamos modo búsqueda y luego abrimos modal
+            if (searchState.style.opacity !== '1') {
+                window.triggerSearchMode();
+            } else {
+                openSearchModal();
+            }
+        } else {
+            // Si hay bandera, abrimos el menú de idioma
+            langMenu.classList.toggle('show');
+        }
+    });
+
+    // Cerrar menú idioma al hacer click fuera
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.lang-dropdown-wrapper')) {
+            langMenu.classList.remove('show');
+        }
+    });
 }
 
 export function openSearchModal() {

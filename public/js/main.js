@@ -51,13 +51,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const mainHeader = document.getElementById('main-header');
     if (mainHeader) {
         mainHeader.addEventListener('click', (e) => {
-            // No abrir búsqueda si se hace clic en botones específicos
+            // No hacer nada si se clica en botones específicos (hamburguesa, lang, etc)
             if (e.target.closest('.hamburger-btn') || 
                 e.target.closest('.lang-dropdown-wrapper') || 
                 e.target.closest('.btn-header-call')) {
                 return;
             }
-            openSearchModal();
+            
+            // Si estamos en modo búsqueda (el searchState es visible), abrimos el modal
+            const searchState = document.getElementById('header-state-search');
+            if (searchState && searchState.style.opacity === '1') {
+                openSearchModal();
+            }
         });
     }
 
@@ -76,11 +81,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Lógica para Accesos Rápidos
-    document.querySelectorAll('.quick-action-card').forEach(card => {
-        card.addEventListener('click', () => {
+    document.querySelectorAll('.quick-action-pill').forEach(pill => {
+        pill.addEventListener('click', () => {
             closeSearchModal();
-            const targetSelector = card.getAttribute('data-target');
-            const action = card.getAttribute('data-action');
+            const targetSelector = pill.getAttribute('data-target');
+            const action = pill.getAttribute('data-action');
             
             if (targetSelector) {
                 const targetEl = document.querySelector(targetSelector);
