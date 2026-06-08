@@ -49,27 +49,9 @@ document.addEventListener('DOMContentLoaded', () => {
     initDynamicHeader();
 
     const mainHeader = document.getElementById('main-header');
-    const searchStateArea = document.getElementById('header-state-search');
     
-    if (searchStateArea) {
-        searchStateArea.addEventListener('click', (e) => {
-            // El área de búsqueda solo intercepta clics cuando está activa (pointer-events: auto)
-            openSearchModal();
-        });
-    }
-
-    if (mainHeader) {
-        mainHeader.addEventListener('click', (e) => {
-            if (e.target.closest('.hamburger-btn') || 
-                e.target.closest('.lang-dropdown-wrapper') || 
-                e.target.closest('.btn-header-call')) {
-                return;
-            }
-            if (mainHeader.classList.contains('is-search-mode')) {
-                openSearchModal();
-            }
-        });
-    }
+    // El header principal ya no intercepta clics globales para abrir la búsqueda.
+    // La búsqueda se abre directamente al hacer clic en el icono de la lupa (lógica en ui.js).
 
     const closeSearchBtn = document.getElementById('close-search-modal');
     if (closeSearchBtn) {
