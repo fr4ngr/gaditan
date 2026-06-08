@@ -46,12 +46,13 @@ document.addEventListener('DOMContentLoaded', () => {
         lucide.createIcons();
     }
 
-    initDynamicHeader();
-
-    const mainHeader = document.getElementById('main-header');
-    
-    // El header principal ya no intercepta clics globales para abrir la búsqueda.
-    // La búsqueda se abre directamente al hacer clic en el icono de la lupa (lógica en ui.js).
+    // El header principal ahora es estático.
+    const openSearchBtn = document.getElementById('open-search-btn');
+    if (openSearchBtn) {
+        openSearchBtn.addEventListener('click', () => {
+            openSearchModal();
+        });
+    }
 
     const closeSearchBtn = document.getElementById('close-search-modal');
     if (closeSearchBtn) {

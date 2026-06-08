@@ -2,62 +2,7 @@ import { translations, state, routeState, routeData, calcState, calcContext } fr
 import { updatePriceUI, updateCalcPriceUI, calculateRoute, getRouteDetails, calculatePrice, isInterurban } from './pricing.js';
 import { geocodeString } from './api.js';
 
-let headerAnimationInterval;
-let typeWriterTimeout;
-
-export function initDynamicHeader() {
-    const flagIcon = document.getElementById('header-icon-flag');
-    const lupaIcon = document.getElementById('header-icon-lupa');
-    const dynamicWrapper = document.getElementById('header-dynamic-wrapper');
-    const langMenu = document.getElementById('lang-menu');
-    const mainHeader = document.getElementById('main-header');
-    
-    if (!flagIcon || !lupaIcon || !dynamicWrapper) return;
-    
-    let isShowingLupa = false;
-
-    // 1. Animación automática: Alternar entre Bandera y Lupa en el círculo derecho
-    headerAnimationInterval = setInterval(() => {
-        if (document.getElementById('mobile-overlay')?.classList.contains('active') ||
-            document.getElementById('search-modal')?.classList.contains('active')) {
-            return;
-        }
-
-        isShowingLupa = !isShowingLupa;
-        
-        if (isShowingLupa) {
-            flagIcon.style.transform = 'translateY(-100%)';
-            flagIcon.style.opacity = '0';
-            lupaIcon.style.transform = 'translateY(0)';
-            lupaIcon.style.opacity = '1';
-        } else {
-            flagIcon.style.transform = 'translateY(0)';
-            flagIcon.style.opacity = '1';
-            lupaIcon.style.transform = 'translateY(100%)';
-            lupaIcon.style.opacity = '0';
-        }
-    }, 4000); // Cambiar de icono cada 4 segundos
-    
-    // 2. Lógica del botón dinámico
-    dynamicWrapper.addEventListener('click', (e) => {
-        e.stopPropagation();
-        if (isShowingLupa) {
-            // Si hay lupa visible, abrimos el modal de búsqueda directamente
-            openSearchModal();
-        } else {
-            // Si hay bandera, abrimos el menú de idioma
-            langMenu.classList.toggle('show');
-        }
-    });
-
-    // Cerrar menú idioma al hacer click fuera
-    document.addEventListener('click', (e) => {
-        if (!e.target.closest('.lang-dropdown-wrapper')) {
-            langMenu?.classList.remove('show');
-        }
-    });
-}
-
+// Lógica del header dinámico eliminada a petición del usuario para simplificar.
 export function openSearchModal() {
     const modal = document.getElementById('search-modal');
     if (modal) {
