@@ -11,10 +11,11 @@ export function initDynamicHeader() {
     const flagIcon = document.getElementById('header-icon-flag');
     const lupaIcon = document.getElementById('header-icon-lupa');
     const typeText = document.getElementById('header-typing-text');
-    const dynamicBtn = document.getElementById('header-dynamic-btn');
+    const dynamicWrapper = document.getElementById('header-dynamic-wrapper');
     const langMenu = document.getElementById('lang-menu');
+    const mainHeader = document.getElementById('main-header');
     
-    if (!navState || !searchState || !typeText || !flagIcon || !lupaIcon || !dynamicBtn) return;
+    if (!navState || !searchState || !typeText || !flagIcon || !lupaIcon || !dynamicWrapper) return;
     
     const searches = [
         "¿Llevas equipaje?",
@@ -30,7 +31,7 @@ export function initDynamicHeader() {
     headerAnimationInterval = setInterval(() => {
         if (document.getElementById('mobile-overlay')?.classList.contains('active') ||
             document.getElementById('search-modal')?.classList.contains('active') ||
-            searchState.style.opacity === '1') { // Si ya estamos en "Modo Búsqueda"
+            mainHeader?.classList.contains('is-search-mode')) { // Si ya estamos en "Modo Búsqueda"
             return;
         }
 
@@ -51,7 +52,8 @@ export function initDynamicHeader() {
 
     // 2. Transición a Modo Búsqueda
     window.triggerSearchMode = function() {
-        if (searchState.style.opacity === '1') return; // Ya está activo
+        if (mainHeader?.classList.contains('is-search-mode')) return; // Ya está activo
+        mainHeader?.classList.add('is-search-mode');
         
         // Ocultar nav y mostrar búsqueda
         navState.style.opacity = '0';
@@ -68,16 +70,21 @@ export function initDynamicHeader() {
         lupaIcon.style.transform = 'translateY(0)';
         lupaIcon.style.opacity = '1';
         
-        // Efecto máquina de escribir
+        // Efecto máquina de escribir (preservando espacios)
         const textToType = searches[currentSearchIdx];
-        typeText.innerText = '';
+        typeText.innerHTML = '';
         let charIdx = 0;
         
         if (typeWriterTimeout) clearTimeout(typeWriterTimeout);
         
         const typeWriter = () => {
             if (charIdx < textToType.length) {
-                typeText.innerText += textToType.charAt(charIdx);
+                const char = textToType.charAt(charIdx);
+                if (char === ' ') {
+                    typeText.innerHTML += '&nbsp;';
+                } else {
+                    typeText.innerHTML += char;
+                }
                 charIdx++;
                 typeWriterTimeout = setTimeout(typeWriter, 50);
             }
@@ -89,6 +96,8 @@ export function initDynamicHeader() {
 
     // 3. Restaurar Modo Nav
     window.restoreNavMode = function() {
+        mainHeader?.classList.remove('is-search-mode');
+        
         searchState.style.opacity = '0';
         searchState.style.transform = 'translateY(10px)';
         searchState.style.pointerEvents = 'none';
@@ -105,11 +114,11 @@ export function initDynamicHeader() {
     };
     
     // 4. Lógica del botón dinámico
-    dynamicBtn.addEventListener('click', (e) => {
+    dynamicWrapper.addEventListener('click', (e) => {
         e.stopPropagation();
-        if (isShowingLupa || searchState.style.opacity === '1') {
+        if (isShowingLupa || mainHeader?.classList.contains('is-search-mode')) {
             // Si hay lupa visible, activamos modo búsqueda y luego abrimos modal
-            if (searchState.style.opacity !== '1') {
+            if (!mainHeader?.classList.contains('is-search-mode')) {
                 window.triggerSearchMode();
             } else {
                 openSearchModal();

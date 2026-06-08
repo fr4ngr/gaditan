@@ -58,9 +58,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
             
-            // Si estamos en modo búsqueda (el searchState es visible), abrimos el modal
-            const searchState = document.getElementById('header-state-search');
-            if (searchState && searchState.style.opacity === '1') {
+            // Si estamos en modo búsqueda abrimos el modal
+            if (mainHeader.classList.contains('is-search-mode')) {
                 openSearchModal();
             }
         });
