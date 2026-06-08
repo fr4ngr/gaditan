@@ -26,12 +26,12 @@
             <!-- Derecha: Botón Dinámico (Bandera/Lupa) -->
             <div style="display: flex; align-items: center; gap: 1rem;">
                 <!-- Dynamic Button (Flag <-> Lupa) -->
-                <div class="lang-dropdown-wrapper" id="header-dynamic-wrapper" style="position: relative; width: 32px; height: 32px; display: flex; justify-content: center; align-items: center; cursor: pointer;">
+                <div class="lang-dropdown-wrapper" id="header-dynamic-wrapper" style="position: relative; width: 44px; height: 44px; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 10;">
                     <!-- Spanish Flag Circle (Libre y sin bordes de botón) -->
-                    <div id="header-icon-flag" style="position: absolute; width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(to bottom, #AA151B 25%, #F1BF00 25%, #F1BF00 75%, #AA151B 75%); transition: transform 0.4s ease, opacity 0.4s ease; box-shadow: 0 2px 6px rgba(0,0,0,0.2);"></div>
+                    <div id="header-icon-flag" style="position: absolute; width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(to bottom, #AA151B 25%, #F1BF00 25%, #F1BF00 75%, #AA151B 75%); transition: transform 0.4s ease, opacity 0.4s ease; box-shadow: 0 2px 6px rgba(0,0,0,0.2); pointer-events: none;"></div>
                     
                     <!-- Search Icon (Lupa Libre) -->
-                    <div id="header-icon-lupa" style="position: absolute; display: flex; justify-content: center; align-items: center; opacity: 0; transform: translateY(100%); transition: transform 0.4s ease, opacity 0.4s ease;">
+                    <div id="header-icon-lupa" style="position: absolute; display: flex; justify-content: center; align-items: center; opacity: 0; transform: translateY(100%); transition: transform 0.4s ease, opacity 0.4s ease; pointer-events: none;">
                         <i data-lucide="search" style="color: white; width: 24px; height: 24px; drop-shadow: 0 2px 4px rgba(0,0,0,0.5);"></i>
                     </div>
                 </div>
