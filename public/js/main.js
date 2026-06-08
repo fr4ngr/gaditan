@@ -18,7 +18,6 @@ import {
     toggleBookingPet,
     toggleSupplements,
     toggleCalcSupplements,
-    initDynamicHeader,
     openSearchModal,
     closeSearchModal
 } from './ui.js';
