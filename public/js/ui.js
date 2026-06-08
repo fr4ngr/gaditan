@@ -2,6 +2,97 @@ import { translations, state, routeState, routeData, calcState, calcContext } fr
 import { updatePriceUI, updateCalcPriceUI, calculateRoute, getRouteDetails, calculatePrice, isInterurban } from './pricing.js';
 import { geocodeString } from './api.js';
 
+let headerAnimationInterval;
+let typeWriterTimeout;
+
+export function initDynamicHeader() {
+    const navState = document.getElementById('header-state-nav');
+    const searchState = document.getElementById('header-state-search');
+    const typeText = document.getElementById('header-typing-text');
+    
+    if (!navState || !searchState || !typeText) return;
+    
+    const searches = [
+        "¿Llevas equipaje? 🧳",
+        "¿Recogida en Renfe? 🚆",
+        "¿Buscas tarifas? 💶",
+        "¿Paradas cercanas? 📍"
+    ];
+    
+    let currentSearchIdx = 0;
+    let isSearchState = false;
+
+    headerAnimationInterval = setInterval(() => {
+        // No animar si el menú móvil o algún modal está abierto
+        if (document.getElementById('mobile-overlay')?.classList.contains('active') ||
+            document.getElementById('search-modal')?.classList.contains('active')) {
+            return;
+        }
+
+        isSearchState = !isSearchState;
+        
+        if (isSearchState) {
+            // Mostrar estado búsqueda
+            navState.style.opacity = '0';
+            navState.style.transform = 'translateY(-10px)';
+            navState.style.pointerEvents = 'none';
+            
+            searchState.style.opacity = '1';
+            searchState.style.transform = 'translateY(0)';
+            searchState.style.pointerEvents = 'auto';
+            
+            // Efecto máquina de escribir
+            const textToType = searches[currentSearchIdx];
+            typeText.innerText = '';
+            let charIdx = 0;
+            
+            const typeWriter = () => {
+                if (charIdx < textToType.length) {
+                    typeText.innerText += textToType.charAt(charIdx);
+                    charIdx++;
+                    typeWriterTimeout = setTimeout(typeWriter, 50);
+                }
+            };
+            typeWriter();
+            
+            currentSearchIdx = (currentSearchIdx + 1) % searches.length;
+        } else {
+            // Volver al estado normal
+            searchState.style.opacity = '0';
+            searchState.style.transform = 'translateY(10px)';
+            searchState.style.pointerEvents = 'none';
+            
+            navState.style.opacity = '1';
+            navState.style.transform = 'translateY(0)';
+            navState.style.pointerEvents = 'auto';
+        }
+    }, 6000); // Cambiar de estado cada 6 segundos
+}
+
+export function openSearchModal() {
+    const modal = document.getElementById('search-modal');
+    if (modal) {
+        modal.classList.add('active');
+        const input = document.getElementById('predictive-search-input');
+        if (input) setTimeout(() => input.focus(), 100);
+        // Asegurarnos de que el header se queda en modo Nav si lo cerramos después
+        const searchState = document.getElementById('header-state-search');
+        if (searchState) {
+            searchState.style.opacity = '0';
+            searchState.style.pointerEvents = 'none';
+            document.getElementById('header-state-nav').style.opacity = '1';
+            document.getElementById('header-state-nav').style.pointerEvents = 'auto';
+        }
+    }
+}
+
+export function closeSearchModal() {
+    const modal = document.getElementById('search-modal');
+    if (modal) {
+        modal.classList.remove('active');
+    }
+}
+
 export function updateDynamicAd() {
     const adTitle = document.getElementById('ad-title');
     const adDesc = document.getElementById('ad-desc');

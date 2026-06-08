@@ -17,7 +17,10 @@ import {
     updateBookingStepper,
     toggleBookingPet,
     toggleSupplements,
-    toggleCalcSupplements
+    toggleCalcSupplements,
+    initDynamicHeader,
+    openSearchModal,
+    closeSearchModal
 } from './ui.js';
 
 window.calculateRoute = calculateRoute;
@@ -42,6 +45,61 @@ document.addEventListener('DOMContentLoaded', () => {
     if (typeof lucide !== 'undefined') {
         lucide.createIcons();
     }
+
+    initDynamicHeader();
+
+    const mainHeader = document.getElementById('main-header');
+    if (mainHeader) {
+        mainHeader.addEventListener('click', (e) => {
+            // No abrir búsqueda si se hace clic en botones específicos
+            if (e.target.closest('.hamburger-btn') || 
+                e.target.closest('.lang-dropdown-wrapper') || 
+                e.target.closest('.btn-header-call')) {
+                return;
+            }
+            openSearchModal();
+        });
+    }
+
+    const closeSearchBtn = document.getElementById('close-search-modal');
+    if (closeSearchBtn) {
+        closeSearchBtn.addEventListener('click', closeSearchModal);
+    }
+    
+    const searchModalOverlay = document.getElementById('search-modal');
+    if (searchModalOverlay) {
+        searchModalOverlay.addEventListener('click', (e) => {
+            if (e.target === searchModalOverlay) {
+                closeSearchModal();
+            }
+        });
+    }
+
+    // Lógica para Accesos Rápidos
+    document.querySelectorAll('.quick-action-card').forEach(card => {
+        card.addEventListener('click', () => {
+            closeSearchModal();
+            const targetSelector = card.getAttribute('data-target');
+            const action = card.getAttribute('data-action');
+            
+            if (targetSelector) {
+                const targetEl = document.querySelector(targetSelector);
+                if (targetEl) {
+                    targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }
+            
+            if (action === 'open-supplements') {
+                setTimeout(() => {
+                    const suppContainer = document.getElementById('calc-supplements-container');
+                    const suppBtn = document.getElementById('btn-calc-supplements');
+                    if (suppContainer && suppContainer.classList.contains('hidden')) {
+                        if (window.toggleCalcSupplements) window.toggleCalcSupplements();
+                    }
+                }, 500); // Dar tiempo al scroll
+            }
+        });
+    });
 
     const savedLang = localStorage.getItem('cadiz_taxi_lang');
     if (savedLang && translations[savedLang]) {

@@ -1,0 +1,244 @@
+---
+// src/components/SearchModal.astro
+---
+
+<div id="search-modal" class="search-modal-overlay hidden">
+    <div class="search-modal-content">
+        <!-- Barra superior -->
+        <div class="search-modal-header">
+            <div class="search-input-wrapper">
+                <i data-lucide="search" class="search-icon"></i>
+                <input type="text" id="predictive-search-input" placeholder="¿Qué necesitas buscar?" autocomplete="off" />
+            </div>
+            <button id="close-search-modal" class="close-search-btn">
+                <i data-lucide="x"></i>
+            </button>
+        </div>
+
+        <!-- Sugerencias (Quick Actions) -->
+        <div class="search-suggestions">
+            <h3 style="font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 1rem; margin-top: 1rem;">Sugerencias Rápidas</h3>
+            
+            <div class="quick-actions-grid">
+                <!-- Acción: Calculadora -->
+                <button class="quick-action-card" data-target="#reservas">
+                    <div class="qa-icon" style="background: rgba(6, 182, 212, 0.15); color: var(--brand-cyan);">
+                        <i data-lucide="calculator"></i>
+                    </div>
+                    <div class="qa-text">
+                        <span class="qa-title">Calcular un viaje</span>
+                        <span class="qa-desc">Estima el coste de tu trayecto</span>
+                    </div>
+                    <i data-lucide="arrow-up-right" class="qa-arrow"></i>
+                </button>
+
+                <!-- Acción: Maletas -->
+                <button class="quick-action-card" data-target="#reservas" data-action="open-supplements">
+                    <div class="qa-icon" style="background: rgba(168, 85, 247, 0.15); color: #c084fc;">
+                        <i data-lucide="briefcase"></i>
+                    </div>
+                    <div class="qa-text">
+                        <span class="qa-title">Viajar con equipaje</span>
+                        <span class="qa-desc">Añade maletas grandes</span>
+                    </div>
+                    <i data-lucide="arrow-up-right" class="qa-arrow"></i>
+                </button>
+
+                <!-- Acción: Tarifas -->
+                <button class="quick-action-card" data-target="#tarifas">
+                    <div class="qa-icon" style="background: rgba(16, 185, 129, 0.15); color: #34d399;">
+                        <i data-lucide="receipt"></i>
+                    </div>
+                    <div class="qa-text">
+                        <span class="qa-title">Ver tarifas oficiales</span>
+                        <span class="qa-desc">Precios urbanos e interurbanos</span>
+                    </div>
+                    <i data-lucide="arrow-up-right" class="qa-arrow"></i>
+                </button>
+
+                <!-- Acción: Paradas -->
+                <button class="quick-action-card" data-target="#paradas">
+                    <div class="qa-icon" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24;">
+                        <i data-lucide="map-pin"></i>
+                    </div>
+                    <div class="qa-text">
+                        <span class="qa-title">Encontrar una parada</span>
+                        <span class="qa-desc">Localiza el taxi más cercano</span>
+                    </div>
+                    <i data-lucide="arrow-up-right" class="qa-arrow"></i>
+                </button>
+
+                <!-- Acción: Renfe -->
+                <button class="quick-action-card" data-target="#reservas" data-action="open-supplements">
+                    <div class="qa-icon" style="background: rgba(239, 68, 68, 0.15); color: #f87171;">
+                        <i data-lucide="train"></i>
+                    </div>
+                    <div class="qa-text">
+                        <span class="qa-title">Recogida en Renfe</span>
+                        <span class="qa-desc">Suplementos de salida</span>
+                    </div>
+                    <i data-lucide="arrow-up-right" class="qa-arrow"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .search-modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(15, 23, 42, 0.85);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        z-index: 9999;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding-top: 2rem;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+    }
+    
+    .search-modal-overlay.active {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .search-modal-content {
+        width: 100%;
+        max-width: 600px;
+        padding: 0 1rem;
+        transform: translateY(-20px);
+        transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    
+    .search-modal-overlay.active .search-modal-content {
+        transform: translateY(0);
+    }
+
+    .search-modal-header {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+    }
+
+    .search-input-wrapper {
+        flex: 1;
+        position: relative;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 999px;
+        display: flex;
+        align-items: center;
+        padding: 0.8rem 1.2rem;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+
+    .search-icon {
+        color: var(--brand-cyan);
+        width: 20px;
+        height: 20px;
+        margin-right: 0.8rem;
+    }
+
+    #predictive-search-input {
+        background: transparent;
+        border: none;
+        color: white;
+        font-size: 1.1rem;
+        width: 100%;
+        outline: none;
+        font-family: 'Outfit', sans-serif;
+    }
+    
+    #predictive-search-input::placeholder {
+        color: rgba(255, 255, 255, 0.5);
+    }
+
+    .close-search-btn {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: white;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    
+    .close-search-btn:hover {
+        background: rgba(255, 255, 255, 0.2);
+    }
+
+    .quick-actions-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 0.8rem;
+    }
+
+    .quick-action-card {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 16px;
+        padding: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-align: left;
+        width: 100%;
+    }
+
+    .quick-action-card:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.15);
+        transform: translateY(-2px);
+    }
+
+    .qa-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-shrink: 0;
+    }
+
+    .qa-text {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+    }
+
+    .qa-title {
+        color: white;
+        font-weight: 600;
+        font-size: 1.05rem;
+    }
+
+    .qa-desc {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.85rem;
+    }
+
+    .qa-arrow {
+        color: rgba(255, 255, 255, 0.3);
+        width: 20px;
+        height: 20px;
+        transition: color 0.2s ease;
+    }
+
+    .quick-action-card:hover .qa-arrow {
+        color: white;
+    }
+</style>

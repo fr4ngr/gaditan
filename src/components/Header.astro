@@ -3,39 +3,54 @@
 ---
 
 <!-- Header Glassmorphism (Dynamic Island) -->
-<header class="header glass-nav">
-    <div class="container header-content" style="padding: 0;">
-        <div class="logo">
-            <!-- Mobile Hamburger Button on the left -->
-            <button class="hamburger-btn" id="mobile-menu-btn" aria-label="Menú">
-                <i data-lucide="menu" size="24"></i>
-            </button>
-            <span class="logo-text">Cádiz.Taxi</span>
-        </div>
-        <div class="header-right">
-            <!-- Desktop Nav -->
-            <nav class="nav-links hide-mobile">
-                <a href="#tarifas" data-translate="nav-prices">Precios</a>
-                <a href="#reservas" data-translate="nav-booking">Reservar</a>
-                <a href="#paradas" data-translate="nav-stops">Paradas</a>
-                <a href="#faq" data-translate="nav-faq">Preguntas</a>
-            </nav>
-            
-            <!-- Language Dropdown -->
-            <div class="lang-dropdown-wrapper">
-                <button class="lang-dropdown-btn" id="lang-toggle">
-                    <span id="current-lang-icon">🇪🇸</span> <i data-lucide="chevron-down" size="14"></i>
+<header class="header glass-nav" id="main-header" style="cursor: pointer;">
+    <div class="container header-content" style="padding: 0; position: relative;">
+        <!-- ESTADO NAVEGACIÓN -->
+        <div id="header-state-nav" style="display: flex; justify-content: space-between; align-items: center; width: 100%; transition: opacity 0.4s ease, transform 0.4s ease;">
+            <div class="logo">
+                <!-- Mobile Hamburger Button on the left -->
+                <button class="hamburger-btn" id="mobile-menu-btn" aria-label="Menú">
+                    <i data-lucide="menu" size="24"></i>
                 </button>
-                <div class="lang-menu" id="lang-menu">
-                    <button class="lang-btn active" id="lang-es">🇪🇸 Español</button>
-                    <button class="lang-btn" id="lang-en">🇬🇧 English</button>
-                </div>
+                <span class="logo-text">Cádiz.Taxi</span>
             </div>
+            <div class="header-right">
+                <!-- Desktop Nav -->
+                <nav class="nav-links hide-mobile">
+                    <a href="#tarifas" data-translate="nav-prices">Precios</a>
+                    <a href="#reservas" data-translate="nav-booking">Reservar</a>
+                    <a href="#paradas" data-translate="nav-stops">Paradas</a>
+                    <a href="#faq" data-translate="nav-faq">Preguntas</a>
+                </nav>
+                
+                <!-- Language Dropdown -->
+                <div class="lang-dropdown-wrapper">
+                    <button class="lang-dropdown-btn" id="lang-toggle" style="width: 32px; height: 32px; border-radius: 50%; padding: 0; display: flex; justify-content: center; align-items: center; border: 1px solid rgba(255,255,255,0.1);">
+                        <span id="current-lang-icon" style="font-size: 1.1rem; line-height: 1;">🇪🇸</span>
+                    </button>
+                    <div class="lang-menu" id="lang-menu">
+                        <button class="lang-btn active" id="lang-es">🇪🇸 Español</button>
+                        <button class="lang-btn" id="lang-en">🇬🇧 English</button>
+                    </div>
+                </div>
 
-            <!-- Call Button -->
-            <a href="tel:956212121" class="btn-header-call hide-mobile">
-                <i data-lucide="phone" size="16"></i> <span data-translate="nav-call">Llama Ya</span>
-            </a>
+                <!-- Call Button -->
+                <a href="tel:956212121" class="btn-header-call hide-mobile">
+                    <i data-lucide="phone" size="16"></i> <span data-translate="nav-call">Llama Ya</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- ESTADO BÚSQUEDA (Oculto inicialmente) -->
+        <div id="header-state-search" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; justify-content: space-between; align-items: center; opacity: 0; transform: translateY(10px); pointer-events: none; transition: opacity 0.4s ease, transform 0.4s ease;">
+            <div style="display: flex; align-items: center; gap: 0.8rem; margin-left: 0.5rem;">
+                <i data-lucide="search" style="color: var(--brand-cyan); width: 20px; height: 20px;"></i>
+                <span id="header-typing-text" style="color: rgba(255,255,255,0.7); font-size: 0.95rem; font-family: 'Outfit', sans-serif;">Buscar...</span>
+                <span class="typing-cursor">|</span>
+            </div>
+            <div style="background: rgba(255,255,255,0.1); border-radius: 50%; width: 32px; height: 32px; display: flex; justify-content: center; align-items: center; margin-right: 0.5rem; border: 1px solid rgba(255,255,255,0.1);">
+                <i data-lucide="arrow-right" style="color: white; width: 16px; height: 16px;"></i>
+            </div>
         </div>
     </div>
 </header>
