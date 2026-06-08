@@ -35,18 +35,67 @@
                             </div>
                         </div>
 
-                        <!-- Botonera Estilo Pill -->
-                        <div style="display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap; margin-top: 0.5rem;">
-                            <button class="pill-toggle active" id="calc-time-toggle" onclick="toggleCalcTime()">
-                                <i data-lucide="sun" size="14"></i> <span id="calc-time-text" data-translate="btn-day">Día</span>
+                        <!-- Selector de Cuándo -->
+                        <div class="form-group" style="gap: 0.25rem;">
+                            <label for="calc-when"><span>¿Cuándo viajas?</span></label>
+                            <div class="input-icon-wrapper">
+                                <i data-lucide="calendar-clock"></i>
+                                <select id="calc-when" class="glass-input with-icon" style="appearance: none; -webkit-appearance: none; cursor: pointer;">
+                                    <option value="now">Ahora mismo</option>
+                                    <option value="later">Elegir Fecha y Hora</option>
+                                </select>
+                                <i data-lucide="chevron-down" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); opacity: 0.5; pointer-events: none;"></i>
+                            </div>
+                        </div>
+
+                        <!-- Fecha y Hora (Oculto por defecto) -->
+                        <div id="calc-datetime-container" class="form-row hidden" style="display: flex; gap: 1rem; flex-wrap: nowrap;">
+                            <div class="form-group" style="flex: 1; min-width: 0;">
+                                <label for="calc-date"><span>Fecha</span></label>
+                                <div class="input-icon-wrapper">
+                                    <i data-lucide="calendar"></i>
+                                    <input type="date" id="calc-date" class="glass-input with-icon">
+                                </div>
+                            </div>
+                            <div class="form-group" style="flex: 1; min-width: 0;">
+                                <label for="calc-time"><span>Hora</span></label>
+                                <div class="input-icon-wrapper">
+                                    <i data-lucide="clock"></i>
+                                    <input type="time" id="calc-time" class="glass-input with-icon">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Botón SUPLEMENTOS -->
+                        <div style="margin-top: 0.5rem;">
+                            <button type="button" id="btn-calc-supplements" onclick="toggleCalcSupplements()" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 0.8rem 1rem; border-radius: 12px; cursor: pointer; font-weight: 600; font-family: 'Outfit', sans-serif;">
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <i data-lucide="plus-circle" style="color: var(--brand-cyan);"></i> SUPLEMENTOS
+                                </div>
+                                <i data-lucide="chevron-down" id="calc-supplements-chevron"></i>
                             </button>
-                            <button class="pill-toggle" id="calc-festivo-toggle" onclick="toggleCalcFestivo()">
-                                <i data-lucide="calendar" size="14"></i> <span id="calc-festivo-text" data-translate="btn-festivo">Festivo</span>
-                            </button>
-                            <button class="pill-toggle" id="calc-renfe-toggle" onclick="toggleCalcRenfe()">
-                                <i data-lucide="train" size="14"></i> <span data-translate="btn-renfe">Renfe</span>
-                            </button>
-                            <div class="pill-toggle" id="calc-maleta-container" style="padding: 0 0.5rem; display: flex; align-items: center; gap: 0.2rem;"><i data-lucide="briefcase" size="14"></i><button type="button" onclick="updateCalcLuggage(-1)" style="background: none; border: none; color: inherit; padding: 0.2rem 0.4rem; cursor: pointer; font-size: 1.1rem; line-height: 1;">-</button><span id="calc-luggage" style="font-weight: bold; width: 12px; text-align: center;">0</span><button type="button" onclick="updateCalcLuggage(1)" style="background: none; border: none; color: inherit; padding: 0.2rem 0.4rem; cursor: pointer; font-size: 1.1rem; line-height: 1;">+</button></div>
+                            
+                            <!-- Contenedor de Suplementos -->
+                            <div id="calc-supplements-container" class="hidden" style="background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 1rem; margin-top: 0.5rem;">
+                                <div class="chip-group" style="justify-content: flex-start;">
+                                    <div class="chip-wrapper">
+                                        <span class="chip-label">Maletas grandes</span>
+                                        <div class="booking-chip stepper-chip-container">
+                                            <button type="button" class="stepper-btn-full" onclick="updateCalcLuggage(-1)">-</button>
+                                            <div class="stepper-content">
+                                                <i data-lucide="briefcase" class="chip-icon"></i> <span class="chip-text" id="calc-luggage">0</span>
+                                            </div>
+                                            <button type="button" class="stepper-btn-full" onclick="updateCalcLuggage(1)">+</button>
+                                        </div>
+                                    </div>
+                                    <div class="chip-wrapper" style="width: 100%; margin-top: 0.5rem;">
+                                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: var(--text-muted); font-size: 0.9rem;">
+                                            <input type="checkbox" id="calc-renfe-toggle" onchange="toggleCalcRenfe()" style="accent-color: var(--brand-cyan); width: 16px; height: 16px;">
+                                            Suplemento Salida Renfe (+0,82€)
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         
                         <button class="btn btn-glow" style="width: 100%; margin-top: 0.5rem;" onclick="calculateRoute()">

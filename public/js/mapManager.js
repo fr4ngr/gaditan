@@ -258,10 +258,6 @@ const mapManager = (() => {
             <div style="background: rgba(6,182,212,0.12); border: 1px solid rgba(6,182,212,0.35); width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 1.1rem; font-weight: 700; color: var(--brand-cyan); margin-left: 0.5rem;">+</div>
         `;
         item.addEventListener('click', () => {
-            // Desactivamos temporalmente el scroll suave global para evitar el salto raro al encogerse la web
-            const originalScrollBehavior = document.documentElement.style.scrollBehavior;
-            document.documentElement.style.scrollBehavior = 'auto';
-            
             // Pasar a modo 'elegir'
             setMode('elegir');
             
@@ -272,21 +268,12 @@ const mapManager = (() => {
                 select.dispatchEvent(new Event('change'));
             }
             
-            // Esperar al reflow del DOM para que las alturas se ajusten antes de calcular el scroll
+            // Smooth scroll to map
             setTimeout(() => {
-                const mapControls = document.querySelector('.map-controls');
-                if (mapControls) {
-                    const headerHeight = document.querySelector('.header')?.offsetHeight || 0;
-                    const offsetPosition = mapControls.getBoundingClientRect().top + window.scrollY - headerHeight - 5;
-                    window.scrollTo({ top: offsetPosition, behavior: 'auto' });
-                } else {
-                    document.getElementById('map').scrollIntoView({ behavior: 'auto', block: 'start' });
+                const paradasSection = document.getElementById('paradas');
+                if (paradasSection) {
+                    paradasSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
-                
-                // Restauramos el scroll suave en el siguiente frame
-                requestAnimationFrame(() => {
-                    document.documentElement.style.scrollBehavior = originalScrollBehavior;
-                });
             }, 50);
         });
         return item;

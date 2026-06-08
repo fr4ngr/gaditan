@@ -130,8 +130,30 @@ export function calculatePrice(routeInfo, isNight, isFestivo, hasRenfe, hasPuert
 
 export function updateCalcPriceUI() {
     if (!calcContext.lastCalcRoute) return;
-    const isNight = !calcState.isDay;
-    const result = calculatePrice(calcContext.lastCalcRoute, isNight, calcState.isFestivo, calcState.hasRenfe, calcState.luggage);
+    
+    // Calcular isNight y isFestivo automáticamente
+    let isNight = false;
+    let isFestivo = false; // Implementar lógica de festivos más adelante o usar estado manual
+    
+    const whenSelect = document.getElementById('calc-when');
+    let targetDate = new Date();
+    
+    if (whenSelect && whenSelect.value === 'later') {
+        const dateVal = document.getElementById('calc-date')?.value;
+        const timeVal = document.getElementById('calc-time')?.value;
+        if (dateVal && timeVal) {
+            targetDate = new Date(`${dateVal}T${timeVal}`);
+        }
+    }
+    
+    const h = targetDate.getHours();
+    const day = targetDate.getDay(); // 0 is Sunday
+    if (h >= 21 || h < 7 || day === 0 || day === 6) {
+        isNight = true; // Sábados, domingos o de 21:00 a 07:00 son tarifa nocturna/festiva
+        isFestivo = (day === 0 || day === 6);
+    }
+    
+    const result = calculatePrice(calcContext.lastCalcRoute, isNight, isFestivo, calcState.hasRenfe, calcState.luggage);
     
     const formattedPrice = result.price.toFixed(2).replace('.', ',');
     const formattedDist = calcContext.lastCalcRoute.finalDistanceKm.toFixed(1).replace('.', ',');

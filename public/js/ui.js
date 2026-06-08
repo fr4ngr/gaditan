@@ -27,7 +27,29 @@ export function updateDynamicAd() {
 export function toggleSupplements() {
     const container = document.getElementById('supplements-container');
     const btn = document.getElementById('btn-toggle-supplements');
-    const icon = btn.querySelector('i');
+    const icon = document.getElementById('icon-supplements-chevron');
+    
+    if (container.classList.contains('hidden')) {
+        container.classList.remove('hidden');
+        btn.classList.add('active');
+        if (icon) {
+            icon.setAttribute('data-lucide', 'chevron-up');
+            if (window.lucide) window.lucide.createIcons();
+        }
+    } else {
+        container.classList.add('hidden');
+        btn.classList.remove('active');
+        if (icon) {
+            icon.setAttribute('data-lucide', 'chevron-down');
+            if (window.lucide) window.lucide.createIcons();
+        }
+    }
+}
+
+export function toggleCalcSupplements() {
+    const container = document.getElementById('calc-supplements-container');
+    const btn = document.getElementById('btn-calc-supplements');
+    const icon = document.getElementById('calc-supplements-chevron');
     
     if (container.classList.contains('hidden')) {
         container.classList.remove('hidden');

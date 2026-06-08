@@ -95,7 +95,13 @@ html { overflow-x: hidden; max-width: 100%; scroll-behavior: smooth; font-size: 
 
 /* Hamburger Menu */
 .hamburger-btn {
-    display: none; background: transparent; border: none; color: white; cursor: pointer; padding: 0.4rem; border-radius: 8px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: transparent; border: none; color: white; cursor: pointer; padding: 0.4rem; border-radius: 8px;
+}
+@media (max-width: 768px) {
+    .hamburger-btn { display: flex; }
 }
 .hamburger-btn:hover { background: rgba(255,255,255,0.05); }
 

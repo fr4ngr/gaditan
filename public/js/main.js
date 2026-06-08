@@ -1,5 +1,5 @@
 import { translations, state, calcContext } from './config.js';
-import { calculateRoute } from './pricing.js';
+import { calculateRoute, updateCalcPriceUI } from './pricing.js';
 import { 
     setLanguage, 
     updateDynamicAd, 
@@ -16,7 +16,8 @@ import {
     confirmReservation,
     updateBookingStepper,
     toggleBookingPet,
-    toggleSupplements
+    toggleSupplements,
+    toggleCalcSupplements
 } from './ui.js';
 
 window.calculateRoute = calculateRoute;
@@ -28,6 +29,9 @@ window.toggleCalcTime = toggleCalcTime;
 window.toggleCalcFestivo = toggleCalcFestivo;
 window.toggleCalcRenfe = toggleCalcRenfe;
 window.updateCalcLuggage = updateCalcLuggage;
+window.toggleSupplements = toggleSupplements;
+window.toggleCalcSupplements = toggleCalcSupplements;
+window.updateCalcPriceUI = updateCalcPriceUI;
 window.geolocateOrigin = geolocateOrigin;
 window.confirmReservation = confirmReservation;
 window.updateBookingStepper = updateBookingStepper;
@@ -66,6 +70,25 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Listener para el selector de Cuándo (Ahora vs Fecha)
     const whenSelect = document.getElementById('b-when');
+    const calcWhenSelect = document.getElementById('calc-when');
+    const calcDatetimeContainer = document.getElementById('calc-datetime-container');
+    const calcDateInput = document.getElementById('calc-date');
+    const calcTimeInput = document.getElementById('calc-time');
+    
+    if (calcWhenSelect && calcDatetimeContainer) {
+        calcWhenSelect.addEventListener('change', (e) => {
+            if (e.target.value === 'later') {
+                calcDatetimeContainer.classList.remove('hidden');
+            } else {
+                calcDatetimeContainer.classList.add('hidden');
+            }
+            if (window.updateCalcPriceUI) window.updateCalcPriceUI();
+        });
+    }
+    
+    if (calcDateInput) calcDateInput.addEventListener('change', () => { if (window.updateCalcPriceUI) window.updateCalcPriceUI(); });
+    if (calcTimeInput) calcTimeInput.addEventListener('change', () => { if (window.updateCalcPriceUI) window.updateCalcPriceUI(); });
+
     const dateContainer = document.getElementById('b-date-container');
     const timeContainer = document.getElementById('b-time-container');
     if (whenSelect) {

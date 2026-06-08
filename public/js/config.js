@@ -6,7 +6,7 @@ export const translations = {
         "nav-faq": "Preguntas",
         "nav-call": "Llama Ya",
         "sponsor-sticky": "¿Prefieres precio cerrado? 🌟 Transfer Privado por Cadiz.cab",
-        "hero-pretitle": "LA MEJOR GUÍA TURÍSTICA SOBRE",
+        "hero-pretitle": "LA MEJOR GUÍA INFORMATIVA SOBRE",
         "hero-title": "Taxis Oficiales <br>en Cádiz",
         "hero-subtitle": "Pide un taxi, resérvalo o consulta las tarifas. Toda la info que necesitas en cadiz.taxi",
         "hero-call-btn": "<i data-lucide=\"phone\"></i> &iexcl;LLAMA YA!",
