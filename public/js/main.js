@@ -267,11 +267,19 @@ document.addEventListener('DOMContentLoaded', () => {
             if (group.classList.contains('active')) {
                 group.classList.remove('active');
                 if (icon) icon.style.transform = 'rotate(0deg)';
+                content.style.overflow = 'hidden'; // Ocultar para no desbordar durante cierre
                 content.style.maxHeight = '0px';
             } else {
                 group.classList.add('active');
                 if (icon) icon.style.transform = 'rotate(180deg)';
                 content.style.maxHeight = '2000px';
+                
+                // Permitir que el brillo (box-shadow) sobresalga una vez abierta
+                setTimeout(() => {
+                    if (group.classList.contains('active')) {
+                        content.style.overflow = 'visible';
+                    }
+                }, 400);
                 
                 setTimeout(() => {
                     const rect = group.getBoundingClientRect();

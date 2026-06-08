@@ -275,9 +275,15 @@ section { padding: 5rem 0; }
 .glass-table th, .glass-table td { padding: 0.7rem 1.2rem; border-bottom: 1px solid rgba(255, 255, 255, 0.1); vertical-align: middle; }
 .glass-table th { font-weight: 600; color: var(--text-main); font-size: 1.1rem; vertical-align: top; }
 .glass-table th:nth-child(2), .glass-table td:nth-child(2),
-.glass-table th:nth-child(3), .glass-table td:nth-child(3) { text-align: center; white-space: nowrap; min-width: 90px; }
-.table-schedule { display: block; font-size: 0.9rem; font-weight: 400; color: var(--text-muted); margin-top: 0.3rem; }
+.glass-table th:nth-child(3), .glass-table td:nth-child(3) { text-align: center; white-space: nowrap; min-width: 70px; }
+
 .glass-table tbody tr:hover { background: rgba(255, 255, 255, 0.03); }
+
+/* Ajustes Responsive para Tablas */
+@media (max-width: 400px) {
+    .glass-table th, .glass-table td { padding: 0.5rem 0.5rem; font-size: 0.9rem; }
+    .table-responsive { overflow-x: visible !important; }
+}
 
 /* Grid Cards */
 .pricing-grid, .grid-features { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; }
