@@ -6,6 +6,8 @@ let headerAnimationInterval;
 let typeWriterTimeout;
 
 export function initDynamicHeader() {
+    const navState = document.getElementById('header-state-nav');
+    const searchState = document.getElementById('header-state-search');
     const flagIcon = document.getElementById('header-icon-flag');
     const lupaIcon = document.getElementById('header-icon-lupa');
     const typeText = document.getElementById('header-typing-text');
