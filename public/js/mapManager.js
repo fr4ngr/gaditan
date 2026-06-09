@@ -46,10 +46,13 @@ const mapManager = (() => {
         if (!mapElement || typeof L === 'undefined') return;
 
         map = L.map('map', {
+            zoomControl: false,
             scrollWheelZoom: false,
             dragging: !L.Browser.mobile,
             tap: false
         }).setView([36.529, -6.292], 13);
+        
+        L.control.zoom({ position: 'bottomright' }).addTo(map);
         
         L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
             attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
@@ -60,7 +63,7 @@ const mapManager = (() => {
 
         // Control de localización tipo mirilla
         const LocateControl = L.Control.extend({
-            options: { position: 'topright' },
+            options: { position: 'bottomright' },
             onAdd: function() {
                 const btn = L.DomUtil.create('button', 'map-locate-btn');
                 btn.title = 'Localizar parada más cercana';
