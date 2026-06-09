@@ -359,7 +359,7 @@ const mapManager = (() => {
                     <div style="width: 100%;">
                         <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
                             <div style="display: flex; align-items: center; gap: 0.6rem;">
-                                <div style="background: #eab308; color: #111827; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.65rem;">TO</div>
+                                <div style="background: #eab308; color: #111827; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.65rem;">RT</div>
                                 <div style="display: flex; flex-direction: column;">
                                     <div style="color: #fff; font-weight: 600; font-size: 1.1rem;">Taxi Oficial</div>
                                 </div>
