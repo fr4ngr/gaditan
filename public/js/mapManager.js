@@ -181,11 +181,12 @@ const mapManager = (() => {
 
     const buildListItem = (p) => {
         const item = document.createElement('div');
+        item.className = 'pildora-hover';
         item.style.cssText = `
             display: flex; align-items: center; justify-content: space-between;
             padding: 0.65rem 0.9rem; border-radius: 9999px; cursor: pointer;
             background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
-            margin-bottom: 0.55rem; transition: background 0.25s ease, border-color 0.25s ease, transform 0.2s ease;
+            margin-bottom: 0.55rem; transition: background 0.25s ease, border-color 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
             overflow: hidden;
         `;
         item.onmouseover = () => { item.style.background = 'rgba(6,182,212,0.08)'; item.style.borderColor = 'rgba(6,182,212,0.3)'; };
@@ -226,11 +227,12 @@ const mapManager = (() => {
 
     const buildPlainListItem = (p) => {
         const item = document.createElement('div');
+        item.className = 'pildora-hover';
         item.style.cssText = `
             display: flex; align-items: center; justify-content: space-between;
             padding: 0.65rem 0.9rem; border-radius: 9999px; cursor: pointer;
             background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
-            margin-bottom: 0.55rem; transition: background 0.25s ease, border-color 0.25s ease, transform 0.2s ease;
+            margin-bottom: 0.55rem; transition: background 0.25s ease, border-color 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
             overflow: hidden;
         `;
         item.onmouseover = () => { item.style.background = 'rgba(6,182,212,0.08)'; item.style.borderColor = 'rgba(6,182,212,0.3)'; };
