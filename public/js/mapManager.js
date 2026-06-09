@@ -315,16 +315,16 @@ const mapManager = (() => {
         }
         
         overlay.innerHTML = `
-            <div style="background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; padding: 1rem 1.25rem; box-shadow: 0 10px 30px rgba(0,0,0,0.3); display: flex; flex-direction: column; width: 100%; box-sizing: border-box;">
+            <div style="background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.1); border-radius: 9999px; padding: 0.85rem 1.25rem; box-shadow: 0 10px 30px rgba(0,0,0,0.3); display: flex; flex-direction: column; width: 100%; box-sizing: border-box;">
                 <div style="display: flex; align-items: center; gap: 0.85rem; width: 100%;">
                     <!-- Icono circular a la izquierda -->
-                    <div style="background: rgba(6,182,212,0.15); border: 1px solid rgba(6,182,212,0.3); width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                        <i data-lucide="map-pin" style="color: var(--brand-cyan); width: 22px; height: 22px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));"></i>
+                    <div style="background: rgba(6,182,212,0.15); border: 1px solid rgba(6,182,212,0.3); width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                        <i data-lucide="map-pin" style="color: var(--brand-cyan); width: 18px; height: 18px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));"></i>
                     </div>
                     <!-- Textos a la derecha -->
-                    <div style="display: flex; flex-direction: column; flex: 1; min-width: 0;">
-                        <strong style="color: #fff; font-size: 1.15rem; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.2;">${p.name}</strong>
-                        <span style="color: rgba(255,255,255,0.7); font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 0.1rem;">${p.address}</span>
+                    <div style="display: flex; flex-direction: column; flex: 1; min-width: 0; justify-content: center;">
+                        <strong style="color: #fff; font-size: 1.1rem; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.2;">${p.name}</strong>
+                        <span style="color: rgba(255,255,255,0.7); font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 0.1rem;">${p.address}, Cádiz</span>
                     </div>
                 </div>
                 ${distHtml}
