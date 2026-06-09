@@ -75,7 +75,7 @@ window.showDestinoDetails = function(destId, gridType) {
         setTimeout(() => {
             if (!detailEl.classList.contains('is-open')) {
                 const inner = detailEl.querySelector('.dest-detail-inner');
-                if (inner) inner.innerHTML = '';
+                if (inner) inner.style.display = 'none'; // ocultar sin romper layout
             }
         }, 450);
         return;
@@ -87,6 +87,7 @@ window.showDestinoDetails = function(destId, gridType) {
     function openNewCard() {
         // Inyectamos contenido
         const inner = detailEl.querySelector('.dest-detail-inner');
+        inner.style.display = ''; // Resetear display por si estaba oculto
         inner.innerHTML = buildSelectedDestinoWidget(dest, gridType);
         if (typeof lucide !== 'undefined') lucide.createIcons();
         
@@ -127,7 +128,7 @@ window.showDestinoDetails = function(destId, gridType) {
             setTimeout(() => {
                 if (!el.classList.contains('is-open')) {
                     const inner = el.querySelector('.dest-detail-inner');
-                    if (inner) inner.innerHTML = '';
+                    if (inner) inner.style.display = 'none'; // ocultar sin romper layout
                 }
             }, 450);
         });
