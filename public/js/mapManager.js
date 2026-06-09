@@ -433,8 +433,8 @@ const mapManager = (() => {
                     <div style="background: #eab308; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center;"><i data-lucide="bus" style="width:14px; height:14px; color: #111827;"></i></div>
                     <div style="display: flex; align-items: center; gap: 0.3rem;">
                         <span style="font-size: 0.85rem; font-weight: 600; color: white;">Autobús Urbano</span>
-                        <div style="background: white; color: #111827; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.55rem; font-weight: 800; margin-left: 0.2rem;">L1</div>
-                        <div style="background: white; color: #111827; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.55rem; font-weight: 800;">L3</div>
+                        <div style="background: white; color: #111827; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.55rem; font-weight: 800; margin-left: 0.2rem;">1</div>
+                        <div style="background: white; color: #111827; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.55rem; font-weight: 800;">3</div>
                     </div>
                 </div>
                 <div style="display: flex; align-items: center; gap: 0.5rem;">
@@ -446,7 +446,7 @@ const mapManager = (() => {
             <!-- Opción Tren -->
             <a href="#" style="display: flex; justify-content: space-between; align-items: center; background: rgba(142, 68, 173, 0.08); border: 1px solid rgba(142, 68, 173, 0.3); border-radius: 9999px; padding: 0.6rem 1rem; text-decoration: none; margin-bottom: 0.5rem;">
                 <div style="display: flex; align-items: center; gap: 0.6rem;">
-                    <div style="background: white; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 1.1rem; font-family: sans-serif; color: #8e44ad; padding-bottom: 2px;">r</div>
+                    <div style="background: #8e44ad; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 1.1rem; font-family: sans-serif; color: white; padding-bottom: 2px;">r</div>
                     <div style="display: flex; align-items: center; gap: 0.3rem;">
                         <span style="font-size: 0.85rem; font-weight: 600; color: white;">Tren</span>
                         <div style="background: #ef4444; color: white; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.55rem; font-weight: 800; margin-left: 0.2rem;">C</div>
@@ -461,7 +461,7 @@ const mapManager = (() => {
             </a>
 
             <!-- Opción Tranvía -->
-            <a href="#" style="display: flex; justify-content: space-between; align-items: center; background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 9999px; padding: 0.6rem 1rem; text-decoration: none; margin-bottom: 0.5rem;">
+            <a href="#" style="display: flex; justify-content: space-between; align-items: center; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 9999px; padding: 0.6rem 1rem; text-decoration: none; margin-bottom: 0.5rem;">
                 <div style="display: flex; align-items: center; gap: 0.6rem;">
                     <div style="background: #10b981; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.9rem; color: white;">T</div>
                     <div style="display: flex; align-items: center; gap: 0.3rem;">
@@ -471,14 +471,14 @@ const mapManager = (() => {
                 </div>
                 <div style="display: flex; align-items: center; gap: 0.5rem;">
                     <span style="background: #10b981; color: #022c22; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; padding: 0.25rem 0.5rem; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">ECO</span>
-                    <i data-lucide="chevron-right" style="width: 16px; height: 16px; color: #34d399;"></i>
+                    <i data-lucide="chevron-right" style="width: 16px; height: 16px; color: #d1d5db;"></i>
                 </div>
             </a>
 
             <!-- Opción Autobús Interurbano -->
             <a href="#" style="display: flex; justify-content: space-between; align-items: center; background: rgba(0, 102, 77, 0.08); border: 1px solid rgba(0, 102, 77, 0.3); border-radius: 9999px; padding: 0.6rem 1rem; text-decoration: none; margin-bottom: 0.5rem;">
                 <div style="display: flex; align-items: center; gap: 0.6rem;">
-                    <div style="background: #00664d; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.75rem; color: white; letter-spacing: -0.5px;">AI</div>
+                    <div style="background: #00664d; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.75rem; color: white; letter-spacing: -0.5px;">C</div>
                     <div style="display: flex; align-items: center; gap: 0.3rem;">
                         <span style="font-size: 0.85rem; font-weight: 600; color: white;">Autobús Interurbano</span>
                     </div>
