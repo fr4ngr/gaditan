@@ -422,16 +422,20 @@ const mapManager = (() => {
 
             <!-- Separador TRANSPORTE PÚBLICO -->
             <div style="display: flex; align-items: center; gap: 0.75rem; margin: 1rem 0;">
-                <div style="flex: 1; height: 1px; background: linear-gradient(90deg, transparent, rgba(234,179,8,0.4));"></div>
-                <span style="font-size: 0.65rem; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: #fbbf24; white-space: nowrap;">Transporte público</span>
-                <div style="flex: 1; height: 1px; background: linear-gradient(90deg, rgba(234,179,8,0.4), transparent);"></div>
+                <div style="flex: 1; height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3));"></div>
+                <span style="font-size: 0.65rem; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: #ffffff; white-space: nowrap;">Transporte público</span>
+                <div style="flex: 1; height: 1px; background: linear-gradient(90deg, rgba(255,255,255,0.3), transparent);"></div>
             </div>
 
             <!-- Opción Autobús Interurbano -->
             <a href="#" style="display: flex; justify-content: space-between; align-items: center; background: rgba(234, 179, 8, 0.08); border: 1px solid rgba(234, 179, 8, 0.3); border-radius: 9999px; padding: 0.6rem 1rem; text-decoration: none; margin-bottom: 0.5rem;">
                 <div style="display: flex; align-items: center; gap: 0.6rem;">
                     <div style="background: #eab308; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center;"><i data-lucide="bus" style="width:14px; height:14px; color: #111827;"></i></div>
-                    <span style="font-size: 0.85rem; font-weight: 600; color: white;">Autobús Urbano</span>
+                    <div style="display: flex; align-items: center; gap: 0.3rem;">
+                        <span style="font-size: 0.85rem; font-weight: 600; color: white;">Autobús Urbano</span>
+                        <div style="background: white; color: #111827; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.55rem; font-weight: 800; margin-left: 0.2rem;">L1</div>
+                        <div style="background: white; color: #111827; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.55rem; font-weight: 800;">L3</div>
+                    </div>
                 </div>
                 <div style="display: flex; align-items: center; gap: 0.5rem;">
                     <span style="background: #10b981; color: #022c22; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; padding: 0.25rem 0.5rem; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">ECO</span>
