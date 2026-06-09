@@ -139,13 +139,13 @@ document.addEventListener('DOMContentLoaded', function() {
           entries.forEach(entry => {
               if (entry.isIntersecting) {
                   entry.target.classList.add('glow-active');
-              } else {
-                  entry.target.classList.remove('glow-active');
+                  // Una vez activada la animación, dejamos de observar para que sea 'Aparezco y Listo'
+                  observer.unobserve(entry.target);
               }
           });
       }, {
           root: null,
-          rootMargin: '-64% 0px -34% 0px',
+          rootMargin: '0px 0px -15% 0px',
           threshold: 0
       });
 

@@ -1279,22 +1279,17 @@ select:-webkit-autofill:focus {
   transition: background-color 5000s ease-in-out 0s;
 }
 
-/* Animación sorpresa tipo premio Aliexpress/iOS */
-@keyframes prizePop {
+/* Animación aparición elegante premium */
+@keyframes premiumReveal {
     0% {
-        transform: scale(0.95);
-        box-shadow: 0 0 0 0 rgba(123, 72, 250, 0.6);
-    }
-    40% {
-        transform: scale(1.03);
-        box-shadow: 0 0 0 20px rgba(123, 72, 250, 0);
-    }
-    60% {
-        transform: scale(0.98);
+        transform: translateY(20px) scale(0.98);
+        box-shadow: 0 0 0 rgba(123, 72, 250, 0);
+        filter: brightness(1.2);
     }
     100% {
-        transform: scale(1);
+        transform: translateY(0) scale(1);
         box-shadow: 0 15px 40px rgba(123, 72, 250, 0.3);
+        filter: brightness(1);
     }
 }
 
@@ -1307,7 +1302,7 @@ select:-webkit-autofill:focus {
 .cadizcab-card-hover.glow-active {
     border-color: rgba(123, 72, 250, 0.8) !important;
     background: linear-gradient(145deg, rgba(123, 72, 250, 0.25), rgba(99, 102, 241, 0.1)) !important;
-    animation: prizePop 0.65s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards !important;
+    animation: premiumReveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) both !important;
 }
 @media (hover: hover) {
     .cadizcab-card-hover:hover {
