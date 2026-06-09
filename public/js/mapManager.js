@@ -549,7 +549,6 @@ const mapManager = (() => {
                 
                 // Dibujar solo ESE pin
                 renderMarkers([parada]);
-                map.flyTo([parada.lat, parada.lon], 17);
                 
                 // Mostrar widget de la parada seleccionada
                 bottomContainer.innerHTML = '';
@@ -557,8 +556,8 @@ const mapManager = (() => {
                 renderMapOverlay(parada);
                 if (typeof lucide !== 'undefined') lucide.createIcons();
                 
-                // Centrar mapa
-                map.setView([parada.lat, parada.lon], 16);
+                // Centrar mapa fluido sin saltos
+                map.flyTo([parada.lat, parada.lon], 16, { animate: true, duration: 1.2, easeLinearity: 0.25 });
             }
         });
 
@@ -682,7 +681,7 @@ const mapManager = (() => {
                 if (map) {
                     map.invalidateSize(); 
                     const bounds = L.latLngBounds(dbParadas.map(p => [p.lat, p.lon]));
-                    map.fitBounds(bounds, { padding: [20, 20], animate: true, duration: 0.5 });
+                    map.flyToBounds(bounds, { padding: [20, 20], animate: true, duration: 1.0, easeLinearity: 0.25 });
                 }
             }, 400);
             
@@ -705,7 +704,7 @@ const mapManager = (() => {
                 if (map) {
                     map.invalidateSize();
                     const bounds = L.latLngBounds(dbParadas.map(p => [p.lat, p.lon]));
-                    map.fitBounds(bounds, { padding: [20, 20], animate: true, duration: 0.5 });
+                    map.flyToBounds(bounds, { padding: [20, 20], animate: true, duration: 1.0, easeLinearity: 0.25 });
                 }
             }, 400);
 
@@ -749,7 +748,8 @@ const mapManager = (() => {
                         [lat, lon],
                         [masCercana.lat, masCercana.lon]
                     ]);
-                    map.fitBounds(bounds, { padding: [50, 50], maxZoom: 16 });
+                    
+                    map.flyToBounds(bounds, { padding: [50, 50], animate: true, duration: 1.2, easeLinearity: 0.25 });
 
                     // Obtener distancia y tiempo REAL caminando desde OSRM
                     fetch(`https://router.project-osrm.org/route/v1/foot/${lon},${lat};${masCercana.lon},${masCercana.lat}?overview=false`)
