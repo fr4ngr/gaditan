@@ -37,15 +37,17 @@ function renderDestino(dest, gridType) {
                     </div>
                     <!-- Indicador interactivo -->
                     <div style="display: flex; align-items: center; margin-left: 0.8rem;">
-                        <div style="background: rgba(6,182,212,0.12); border: 1px solid rgba(6,182,212,0.35); width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                        <div class="chevron-wrapper" style="background: rgba(6,182,212,0.12); border: 1px solid rgba(6,182,212,0.35); width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);">
                             <i data-lucide="chevron-down" style="color: var(--brand-cyan); width: 16px; height: 16px;"></i>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div id="detail-${gridType}-${dest.id}" class="dest-detail-container" style="display: none; width: 100%; margin-bottom: 1rem;">
-            <!-- El contenido dinámico se inyecta aquí -->
+        <div id="detail-${gridType}-${dest.id}" class="dest-detail-container" style="width: 100%;">
+            <div class="dest-detail-inner" id="inner-detail-${gridType}-${dest.id}">
+                <!-- El contenido dinámico se inyecta aquí -->
+            </div>
         </div>
     </div>
     `;
@@ -61,35 +63,48 @@ window.showDestinoDetails = function(destId, gridType) {
     
     const detailContainerId = `detail-${gridType}-${destId}`;
     const detailEl = document.getElementById(detailContainerId);
-    const isCurrentlyOpen = detailEl.style.display === 'block';
+    const isCurrentlyOpen = detailEl.classList.contains('is-open');
 
     // 1. Cerramos todas las demás tarjetas abiertas en esta misma cuadrícula
     const allDetails = gridEl.querySelectorAll('.dest-detail-container');
     allDetails.forEach(el => {
-        el.style.display = 'none';
-        el.innerHTML = ''; // Limpiamos para liberar memoria
-    });
-
-    // Restauramos el icono de las tarjetas a "chevron-down"
-    const allHeaders = gridEl.querySelectorAll('.pildora-hover i[data-lucide="chevron-up"]');
-    allHeaders.forEach(icon => {
-        icon.setAttribute('data-lucide', 'chevron-down');
-    });
-
-    // 2. Si no estaba abierta, la abrimos
-    if (!isCurrentlyOpen) {
-        detailEl.style.display = 'block';
-        detailEl.innerHTML = buildSelectedDestinoWidget(dest, gridType);
-        
-        // Cambiar flecha a chevron-up
-        const thisCard = document.getElementById(`card-header-${gridType}-${destId}`);
-        const chevron = thisCard.querySelector('i[data-lucide="chevron-down"]');
-        if (chevron) {
-            chevron.setAttribute('data-lucide', 'chevron-up');
+        if (el.id !== detailContainerId && el.classList.contains('is-open')) {
+            el.classList.remove('is-open');
+            // Limpiamos contenido después de la animación (400ms)
+            setTimeout(() => {
+                if (!el.classList.contains('is-open')) {
+                    const inner = el.querySelector('.dest-detail-inner');
+                    if (inner) inner.innerHTML = '';
+                }
+            }, 400);
         }
+    });
+
+    // Rotamos los chevrones de vuelta a 0deg
+    const allChevrons = gridEl.querySelectorAll('.chevron-wrapper');
+    allChevrons.forEach(wrapper => {
+        wrapper.style.transform = 'rotate(0deg)';
+    });
+
+    // 2. Toggle de la seleccionada
+    const thisCard = document.getElementById(`card-header-${gridType}-${destId}`);
+    const thisChevron = thisCard.querySelector('.chevron-wrapper');
+    
+    if (!isCurrentlyOpen) {
+        // Abrir
+        const inner = detailEl.querySelector('.dest-detail-inner');
+        inner.innerHTML = buildSelectedDestinoWidget(dest, gridType);
         
-        // Renderizar nuevos iconos
         if (typeof lucide !== 'undefined') lucide.createIcons();
+        
+        // Rotar chevron
+        if (thisChevron) {
+            thisChevron.style.transform = 'rotate(180deg)';
+        }
+
+        // Forzar reflow para que la animación CSS se dispare
+        void detailEl.offsetWidth;
+        detailEl.classList.add('is-open');
 
         // Scroll suave hacia la tarjeta
         const originalScrollBehavior = document.documentElement.style.scrollBehavior;
@@ -100,15 +115,25 @@ window.showDestinoDetails = function(destId, gridType) {
         
         setTimeout(() => {
             document.documentElement.style.scrollBehavior = originalScrollBehavior;
-        }, 300);
+        }, 400);
     } else {
-        if (typeof lucide !== 'undefined') lucide.createIcons();
+        // Cerrar
+        detailEl.classList.remove('is-open');
+        if (thisChevron) {
+            thisChevron.style.transform = 'rotate(0deg)';
+        }
+        setTimeout(() => {
+            if (!detailEl.classList.contains('is-open')) {
+                const inner = detailEl.querySelector('.dest-detail-inner');
+                if (inner) inner.innerHTML = '';
+            }
+        }, 400);
     }
 };
 
 function buildSelectedDestinoWidget(dest, gridType) {
     const content = `
-        <div style="display: flex; flex-direction: column; gap: 1rem; margin-top: 0.5rem;">
+        <div style="display: flex; flex-direction: column; gap: 1rem; margin-top: 0.5rem; margin-bottom: 0.5rem;">
             <!-- Opción Taxis Oficiales -->
             <div style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 30px; padding: 1.25rem; display: flex; flex-direction: column; gap: 1rem; margin-bottom: 0.85rem;">
                 <div style="display: flex; justify-content: space-between; align-items: flex-start; width: 100%;">

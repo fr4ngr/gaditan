@@ -1409,3 +1409,26 @@ select:-webkit-autofill:focus {
 /* Responsive Utilities */
 @media (min-width: 1024px) { .hide-desktop { display: none !important; } }
 @media (max-width: 1023px) { .hide-mobile { display: none !important; } }
+
+/* ----------------- VIRTUAL ACCORDION ANIMATION (Android 17 Style) ----------------- */
+.dest-detail-container {
+    display: grid;
+    grid-template-rows: 0fr;
+    opacity: 0;
+    transition: grid-template-rows 0.45s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.3s ease, margin-bottom 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+    margin-bottom: 0;
+}
+.dest-detail-container.is-open {
+    grid-template-rows: 1fr;
+    opacity: 1;
+    margin-bottom: 1rem;
+}
+.dest-detail-inner {
+    overflow: hidden;
+    min-height: 0;
+    transform: translateY(-10px);
+    transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.dest-detail-container.is-open .dest-detail-inner {
+    transform: translateY(0);
+}
