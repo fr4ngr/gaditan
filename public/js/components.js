@@ -65,69 +65,80 @@ window.showDestinoDetails = function(destId, gridType) {
     const detailEl = document.getElementById(detailContainerId);
     const isCurrentlyOpen = detailEl.classList.contains('is-open');
 
-    // 1. Cerramos todas las demás tarjetas abiertas en esta misma cuadrícula
-    const allDetails = gridEl.querySelectorAll('.dest-detail-container');
-    allDetails.forEach(el => {
-        if (el.id !== detailContainerId && el.classList.contains('is-open')) {
-            el.classList.remove('is-open');
-            // Limpiamos contenido después de la animación (400ms)
-            setTimeout(() => {
-                if (!el.classList.contains('is-open')) {
-                    const inner = el.querySelector('.dest-detail-inner');
-                    if (inner) inner.innerHTML = '';
-                }
-            }, 400);
-        }
-    });
-
-    // Rotamos los chevrones de vuelta a 0deg
-    const allChevrons = gridEl.querySelectorAll('.chevron-wrapper');
-    allChevrons.forEach(wrapper => {
-        wrapper.style.transform = 'rotate(0deg)';
-    });
-
-    // 2. Toggle de la seleccionada
     const thisCard = document.getElementById(`card-header-${gridType}-${destId}`);
     const thisChevron = thisCard.querySelector('.chevron-wrapper');
-    
-    if (!isCurrentlyOpen) {
-        // Abrir
-        const inner = detailEl.querySelector('.dest-detail-inner');
-        inner.innerHTML = buildSelectedDestinoWidget(dest, gridType);
-        
-        if (typeof lucide !== 'undefined') lucide.createIcons();
-        
-        // Rotar chevron
-        if (thisChevron) {
-            thisChevron.style.transform = 'rotate(180deg)';
-        }
 
-        // Forzar reflow para que la animación CSS se dispare
-        void detailEl.offsetWidth;
-        detailEl.classList.add('is-open');
-
-        // Scroll suave hacia la tarjeta
-        const originalScrollBehavior = document.documentElement.style.scrollBehavior;
-        document.documentElement.style.scrollBehavior = 'smooth';
-        const headerHeight = document.querySelector('.header')?.offsetHeight || 0;
-        const offsetPosition = thisCard.getBoundingClientRect().top + window.scrollY - headerHeight - 10;
-        window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-        
-        setTimeout(() => {
-            document.documentElement.style.scrollBehavior = originalScrollBehavior;
-        }, 400);
-    } else {
-        // Cerrar
+    // Si ya está abierta, simplemente la cerramos
+    if (isCurrentlyOpen) {
         detailEl.classList.remove('is-open');
-        if (thisChevron) {
-            thisChevron.style.transform = 'rotate(0deg)';
-        }
+        if (thisChevron) thisChevron.style.transform = 'rotate(0deg)';
         setTimeout(() => {
             if (!detailEl.classList.contains('is-open')) {
                 const inner = detailEl.querySelector('.dest-detail-inner');
                 if (inner) inner.innerHTML = '';
             }
-        }, 400);
+        }, 450);
+        return;
+    }
+
+    // Buscamos si hay alguna OTRA tarjeta abierta
+    const openDetails = Array.from(gridEl.querySelectorAll('.dest-detail-container.is-open'));
+    
+    function openNewCard() {
+        // Inyectamos contenido
+        const inner = detailEl.querySelector('.dest-detail-inner');
+        inner.innerHTML = buildSelectedDestinoWidget(dest, gridType);
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+        
+        // Rotar chevron
+        if (thisChevron) thisChevron.style.transform = 'rotate(180deg)';
+
+        // Forzar reflow y añadir clase para abrir
+        void detailEl.offsetWidth;
+        detailEl.classList.add('is-open');
+
+        // Hacer scroll suave hacia la tarjeta tras un pequeñísimo delay para que el layout se calcule
+        setTimeout(() => {
+            const originalScrollBehavior = document.documentElement.style.scrollBehavior;
+            document.documentElement.style.scrollBehavior = 'smooth';
+            const headerHeight = document.querySelector('.header')?.offsetHeight || 0;
+            
+            // Usamos un scroll position ajustado
+            const offsetPosition = thisCard.getBoundingClientRect().top + window.scrollY - headerHeight - 15;
+            window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+            
+            setTimeout(() => {
+                document.documentElement.style.scrollBehavior = originalScrollBehavior;
+            }, 400);
+        }, 50);
+    }
+
+    if (openDetails.length > 0) {
+        // 1. Cerramos las que estén abiertas
+        openDetails.forEach(el => {
+            el.classList.remove('is-open');
+            // Buscamos su chevron para resetearlo (el wrapper hermano previo)
+            const parentCard = el.previousElementSibling;
+            if (parentCard) {
+                const chevron = parentCard.querySelector('.chevron-wrapper');
+                if (chevron) chevron.style.transform = 'rotate(0deg)';
+            }
+            // Limpiamos contenido tras animación
+            setTimeout(() => {
+                if (!el.classList.contains('is-open')) {
+                    const inner = el.querySelector('.dest-detail-inner');
+                    if (inner) inner.innerHTML = '';
+                }
+            }, 450);
+        });
+
+        // 2. Esperamos a que termine la animación de cierre (aprox 350ms) antes de abrir la nueva
+        setTimeout(() => {
+            openNewCard();
+        }, 350); 
+    } else {
+        // No había ninguna abierta, abrimos directamente
+        openNewCard();
     }
 };
 
