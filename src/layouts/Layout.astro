@@ -65,7 +65,7 @@ import '../styles/styles.css';
     <!-- Script genérico (carga diferida de módulos específicos) -->
     <script src="js/mapData.js?v=20260606d" defer></script>
     <script src="js/components.js?v=20260609d" defer></script>
-    <script src="js/mapManager.js?v=20260609i" defer></script>
+    <script src="js/mapManager.js?v=20260609j" defer></script>
     <script type="module" src="js/main.js?v=20260609d"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -160,10 +160,11 @@ document.addEventListener('DOMContentLoaded', function() {
               mutation.addedNodes.forEach(node => {
                   if (node.nodeType === 1) { 
                       if (node.classList && (node.classList.contains('cadizcab-card-hover') || node.classList.contains('pildora-hover'))) {
-                          observer.observe(node);
+                          // Dar tiempo a que termine el scroll automático de mapManager
+                          setTimeout(() => observer.observe(node), 800);
                       }
                       const childCards = node.querySelectorAll ? node.querySelectorAll('.cadizcab-card-hover, .pildora-hover') : [];
-                      childCards.forEach(card => observer.observe(card));
+                      childCards.forEach(child => setTimeout(() => observer.observe(child), 800));
                   }
               });
           });
