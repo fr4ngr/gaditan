@@ -1435,7 +1435,20 @@ select:-webkit-autofill:focus {
 }
 
 /* ----------------- LEAFLET CUSTOM CONTROLS (Android 17 Style) ----------------- */
-/* Removido el centrado vertical para que Leaflet use bottomright natural */
+
+.leaflet-bottom.leaflet-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 12px;
+    padding-bottom: 15px;
+    padding-right: 15px;
+}
+
+.leaflet-bottom.leaflet-right .leaflet-control {
+    margin: 0 !important;
+    float: none !important;
+}
 
 .leaflet-control-zoom {
     border: none !important;
@@ -1444,8 +1457,6 @@ select:-webkit-autofill:focus {
     overflow: hidden;
     box-shadow: 0 4px 15px rgba(0,0,0,0.3) !important;
     backdrop-filter: blur(10px) !important;
-    margin-bottom: 15px !important;
-    margin-right: 15px !important;
     border: 1px solid rgba(6, 182, 212, 0.4) !important;
 }
 
@@ -1468,9 +1479,4 @@ select:-webkit-autofill:focus {
 
 .leaflet-control-zoom-in {
     border-bottom: 1px solid rgba(6, 182, 212, 0.2) !important;
-}
-
-.leaflet-bottom.leaflet-right .map-locate-btn {
-    margin-bottom: 15px;
-    margin-right: 15px;
 }
