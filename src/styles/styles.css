@@ -277,6 +277,7 @@ section { padding: 5rem 0; }
 .glass-table th { font-weight: 600; color: var(--text-main); font-size: 1.1rem; vertical-align: top; }
 .glass-table th:nth-child(2), .glass-table td:nth-child(2),
 .glass-table th:nth-child(3), .glass-table td:nth-child(3) { text-align: center; white-space: nowrap; min-width: 70px; }
+.table-schedule { display: block; color: var(--brand-cyan); font-size: 0.85rem; font-weight: 500; opacity: 0.9; margin-top: 0.1rem !important; }
 
 .glass-table tbody tr:hover { background: rgba(255, 255, 255, 0.03); }
 
