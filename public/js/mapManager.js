@@ -315,20 +315,28 @@ const mapManager = (() => {
         }
         
         overlay.innerHTML = `
-            <span style="font-size: 0.65rem; color: var(--brand-cyan); font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 0.1rem; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">Parada de taxi</span>
-            <div style="display: flex; align-items: center; gap: 0.4rem; justify-content: center; margin-bottom: 0.1rem;">
-                <i data-lucide="map-pin" style="color: var(--brand-cyan); width: 18px; height: 18px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));"></i>
-                <strong style="color: #fff; font-size: 1.25rem; font-weight: 800; text-shadow: 0 2px 6px rgba(0,0,0,0.8);">${p.name}</strong>
+            <div style="background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; padding: 1rem 1.25rem; box-shadow: 0 10px 30px rgba(0,0,0,0.3); display: flex; flex-direction: column; width: 100%; box-sizing: border-box;">
+                <div style="display: flex; align-items: center; gap: 0.85rem; width: 100%;">
+                    <!-- Icono circular a la izquierda -->
+                    <div style="background: rgba(6,182,212,0.15); border: 1px solid rgba(6,182,212,0.3); width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                        <i data-lucide="map-pin" style="color: var(--brand-cyan); width: 22px; height: 22px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));"></i>
+                    </div>
+                    <!-- Textos a la derecha -->
+                    <div style="display: flex; flex-direction: column; flex: 1; min-width: 0;">
+                        <strong style="color: #fff; font-size: 1.15rem; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.2;">${p.name}</strong>
+                        <span style="color: rgba(255,255,255,0.7); font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 0.1rem;">${p.address}</span>
+                    </div>
+                </div>
+                ${distHtml}
             </div>
-            <span style="color: rgba(255,255,255,0.9); font-size: 0.85rem; line-height: 1.2; text-shadow: 0 2px 4px rgba(0,0,0,0.8);">${p.address}</span>
-            ${distHtml}
         `;
         
         if (typeof lucide !== 'undefined') lucide.createIcons();
-        overlay.style.display = 'flex';
-        // Fade in
+        overlay.style.display = 'block';
+        // Fade in con traslación suave
         requestAnimationFrame(() => {
             overlay.style.opacity = '1';
+            overlay.style.transform = 'translateY(0)';
         });
     };
 
@@ -336,7 +344,8 @@ const mapManager = (() => {
         const overlay = document.getElementById('map-overlay-info');
         if (overlay) {
             overlay.style.opacity = '0';
-            setTimeout(() => { overlay.style.display = 'none'; }, 300);
+            overlay.style.transform = 'translateY(-20px)';
+            setTimeout(() => { overlay.style.display = 'none'; }, 400);
         }
     };
 
