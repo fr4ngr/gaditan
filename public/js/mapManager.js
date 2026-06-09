@@ -543,6 +543,9 @@ const mapManager = (() => {
             const selectedId = e.target.value;
             const parada = paradas.find(p => p.id === selectedId);
             if (parada) {
+                // Ocultar la píldora negra de selección una vez seleccionada la parada
+                topContainer.style.display = 'none';
+                
                 // Dibujar solo ESE pin
                 renderMarkers([parada]);
                 map.flyTo([parada.lat, parada.lon], 17);
