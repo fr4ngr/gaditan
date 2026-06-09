@@ -169,9 +169,7 @@ const mapManager = (() => {
         }
         return `
             <div style="display: flex; align-items: center; gap: 0.6rem; min-width: 0; flex: 1;">
-                <div style="background: rgba(6,182,212,0.15); border: 1px solid rgba(6,182,212,0.3); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                    <i data-lucide="map-pin" style="width:14px; height:14px; color: var(--brand-cyan);"></i>
-                </div>
+                <i data-lucide="map-pin" style="width:20px; height:20px; color: var(--brand-cyan); flex-shrink: 0;"></i>
                 <div style="display: flex; flex-direction: column; min-width: 0;">
                     <strong style="color: #fff; font-size: 0.88rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.name}</strong>
                     <span style="color: var(--text-muted); font-size: 0.72rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.address}</span>
@@ -268,9 +266,7 @@ const mapManager = (() => {
 
         item.innerHTML = `
             <div style="display: flex; align-items: center; gap: 0.6rem; min-width: 0; flex: 1;">
-                <div style="background: rgba(6,182,212,0.15); border: 1px solid rgba(6,182,212,0.3); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                    <i data-lucide="map-pin" style="width:14px; height:14px; color: var(--brand-cyan);"></i>
-                </div>
+                <i data-lucide="map-pin" style="width:20px; height:20px; color: var(--brand-cyan); flex-shrink: 0;"></i>
                 <div style="display: flex; flex-direction: column; min-width: 0;">
                     <strong style="color: #fff; font-size: 0.88rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.name}</strong>
                     <span style="color: var(--text-muted); font-size: 0.72rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.address}</span>
@@ -317,10 +313,8 @@ const mapManager = (() => {
         overlay.innerHTML = `
             <div style="background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.1); border-radius: 9999px; padding: 0.85rem 1.25rem; box-shadow: 0 10px 30px rgba(0,0,0,0.3); display: flex; flex-direction: column; width: 100%; box-sizing: border-box;">
                 <div style="display: flex; align-items: center; gap: 0.85rem; width: 100%;">
-                    <!-- Icono circular a la izquierda -->
-                    <div style="background: rgba(6,182,212,0.15); border: 1px solid rgba(6,182,212,0.3); width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                        <i data-lucide="map-pin" style="color: var(--brand-cyan); width: 18px; height: 18px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));"></i>
-                    </div>
+                    <!-- Icono sin fondo -->
+                    <i data-lucide="map-pin" style="color: var(--brand-cyan); width: 28px; height: 28px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); flex-shrink: 0;"></i>
                     <!-- Textos a la derecha -->
                     <div style="display: flex; flex-direction: column; flex: 1; min-width: 0; justify-content: center;">
                         <strong style="color: #fff; font-size: 1.1rem; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.2;">${p.name}</strong>
@@ -666,8 +660,7 @@ const mapManager = (() => {
             hideMapOverlay();
             const mapEl = document.getElementById('map');
             if (mapEl) mapEl.style.aspectRatio = '16/9';
-            setTimeout(() => { if (map) map.invalidateSize(); }, 400);
-
+            
             renderMarkers(dbParadas);
             currentPage = 1;
             renderPaginatedList(dbParadas);
@@ -678,15 +671,19 @@ const mapManager = (() => {
                 userLocation = null;
             }
             
-            const bounds = L.latLngBounds(dbParadas.map(p => [p.lat, p.lon]));
-            map.fitBounds(bounds, { padding: [20, 20] });
+            setTimeout(() => { 
+                if (map) {
+                    map.invalidateSize(); 
+                    const bounds = L.latLngBounds(dbParadas.map(p => [p.lat, p.lon]));
+                    map.fitBounds(bounds, { padding: [20, 20], animate: true, duration: 0.5 });
+                }
+            }, 400);
             
         } else if (mode === 'elegir') {
             btnElegir.className = 'md3-btn md3-primary';
             
             const mapEl = document.getElementById('map');
             if (mapEl) mapEl.style.aspectRatio = '4/5';
-            setTimeout(() => { if (map) map.invalidateSize(); }, 400);
 
             renderMarkers(dbParadas);
             renderElegirView(dbParadas);
@@ -697,8 +694,13 @@ const mapManager = (() => {
                 userLocation = null;
             }
             
-            const bounds = L.latLngBounds(dbParadas.map(p => [p.lat, p.lon]));
-            map.fitBounds(bounds, { padding: [20, 20] });
+            setTimeout(() => { 
+                if (map) {
+                    map.invalidateSize();
+                    const bounds = L.latLngBounds(dbParadas.map(p => [p.lat, p.lon]));
+                    map.fitBounds(bounds, { padding: [20, 20], animate: true, duration: 0.5 });
+                }
+            }, 400);
 
         } else if (mode === 'cercana') {
             btnCercana.className = 'md3-btn md3-primary';
