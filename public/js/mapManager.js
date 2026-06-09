@@ -47,10 +47,13 @@ const mapManager = (() => {
 
         map = L.map('map', {
             zoomControl: false,
+            attributionControl: false,
             scrollWheelZoom: false,
             dragging: !L.Browser.mobile,
             tap: false
         }).setView([36.529, -6.292], 13);
+        
+        L.control.attribution({ position: 'bottomleft' }).addTo(map);
         
         L.control.zoom({ position: 'bottomright' }).addTo(map);
         
