@@ -649,7 +649,8 @@ input[type="date"], input[type="time"] { -webkit-appearance: none; -moz-appearan
 
 /* ----------------- RESPONSIVE ----------------- */
 @media (max-width: 768px) {
-    .hero-content { margin-top: 4rem; }
+    .hero-content { margin-top: 7rem; }
+    .hero-subtitle { margin-bottom: 4rem; }
     .trust-badges { gap: 0.3rem; }
     .glass-badge { padding: 0.3rem 0.5rem; font-size: 0.7rem; }
     .hero-glow { width: 150vw; height: 600px; top: -10%; }
