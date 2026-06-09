@@ -10,9 +10,9 @@ const mapManager = (() => {
     // Configuración visual de pines
     const customIcon = L.divIcon({
         className: 'custom-div-icon',
-        html: `<div style="background-color: var(--brand-cyan); width: 24px; height: 24px; border-radius: 50%; border: 3px solid #111827; box-shadow: 0 4px 6px rgba(0,0,0,0.3); display: flex; justify-content: center; align-items: center;"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#111827" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path><circle cx="12" cy="10" r="3"></circle></svg></div>`,
-        iconSize: [24, 24],
-        iconAnchor: [12, 24]
+        html: `<div style="display: flex; justify-content: center; align-items: center; filter: drop-shadow(0 4px 4px rgba(0,0,0,0.5));"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="#06b6d4" stroke="#111827" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path><circle cx="12" cy="10" r="3" fill="#111827"></circle></svg></div>`,
+        iconSize: [32, 32],
+        iconAnchor: [16, 32]
     });
 
     const userIcon = L.divIcon({
@@ -152,9 +152,9 @@ const mapManager = (() => {
                     // Flash visual en el pin para confirmar selección
                     const selectedIcon = L.divIcon({
                         className: 'custom-div-icon',
-                        html: `<div style="background-color: #facc15; width: 28px; height: 28px; border-radius: 50%; border: 3px solid #111827; box-shadow: 0 0 12px rgba(250,204,21,0.7); display: flex; justify-content: center; align-items: center;"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#111827" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path><circle cx="12" cy="10" r="3"></circle></svg></div>`,
-                        iconSize: [28, 28],
-                        iconAnchor: [14, 28]
+                        html: `<div style="display: flex; justify-content: center; align-items: center; filter: drop-shadow(0 0 8px rgba(250,204,21,0.8));"><svg xmlns="http://www.w3.org/2000/svg" width="38" height="38" viewBox="0 0 24 24" fill="#facc15" stroke="#111827" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path><circle cx="12" cy="10" r="3" fill="#111827"></circle></svg></div>`,
+                        iconSize: [38, 38],
+                        iconAnchor: [19, 38]
                     });
                     marker.setIcon(selectedIcon);
                     setTimeout(() => marker.setIcon(customIcon), 1500);
@@ -357,7 +357,6 @@ const mapManager = (() => {
             <div style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 30px; padding: 0.75rem 1rem; display: flex; flex-direction: column; gap: 0.25rem; margin-bottom: 0.85rem;">
                 <div style="display: flex; justify-content: space-between; align-items: flex-start; width: 100%;">
                     <div style="width: 100%;">
-                        <div style="font-size: 0.65rem; color: #06b6d4; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.25rem; font-weight: 600; display: flex; align-items: center; gap: 0.3rem;">PARADA ATENDIDA POR</div>
                         <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
                             <div style="display: flex; align-items: center; gap: 0.6rem;">
                                 <div style="background: #eab308; color: #111827; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.65rem;">TO</div>
@@ -382,11 +381,11 @@ const mapManager = (() => {
             
 
             
-            <!-- Separador ¿PRECIO CERRADO? -->
+            <!-- Separador OTRAS OPCIONES -->
             <div style="display: flex; align-items: center; gap: 0.75rem; margin: 0.25rem 0;">
-                <div style="flex: 1; height: 1px; background: linear-gradient(90deg, transparent, rgba(123,72,250,0.4));"></div>
-                <span style="font-size: 0.65rem; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: #a78bfa; white-space: nowrap;">¿Precio cerrado?</span>
-                <div style="flex: 1; height: 1px; background: linear-gradient(90deg, rgba(123,72,250,0.4), transparent);"></div>
+                <div style="flex: 1; height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3));"></div>
+                <span style="font-size: 0.65rem; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: #ffffff; white-space: nowrap;">OTRAS OPCIONES</span>
+                <div style="flex: 1; height: 1px; background: linear-gradient(90deg, rgba(255,255,255,0.3), transparent);"></div>
             </div>
 
             <!-- Opción VTC Alternativa -->
