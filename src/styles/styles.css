@@ -1435,14 +1435,7 @@ select:-webkit-autofill:focus {
 }
 
 /* ----------------- LEAFLET CUSTOM CONTROLS (Android 17 Style) ----------------- */
-.leaflet-right {
-    top: 50% !important;
-    bottom: auto !important;
-    transform: translateY(-50%) !important;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-}
+/* Removido el centrado vertical para que Leaflet use bottomright natural */
 
 .leaflet-control-zoom {
     border: none !important;
