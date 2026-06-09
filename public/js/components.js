@@ -18,29 +18,34 @@ const dbDestinos = {
 
 function renderDestino(dest, gridType) {
     return `
-    <div class="mini-dest-card pildora-hover" onclick="showDestinoDetails('${dest.id}', '${gridType}')" style="margin-bottom: 1rem; cursor: pointer;">
-        <div class="mini-dest-header" style="align-items: center; position: relative; width: 100%; display: flex; justify-content: space-between;">
-            <div class="mini-dest-name" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0.2rem;">
-                <div style="font-size: 0.65rem; color: white; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;">DESDE CÁDIZ A</div>
-                <div style="display: flex; align-items: center; gap: 0.4rem;">
-                    <i data-lucide="${dest.icon}" size="16" style="color: var(--brand-cyan);"></i> ${dest.name}
-                </div>
-            </div>
-            <div style="display: flex; align-items: center;">
-                <div class="mini-dest-info-right" style="text-align: right;">
-                    <div style="display: flex; align-items: baseline; justify-content: flex-end; gap: 0.1rem;">
-                        <span class="mini-dest-price" style="line-height: 1;">${dest.price}</span>
-                        <span style="font-size: 1.2rem; color: var(--brand-cyan); font-weight: 800; transform: translateY(2px);">*</span>
-                    </div>
-                    ${dest.time ? `<div style="font-size: 0.75rem; color: var(--text-muted); display: flex; align-items: center; justify-content: flex-end; gap: 0.25rem; margin-top: 0.3rem; white-space: nowrap;"><i data-lucide="clock" style="width: 12px; height: 12px;"></i> ${dest.time}</div>` : ''}
-                </div>
-                <!-- Right arrow to indicate clickability -->
-                <div style="display: flex; align-items: center; margin-left: 0.8rem;">
-                    <div style="background: rgba(6,182,212,0.12); border: 1px solid rgba(6,182,212,0.35); width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                        <i data-lucide="chevron-right" style="color: var(--brand-cyan); width: 16px; height: 16px;"></i>
+    <div id="card-wrapper-${gridType}-${dest.id}" style="width: 100%;">
+        <div class="mini-dest-card pildora-hover" id="card-header-${gridType}-${dest.id}" onclick="showDestinoDetails('${dest.id}', '${gridType}')" style="margin-bottom: 0.5rem; cursor: pointer;">
+            <div class="mini-dest-header" style="align-items: center; position: relative; width: 100%; display: flex; justify-content: space-between;">
+                <div class="mini-dest-name" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0.2rem;">
+                    <div style="font-size: 0.65rem; color: white; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;">DESDE CÁDIZ A</div>
+                    <div style="display: flex; align-items: center; gap: 0.4rem;">
+                        <i data-lucide="${dest.icon}" size="16" style="color: var(--brand-cyan);"></i> ${dest.name}
                     </div>
                 </div>
+                <div style="display: flex; align-items: center;">
+                    <div class="mini-dest-info-right" style="text-align: right;">
+                        <div style="display: flex; align-items: baseline; justify-content: flex-end; gap: 0.1rem;">
+                            <span class="mini-dest-price" style="line-height: 1;">${dest.price}</span>
+                            <span style="font-size: 1.2rem; color: var(--brand-cyan); font-weight: 800; transform: translateY(2px);">*</span>
+                        </div>
+                        ${dest.time ? `<div style="font-size: 0.75rem; color: var(--text-muted); display: flex; align-items: center; justify-content: flex-end; gap: 0.25rem; margin-top: 0.3rem; white-space: nowrap;"><i data-lucide="clock" style="width: 12px; height: 12px;"></i> ${dest.time}</div>` : ''}
+                    </div>
+                    <!-- Indicador interactivo -->
+                    <div style="display: flex; align-items: center; margin-left: 0.8rem;">
+                        <div style="background: rgba(6,182,212,0.12); border: 1px solid rgba(6,182,212,0.35); width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                            <i data-lucide="chevron-down" style="color: var(--brand-cyan); width: 16px; height: 16px;"></i>
+                        </div>
+                    </div>
+                </div>
             </div>
+        </div>
+        <div id="detail-${gridType}-${dest.id}" class="dest-detail-container" style="display: none; width: 100%; margin-bottom: 1rem;">
+            <!-- El contenido dinámico se inyecta aquí -->
         </div>
     </div>
     `;
@@ -54,77 +59,56 @@ window.showDestinoDetails = function(destId, gridType) {
     const gridEl = document.getElementById(gridId);
     if (!gridEl) return;
     
-    let detailEl = document.getElementById(`${gridId}-detail`);
-    if (!detailEl) {
-        detailEl = document.createElement('div');
-        detailEl.id = `${gridId}-detail`;
-        detailEl.style.marginBottom = gridEl.style.marginBottom || '4rem';
-        gridEl.parentNode.insertBefore(detailEl, gridEl.nextSibling);
-    }
-    
-    gridEl.style.display = 'none';
-    detailEl.style.display = 'block';
-    
-    detailEl.innerHTML = buildSelectedDestinoWidget(dest, gridType);
-    
-    // Scroll to the top of the detail view
-    const sectionTitle = gridEl.previousElementSibling?.previousElementSibling;
-    if (sectionTitle) {
+    const detailContainerId = `detail-${gridType}-${destId}`;
+    const detailEl = document.getElementById(detailContainerId);
+    const isCurrentlyOpen = detailEl.style.display === 'block';
+
+    // 1. Cerramos todas las demás tarjetas abiertas en esta misma cuadrícula
+    const allDetails = gridEl.querySelectorAll('.dest-detail-container');
+    allDetails.forEach(el => {
+        el.style.display = 'none';
+        el.innerHTML = ''; // Limpiamos para liberar memoria
+    });
+
+    // Restauramos el icono de las tarjetas a "chevron-down"
+    const allHeaders = gridEl.querySelectorAll('.pildora-hover i[data-lucide="chevron-up"]');
+    allHeaders.forEach(icon => {
+        icon.setAttribute('data-lucide', 'chevron-down');
+    });
+
+    // 2. Si no estaba abierta, la abrimos
+    if (!isCurrentlyOpen) {
+        detailEl.style.display = 'block';
+        detailEl.innerHTML = buildSelectedDestinoWidget(dest, gridType);
+        
+        // Cambiar flecha a chevron-up
+        const thisCard = document.getElementById(`card-header-${gridType}-${destId}`);
+        const chevron = thisCard.querySelector('i[data-lucide="chevron-down"]');
+        if (chevron) {
+            chevron.setAttribute('data-lucide', 'chevron-up');
+        }
+        
+        // Renderizar nuevos iconos
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+
+        // Scroll suave hacia la tarjeta
         const originalScrollBehavior = document.documentElement.style.scrollBehavior;
-        document.documentElement.style.scrollBehavior = 'auto';
+        document.documentElement.style.scrollBehavior = 'smooth';
         const headerHeight = document.querySelector('.header')?.offsetHeight || 0;
-        const offsetPosition = sectionTitle.getBoundingClientRect().top + window.scrollY - headerHeight - 10;
-        window.scrollTo({ top: offsetPosition, behavior: 'auto' });
-        requestAnimationFrame(() => {
+        const offsetPosition = thisCard.getBoundingClientRect().top + window.scrollY - headerHeight - 10;
+        window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+        
+        setTimeout(() => {
             document.documentElement.style.scrollBehavior = originalScrollBehavior;
-        });
-    }
-
-    if (typeof lucide !== 'undefined') lucide.createIcons();
-};
-
-window.hideDestinoDetails = function(gridType) {
-    const gridId = gridType === 'aeropuertos' ? 'aeropuertos-grid-dinamico' : 'favoritos-grid-dinamico';
-    const gridEl = document.getElementById(gridId);
-    const detailEl = document.getElementById(`${gridId}-detail`);
-    
-    if (detailEl) detailEl.style.display = 'none';
-    if (gridEl) {
-        gridEl.style.display = ''; 
-    }
-
-    // Scroll back
-    const sectionTitle = gridEl?.previousElementSibling?.previousElementSibling;
-    if (sectionTitle) {
-        const originalScrollBehavior = document.documentElement.style.scrollBehavior;
-        document.documentElement.style.scrollBehavior = 'auto';
-        const headerHeight = document.querySelector('.header')?.offsetHeight || 0;
-        const offsetPosition = sectionTitle.getBoundingClientRect().top + window.scrollY - headerHeight - 10;
-        window.scrollTo({ top: offsetPosition, behavior: 'auto' });
-        requestAnimationFrame(() => {
-            document.documentElement.style.scrollBehavior = originalScrollBehavior;
-        });
+        }, 300);
+    } else {
+        if (typeof lucide !== 'undefined') lucide.createIcons();
     }
 };
 
 function buildSelectedDestinoWidget(dest, gridType) {
-    const header = `
-        <div style="background: rgba(6, 182, 212, 0.12); border: 1px solid rgba(6, 182, 212, 0.25); border-radius: 30px; padding: 1rem 1.5rem; margin-bottom: 1.25rem; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15); display: flex; flex-direction: column; position: relative;">
-            <button onclick="hideDestinoDetails('${gridType}')" style="position: absolute; top: 1rem; left: 1rem; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer; backdrop-filter: blur(5px);">
-                <i data-lucide="arrow-left" style="width: 18px; height: 18px;"></i>
-            </button>
-            <div style="text-align: center; margin-top: 0.5rem;">
-                <span style="font-size: 0.65rem; color: var(--brand-cyan); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.1rem;">Desde Cádiz a</span>
-                <div style="display: flex; align-items: center; gap: 0.4rem; justify-content: center; margin-bottom: 0.5rem;">
-                    <i data-lucide="${dest.icon}" style="color: var(--brand-cyan); width: 16px; height: 16px;"></i>
-                    <strong style="color: #fff; font-size: 1.1rem; font-weight: 700;">${dest.name}</strong>
-                </div>
-            </div>
-        </div>
-    `;
-
     const content = `
-        <div style="display: flex; flex-direction: column; gap: 1rem;">
+        <div style="display: flex; flex-direction: column; gap: 1rem; margin-top: 0.5rem;">
             <!-- Opción Taxis Oficiales -->
             <div style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 30px; padding: 1.25rem; display: flex; flex-direction: column; gap: 1rem; margin-bottom: 0.85rem;">
                 <div style="display: flex; justify-content: space-between; align-items: flex-start; width: 100%;">
@@ -251,14 +235,13 @@ function buildSelectedDestinoWidget(dest, gridType) {
             </a>
         </div>
     `;
-
-    return header + content;
+    return content;
 }
+
 document.addEventListener("DOMContentLoaded", () => {
     const aeroGrid = document.getElementById("aeropuertos-grid-dinamico");
     if (aeroGrid) { aeroGrid.innerHTML = dbDestinos.aeropuertos.map(d => renderDestino(d, 'aeropuertos')).join(''); }
     
     const favGrid = document.getElementById("favoritos-grid-dinamico");
     if (favGrid) { favGrid.innerHTML = dbDestinos.favoritos.map(d => renderDestino(d, 'favoritos')).join(''); }
-    
-    });
+});
