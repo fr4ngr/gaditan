@@ -273,7 +273,7 @@ section { padding: 5rem 0; }
 .table-responsive { width: 100%; border-radius: 30px; padding: 1px; -ms-overflow-style: none; scrollbar-width: none; } .table-responsive::-webkit-scrollbar { display: none; } /* ----------------- TABLAS ----------------- */
 .glass-table { width: 100%; border-collapse: collapse; text-align: left; }
 .glass-table th, .glass-table td { padding: 0.7rem 1.2rem; border-bottom: 1px solid rgba(255, 255, 255, 0.1); vertical-align: middle; }
-.glass-table td strong { font-weight: 400; opacity: 0.95; }
+.glass-table td strong { font-weight: 600; color: var(--text-main); }
 .glass-table th { font-weight: 600; color: var(--text-main); font-size: 1.1rem; vertical-align: top; }
 .glass-table th:nth-child(2), .glass-table td:nth-child(2),
 .glass-table th:nth-child(3), .glass-table td:nth-child(3) { text-align: center; white-space: nowrap; min-width: 70px; }
