@@ -254,11 +254,11 @@ function buildSelectedDestinoWidget(dest, gridType) {
 
     return header + content;
 }
-\n\ndocument.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", () => {
     const aeroGrid = document.getElementById("aeropuertos-grid-dinamico");
     if (aeroGrid) { aeroGrid.innerHTML = dbDestinos.aeropuertos.map(d => renderDestino(d, 'aeropuertos')).join(''); }
     
     const favGrid = document.getElementById("favoritos-grid-dinamico");
     if (favGrid) { favGrid.innerHTML = dbDestinos.favoritos.map(d => renderDestino(d, 'favoritos')).join(''); }
     
-    });\n
+    });
