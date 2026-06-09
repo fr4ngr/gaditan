@@ -197,6 +197,28 @@ const mapManager = (() => {
 
 
         item.addEventListener('click', () => {
+            if (currentMode === 'todas') {
+                setMode('elegir');
+                const select = document.querySelector('#elegir-select-container select');
+                if (select) {
+                    select.value = p.id;
+                    select.dispatchEvent(new Event('change'));
+                }
+            } else if (currentMode === 'elegir') {
+                const select = document.querySelector('#elegir-select-container select');
+                if (select) {
+                    select.value = p.id;
+                    select.dispatchEvent(new Event('change'));
+                }
+            } else {
+                map.flyTo([p.lat, p.lon], 17);
+                markersLayer.eachLayer(layer => {
+                    if (layer.getLatLng().lat === p.lat && layer.getLatLng().lng === p.lon) {
+                        layer.openPopup();
+                    }
+                });
+            }
+            
             const originalScrollBehavior = document.documentElement.style.scrollBehavior;
             document.documentElement.style.scrollBehavior = 'auto';
             
@@ -212,12 +234,7 @@ const mapManager = (() => {
             requestAnimationFrame(() => {
                 document.documentElement.style.scrollBehavior = originalScrollBehavior;
             });
-            map.flyTo([p.lat, p.lon], 17);
-            markersLayer.eachLayer(layer => {
-                if (layer.getLatLng().lat === p.lat && layer.getLatLng().lng === p.lon) {
-                    layer.openPopup();
-                }
-            });
+
             if (currentMode === 'cercana' && userLocation) {
                 fetchRoute(userLocation.lat, userLocation.lon, p.lat, p.lon);
             }
@@ -281,33 +298,49 @@ const mapManager = (() => {
         return item;
     };
 
-    const buildSelectedStopWidget = (p) => {
-        const item = document.createElement('div');
-        item.style.cssText = `display: flex; flex-direction: column; width: 100%;`;
+    const renderMapOverlay = (p) => {
+        const overlay = document.getElementById('map-overlay-info');
+        if (!overlay) return;
         
-        // 1. Cabecera (Mini Tarjeta de la Parada - Estilo Píldora Turquesa)
         let distHtml = '';
         if (currentMode === 'cercana' && p.distance !== undefined) {
-            // Placeholder que se actualiza con datos reales de OSRM
             distHtml = `
-                <div id="walk-info-pill" style="display: flex; align-items: center; justify-content: center; gap: 1rem; margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid rgba(6, 182, 212, 0.25); width: 90%;">
+                <div id="walk-info-pill" style="display: flex; align-items: center; justify-content: center; gap: 1rem; margin-top: 0.6rem; padding-top: 0.6rem; border-top: 1px solid rgba(6, 182, 212, 0.25); width: 100%;">
                     <div style="font-size: 0.8rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.35rem;"><i data-lucide="loader-2" style="width:14px; height:14px; animation: spin 1s linear infinite;"></i> Calculando ruta...</div>
                 </div>
             `;
         }
         
-        const header = `
-            <div style="background: rgba(6, 182, 212, 0.12); border: 1px solid rgba(6, 182, 212, 0.25); border-radius: 30px; padding: 1rem 1.5rem; margin-bottom: 1.25rem; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15); display: flex; flex-direction: column; align-items: center; text-align: center;">
-                <span style="font-size: 0.65rem; color: var(--brand-cyan); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.1rem;">Parada de taxi</span>
-                <div style="display: flex; align-items: center; gap: 0.4rem; justify-content: center; margin-bottom: 0.1rem;">
-                    <i data-lucide="map-pin" style="color: var(--brand-cyan); width: 16px; height: 16px;"></i>
-                    <strong style="color: #fff; font-size: 1.1rem; font-weight: 700;">${p.name}</strong>
-                </div>
-                <span style="color: rgba(255,255,255,0.7); font-size: 0.8rem; line-height: 1.2;">${p.address}</span>
-                ${distHtml}
+        overlay.innerHTML = `
+            <span style="font-size: 0.65rem; color: var(--brand-cyan); font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 0.1rem; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">Parada de taxi</span>
+            <div style="display: flex; align-items: center; gap: 0.4rem; justify-content: center; margin-bottom: 0.1rem;">
+                <i data-lucide="map-pin" style="color: var(--brand-cyan); width: 18px; height: 18px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));"></i>
+                <strong style="color: #fff; font-size: 1.25rem; font-weight: 800; text-shadow: 0 2px 6px rgba(0,0,0,0.8);">${p.name}</strong>
             </div>
+            <span style="color: rgba(255,255,255,0.9); font-size: 0.85rem; line-height: 1.2; text-shadow: 0 2px 4px rgba(0,0,0,0.8);">${p.address}</span>
+            ${distHtml}
         `;
+        
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+        overlay.style.display = 'flex';
+        // Fade in
+        requestAnimationFrame(() => {
+            overlay.style.opacity = '1';
+        });
+    };
 
+    const hideMapOverlay = () => {
+        const overlay = document.getElementById('map-overlay-info');
+        if (overlay) {
+            overlay.style.opacity = '0';
+            setTimeout(() => { overlay.style.display = 'none'; }, 300);
+        }
+    };
+
+    const buildSelectedStopWidget = (p) => {
+        const item = document.createElement('div');
+        item.style.cssText = `display: flex; flex-direction: column; width: 100%;`;
+        
         // 2. Tarjeta Taxis Oficiales + Alternativas
         const content = `
             <!-- Opción Taxis Oficiales -->
@@ -403,7 +436,7 @@ const mapManager = (() => {
             </a>
         `;
 
-        item.innerHTML = header + content;
+        item.innerHTML = content;
         return item;
     };
 
@@ -508,7 +541,11 @@ const mapManager = (() => {
                 // Mostrar widget de la parada seleccionada
                 bottomContainer.innerHTML = '';
                 bottomContainer.appendChild(buildSelectedStopWidget(parada));
+                renderMapOverlay(parada);
                 if (typeof lucide !== 'undefined') lucide.createIcons();
+                
+                // Centrar mapa
+                map.setView([parada.lat, parada.lon], 16);
             }
         });
 
@@ -614,6 +651,11 @@ const mapManager = (() => {
         if (mode === 'todas') {
             btnTodas.className = 'md3-btn md3-primary';
             
+            hideMapOverlay();
+            const mapEl = document.getElementById('map');
+            if (mapEl) mapEl.style.aspectRatio = '16/9';
+            setTimeout(() => { if (map) map.invalidateSize(); }, 400);
+
             renderMarkers(dbParadas);
             currentPage = 1;
             renderPaginatedList(dbParadas);
@@ -630,6 +672,10 @@ const mapManager = (() => {
         } else if (mode === 'elegir') {
             btnElegir.className = 'md3-btn md3-primary';
             
+            const mapEl = document.getElementById('map');
+            if (mapEl) mapEl.style.aspectRatio = '4/5';
+            setTimeout(() => { if (map) map.invalidateSize(); }, 400);
+
             renderMarkers(dbParadas);
             renderElegirView(dbParadas);
             
@@ -644,6 +690,10 @@ const mapManager = (() => {
 
         } else if (mode === 'cercana') {
             btnCercana.className = 'md3-btn md3-primary';
+            
+            const mapEl = document.getElementById('map');
+            if (mapEl) mapEl.style.aspectRatio = '4/5';
+            setTimeout(() => { if (map) map.invalidateSize(); }, 400);
             
             if (navigator.geolocation) {
                 document.getElementById('paradas-list-container').innerHTML = '<div style="text-align:center; padding: 2rem; color: var(--text-muted);"><i data-lucide="loader-2" class="spin" style="animation: spin 1s linear infinite;"></i> Localizando...</div>';
@@ -670,6 +720,7 @@ const mapManager = (() => {
                     if (container) {
                         container.innerHTML = '';
                         container.appendChild(buildSelectedStopWidget(masCercana));
+                        renderMapOverlay(masCercana);
                         if (typeof lucide !== 'undefined') lucide.createIcons();
                     }
                     
