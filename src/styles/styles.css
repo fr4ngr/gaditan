@@ -1414,21 +1414,22 @@ select:-webkit-autofill:focus {
 .dest-detail-container {
     display: grid;
     grid-template-rows: 0fr;
-    opacity: 0;
-    transition: grid-template-rows 0.45s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.3s ease, margin-bottom 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+    transition: grid-template-rows 0.4s cubic-bezier(0.1, 0.9, 0.2, 1), margin-bottom 0.4s cubic-bezier(0.1, 0.9, 0.2, 1);
     margin-bottom: 0;
 }
 .dest-detail-container.is-open {
     grid-template-rows: 1fr;
-    opacity: 1;
     margin-bottom: 1rem;
 }
 .dest-detail-inner {
     overflow: hidden;
     min-height: 0;
-    transform: translateY(-10px);
-    transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+    opacity: 0;
+    transform: translateY(-15px) scale(0.98);
+    transition: transform 0.4s cubic-bezier(0.1, 0.9, 0.2, 1), opacity 0.3s ease 0.05s;
+    transform-origin: top center;
 }
 .dest-detail-container.is-open .dest-detail-inner {
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
+    opacity: 1;
 }

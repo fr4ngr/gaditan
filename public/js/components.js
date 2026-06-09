@@ -104,7 +104,7 @@ window.showDestinoDetails = function(destId, gridType) {
             const headerHeight = document.querySelector('.header')?.offsetHeight || 0;
             
             // Usamos un scroll position ajustado
-            const offsetPosition = thisCard.getBoundingClientRect().top + window.scrollY - headerHeight - 15;
+            const offsetPosition = thisCard.getBoundingClientRect().top + window.scrollY - headerHeight - 75;
             window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
             
             setTimeout(() => {
