@@ -20,7 +20,7 @@ const dbDestinos = {
 function renderDestino(dest, gridType) {
     return `
     <div id="card-wrapper-${gridType}-${dest.id}" style="width: 100%;">
-        <div class="mini-dest-card pildora-hover" id="card-header-${gridType}-${dest.id}" onclick="showDestinoDetails('${dest.id}', '${gridType}')" style="margin-bottom: 0.5rem; cursor: pointer; display: flex; flex-direction: column;">
+        <div class="mini-dest-card pildora-hover" id="card-header-${gridType}-${dest.id}" onclick="showDestinoDetails('${dest.id}', '${gridType}')" style="position: relative; margin-bottom: 0.5rem; cursor: pointer; display: flex; flex-direction: column;">
             <div class="mini-dest-header" style="align-items: center; position: relative; width: 100%; display: flex; justify-content: space-between; flex-wrap: wrap;">
                 <div class="mini-dest-name" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0.2rem;">
                     <div style="font-size: 0.65rem; color: white; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;">DESDE CÁDIZ A</div>
@@ -36,8 +36,8 @@ function renderDestino(dest, gridType) {
                     ${dest.time ? `<div style="font-size: 0.75rem; color: var(--text-muted); display: flex; align-items: center; justify-content: flex-end; gap: 0.25rem; margin-top: 0.3rem; white-space: nowrap;"><i data-lucide="clock" style="width: 12px; height: 12px;"></i> ${dest.time}</div>` : ''}
                 </div>
             </div>
-            <!-- Indicador interactivo inferior animado (latido) -->
-            <div class="bottom-expand-indicator" style="width: 100%; height: 0; display: flex; justify-content: center; align-items: flex-end; opacity: 0; overflow: hidden; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);">
+            <!-- Indicador interactivo inferior animado (latido) posicionado absolutamente para no empujar -->
+            <div class="bottom-expand-indicator" style="position: absolute; bottom: 8px; left: 0; width: 100%; height: 0; display: flex; justify-content: center; align-items: flex-end; opacity: 0; overflow: hidden; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);">
                 <div class="chevron-wrapper" style="transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); display: flex; justify-content: center;">
                     <i data-lucide="chevron-down" style="color: var(--brand-cyan); width: 22px; height: 22px;"></i>
                 </div>
