@@ -116,7 +116,7 @@ const destinosMapManager = (() => {
                 if (polylines[type]) maps[type].removeLayer(polylines[type]);
                 if (destinationMarkers[type]) maps[type].removeLayer(destinationMarkers[type]);
                 
-                polylines[type] = L.layerGroup([outerLine, innerLine, animatedLine]).addTo(maps[type]);
+                polylines[type] = L.featureGroup([outerLine, innerLine, animatedLine]).addTo(maps[type]);
 
                 destinationMarkers[type] = L.marker([destLat, destLon], { icon: customIcon }).addTo(maps[type]);
                 
