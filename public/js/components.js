@@ -21,22 +21,27 @@ function renderDestino(dest, gridType) {
     return `
     <div id="card-wrapper-${gridType}-${dest.id}" style="width: 100%;">
         <div class="mini-dest-card pildora-hover" id="card-header-${gridType}-${dest.id}" onclick="showDestinoDetails('${dest.id}', '${gridType}')" style="position: relative; margin-bottom: 0.5rem; cursor: pointer; display: flex; flex-direction: column;">
-            <div class="mini-dest-header" style="align-items: stretch; position: relative; width: 100%; display: flex; justify-content: space-between; flex-wrap: nowrap;">
-                <div class="mini-dest-name" style="display: flex; flex-direction: column; align-items: flex-start; justify-content: space-between;">
-                    <div style="font-size: 0.65rem; color: var(--brand-cyan); font-weight: 800; text-transform: uppercase; letter-spacing: 1px;">DESDE CÁDIZ A</div>
-                    <div style="display: flex; align-items: center; gap: 0.4rem;">
-                        <i data-lucide="${dest.icon}" size="16" style="color: var(--brand-cyan);"></i> ${dest.name}
-                    </div>
-                </div>
-                <div class="mini-dest-info-right" style="display: flex; flex-direction: column; align-items: flex-end; justify-content: space-between;">
-                    <div style="display: flex; align-items: baseline; justify-content: flex-end; gap: 0.1rem;">
+            <div class="mini-dest-header" style="position: relative; width: 100%; display: flex; flex-direction: column; justify-content: center; gap: 0.3rem;">
+                
+                <!-- Fila 1: DESDE CÁDIZ A y Precio -->
+                <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                    <div style="font-size: 0.65rem; color: var(--brand-cyan); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; line-height: 1;">DESDE CÁDIZ A</div>
+                    <div class="mini-dest-info-right" style="display: flex; align-items: baseline; justify-content: flex-end; gap: 0.1rem; line-height: 1;">
                         <span class="mini-dest-price" style="line-height: 1;">${dest.price}</span>
                         <span style="font-size: 1.2rem; color: var(--brand-cyan); font-weight: 800; transform: translateY(2px);">*</span>
                     </div>
-                    ${dest.time ? `<div style="font-size: 0.75rem; color: var(--text-muted); display: flex; align-items: center; justify-content: flex-end; gap: 0.25rem; white-space: nowrap;"><i data-lucide="clock" style="width: 12px; height: 12px;"></i> ${dest.time}</div>` : ''}
                 </div>
-                <!-- Icono de cerrar (X) oculto por defecto -->
-                <div class="mini-dest-close-icon" style="display: none; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 50%; background: rgba(255,255,255,0.05); transition: background 0.3s ease;">
+
+                <!-- Fila 2: Destino y Tiempo -->
+                <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                    <div style="display: flex; align-items: center; gap: 0.4rem; line-height: 1;">
+                        <i data-lucide="${dest.icon}" size="16" style="color: var(--brand-cyan);"></i> ${dest.name}
+                    </div>
+                    ${dest.time ? `<div class="mini-dest-info-right" style="font-size: 0.75rem; color: var(--text-muted); display: flex; align-items: center; justify-content: flex-end; gap: 0.25rem; white-space: nowrap; line-height: 1;"><i data-lucide="clock" style="width: 12px; height: 12px;"></i> ${dest.time}</div>` : ''}
+                </div>
+
+                <!-- Icono de cerrar (X) posicionado absolutamente a la derecha -->
+                <div class="mini-dest-close-icon" style="display: none; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 50%; background: rgba(255,255,255,0.05); transition: background 0.3s ease; position: absolute; right: 0; top: 50%; transform: translateY(-50%);">
                     <i data-lucide="x" style="color: white; width: 20px; height: 20px;"></i>
                 </div>
             </div>
