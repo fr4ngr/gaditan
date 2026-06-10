@@ -20,7 +20,7 @@ const dbDestinos = {
 function renderDestino(dest, gridType) {
     return `
     <div id="card-wrapper-${gridType}-${dest.id}" style="width: 100%;">
-        <div class="mini-dest-card pildora-hover" id="card-header-${gridType}-${dest.id}" onclick="showDestinoDetails('${dest.id}', '${gridType}')" style="position: relative; margin-bottom: 0.5rem; cursor: pointer; display: flex; flex-direction: column;">
+        <div class="mini-dest-card pildora-hover" id="card-header-${gridType}-${dest.id}" onclick="showDestinoDetails('${dest.id}', '${gridType}')" style="position: relative; margin-bottom: 0.55rem; cursor: pointer; display: flex; flex-direction: column;">
             <div class="mini-dest-header" style="position: relative; width: 100%; display: flex; flex-direction: column; justify-content: center; gap: 0.3rem;">
                 
                 <!-- Fila 1: DESDE CÁDIZ A y Precio -->
