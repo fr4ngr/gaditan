@@ -56,7 +56,7 @@ function renderDestino(dest, gridType) {
     return `
     <div class="mini-dest-card pildora-hover" onclick="showDestinoDetails('${dest.id}', '${gridType}')" style="margin-bottom: 1rem; cursor: pointer;">
         <div class="mini-dest-header" style="align-items: center; position: relative; width: 100%; display: flex; justify-content: space-between;">
-            <div class="mini-dest-name" style="display: grid; grid-template-columns: 16px 1fr; gap: 0.15rem 0.4rem; align-items: start; text-align: left;">
+            <div class="mini-dest-name" style="display: grid; grid-template-columns: 16px 1fr; gap: 0.15rem 0.8rem; align-items: start; text-align: left;">
                 <div></div>
                 <div style="font-size: 0.65rem; color: white; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; line-height: 1; text-align: left; padding-top: 0.1rem;">DESDE CÁDIZ A</div>
                 <i data-lucide="${dest.icon}" size="16" style="color: var(--brand-cyan); margin-top: 0.15rem;"></i>
