@@ -19,28 +19,26 @@ const dbDestinos = {
 function renderDestino(dest, gridType) {
     return `
     <div id="card-wrapper-${gridType}-${dest.id}" style="width: 100%;">
-        <div class="mini-dest-card pildora-hover" id="card-header-${gridType}-${dest.id}" onclick="showDestinoDetails('${dest.id}', '${gridType}')" style="margin-bottom: 0.5rem; cursor: pointer;">
-            <div class="mini-dest-header" style="align-items: center; position: relative; width: 100%; display: flex; justify-content: space-between;">
+        <div class="mini-dest-card pildora-hover" id="card-header-${gridType}-${dest.id}" onclick="showDestinoDetails('${dest.id}', '${gridType}')" style="margin-bottom: 0.5rem; cursor: pointer; display: flex; flex-direction: column;">
+            <div class="mini-dest-header" style="align-items: center; position: relative; width: 100%; display: flex; justify-content: space-between; flex-wrap: wrap;">
                 <div class="mini-dest-name" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0.2rem;">
                     <div style="font-size: 0.65rem; color: white; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;">DESDE CÁDIZ A</div>
                     <div style="display: flex; align-items: center; gap: 0.4rem;">
                         <i data-lucide="${dest.icon}" size="16" style="color: var(--brand-cyan);"></i> ${dest.name}
                     </div>
                 </div>
-                <div style="display: flex; align-items: center;">
-                    <div class="mini-dest-info-right" style="text-align: right;">
-                        <div style="display: flex; align-items: baseline; justify-content: flex-end; gap: 0.1rem;">
-                            <span class="mini-dest-price" style="line-height: 1;">${dest.price}</span>
-                            <span style="font-size: 1.2rem; color: var(--brand-cyan); font-weight: 800; transform: translateY(2px);">*</span>
-                        </div>
-                        ${dest.time ? `<div style="font-size: 0.75rem; color: var(--text-muted); display: flex; align-items: center; justify-content: flex-end; gap: 0.25rem; margin-top: 0.3rem; white-space: nowrap;"><i data-lucide="clock" style="width: 12px; height: 12px;"></i> ${dest.time}</div>` : ''}
+                <div class="mini-dest-info-right" style="text-align: right;">
+                    <div style="display: flex; align-items: baseline; justify-content: flex-end; gap: 0.1rem;">
+                        <span class="mini-dest-price" style="line-height: 1;">${dest.price}</span>
+                        <span style="font-size: 1.2rem; color: var(--brand-cyan); font-weight: 800; transform: translateY(2px);">*</span>
                     </div>
-                    <!-- Indicador interactivo -->
-                    <div style="display: flex; align-items: center; margin-left: 0.8rem;">
-                        <div class="chevron-wrapper" style="background: rgba(6,182,212,0.12); border: 1px solid rgba(6,182,212,0.35); width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);">
-                            <i data-lucide="chevron-down" style="color: var(--brand-cyan); width: 16px; height: 16px;"></i>
-                        </div>
-                    </div>
+                    ${dest.time ? `<div style="font-size: 0.75rem; color: var(--text-muted); display: flex; align-items: center; justify-content: flex-end; gap: 0.25rem; margin-top: 0.3rem; white-space: nowrap;"><i data-lucide="clock" style="width: 12px; height: 12px;"></i> ${dest.time}</div>` : ''}
+                </div>
+            </div>
+            <!-- Indicador interactivo inferior animado (latido) -->
+            <div class="bottom-expand-indicator" style="width: 100%; height: 0; display: flex; justify-content: center; align-items: flex-end; opacity: 0; overflow: hidden; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);">
+                <div class="chevron-wrapper" style="transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); display: flex; justify-content: center;">
+                    <i data-lucide="chevron-down" style="color: var(--brand-cyan); width: 22px; height: 22px;"></i>
                 </div>
             </div>
         </div>

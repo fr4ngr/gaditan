@@ -1001,11 +1001,7 @@ input[type="date"], input[type="time"] { -webkit-appearance: none; -moz-appearan
 .mini-dest-info-right {
     transition: opacity 0.2s ease 0.2s;
 }
-.mini-dest-card.expanded .mini-dest-info-right {
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.2s ease;
-}
+/* La clase expanded ya no oculta la información de la derecha */
 
 .mini-dest-close-btn {
     position: absolute;
@@ -1332,6 +1328,25 @@ select:-webkit-autofill:focus {
     transform: scale(1.15) !important;
     border-color: rgba(255, 255, 255, 0.4) !important;
     box-shadow: 0 4px 10px rgba(6, 182, 212, 0.3) !important;
+}
+
+/* Animación del indicador inferior en tarjetas tipo acordeón (ej. Aeropuertos) */
+.pildora-hover.glow-active .bottom-expand-indicator,
+.pildora-hover:hover .bottom-expand-indicator {
+    height: 22px !important;
+    opacity: 1 !important;
+    padding-top: 4px;
+}
+.pildora-hover.glow-active .bottom-expand-indicator .chevron-wrapper,
+.pildora-hover:hover .bottom-expand-indicator .chevron-wrapper {
+    animation: heartBeatPulse 1.5s infinite cubic-bezier(0.4, 0, 0.2, 1);
+}
+@keyframes heartBeatPulse {
+    0% { transform: scale(1) translateY(0); opacity: 0.6; }
+    15% { transform: scale(1.2) translateY(3px); opacity: 1; }
+    30% { transform: scale(1) translateY(0); opacity: 0.6; }
+    45% { transform: scale(1.2) translateY(3px); opacity: 1; }
+    100% { transform: scale(1) translateY(0); opacity: 0.6; }
 }
 
 /* --- Mobile Sticky Bottom Bar --- */
