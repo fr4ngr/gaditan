@@ -258,7 +258,7 @@ function buildSelectedDestinoWidget(dest, gridType) {
         </div>
     `;
 
-    return header + content;
+    return content;
 }
 document.addEventListener("DOMContentLoaded", () => {
     const aeroGrid = document.getElementById("aeropuertos-grid-dinamico");
