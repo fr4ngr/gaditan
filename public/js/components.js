@@ -21,14 +21,14 @@ function renderDestino(dest, gridType) {
     return `
     <div id="card-wrapper-${gridType}-${dest.id}" style="width: 100%;">
         <div class="mini-dest-card pildora-hover" id="card-header-${gridType}-${dest.id}" onclick="showDestinoDetails('${dest.id}', '${gridType}')" style="position: relative; margin-bottom: 0.5rem; cursor: pointer; display: flex; flex-direction: column;">
-            <div class="mini-dest-header" style="align-items: center; position: relative; width: 100%; display: flex; justify-content: space-between; flex-wrap: wrap;">
-                <div class="mini-dest-name" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0.2rem;">
+            <div class="mini-dest-header" style="align-items: stretch; position: relative; width: 100%; display: flex; justify-content: space-between; flex-wrap: nowrap;">
+                <div class="mini-dest-name" style="display: flex; flex-direction: column; align-items: flex-start; justify-content: space-between;">
                     <div style="font-size: 0.65rem; color: var(--brand-cyan); font-weight: 800; text-transform: uppercase; letter-spacing: 1px;">DESDE CÁDIZ A</div>
                     <div style="display: flex; align-items: center; gap: 0.4rem;">
                         <i data-lucide="${dest.icon}" size="16" style="color: var(--brand-cyan);"></i> ${dest.name}
                     </div>
                 </div>
-                <div class="mini-dest-info-right" style="display: flex; flex-direction: column; align-items: flex-end; justify-content: center; gap: 0;">
+                <div class="mini-dest-info-right" style="display: flex; flex-direction: column; align-items: flex-end; justify-content: space-between;">
                     <div style="display: flex; align-items: baseline; justify-content: flex-end; gap: 0.1rem;">
                         <span class="mini-dest-price" style="line-height: 1;">${dest.price}</span>
                         <span style="font-size: 1.2rem; color: var(--brand-cyan); font-weight: 800; transform: translateY(2px);">*</span>
