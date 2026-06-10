@@ -57,7 +57,8 @@ const destinosMapManager = (() => {
             maxZoom: 20
         }).addTo(mapInstance);
 
-        // No añadir marcador de origen para evitar confusiones con la ubicación del usuario
+        // Añadir marcador de origen (Cádiz)
+        L.marker([originLat, originLon], { icon: customIcon }).addTo(mapInstance);
 
         maps[type] = mapInstance;
         return mapInstance;
@@ -100,11 +101,22 @@ const destinosMapManager = (() => {
                     lineJoin: 'round',
                     lineCap: 'round'
                 }).addTo(maps[type]);
+                
+                // Línea animada superior para el efecto flow
+                const animatedLine = L.polyline(coordinates, {
+                    color: '#ffffff',
+                    weight: 3,
+                    opacity: 0.9,
+                    dashArray: '10, 30',
+                    lineJoin: 'round',
+                    className: 'route-flow-animation'
+                }).addTo(maps[type]);
+
                 // Limpieza doble: por si el usuario hizo clic en otro destino mientras esta petición estaba en curso
                 if (polylines[type]) maps[type].removeLayer(polylines[type]);
                 if (destinationMarkers[type]) maps[type].removeLayer(destinationMarkers[type]);
                 
-                polylines[type] = L.layerGroup([outerLine, innerLine]).addTo(maps[type]);
+                polylines[type] = L.layerGroup([outerLine, innerLine, animatedLine]).addTo(maps[type]);
 
                 destinationMarkers[type] = L.marker([destLat, destLon], { icon: customIcon }).addTo(maps[type]);
                 
