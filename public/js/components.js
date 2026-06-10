@@ -114,21 +114,6 @@ window.hideDestinoDetails = function(gridType) {
 };
 
 function buildSelectedDestinoWidget(dest, gridType) {
-    const header = `
-        <div style="background: rgba(6, 182, 212, 0.12); border: 1px solid rgba(6, 182, 212, 0.25); border-radius: 30px; padding: 1rem 1.5rem; margin-bottom: 1.25rem; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15); display: flex; flex-direction: column; position: relative;">
-            <button onclick="hideDestinoDetails('${gridType}')" style="position: absolute; top: 1rem; left: 1rem; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer; backdrop-filter: blur(5px);">
-                <i data-lucide="arrow-left" style="width: 18px; height: 18px;"></i>
-            </button>
-            <div style="text-align: center; margin-top: 0.5rem;">
-                <span style="font-size: 0.65rem; color: var(--brand-cyan); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.1rem;">Desde Cádiz a</span>
-                <div style="display: flex; align-items: center; gap: 0.4rem; justify-content: center; margin-bottom: 0.5rem;">
-                    <i data-lucide="${dest.icon}" style="color: var(--brand-cyan); width: 16px; height: 16px;"></i>
-                    <strong style="color: #fff; font-size: 1.1rem; font-weight: 700;">${dest.name}</strong>
-                </div>
-            </div>
-        </div>
-    `;
-
     const content = `
         <div style="display: flex; flex-direction: column; width: 100%;">
             <!-- Opción Taxis Oficiales -->

@@ -84,25 +84,48 @@ const destinosMapManager = (() => {
                 const route = data.routes[0];
                 const coordinates = route.geometry.coordinates.map(coord => [coord[1], coord[0]]); // Leaflet usa lat,lon
                 
+                // Línea sólida de base
                 polylines[type] = L.polyline(coordinates, {
                     color: '#06b6d4',
-                    weight: 5,
-                    opacity: 0.8,
-                    dashArray: '10, 10',
-                    lineJoin: 'round'
+                    weight: 6,
+                    opacity: 0.6,
+                    lineJoin: 'round',
+                    lineCap: 'round'
                 }).addTo(maps[type]);
+
+                // Línea animada superior para el efecto flow
+                const animatedLine = L.polyline(coordinates, {
+                    color: '#ffffff',
+                    weight: 3,
+                    opacity: 0.9,
+                    dashArray: '10, 30',
+                    lineJoin: 'round',
+                    className: 'route-flow-animation'
+                }).addTo(maps[type]);
+                
+                // Agrupar para fácil borrado posterior si es necesario, 
+                // pero como la limpiamos por polylines[type]... wait. 
+                // Guardaré la capa animada en el objeto polylines también.
+                polylines[type] = L.layerGroup([polylines[type], animatedLine]).addTo(maps[type]);
 
                 destinationMarkers[type] = L.marker([destLat, destLon], { icon: customIcon }).addTo(maps[type]);
                 
-                // Ajustar vista para mostrar toda la ruta con un poco de padding
-                maps[type].fitBounds(polylines[type].getBounds(), { padding: [50, 50], maxZoom: 14 });
+                // Ajustar vista con padding superior grande para esquivar la píldora del overlay
+                maps[type].fitBounds(polylines[type].getBounds(), { 
+                    paddingTopLeft: [50, 150], 
+                    paddingBottomRight: [50, 50], 
+                    maxZoom: 14 
+                });
             }
         } catch (error) {
             console.error('Error calculando ruta al destino:', error);
             // Fallback: solo mover el mapa y poner el pin
             destinationMarkers[type] = L.marker([destLat, destLon], { icon: customIcon }).addTo(maps[type]);
             const bounds = L.latLngBounds([[originLat, originLon], [destLat, destLon]]);
-            maps[type].fitBounds(bounds, { padding: [50, 50] });
+            maps[type].fitBounds(bounds, { 
+                paddingTopLeft: [50, 150], 
+                paddingBottomRight: [50, 50] 
+            });
         }
     };
 

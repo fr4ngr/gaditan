@@ -17,7 +17,7 @@
                             <span>Volver a Aeropuertos</span>
                             <i data-lucide="chevron-down" style="color: var(--brand-cyan); width: 20px; height: 20px;"></i>
                         </button>    
-                        <div class="map-container" style="position: relative; border-radius: 30px; overflow: hidden; border: 1px solid var(--glass-border); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2); margin-bottom: 1.5rem;">
+                        <div class="map-container" style="position: relative; border-radius: 12px; overflow: hidden; border: 1px solid var(--glass-border); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2); margin-bottom: 1.5rem;">
                             <!-- Overlay dinámico -->
                             <div id="map-overlay-info-aeropuertos" style="position: absolute; top: 15px; left: 15px; right: 15px; z-index: 90; display: none; pointer-events: none; transition: all 0.4s cubic-bezier(0.1, 0.9, 0.2, 1); transform: translateY(-20px); opacity: 0;"></div>
                             <!-- Mapa Base -->
@@ -46,7 +46,7 @@
                             <i data-lucide="chevron-down" style="color: var(--brand-cyan); width: 20px; height: 20px;"></i>
                         </button>
                         
-                        <div class="map-container" style="position: relative; border-radius: 30px; overflow: hidden; border: 1px solid var(--glass-border); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2); margin-bottom: 1.5rem;">
+                        <div class="map-container" style="position: relative; border-radius: 12px; overflow: hidden; border: 1px solid var(--glass-border); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2); margin-bottom: 1.5rem;">
                             <!-- Overlay dinámico -->
                             <div id="map-overlay-info-favoritos" style="position: absolute; top: 15px; left: 15px; right: 15px; z-index: 90; display: none; pointer-events: none; transition: all 0.4s cubic-bezier(0.1, 0.9, 0.2, 1); transform: translateY(-20px); opacity: 0;"></div>
                             <!-- Mapa Base -->
@@ -58,4 +58,15 @@
                     </div>
                 </div>
             </div>
-        </section>
+        </section>
+
+<style>
+    @keyframes flowRoute {
+        to {
+            stroke-dashoffset: -40;
+        }
+    }
+    :global(.route-flow-animation) {
+        animation: flowRoute 1.5s linear infinite;
+    }
+</style>
