@@ -23,7 +23,7 @@ function renderDestino(dest, gridType) {
         <div class="mini-dest-card pildora-hover" id="card-header-${gridType}-${dest.id}" onclick="showDestinoDetails('${dest.id}', '${gridType}')" style="position: relative; margin-bottom: 0.5rem; cursor: pointer; display: flex; flex-direction: column;">
             <div class="mini-dest-header" style="align-items: center; position: relative; width: 100%; display: flex; justify-content: space-between; flex-wrap: wrap;">
                 <div class="mini-dest-name" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0.2rem;">
-                    <div style="font-size: 0.65rem; color: white; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;">DESDE CÁDIZ A</div>
+                    <div style="font-size: 0.65rem; color: var(--brand-cyan); font-weight: 800; text-transform: uppercase; letter-spacing: 1px;">DESDE CÁDIZ A</div>
                     <div style="display: flex; align-items: center; gap: 0.4rem;">
                         <i data-lucide="${dest.icon}" size="16" style="color: var(--brand-cyan);"></i> ${dest.name}
                     </div>
@@ -34,6 +34,10 @@ function renderDestino(dest, gridType) {
                         <span style="font-size: 1.2rem; color: var(--brand-cyan); font-weight: 800; transform: translateY(2px);">*</span>
                     </div>
                     ${dest.time ? `<div style="font-size: 0.75rem; color: var(--text-muted); display: flex; align-items: center; justify-content: flex-end; gap: 0.25rem; margin-top: 0.3rem; white-space: nowrap;"><i data-lucide="clock" style="width: 12px; height: 12px;"></i> ${dest.time}</div>` : ''}
+                </div>
+                <!-- Icono de cerrar (X) oculto por defecto -->
+                <div class="mini-dest-close-icon" style="display: none; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 50%; background: rgba(255,255,255,0.05); transition: background 0.3s ease;">
+                    <i data-lucide="x" style="color: white; width: 20px; height: 20px;"></i>
                 </div>
             </div>
             <!-- Indicador interactivo inferior animado (latido) posicionado absolutamente para no empujar -->
