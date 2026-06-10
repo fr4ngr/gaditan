@@ -100,6 +100,9 @@ const destinosMapManager = (() => {
                     lineJoin: 'round',
                     lineCap: 'round'
                 }).addTo(maps[type]);
+                // Limpieza doble: por si el usuario hizo clic en otro destino mientras esta petición estaba en curso
+                if (polylines[type]) maps[type].removeLayer(polylines[type]);
+                if (destinationMarkers[type]) maps[type].removeLayer(destinationMarkers[type]);
                 
                 polylines[type] = L.layerGroup([outerLine, innerLine]).addTo(maps[type]);
 
@@ -114,6 +117,10 @@ const destinosMapManager = (() => {
             }
         } catch (error) {
             console.error('Error calculando ruta al destino:', error);
+            // Limpieza doble por seguridad
+            if (polylines[type]) maps[type].removeLayer(polylines[type]);
+            if (destinationMarkers[type]) maps[type].removeLayer(destinationMarkers[type]);
+            
             // Fallback: solo mover el mapa y poner el pin
             destinationMarkers[type] = L.marker([destLat, destLon], { icon: customIcon }).addTo(maps[type]);
             const bounds = L.latLngBounds([[originLat, originLon], [destLat, destLon]]);
