@@ -155,7 +155,7 @@ function buildSelectedDestinoWidget(dest, gridType) {
             <div style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 30px; padding: 0.75rem 1rem; display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 0.5rem;">
                 <div style="display: flex; justify-content: space-between; align-items: flex-start; width: 100%;">
                     <div style="display: flex; align-items: center; gap: 0.6rem;">
-                        <div style="background: #eab308; color: #111827; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.65rem;">RT</div>
+                        <div style="background: linear-gradient(135deg, #ffffff 44%, #8a1538 44%, #8a1538 56%, #ffffff 56%); color: #0f172a; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 0.65rem; box-shadow: 0 0 0 1px rgba(255,255,255,0.8), 0 2px 4px rgba(0,0,0,0.2); text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff, 0 0 2px #fff;">TO</div>
                         <div style="display: flex; flex-direction: column;">
                             <div style="color: #fff; font-weight: 600; font-size: 1.1rem;">Taxi Oficial</div>
                             <div style="display: flex; align-items: baseline; gap: 0.15rem;">
