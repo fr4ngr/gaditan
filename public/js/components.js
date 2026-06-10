@@ -28,7 +28,7 @@ function renderDestino(dest, gridType) {
                         <i data-lucide="${dest.icon}" size="16" style="color: var(--brand-cyan);"></i> ${dest.name}
                     </div>
                 </div>
-                <div class="mini-dest-info-right" style="display: flex; flex-direction: column; align-items: flex-end; justify-content: center; gap: 0.2rem;">
+                <div class="mini-dest-info-right" style="display: flex; flex-direction: column; align-items: flex-end; justify-content: center; gap: 0;">
                     <div style="display: flex; align-items: baseline; justify-content: flex-end; gap: 0.1rem;">
                         <span class="mini-dest-price" style="line-height: 1;">${dest.price}</span>
                         <span style="font-size: 1.2rem; color: var(--brand-cyan); font-weight: 800; transform: translateY(2px);">*</span>
