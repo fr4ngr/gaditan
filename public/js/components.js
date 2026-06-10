@@ -28,12 +28,12 @@ function renderDestino(dest, gridType) {
                         <i data-lucide="${dest.icon}" size="16" style="color: var(--brand-cyan);"></i> ${dest.name}
                     </div>
                 </div>
-                <div class="mini-dest-info-right" style="text-align: right;">
+                <div class="mini-dest-info-right" style="display: flex; flex-direction: column; align-items: flex-end; justify-content: center; gap: 0.2rem;">
                     <div style="display: flex; align-items: baseline; justify-content: flex-end; gap: 0.1rem;">
                         <span class="mini-dest-price" style="line-height: 1;">${dest.price}</span>
                         <span style="font-size: 1.2rem; color: var(--brand-cyan); font-weight: 800; transform: translateY(2px);">*</span>
                     </div>
-                    ${dest.time ? `<div style="font-size: 0.75rem; color: var(--text-muted); display: flex; align-items: center; justify-content: flex-end; gap: 0.25rem; margin-top: 0.3rem; white-space: nowrap;"><i data-lucide="clock" style="width: 12px; height: 12px;"></i> ${dest.time}</div>` : ''}
+                    ${dest.time ? `<div style="font-size: 0.75rem; color: var(--text-muted); display: flex; align-items: center; justify-content: flex-end; gap: 0.25rem; white-space: nowrap;"><i data-lucide="clock" style="width: 12px; height: 12px;"></i> ${dest.time}</div>` : ''}
                 </div>
                 <!-- Icono de cerrar (X) oculto por defecto -->
                 <div class="mini-dest-close-icon" style="display: none; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 50%; background: rgba(255,255,255,0.05); transition: background 0.3s ease;">
