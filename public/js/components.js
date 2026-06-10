@@ -37,9 +37,9 @@ function renderDestino(dest, gridType) {
                 </div>
             </div>
             <!-- Indicador interactivo inferior animado (latido) posicionado absolutamente para no empujar -->
-            <div class="bottom-expand-indicator" style="position: absolute; bottom: 8px; left: 0; width: 100%; height: 0; display: flex; justify-content: center; align-items: flex-end; opacity: 0; overflow: hidden; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);">
+            <div class="bottom-expand-indicator" style="position: absolute; bottom: 2px; left: 0; width: 100%; height: 0; display: flex; justify-content: center; align-items: flex-end; opacity: 0; overflow: hidden; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);">
                 <div class="chevron-wrapper" style="transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); display: flex; justify-content: center;">
-                    <i data-lucide="chevron-down" style="color: var(--brand-cyan); width: 22px; height: 22px;"></i>
+                    <i data-lucide="chevron-down" style="color: var(--brand-cyan); width: 20px; height: 20px;"></i>
                 </div>
             </div>
         </div>
