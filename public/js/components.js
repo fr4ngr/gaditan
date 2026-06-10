@@ -6,49 +6,49 @@ const dbDestinos = {
         { id: "malaga", name: "Aeropuerto de<br class=\"sm-break\"> Málaga", price: "245€", icon: "plane", time: "2h 30 min", lat: 36.6749, lon: -4.4991 }
     ],
     favoritos: [
-        {"id":"alcala_gazules","name":"Alcalá de los Gazules","price":"Consultar","icon":"map-pin","time":"50 min","lat":36.46,"lon":-5.722},
-        {"id":"alcala_valle","name":"Alcalá del Valle","price":"Consultar","icon":"map-pin","time":"1h 50 min","lat":36.904,"lon":-5.172},
-        {"id":"algar","name":"Algar","price":"Consultar","icon":"map-pin","time":"1h 10 min","lat":36.656,"lon":-5.656},
+        {"id":"alcala_gazules","name":"Alcalá de los Gazules","price":"42€*","icon":"map-pin","time":"50 min","lat":36.46,"lon":-5.722},
+        {"id":"alcala_valle","name":"Alcalá del Valle","price":"108€*","icon":"map-pin","time":"1h 50 min","lat":36.904,"lon":-5.172},
+        {"id":"algar","name":"Algar","price":"63€*","icon":"map-pin","time":"1h 10 min","lat":36.656,"lon":-5.656},
         {"id":"algeciras","name":"Algeciras","price":"120€","icon":"map-pin","time":"1h 15 min","lat":36.131,"lon":-5.447},
-        {"id":"algodonales","name":"Algodonales","price":"Consultar","icon":"map-pin","time":"1h 25 min","lat":36.879,"lon":-5.404},
+        {"id":"algodonales","name":"Algodonales","price":"80€*","icon":"map-pin","time":"1h 25 min","lat":36.879,"lon":-5.404},
         {"id":"arcos","name":"Arcos de la Frontera","price":"65€","icon":"map-pin","time":"50 min","lat":36.748,"lon":-5.805},
         {"id":"barbate","name":"Barbate","price":"75€","icon":"map-pin","time":"1h 5 min","lat":36.192,"lon":-5.922},
         {"id":"los_barrios","name":"Los Barrios","price":"110€","icon":"map-pin","time":"1h 10 min","lat":36.185,"lon":-5.493},
         {"id":"benalup","name":"Benalup-Casas Viejas","price":"65€","icon":"map-pin","time":"55 min","lat":36.345,"lon":-5.813},
-        {"id":"benaocaz","name":"Benaocaz","price":"Consultar","icon":"map-pin","time":"1h 30 min","lat":36.7,"lon":-5.421},
-        {"id":"bornos","name":"Bornos","price":"Consultar","icon":"map-pin","time":"1h","lat":36.815,"lon":-5.743},
-        {"id":"el_bosque","name":"El Bosque","price":"Consultar","icon":"map-pin","time":"1h 15 min","lat":36.757,"lon":-5.506},
-        {"id":"castellar","name":"Castellar de la Frontera","price":"Consultar","icon":"map-pin","time":"1h 20 min","lat":36.286,"lon":-5.419},
+        {"id":"benaocaz","name":"Benaocaz","price":"81€*","icon":"map-pin","time":"1h 30 min","lat":36.7,"lon":-5.421},
+        {"id":"bornos","name":"Bornos","price":"52€*","icon":"map-pin","time":"1h","lat":36.815,"lon":-5.743},
+        {"id":"el_bosque","name":"El Bosque","price":"68€*","icon":"map-pin","time":"1h 15 min","lat":36.757,"lon":-5.506},
+        {"id":"castellar","name":"Castellar de la Frontera","price":"85€*","icon":"map-pin","time":"1h 20 min","lat":36.286,"lon":-5.419},
         {"id":"chiclana","name":"Chiclana de la Frontera","price":"35€","icon":"map-pin","time":"30 min","lat":36.418,"lon":-6.146},
         {"id":"chipiona","name":"Chipiona","price":"55€","icon":"map-pin","time":"45 min","lat":36.736,"lon":-6.438},
         {"id":"conil","name":"Conil de la Frontera","price":"50€","icon":"map-pin","time":"40 min","lat":36.276,"lon":-6.088},
-        {"id":"espera","name":"Espera","price":"Consultar","icon":"map-pin","time":"1h 5 min","lat":36.871,"lon":-5.806},
-        {"id":"gastor","name":"El Gastor","price":"Consultar","icon":"map-pin","time":"1h 30 min","lat":36.855,"lon":-5.323},
-        {"id":"grazalema","name":"Grazalema","price":"Consultar","icon":"map-pin","time":"1h 40 min","lat":36.758,"lon":-5.366},
+        {"id":"espera","name":"Espera","price":"54€*","icon":"map-pin","time":"1h 5 min","lat":36.871,"lon":-5.806},
+        {"id":"gastor","name":"El Gastor","price":"86€*","icon":"map-pin","time":"1h 30 min","lat":36.855,"lon":-5.323},
+        {"id":"grazalema","name":"Grazalema","price":"82€*","icon":"map-pin","time":"1h 40 min","lat":36.758,"lon":-5.366},
         {"id":"jerez","name":"Jerez de la Frontera","price":"45€","icon":"map-pin","time":"35 min","lat":36.681,"lon":-6.137},
-        {"id":"jimena","name":"Jimena de la Frontera","price":"Consultar","icon":"map-pin","time":"1h 30 min","lat":36.434,"lon":-5.452},
+        {"id":"jimena","name":"Jimena de la Frontera","price":"100€*","icon":"map-pin","time":"1h 30 min","lat":36.434,"lon":-5.452},
         {"id":"linea","name":"La Línea de la Concepción","price":"125€","icon":"map-pin","time":"1h 20 min","lat":36.168,"lon":-5.348},
         {"id":"medina","name":"Medina Sidonia","price":"45€","icon":"map-pin","time":"40 min","lat":36.457,"lon":-5.927},
-        {"id":"olvera","name":"Olvera","price":"Consultar","icon":"map-pin","time":"1h 40 min","lat":36.934,"lon":-5.266},
-        {"id":"paterna","name":"Paterna de Rivera","price":"Consultar","icon":"map-pin","time":"45 min","lat":36.521,"lon":-5.866},
-        {"id":"prado","name":"Prado del Rey","price":"Consultar","icon":"map-pin","time":"1h 10 min","lat":36.789,"lon":-5.556},
+        {"id":"olvera","name":"Olvera","price":"93€*","icon":"map-pin","time":"1h 40 min","lat":36.934,"lon":-5.266},
+        {"id":"paterna","name":"Paterna de Rivera","price":"33€*","icon":"map-pin","time":"45 min","lat":36.521,"lon":-5.866},
+        {"id":"prado","name":"Prado del Rey","price":"69€*","icon":"map-pin","time":"1h 10 min","lat":36.789,"lon":-5.556},
         {"id":"puerto_santa_maria","name":"El Puerto de Santa María","price":"25€","icon":"map-pin","time":"25 min","lat":36.593,"lon":-6.226},
         {"id":"puerto_real","name":"Puerto Real","price":"15€","icon":"map-pin","time":"15 min","lat":36.529,"lon":-6.19},
-        {"id":"puerto_serrano","name":"Puerto Serrano","price":"Consultar","icon":"map-pin","time":"1h 15 min","lat":36.915,"lon":-5.545},
+        {"id":"puerto_serrano","name":"Puerto Serrano","price":"69€*","icon":"map-pin","time":"1h 15 min","lat":36.915,"lon":-5.545},
         {"id":"rota","name":"Rota","price":"45€","icon":"map-pin","time":"40 min","lat":36.619,"lon":-6.353},
         {"id":"san_fernando","name":"San Fernando","price":"15€","icon":"map-pin","time":"15 min","lat":36.466,"lon":-6.198},
-        {"id":"san_jose_valle","name":"San José del Valle","price":"Consultar","icon":"map-pin","time":"55 min","lat":36.608,"lon":-5.8},
+        {"id":"san_jose_valle","name":"San José del Valle","price":"43€*","icon":"map-pin","time":"55 min","lat":36.608,"lon":-5.8},
         {"id":"san_roque","name":"San Roque","price":"120€","icon":"map-pin","time":"1h 15 min","lat":36.21,"lon":-5.383},
         {"id":"sanlucar","name":"Sanlúcar de Barrameda","price":"50€","icon":"map-pin","time":"40 min","lat":36.775,"lon":-6.351},
-        {"id":"setenil","name":"Setenil de las Bodegas","price":"Consultar","icon":"map-pin","time":"1h 45 min","lat":36.862,"lon":-5.181},
+        {"id":"setenil","name":"Setenil de las Bodegas","price":"98€*","icon":"map-pin","time":"1h 45 min","lat":36.862,"lon":-5.181},
         {"id":"tarifa","name":"Tarifa","price":"110€","icon":"map-pin","time":"1h 15 min","lat":36.012,"lon":-5.602},
-        {"id":"torre_alhaquime","name":"Torre Alháquime","price":"Consultar","icon":"map-pin","time":"1h 40 min","lat":36.916,"lon":-5.236},
-        {"id":"trebujena","name":"Trebujena","price":"Consultar","icon":"map-pin","time":"50 min","lat":36.869,"lon":-6.175},
-        {"id":"ubrique","name":"Ubrique","price":"95€","icon":"map-pin","time":"1h 30 min","lat":36.677,"lon":-5.445},
-        {"id":"vejer","name":"Vejer de la Frontera","price":"60€","icon":"map-pin","time":"45 min","lat":36.253,"lon":-5.963},
-        {"id":"villaluenga","name":"Villaluenga del Rosario","price":"Consultar","icon":"map-pin","time":"1h 40 min","lat":36.697,"lon":-5.384},
-        {"id":"villamartin","name":"Villamartín","price":"Consultar","icon":"map-pin","time":"1h 10 min","lat":36.858,"lon":-5.645},
-        {"id":"zahara","name":"Zahara de la Sierra","price":"Consultar","icon":"map-pin","time":"1h 35 min","lat":36.839,"lon":-5.39}
+        {"id":"torre_alhaquime","name":"Torre Alháquime","price":"98€*","icon":"map-pin","time":"1h 40 min","lat":36.916,"lon":-5.236},
+        {"id":"trebujena","name":"Trebujena","price":"38€*","icon":"map-pin","time":"50 min","lat":36.869,"lon":-6.175},
+        {"id":"ubrique","name":"Ubrique","price":"77€*","icon":"map-pin","time":"1h 20 min","lat":36.677,"lon":-5.445},
+        {"id":"vejer","name":"Vejer de la Frontera","price":"65€","icon":"map-pin","time":"50 min","lat":36.253,"lon":-5.964},
+        {"id":"villaluenga","name":"Villaluenga del Rosario","price":"85€*","icon":"map-pin","time":"1h 30 min","lat":36.696,"lon":-5.385},
+        {"id":"villamartin","name":"Villamartín","price":"60€*","icon":"map-pin","time":"1h","lat":36.858,"lon":-5.644},
+        {"id":"zahara","name":"Zahara de la Sierra","price":"84€*","icon":"map-pin","time":"1h 25 min","lat":36.84,"lon":-5.391}
     ]
 };
 
@@ -59,7 +59,7 @@ function renderDestino(dest, gridType) {
             <div class="mini-dest-name" style="display: flex; align-items: center; gap: 0.8rem; text-align: left; min-width: 0; flex: 1;">
                 <i data-lucide="${dest.icon}" style="width: 20px; height: 20px; color: var(--brand-cyan); flex-shrink: 0;"></i>
                 <div style="display: flex; flex-direction: column; min-width: 0;">
-                    <div style="font-size: 0.65rem; color: white; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; line-height: 1.2; margin-bottom: 0.15rem;">DESDE CÁDIZ A</div>
+                    <div style="font-size: 0.65rem; color: var(--brand-cyan); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; line-height: 1.2; margin-bottom: 0.15rem;">DESDE CÁDIZ A</div>
                     <div style="font-size: 1rem; color: #fff; font-weight: 600; line-height: 1.2;">${dest.name}</div>
                 </div>
             </div>
