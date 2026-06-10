@@ -1556,3 +1556,15 @@ select:-webkit-autofill:focus {
 }
 
 @media (min-width: 768px) { .sm-break { display: none; } }
+
+/* Centrar Leaflet attribution horizontalmente */
+.leaflet-bottom.leaflet-right {
+    width: 100%;
+}
+.leaflet-control-attribution {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    margin: 0 !important;
+}
