@@ -59,7 +59,7 @@ function renderDestino(dest, gridType) {
             <div class="mini-dest-name" style="display: grid; grid-template-columns: 16px 1fr; gap: 0.15rem 0.8rem; align-items: start; text-align: left;">
                 <div></div>
                 <div style="font-size: 0.65rem; color: white; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; line-height: 1; text-align: left; padding-top: 0.1rem;">DESDE CÁDIZ A</div>
-                <i data-lucide="${dest.icon}" size="16" style="color: var(--brand-cyan); margin-top: 0.15rem;"></i>
+                <i data-lucide="${dest.icon}" style="display: block; width: 16px; height: 16px; color: var(--brand-cyan); margin-top: 0.25rem;"></i>
                 <div style="line-height: 1.2; text-align: left;">${dest.name}</div>
             </div>
             <div style="display: flex; align-items: center;">
