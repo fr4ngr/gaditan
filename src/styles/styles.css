@@ -1308,20 +1308,20 @@ select:-webkit-autofill:focus {
     transition: all 0.3s ease !important;
 }
 .pildora-hover.glow-active {
-    box-shadow: 0 12px 30px rgba(6, 182, 212, 0.15) !important;
-    border-color: rgba(6, 182, 212, 0.4) !important;
-    background: rgba(17, 24, 39, 0.85) !important;
+    box-shadow: 0 12px 30px rgba(6, 182, 212, 0.25) !important;
+    border-color: rgba(6, 182, 212, 0.6) !important;
+    background: linear-gradient(145deg, rgba(6, 182, 212, 0.15), rgba(6, 182, 212, 0.05)) !important;
 }
 @media (hover: hover) {
     .pildora-hover:hover {
         transform: translateY(-4px) !important;
-        box-shadow: 0 12px 30px rgba(6, 182, 212, 0.15) !important;
-        border-color: rgba(6, 182, 212, 0.4) !important;
-        background: rgba(17, 24, 39, 0.85) !important;
+        box-shadow: 0 12px 30px rgba(6, 182, 212, 0.25) !important;
+        border-color: rgba(6, 182, 212, 0.6) !important;
+        background: linear-gradient(145deg, rgba(6, 182, 212, 0.15), rgba(6, 182, 212, 0.05)) !important;
     }
     .pildora-hover:active {
         transform: translateY(-2px) !important;
-        box-shadow: 0 8px 20px rgba(6, 182, 212, 0.1) !important;
+        box-shadow: 0 8px 20px rgba(6, 182, 212, 0.15) !important;
     }
 }
 
