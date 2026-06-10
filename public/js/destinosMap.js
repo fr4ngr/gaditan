@@ -174,6 +174,7 @@ const destinosMapManager = (() => {
                 overlay.style.display = 'block';
                 if (typeof lucide !== 'undefined') lucide.createIcons();
                 setTimeout(() => {
+                    overlay.style.transition = 'all 0.8s cubic-bezier(0.1, 0.9, 0.2, 1) 0.4s';
                     overlay.style.transform = 'translateY(0)';
                     overlay.style.opacity = '1';
                 }, 50);

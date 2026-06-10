@@ -331,8 +331,9 @@ const mapManager = (() => {
         
         if (typeof lucide !== 'undefined') lucide.createIcons();
         overlay.style.display = 'block';
-        // Fade in con traslación suave
+        // Fade in con traslación suave y retardo
         requestAnimationFrame(() => {
+            overlay.style.transition = 'all 0.8s cubic-bezier(0.1, 0.9, 0.2, 1) 0.4s';
             overlay.style.opacity = '1';
             overlay.style.transform = 'translateY(0)';
         });
@@ -341,9 +342,10 @@ const mapManager = (() => {
     const hideMapOverlay = () => {
         const overlay = document.getElementById('map-overlay-info');
         if (overlay) {
+            overlay.style.transition = 'all 0.3s ease 0s';
             overlay.style.opacity = '0';
             overlay.style.transform = 'translateY(-20px)';
-            setTimeout(() => { overlay.style.display = 'none'; }, 400);
+            setTimeout(() => { overlay.style.display = 'none'; }, 300);
         }
     };
 
