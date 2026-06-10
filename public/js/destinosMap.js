@@ -158,7 +158,7 @@ const destinosMapManager = (() => {
             // Actualizar overlay info en el mapa
             const overlay = document.getElementById(`map-overlay-info-${type}`);
             if (overlay) {
-                const badgeText = type === 'aeropuertos' ? 'TRASLADO A AEROPUERTO' : 'DESTINO FAVORITO';
+                const badgeText = type === 'aeropuertos' ? 'TRASLADO A AEROPUERTO' : 'DESDE CÁDIZ A';
                 overlay.innerHTML = `
                     <div style="background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.1); border-radius: 9999px; padding: 0.85rem 1.25rem; box-shadow: 0 10px 30px rgba(0,0,0,0.3); display: flex; flex-direction: column; width: 100%; box-sizing: border-box;">
                         <div style="display: flex; align-items: center; gap: 0.85rem; width: 100%;">
