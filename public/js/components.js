@@ -1,9 +1,9 @@
 // DESTINOS DATABASE Y COMPONENTES
 const dbDestinos = {
     aeropuertos: [
-        { id: "jerez", name: "Aeropuerto de Jerez", price: "55€", icon: "plane", time: "35 min", lat: 36.7446, lon: -6.0601 },
-        { id: "sevilla", name: "Aeropuerto de Sevilla", price: "145€", icon: "plane", time: "1h 15 min", lat: 37.4180, lon: -5.8931 },
-        { id: "malaga", name: "Aeropuerto de Málaga", price: "245€", icon: "plane", time: "2h 30 min", lat: 36.6749, lon: -4.4991 }
+        { id: "jerez", name: "Aeropuerto de<br class=\"sm-break\"> Jerez", price: "55€", icon: "plane", time: "35 min", lat: 36.7446, lon: -6.0601 },
+        { id: "sevilla", name: "Aeropuerto de<br class=\"sm-break\"> Sevilla", price: "145€", icon: "plane", time: "1h 15 min", lat: 37.4180, lon: -5.8931 },
+        { id: "malaga", name: "Aeropuerto de<br class=\"sm-break\"> Málaga", price: "245€", icon: "plane", time: "2h 30 min", lat: 36.6749, lon: -4.4991 }
     ],
     favoritos: [
         {"id":"alcala_gazules","name":"Alcalá de los Gazules","price":"Consultar","icon":"map-pin","time":"50 min","lat":36.46,"lon":-5.722},
