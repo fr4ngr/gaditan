@@ -2,7 +2,8 @@
 const dbDestinos = {
     aeropuertos: [
         { id: "jerez", name: "Aeropuerto de Jerez", price: "55€", icon: "plane", time: "35 min" },
-        { id: "sevilla", name: "Aeropuerto de Sevilla", price: "145€", icon: "plane", time: "1h 15 min" }
+        { id: "sevilla", name: "Aeropuerto de Sevilla", price: "145€", icon: "plane", time: "1h 15 min" },
+        { id: "malaga", name: "Aeropuerto de Málaga", price: "245€", icon: "plane", time: "2h 30 min" }
     ],
     favoritos: [
         { id: "tarifa", name: "Tarifa (Puerto)", price: "78€", icon: "map-pin", time: "1h 20 min" },
@@ -69,6 +70,7 @@ window.showDestinoDetails = function(destId, gridType) {
     // Si ya está abierta, simplemente la cerramos
     if (isCurrentlyOpen) {
         detailEl.classList.remove('is-open');
+        thisCard.classList.remove('card-open');
         if (thisChevron) thisChevron.style.transform = 'rotate(0deg)';
         setTimeout(() => {
             if (!detailEl.classList.contains('is-open')) {
@@ -95,6 +97,7 @@ window.showDestinoDetails = function(destId, gridType) {
         // Forzar reflow y añadir clase para abrir
         void detailEl.offsetWidth;
         detailEl.classList.add('is-open');
+        thisCard.classList.add('card-open');
 
         // Hacer scroll suave hacia la tarjeta tras un pequeñísimo delay para que el layout se calcule
         setTimeout(() => {
@@ -119,6 +122,7 @@ window.showDestinoDetails = function(destId, gridType) {
             // Buscamos su chevron para resetearlo (el wrapper hermano previo)
             const parentCard = el.previousElementSibling;
             if (parentCard) {
+                parentCard.classList.remove('card-open');
                 const chevron = parentCard.querySelector('.chevron-wrapper');
                 if (chevron) chevron.style.transform = 'rotate(0deg)';
             }
