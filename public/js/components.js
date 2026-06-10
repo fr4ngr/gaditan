@@ -56,11 +56,11 @@ function renderDestino(dest, gridType) {
     return `
     <div class="mini-dest-card pildora-hover" onclick="showDestinoDetails('${dest.id}', '${gridType}')" style="margin-bottom: 1rem; cursor: pointer;">
         <div class="mini-dest-header" style="align-items: center; position: relative; width: 100%; display: flex; justify-content: space-between;">
-            <div class="mini-dest-name" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0.2rem;">
-                <div style="font-size: 0.65rem; color: white; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-left: calc(16px + 0.4rem);">DESDE CÁDIZ A</div>
-                <div style="display: flex; align-items: center; gap: 0.4rem;">
-                    <i data-lucide="${dest.icon}" size="16" style="color: var(--brand-cyan);"></i> <span>${dest.name}</span>
-                </div>
+            <div style="display: grid; grid-template-columns: 16px 1fr; gap: 0.15rem 0.4rem; align-items: center;">
+                <div></div>
+                <div style="font-size: 0.65rem; color: white; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; line-height: 1;">DESDE CÁDIZ A</div>
+                <i data-lucide="${dest.icon}" size="16" style="color: var(--brand-cyan);"></i>
+                <div style="line-height: 1.2;">${dest.name}</div>
             </div>
             <div style="display: flex; align-items: center;">
                 <div class="mini-dest-info-right" style="text-align: right;">
