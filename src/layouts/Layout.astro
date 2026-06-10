@@ -135,11 +135,11 @@ document.addEventListener('DOMContentLoaded', function() {
 <!-- Glow Up Observer -->
 <script>
   document.addEventListener('DOMContentLoaded', () => {
+      // Observer para cadizcab (Aparezco y listo)
       const observer = new IntersectionObserver((entries) => {
           entries.forEach(entry => {
               if (entry.isIntersecting) {
                   entry.target.classList.add('glow-active');
-                  // Una vez activada la animación, dejamos de observar para que sea 'Aparezco y Listo'
                   observer.unobserve(entry.target);
               }
           });
@@ -149,22 +149,42 @@ document.addEventListener('DOMContentLoaded', function() {
           threshold: 0.1
       });
 
-      // Observar las estáticas iniciales
-      document.querySelectorAll('.cadizcab-card-hover, .pildora-hover').forEach(card => {
-          observer.observe(card);
+      // Observer para píldoras de paradas (Efecto foco al pasar por el centro)
+      const focusObserver = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+              if (entry.isIntersecting) {
+                  entry.target.classList.add('glow-active');
+              } else {
+                  entry.target.classList.remove('glow-active');
+              }
+          });
+      }, {
+          root: null,
+          rootMargin: '-30% 0px -30% 0px',
+          threshold: 0
       });
+
+      // Observar las estáticas iniciales
+      document.querySelectorAll('.cadizcab-card-hover').forEach(card => observer.observe(card));
+      document.querySelectorAll('.pildora-hover').forEach(card => focusObserver.observe(card));
 
       // Observar las creadas dinámicamente en el mapa
       const mutationObserver = new MutationObserver((mutations) => {
           mutations.forEach(mutation => {
               mutation.addedNodes.forEach(node => {
                   if (node.nodeType === 1) { 
-                      if (node.classList && (node.classList.contains('cadizcab-card-hover') || node.classList.contains('pildora-hover'))) {
-                          // Dar tiempo a que termine el scroll automático de mapManager
-                          setTimeout(() => observer.observe(node), 800);
+                      if (node.classList) {
+                          if (node.classList.contains('cadizcab-card-hover')) {
+                              setTimeout(() => observer.observe(node), 800);
+                          } else if (node.classList.contains('pildora-hover')) {
+                              setTimeout(() => focusObserver.observe(node), 800);
+                          }
                       }
-                      const childCards = node.querySelectorAll ? node.querySelectorAll('.cadizcab-card-hover, .pildora-hover') : [];
-                      childCards.forEach(child => setTimeout(() => observer.observe(child), 800));
+                      const childCadiz = node.querySelectorAll ? node.querySelectorAll('.cadizcab-card-hover') : [];
+                      childCadiz.forEach(child => setTimeout(() => observer.observe(child), 800));
+                      
+                      const childPildoras = node.querySelectorAll ? node.querySelectorAll('.pildora-hover') : [];
+                      childPildoras.forEach(child => setTimeout(() => focusObserver.observe(child), 800));
                   }
               });
           });
