@@ -53,7 +53,7 @@ const mapManager = (() => {
             tap: false
         }).setView([36.529, -6.292], 13);
         
-        L.control.attribution({ position: 'bottomleft' }).addTo(map);
+        L.control.attribution({ position: 'bottomright' }).addTo(map);
         
         L.control.zoom({ position: 'bottomright' }).addTo(map);
         

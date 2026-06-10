@@ -48,7 +48,7 @@ const destinosMapManager = (() => {
             tap: false
         }).setView([originLat, originLon], 13);
         
-        L.control.attribution({ position: 'bottomleft' }).addTo(mapInstance);
+        L.control.attribution({ position: 'bottomright' }).addTo(mapInstance);
         L.control.zoom({ position: 'bottomright' }).addTo(mapInstance);
         
         L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
