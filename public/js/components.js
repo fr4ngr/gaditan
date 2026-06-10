@@ -25,7 +25,7 @@ function renderDestino(dest, gridType) {
                 
                 <!-- Fila 1: DESDE CÁDIZ A y Precio -->
                 <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-                    <div style="font-size: 0.65rem; color: var(--brand-cyan); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; line-height: 1;">DESDE CÁDIZ A</div>
+                    <div class="dest-label" style="font-size: 0.65rem; color: var(--brand-cyan); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; line-height: 1; transition: color 0.3s;">DESDE CÁDIZ A</div>
                     <div class="mini-dest-info-right" style="display: flex; align-items: baseline; justify-content: flex-end; gap: 0.1rem; line-height: 1;">
                         <span class="mini-dest-price" style="line-height: 1;">${dest.price}</span>
                         <span style="font-size: 1.2rem; color: var(--brand-cyan); font-weight: 800; transform: translateY(2px);">*</span>
@@ -35,7 +35,7 @@ function renderDestino(dest, gridType) {
                 <!-- Fila 2: Destino y Tiempo -->
                 <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
                     <div style="display: flex; align-items: center; gap: 0.4rem; line-height: 1;">
-                        <i data-lucide="${dest.icon}" size="16" style="color: var(--brand-cyan);"></i> ${dest.name}
+                        <i class="dest-icon" data-lucide="${dest.icon}" size="16" style="color: var(--brand-cyan); transition: all 0.3s;"></i> <strong class="dest-name" style="font-weight: inherit; transition: all 0.3s;">${dest.name}</strong>
                     </div>
                     ${dest.time ? `<div class="mini-dest-info-right" style="font-size: 0.75rem; color: var(--text-muted); display: flex; align-items: center; justify-content: flex-end; gap: 0.25rem; white-space: nowrap; line-height: 1;"><i data-lucide="clock" style="width: 12px; height: 12px;"></i> ${dest.time}</div>` : ''}
                 </div>
@@ -80,6 +80,7 @@ window.showDestinoDetails = function(destId, gridType) {
     if (isCurrentlyOpen) {
         detailEl.classList.remove('is-open');
         thisCard.classList.remove('card-open');
+        gridEl.classList.remove('has-open-card');
         if (thisChevron) thisChevron.style.transform = 'rotate(0deg)';
         setTimeout(() => {
             if (!detailEl.classList.contains('is-open')) {
@@ -107,6 +108,7 @@ window.showDestinoDetails = function(destId, gridType) {
         void detailEl.offsetWidth;
         detailEl.classList.add('is-open');
         thisCard.classList.add('card-open');
+        gridEl.classList.add('has-open-card');
 
         // Hacer scroll suave hacia la tarjeta tras un pequeñísimo delay para que el layout se calcule
         setTimeout(() => {
