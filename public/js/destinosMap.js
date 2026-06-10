@@ -58,7 +58,7 @@ const destinosMapManager = (() => {
         }).addTo(mapInstance);
 
         // Añadir marcador de origen (Cádiz)
-        L.marker([originLat, originLon], { icon: userIcon }).addTo(mapInstance);
+        L.marker([originLat, originLon], { icon: customIcon }).addTo(mapInstance);
 
         maps[type] = mapInstance;
         return mapInstance;
@@ -84,36 +84,32 @@ const destinosMapManager = (() => {
                 const route = data.routes[0];
                 const coordinates = route.geometry.coordinates.map(coord => [coord[1], coord[0]]); // Leaflet usa lat,lon
                 
-                // Línea sólida de base
-                polylines[type] = L.polyline(coordinates, {
-                    color: '#06b6d4',
-                    weight: 6,
+                // Línea de borde oscuro (sombra nativa)
+                const outerLine = L.polyline(coordinates, {
+                    color: '#083344', // Dark blue/cyan
+                    weight: 8,
                     opacity: 0.6,
                     lineJoin: 'round',
                     lineCap: 'round'
                 }).addTo(maps[type]);
 
-                // Línea animada superior para el efecto flow
-                const animatedLine = L.polyline(coordinates, {
-                    color: '#ffffff',
-                    weight: 3,
-                    opacity: 0.9,
-                    dashArray: '10, 30',
+                // Línea central sólida y nítida (estilo Android)
+                const innerLine = L.polyline(coordinates, {
+                    color: '#06b6d4', // Cyan
+                    weight: 5,
+                    opacity: 1,
                     lineJoin: 'round',
-                    className: 'route-flow-animation'
+                    lineCap: 'round'
                 }).addTo(maps[type]);
                 
-                // Agrupar para fácil borrado posterior si es necesario, 
-                // pero como la limpiamos por polylines[type]... wait. 
-                // Guardaré la capa animada en el objeto polylines también.
-                polylines[type] = L.layerGroup([polylines[type], animatedLine]).addTo(maps[type]);
+                polylines[type] = L.layerGroup([outerLine, innerLine]).addTo(maps[type]);
 
                 destinationMarkers[type] = L.marker([destLat, destLon], { icon: customIcon }).addTo(maps[type]);
                 
-                // Ajustar vista con padding superior grande para esquivar la píldora del overlay
+                // Ajustar vista con padding superior para la píldora, y padding inferior/derecho para los botones de zoom
                 maps[type].fitBounds(polylines[type].getBounds(), { 
                     paddingTopLeft: [50, 150], 
-                    paddingBottomRight: [50, 50], 
+                    paddingBottomRight: [50, 100], 
                     maxZoom: 14 
                 });
             }
@@ -124,7 +120,7 @@ const destinosMapManager = (() => {
             const bounds = L.latLngBounds([[originLat, originLon], [destLat, destLon]]);
             maps[type].fitBounds(bounds, { 
                 paddingTopLeft: [50, 150], 
-                paddingBottomRight: [50, 50] 
+                paddingBottomRight: [50, 100] 
             });
         }
     };
