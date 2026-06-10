@@ -121,15 +121,21 @@ const destinosMapManager = (() => {
             // Actualizar overlay info en el mapa
             const overlay = document.getElementById(`map-overlay-info-${type}`);
             if (overlay) {
+                const badgeText = type === 'aeropuertos' ? 'TRASLADO A AEROPUERTO' : 'DESTINO FAVORITO';
                 overlay.innerHTML = `
-                    <div style="background: rgba(17, 24, 39, 0.95); backdrop-filter: blur(10px); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 20px; padding: 1rem; color: white; display: flex; flex-direction: column; gap: 0.5rem; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <span style="font-size: 0.7rem; font-weight: 800; color: #06b6d4; text-transform: uppercase; letter-spacing: 1px;">Destino Seleccionado</span>
+                    <div style="background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.1); border-radius: 9999px; padding: 0.85rem 1.25rem; box-shadow: 0 10px 30px rgba(0,0,0,0.3); display: flex; flex-direction: column; width: 100%; box-sizing: border-box;">
+                        <div style="display: flex; align-items: center; gap: 0.85rem; width: 100%;">
+                            <i data-lucide="map-pin" style="color: var(--brand-cyan); width: 28px; height: 28px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); flex-shrink: 0;"></i>
+                            <div style="display: flex; flex-direction: column; flex: 1; min-width: 0; justify-content: center;">
+                                <span style="color: var(--brand-cyan); font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.15rem;">${badgeText}</span>
+                                <strong style="color: #fff; font-size: 1.1rem; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.1;">${dest.name}</strong>
+                                ${dest.time ? `<span style="color: rgba(255,255,255,0.7); font-size: 0.8rem; margin-top: 0.1rem;">Tiempo estimado: ${dest.time}</span>` : ''}
+                            </div>
                         </div>
-                        <div style="font-size: 1.1rem; font-weight: 700; color: white;">${dest.name}</div>
                     </div>
                 `;
                 overlay.style.display = 'block';
+                if (typeof lucide !== 'undefined') lucide.createIcons();
                 setTimeout(() => {
                     overlay.style.transform = 'translateY(0)';
                     overlay.style.opacity = '1';
