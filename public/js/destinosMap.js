@@ -57,8 +57,7 @@ const destinosMapManager = (() => {
             maxZoom: 20
         }).addTo(mapInstance);
 
-        // Añadir marcador de origen (Cádiz)
-        L.marker([originLat, originLon], { icon: customIcon }).addTo(mapInstance);
+        // No añadir marcador de origen para evitar confusiones con la ubicación del usuario
 
         maps[type] = mapInstance;
         return mapInstance;
