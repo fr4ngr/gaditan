@@ -1325,6 +1325,15 @@ select:-webkit-autofill:focus {
     }
 }
 
+.pildora-hover.glow-active .plus-icon-btn,
+.pildora-hover:hover .plus-icon-btn {
+    background: var(--brand-cyan) !important;
+    color: #ffffff !important;
+    transform: scale(1.15) !important;
+    border-color: rgba(255, 255, 255, 0.4) !important;
+    box-shadow: 0 4px 10px rgba(6, 182, 212, 0.3) !important;
+}
+
 /* --- Mobile Sticky Bottom Bar --- */
 .mobile-sticky-bar {
     position: fixed; bottom: 0; left: 0; width: 100%;
