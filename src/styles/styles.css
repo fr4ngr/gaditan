@@ -1569,3 +1569,70 @@ select:-webkit-autofill:focus {
     margin: 0 !important;
     white-space: nowrap;
 }
+
+/* ----------------- FLOATING LABELS (CALCULADORA) ----------------- */
+.floating-group {
+    margin-bottom: 0.2rem;
+}
+.floating-wrapper {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+.floating-input {
+    padding-top: 1.4rem !important; /* Make room for the floating label */
+    padding-bottom: 0.4rem !important;
+}
+.floating-label {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    margin-left: 2.8rem; /* space for icon */
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    pointer-events: none;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: calc(100% - 3.5rem);
+}
+.floating-wrapper .floating-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+    width: 20px;
+    height: 20px;
+    color: rgba(255, 255, 255, 0.5);
+    transition: color 0.2s;
+}
+
+/* Float logic */
+.floating-input:focus ~ .floating-label,
+.floating-input:not(:placeholder-shown) ~ .floating-label,
+.floating-select ~ .floating-label,
+.floating-date ~ .floating-label {
+    top: 0.6rem;
+    transform: translateY(0);
+    font-size: 0.65rem;
+    color: var(--brand-cyan);
+    font-weight: 600;
+}
+.floating-input:focus ~ .floating-icon {
+    color: var(--brand-cyan);
+}
+
+/* Adjust padding for inputs without icon (e.g., number inputs) */
+.floating-wrapper > input:not(.with-icon) ~ .floating-label {
+    margin-left: 1rem;
+}
+.floating-wrapper > input:not(.with-icon) {
+    padding-left: 1rem !important;
+}
+
+/* Ajustes globales */
+.floating-group { gap: 0 !important; }
+
