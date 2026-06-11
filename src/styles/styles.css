@@ -1636,3 +1636,57 @@ select:-webkit-autofill:focus {
 /* Ajustes globales */
 .floating-group { gap: 0 !important; }
 
+
+/* INTEGRATED PILL (CALLE + Nº) */
+.integrated-pill-container {
+    position: relative;
+    width: 100%;
+}
+.integrated-pill {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+.integrated-pill:focus-within {
+    border-color: var(--brand-cyan);
+    box-shadow: 0 0 15px rgba(0, 210, 255, 0.2);
+    background: rgba(255, 255, 255, 0.08);
+}
+.integrated-pill .glass-input {
+    border: none;
+    background: transparent;
+    box-shadow: none;
+}
+.integrated-pill .glass-input:focus {
+    box-shadow: none;
+    border: none;
+}
+.pill-left {
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+}
+.pill-right {
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+}
+.pill-divider {
+    width: 1px;
+    height: 30px;
+    background: rgba(255, 255, 255, 0.1);
+    flex-shrink: 0;
+}
+.num-wrapper {
+    width: 70px;
+    flex-shrink: 0;
+}
+@media (max-width: 480px) {
+    .num-wrapper {
+        width: 80px;
+    }
+}
