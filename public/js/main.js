@@ -410,17 +410,30 @@ document.addEventListener('DOMContentLoaded', () => {
         }, false);
     }
     
-    // Auto-GPS UX: Pedir ubicación al hacer click en el input de origen, de forma silenciosa
-    const originInput = document.getElementById('calc-origin');
-    let hasRequestedGPS = false;
-    if (originInput) {
-        originInput.addEventListener('click', () => {
-            if (!hasRequestedGPS && originInput.value.trim() === '') {
-                hasRequestedGPS = true;
-                geolocateOrigin();
-            }
-        });
-    }
+    
+
+    
+    // Pre-rellenar Fechas y Horas con el momento actual
+    const now = new Date();
+    // Ajustar zona horaria local a YYYY-MM-DD y HH:MM
+    const localIso = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString();
+    const todayDate = localIso.split('T')[0];
+    const todayTime = localIso.split('T')[1].substring(0, 5);
+    
+    ['calc-date', 'b-date'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.value = todayDate;
+            el.min = todayDate;
+        }
+    });
+    
+    ['calc-time', 'b-time'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.value = todayTime;
+        }
+    });
 
     // --- Mobile Sticky Bottom Bar Logic ---
     const stickyBar = document.getElementById('mobileStickyBar');
