@@ -65,7 +65,9 @@ export async function getRouteDetails(exactOrigin, exactDest) {
 
 export function calculatePrice(routeInfo, tarifaMode, hasRenfe, hasPuerto, hasCortadura, isAdapted, luggageCount) {
     // tarifaMode is 1, 2, 3 (Urbano) or 7, 8 (Interurbano)
-    let basePrice = 0;
+    let basePriceCerrado = 0;
+    let basePriceTaximetro = 0;
+    
     let estimatedWaitMins = 0;
     let waitCost = 0;
 
@@ -73,7 +75,6 @@ export function calculatePrice(routeInfo, tarifaMode, hasRenfe, hasPuerto, hasCo
         // REGLA 1 y 3 (Interurbano)
         const iRate = (tarifaMode === 8) ? interurbanRates.night : interurbanRates.day;
         
-        // Condición 12 Kilómetros
         let flagDrop = 0;
         if (routeInfo.finalDistanceKm < 12) {
             flagDrop = iRate.flag;
@@ -83,8 +84,11 @@ export function calculatePrice(routeInfo, tarifaMode, hasRenfe, hasPuerto, hasCo
         estimatedWaitMins = interurbanWaitMins;
         waitCost = (estimatedWaitMins / 60) * iRate.waitHour;
 
-        basePrice = flagDrop + (routeInfo.finalDistanceKm * iRate.km) + waitCost;
-        if (basePrice < iRate.min) basePrice = iRate.min; // Mínimo de percepción (suelo absoluto)
+        basePriceCerrado = flagDrop + (routeInfo.finalDistanceKm * iRate.km);
+        if (basePriceCerrado < iRate.min) basePriceCerrado = iRate.min;
+        
+        basePriceTaximetro = basePriceCerrado + waitCost;
+
     } else {
         // REGLA 1 y 3 (Urbano)
         const uRate = (tarifaMode === 1) ? urbanRates.day : urbanRates.night;
@@ -95,27 +99,35 @@ export function calculatePrice(routeInfo, tarifaMode, hasRenfe, hasPuerto, hasCo
         estimatedWaitMins = Math.max(0, realDurationMin - routeInfo.osrmDurationMin);
         waitCost = (estimatedWaitMins / 60) * uRate.waitHour;
 
-        basePrice = uRate.flag + (routeInfo.finalDistanceKm * uRate.km) + waitCost;
+        basePriceCerrado = uRate.flag + (routeInfo.finalDistanceKm * uRate.km);
         
         if (tarifaMode === 3) {
-            basePrice = basePrice * 1.20; // Incremento del 20%
+            basePriceCerrado = basePriceCerrado * 1.20; // Incremento del 20%
         }
 
         const minFare = (tarifaMode === 1) ? urbanRates.day.min : urbanRates.night.min;
         const finalMinFare = (tarifaMode === 3) ? (minFare * 1.20) : minFare;
         
-        if (basePrice < finalMinFare) basePrice = finalMinFare; // Carrera Mínima
+        if (basePriceCerrado < finalMinFare) basePriceCerrado = finalMinFare; // Carrera Mínima
         
-        // REGLA 4: Suplementos (Solo Urbano)
-        if (hasRenfe) basePrice += supplements.renfe;
-        if (hasPuerto) basePrice += supplements.puerto;
-        if (hasCortadura) basePrice += supplements.cortadura;
-        if (luggageCount > 0) basePrice += luggageCount * supplements.luggage;
+        basePriceTaximetro = basePriceCerrado + waitCost;
+        
+        // REGLA 4: Suplementos (Solo Urbano) - aplican a ambos
+        let supps = 0;
+        if (hasRenfe) supps += supplements.renfe;
+        if (hasPuerto) supps += supplements.puerto;
+        if (hasCortadura) supps += supplements.cortadura;
+        if (luggageCount > 0) supps += luggageCount * supplements.luggage;
+        
+        basePriceCerrado += supps;
+        basePriceTaximetro += supps;
     }
 
     return {
-        price: basePrice,
-        finalDurationMin: Math.ceil(routeInfo.osrmDurationMin + estimatedWaitMins)
+        precioCerrado: basePriceCerrado,
+        precioTaximetro: basePriceTaximetro,
+        finalDurationMin: Math.ceil(routeInfo.osrmDurationMin + estimatedWaitMins),
+        estimatedWaitMins: Math.ceil(estimatedWaitMins)
     };
 }
 
@@ -179,12 +191,18 @@ export function updateCalcPriceUI() {
     
     const result = calculatePrice(calcContext.lastCalcRoute, tarifaMode, renfeChecked, puertoChecked, cortaduraChecked, false, calcState.luggage);
     
-    const formattedPrice = result.price.toFixed(2).replace('.', ',');
+    const formattedCerrado = result.precioCerrado.toFixed(2).replace('.', ',');
+    const formattedTaximetro = result.precioTaximetro.toFixed(2).replace('.', ',');
     const formattedDist = calcContext.lastCalcRoute.finalDistanceKm.toFixed(1).replace('.', ',');
     
     document.getElementById('calc-dist-val').innerText = formattedDist + ' km';
     document.getElementById('calc-time-val').innerText = result.finalDurationMin + ' min';
-    document.getElementById('calc-price-val').innerText = 'Máx ' + formattedPrice + '€';
+    
+    const cerradoEl = document.getElementById('calc-price-cerrado');
+    const taximetroEl = document.getElementById('calc-price-taximetro');
+    
+    if(cerradoEl) cerradoEl.innerText = formattedCerrado + '€';
+    if(taximetroEl) taximetroEl.innerText = '~ ' + formattedTaximetro + '€';
 }
 
 export async function calculateRoute() {

@@ -1,5 +1,11 @@
 export const translations = {
     es: {
+        "badge-guaranteed": "GARANTIZADO",
+        "calc-cerrado-title": "<i data-lucide=\"shield-check\"></i> Precio Cerrado Legal",
+        "calc-cerrado-desc": "Si reservas online. Inmune a atascos o semáforos.",
+        "calc-btn-book": "Bloquear Precio Ahora",
+        "calc-street-title": "<i data-lucide=\"calculator\"></i> Taxímetro en Parada/Calle",
+        "calc-street-desc": "Estimación que incluye un sobrecoste aprox. por semáforos y atascos según el BOJA.",
         "nav-prices": "Precios",
         "nav-booking": "Reservar",
         "nav-stops": "Paradas",
@@ -101,6 +107,12 @@ export const translations = {
         "ad-desc-night": "Reserva mesa en los mejores restaurantes locales con descuento y asegura tu trayecto de taxi de vuelta con tranquilidad."
     },
     en: {
+        "badge-guaranteed": "GUARANTEED",
+        "calc-cerrado-title": "<i data-lucide=\"shield-check\"></i> Legal Fixed Price",
+        "calc-cerrado-desc": "If booked online. Immune to traffic jams or red lights.",
+        "calc-btn-book": "Lock Price Now",
+        "calc-street-title": "<i data-lucide=\"calculator\"></i> Street-Hail Meter",
+        "calc-street-desc": "Estimation including official average wait-time charges for traffic.",
         "nav-prices": "Prices",
         "nav-booking": "Book Taxi",
         "nav-stops": "Stops",
