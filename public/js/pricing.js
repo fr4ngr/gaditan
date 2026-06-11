@@ -37,89 +37,80 @@ export function updatePriceUI(id) {
     document.getElementById('price-'+id).innerText = formattedTotal + '€';
 }
 
-export function isInterurban(destData) {
+export function isInterurban(originData, destData) {
     if (!destData || !destData.city) return false;
-    const city = destData.city.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-    return city !== "cadiz";
+    const originCity = (originData && originData.city) ? originData.city.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "") : "cadiz";
+    const destCity = destData.city.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    
+    // Regla 1: Es interurbano si sale o no de Cadiz capital. 
+    // Si origen es Jerez y destino es Cadiz, es interurbano.
+    // Si origen es Cadiz y destino es Jerez, es interurbano.
+    return (originCity !== "cadiz" || destCity !== "cadiz");
 }
 
 export async function getRouteDetails(exactOrigin, exactDest) {
-    const isInter = isInterurban(exactDest);
-    let finalDistanceKm = 0;
-    let finalDurationMin = 0;
-    let finalGeometry = null;
-
-    // Ya no separamos urbano de interurbano, simplemente sacamos la ruta total
+    const isInter = isInterurban(exactOrigin, exactDest);
+    
     const route = await getOSRMRoute(exactOrigin, exactDest);
-    finalDistanceKm = route.distanceKm;
-    finalDurationMin = route.durationMin;
-    finalGeometry = route.geometry;
-
+    
     return {
         isInter,
-        finalDistanceKm,
-        osrmDurationMin: finalDurationMin,
-        geometry: finalGeometry,
+        finalDistanceKm: route.distanceKm,
+        osrmDurationMin: route.durationMin,
+        geometry: route.geometry,
         originCoords: exactOrigin,
         destCoords: exactDest
     };
 }
 
-export function calculatePrice(routeInfo, isNight, isFestivo, hasRenfe, hasPuerto, hasCortadura, isAdapted, luggageCount) {
-    const isNightOrFestivo = isNight || isFestivo;
-    const uFlag = isNightOrFestivo ? urbanRates.night.flag : urbanRates.day.flag;
-    const uKm = isNightOrFestivo ? urbanRates.night.km : urbanRates.day.km;
-    const uWait = isNightOrFestivo ? urbanRates.night.waitHour : urbanRates.day.waitHour;
-    
-    const iKm = isNightOrFestivo ? interurbanRates.night.km : interurbanRates.day.km;
-    const iWait = isNightOrFestivo ? interurbanRates.night.waitHour : interurbanRates.day.waitHour;
-    // La tarifa interurbana también puede tener un mínimo de percepción
-    const iMin = isNightOrFestivo ? interurbanRates.night.min : interurbanRates.day.min;
-
+export function calculatePrice(routeInfo, tarifaMode, hasRenfe, hasPuerto, hasCortadura, isAdapted, luggageCount) {
+    // tarifaMode is 1, 2, 3 (Urbano) or 7, 8 (Interurbano)
     let basePrice = 0;
     let estimatedWaitMins = 0;
     let waitCost = 0;
 
     if (routeInfo.isInter) {
-        // Regla 1: 100% de los km se calculan con Tarifas Interurbanas
-        // Generalmente las tarifas interurbanas no cobran bajada de bandera en carretera, pero si la hay se suma.
-        // Simularemos un recargo mínimo inicial (si aplica) o directamente el km
+        // REGLA 1 y 3 (Interurbano)
+        const iRate = (tarifaMode === 8) ? interurbanRates.night : interurbanRates.day;
         
-        // Wait time in interurban
-        const interurbanWaitMins = routeInfo.osrmDurationMin * 0.10; // 10% del tiempo estimado como espera por semáforos/tráfico
-        estimatedWaitMins = interurbanWaitMins;
-        waitCost = (estimatedWaitMins / 60) * iWait;
+        // Condición 12 Kilómetros
+        let flagDrop = 0;
+        if (routeInfo.finalDistanceKm < 12) {
+            flagDrop = iRate.flag;
+        }
 
-        basePrice = (routeInfo.finalDistanceKm * iKm) + waitCost;
-        if (basePrice < iMin) basePrice = iMin; // Mínimo de percepción interurbano (ej: 3.83€)
+        const interurbanWaitMins = routeInfo.osrmDurationMin * 0.10; 
+        estimatedWaitMins = interurbanWaitMins;
+        waitCost = (estimatedWaitMins / 60) * iRate.waitHour;
+
+        basePrice = flagDrop + (routeInfo.finalDistanceKm * iRate.km) + waitCost;
+        if (basePrice < iRate.min) basePrice = iRate.min; // Mínimo de percepción (suelo absoluto)
     } else {
-        // Urbano
-        const avgSpeedKmh = isNightOrFestivo ? 25 : 15;
+        // REGLA 1 y 3 (Urbano)
+        const uRate = (tarifaMode === 1) ? urbanRates.day : urbanRates.night;
+        
+        const avgSpeedKmh = (tarifaMode !== 1) ? 25 : 15;
         const realDurationMin = (routeInfo.finalDistanceKm / avgSpeedKmh) * 60;
         
         estimatedWaitMins = Math.max(0, realDurationMin - routeInfo.osrmDurationMin);
-        waitCost = (estimatedWaitMins / 60) * uWait;
+        waitCost = (estimatedWaitMins / 60) * uRate.waitHour;
 
-        basePrice = uFlag + (routeInfo.finalDistanceKm * uKm) + waitCost;
-        const minFare = isNightOrFestivo ? urbanRates.night.min : urbanRates.day.min;
-        if (basePrice < minFare) basePrice = minFare;
-    }
+        basePrice = uRate.flag + (routeInfo.finalDistanceKm * uRate.km) + waitCost;
+        
+        if (tarifaMode === 3) {
+            basePrice = basePrice * 1.20; // Incremento del 20%
+        }
 
-    // Suplementos (solo en urbano o desde puntos clave)
-    // El suplemento de >4 plazas lo aplicamos si no tiene discapacidad. Pero como no preguntamos plazas > 4 (viajeros son 1-4 en el stepper, max 8),
-    // Si usuarios piden "Vehículo Adaptado" no pagan plus. Asumiremos el suplemento de maletas y renfe/puerto/cortadura.
-    if (hasRenfe && !routeInfo.isInter) {
-        basePrice += 1.30; 
-    } else if (hasRenfe && routeInfo.isInter) {
-        basePrice += 0.82; 
-    }
-    
-    // Suplementos Puerto y Cortadura (valores aproximados si no están en config, 1.30 urbano)
-    if (hasPuerto && !routeInfo.isInter) basePrice += 1.30;
-    if (hasCortadura && !routeInfo.isInter) basePrice += 1.30;
-
-    if (luggageCount > 0) {
-        basePrice += luggageCount * supplements.luggage;
+        const minFare = (tarifaMode === 1) ? urbanRates.day.min : urbanRates.night.min;
+        const finalMinFare = (tarifaMode === 3) ? (minFare * 1.20) : minFare;
+        
+        if (basePrice < finalMinFare) basePrice = finalMinFare; // Carrera Mínima
+        
+        // REGLA 4: Suplementos (Solo Urbano)
+        if (hasRenfe) basePrice += supplements.renfe;
+        if (hasPuerto) basePrice += supplements.puerto;
+        if (hasCortadura) basePrice += supplements.cortadura;
+        if (luggageCount > 0) basePrice += luggageCount * supplements.luggage;
     }
 
     return {
@@ -128,12 +119,45 @@ export function calculatePrice(routeInfo, isNight, isFestivo, hasRenfe, hasPuert
     };
 }
 
+export function determineTariffMode(targetDate, isInter) {
+    const h = targetDate.getHours();
+    const day = targetDate.getDay(); // 0 is Sunday
+    const month = targetDate.getMonth();
+    const date = targetDate.getDate();
+
+    // Check for Navidad (Nochebuena 24 Dec and Nochevieja 31 Dec from 21:00 to 23:59)
+    let isNavidad = false;
+    if (month === 11 && (date === 24 || date === 31) && h >= 21) isNavidad = true;
+
+    // Check for Tarifa 3 (Especial Urbana)
+    let isTarifa3 = false;
+    if (!isInter) {
+        if (day === 6 && h >= 3 && h < 6) isTarifa3 = true;
+        if ((day === 0 || /*festivo*/ false) && h >= 3 && h < 7) isTarifa3 = true;
+        if (isNavidad) isTarifa3 = true;
+        // Carnaval and Semana Santa logic can be added here if we check specific dates.
+    }
+
+    if (isInter) {
+        // T7: L-V de 06 a 22h. T8: resto.
+        if (day >= 1 && day <= 5 && h >= 6 && h < 22) {
+            return 7;
+        } else {
+            return 8;
+        }
+    } else {
+        if (isTarifa3) return 3;
+        // T1: L-V de 07 a 21h. T2: resto.
+        if (day >= 1 && day <= 5 && h >= 7 && h < 21) {
+            return 1;
+        } else {
+            return 2;
+        }
+    }
+}
+
 export function updateCalcPriceUI() {
     if (!calcContext.lastCalcRoute) return;
-    
-    // Calcular isNight y isFestivo automáticamente
-    let isNight = false;
-    let isFestivo = false; // Implementar lógica de festivos más adelante o usar estado manual
     
     const whenSelect = document.getElementById('calc-when');
     let targetDate = new Date();
@@ -146,21 +170,21 @@ export function updateCalcPriceUI() {
         }
     }
     
-    const h = targetDate.getHours();
-    const day = targetDate.getDay(); // 0 is Sunday
-    if (h >= 21 || h < 7 || day === 0 || day === 6) {
-        isNight = true; // Sábados, domingos o de 21:00 a 07:00 son tarifa nocturna/festiva
-        isFestivo = (day === 0 || day === 6);
-    }
+    // Check dynamic checkboxes that might have been checked directly
+    const renfeChecked = document.getElementById('calc-renfe-toggle')?.checked || false;
+    const puertoChecked = document.getElementById('calc-puerto-toggle')?.checked || false;
+    const cortaduraChecked = document.getElementById('calc-cortadura-toggle')?.checked || false;
     
-    const result = calculatePrice(calcContext.lastCalcRoute, isNight, isFestivo, calcState.hasRenfe, calcState.luggage);
+    const tarifaMode = determineTariffMode(targetDate, calcContext.lastCalcRoute.isInter);
+    
+    const result = calculatePrice(calcContext.lastCalcRoute, tarifaMode, renfeChecked, puertoChecked, cortaduraChecked, false, calcState.luggage);
     
     const formattedPrice = result.price.toFixed(2).replace('.', ',');
     const formattedDist = calcContext.lastCalcRoute.finalDistanceKm.toFixed(1).replace('.', ',');
     
     document.getElementById('calc-dist-val').innerText = formattedDist + ' km';
     document.getElementById('calc-time-val').innerText = result.finalDurationMin + ' min';
-    document.getElementById('calc-price-val').innerText = '~€' + formattedPrice;
+    document.getElementById('calc-price-val').innerText = 'Máx ' + formattedPrice + '€';
 }
 
 export async function calculateRoute() {
@@ -180,11 +204,8 @@ export async function calculateRoute() {
     loadingDiv.style.display = 'block';
     
     try {
-        const oNum = document.getElementById('calc-origin-num') ? document.getElementById('calc-origin-num').value : '';
-        const dNum = document.getElementById('calc-dest-num') ? document.getElementById('calc-dest-num').value : '';
-        
-        const exactOrigin = await getExactCoordinate(calcContext.selectedOrigin, oNum);
-        const exactDest = await getExactCoordinate(calcContext.selectedDest, dNum);
+        const exactOrigin = await getExactCoordinate(calcContext.selectedOrigin, "");
+        const exactDest = await getExactCoordinate(calcContext.selectedDest, "");
 
         const routeDetails = await getRouteDetails(exactOrigin, exactDest);
         calcContext.lastCalcRoute = routeDetails;

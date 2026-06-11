@@ -15,9 +15,7 @@
                                     <input type="text" id="calc-origin" class="glass-input with-icon" placeholder="Origen (ej. Av. Andalucía)" autocomplete="off" style="width: 100%;">
                                     <div id="origin-suggestions" class="autocomplete-suggestions hidden"></div>
                                 </div>
-                                <div style="width: 70px; flex-shrink: 0;">
-                                    <input type="text" id="calc-origin-num" class="glass-input" placeholder="Nº" style="width: 100%; text-align: center; padding: 1.2rem;">
-                                </div>
+                                
                             </div>
                         </div>
                         
@@ -30,9 +28,7 @@
                                     <input type="text" id="calc-destination" class="glass-input with-icon" placeholder="Destino (ej. Plaza Asdrúbal)" autocomplete="off" style="width: 100%;">
                                 <div id="dest-suggestions" class="autocomplete-suggestions hidden"></div>
                             </div>
-                            <div style="width: 70px; flex-shrink: 0;">
-                                <input type="text" id="calc-dest-num" class="glass-input" placeholder="Nº" style="width: 100%; text-align: center; padding: 1.2rem;">
-                            </div>
+                            
                         </div>
 
                         <!-- Selector de Cuándo -->
@@ -88,19 +84,26 @@
                                             <button type="button" class="stepper-btn-full" onclick="updateCalcLuggage(1)">+</button>
                                         </div>
                                     </div>
-                                    <div class="chip-wrapper" style="width: 100%; margin-top: 0.5rem;">
+                                    <div class="chip-wrapper" style="width: 100%; margin-top: 0.5rem; display: flex; flex-direction: column; gap: 0.5rem;">
                                         <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: var(--text-muted); font-size: 0.9rem;">
-                                            <input type="checkbox" id="calc-renfe-toggle" onchange="toggleCalcRenfe()" style="accent-color: var(--brand-cyan); width: 16px; height: 16px;">
-                                            Suplemento Salida Renfe (+0,82€)
+                                            <input type="checkbox" id="calc-renfe-toggle" onchange="window.triggerAutoCalc && window.triggerAutoCalc()" style="accent-color: var(--brand-cyan); width: 16px; height: 16px;">
+                                            Estación Renfe (+0,82€)
                                         </label>
+                                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: var(--text-muted); font-size: 0.9rem;">
+                                            <input type="checkbox" id="calc-puerto-toggle" onchange="window.triggerAutoCalc && window.triggerAutoCalc()" style="accent-color: var(--brand-cyan); width: 16px; height: 16px;">
+                                            Puerto / Cruceros (+1,06€)
+                                        </label>
+                                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: var(--text-muted); font-size: 0.9rem;">
+                                            <input type="checkbox" id="calc-cortadura-toggle" onchange="window.triggerAutoCalc && window.triggerAutoCalc()" style="accent-color: var(--brand-cyan); width: 16px; height: 16px;">
+                                            Cortadura - Torregorda (+4,46€)
+                                        </label>
+                                        <p style="font-size: 0.75rem; color: rgba(255,255,255,0.4); margin-top: 0.2rem;">*Los suplementos no se aplican si la ruta supera los 12km o sale de la ciudad.</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         
-                        <button class="btn btn-glow" style="width: 100%; margin-top: 0.5rem;" onclick="calculateRoute()">
-                            <span data-translate="calc-btn">Calcular Precio</span> <i data-lucide="calculator" size="18"></i>
-                        </button>
+                        
                         
                                                 <!-- Resultado -->
                         <div id="calc-result" style="display: none; text-align: center; margin-top: 1rem; border-top: 1px solid var(--glass-border); padding-top: 1.5rem;">
@@ -109,7 +112,10 @@
                                 <p style="color: var(--text-muted); font-size: 0.9rem;"><span data-translate="calc-time">Tiempo:</span> <strong id="calc-time-val" style="color: #fff;">0 min</strong></p>
                             </div>
                             <div style="font-size: 3rem; font-weight: 800; color: var(--brand-cyan);" id="calc-price-val">0,00€</div>
-                            <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.5rem;" data-translate="calc-disclaimer">*Precio estimado. El taxímetro oficial determina el precio exacto.</p>
+                            <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.5rem; line-height: 1.4;" data-translate="calc-disclaimer">
+                                <i data-lucide="info" style="width: 12px; height: 12px; display: inline-block; margin-bottom: -2px;"></i>
+                                *Precio máximo estimado. Si contrata telemáticamente con Precio Cerrado, la ley andaluza garantiza que nunca pagará más de esta estimación (aunque haya tráfico). Si lo coge en la calle, el taxímetro oficial determina el precio por tiempo de espera.
+                            </p>
                             
                             <!-- Mapa de la ruta -->
                             <div id="calc-map" style="width: 100%; height: 250px; border-radius: 10px; margin-top: 1.5rem; border: 1px solid var(--glass-border); display: none;"></div>

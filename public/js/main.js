@@ -22,6 +22,12 @@ import {
     closeSearchModal
 } from './ui.js';
 
+window.triggerAutoCalc = function() {
+    if (calcContext.selectedOrigin && calcContext.selectedDest) {
+        window.calculateRoute();
+    }
+};
+
 window.calculateRoute = calculateRoute;
 window.toggleTime = toggleTime;
 window.toggleFestivo = toggleFestivo;
@@ -356,8 +362,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // La inicialización del mapa de paradas ahora se gestiona en mapManager.js
 
 
-    setupPhotonAutocomplete('calc-origin', 'origin-suggestions', (data) => calcContext.selectedOrigin = data, false);
-    setupPhotonAutocomplete('calc-destination', 'dest-suggestions', (data) => calcContext.selectedDest = data, false);
+    setupPhotonAutocomplete('calc-origin', 'origin-suggestions', (data) => { calcContext.selectedOrigin = data; window.triggerAutoCalc(); }, false);
+    setupPhotonAutocomplete('calc-destination', 'dest-suggestions', (data) => { calcContext.selectedDest = data; window.triggerAutoCalc(); }, false);
     
     // Autocompletado para el formulario de reservas
     const bPickupInput = document.getElementById('b-pickup');

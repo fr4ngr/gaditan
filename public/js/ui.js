@@ -470,7 +470,7 @@ export function geolocateOrigin(inputId = 'calc-origin', numInputId = null) {
                     lat: lat,
                     lon: lon
                 };
-                if (inputId === 'calc-origin') calcContext.selectedOrigin = locData;
+                if (inputId === 'calc-origin') { calcContext.selectedOrigin = locData; if(window.triggerAutoCalc) window.triggerAutoCalc(); }
                 else if (inputId === 'b-pickup') calcContext.bookingOrigin = locData;
             }
         } catch(e) {

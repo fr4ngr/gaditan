@@ -226,7 +226,7 @@ export const routeState = {
 };
 
 export const urbanRates = {
-    day: { flag: 1.39, km: 0.70, waitHour: 18.97, min: 3.56 },
+    day: { flag: 1.39, km: 0.70, waitHour: 18.95, min: 3.56 },
     night: { flag: 1.73, km: 0.90, waitHour: 23.66, min: 4.43 }
 };
 
@@ -237,7 +237,9 @@ export const interurbanRates = {
 
 export const supplements = {
     luggage: 0.51,
-    renfe: 0.82
+    renfe: 0.82,
+    puerto: 1.06,
+    cortadura: 4.46
 };
 
 export const EXITS = [
@@ -246,7 +248,7 @@ export const EXITS = [
     { name: "San Fernando (Autovía)", lat: 36.4860, lon: -6.2560 }
 ];
 
-export const calcState = { isDay: true, isFestivo: false, hasRenfe: false, luggage: 0 };
+export const calcState = { isDay: true, isFestivo: false, hasRenfe: false, hasPuerto: false, hasCortadura: false, luggage: 0 };
 export const calcContext = {
     selectedOrigin: null,
     selectedDest: null,
