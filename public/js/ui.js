@@ -311,7 +311,7 @@ export function setupPhotonAutocomplete(inputId, suggestionsId, onSelect, strict
                         return clean.trim();
                     };
                     
-                    const searchSanitized = sanitizeStr(val);
+                    const searchSanitized = sanitizeStr(searchVal);
                     
                     data.features.forEach(feature => {
                         if (count >= 5) return;
