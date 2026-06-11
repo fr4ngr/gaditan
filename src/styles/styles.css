@@ -1801,3 +1801,12 @@ select:-webkit-autofill:focus {
     font-weight: 800;
     margin-left: 0.2rem;
 }
+
+
+/* ----------------- BORDES DE ACENTO (DÍA/NOCHE) ----------------- */
+.pricing-card-day {
+    border-top: 5px solid var(--brand-cyan);
+}
+.pricing-card-night {
+    border-top: 5px solid #1e3a8a;
+}
