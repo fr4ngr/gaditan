@@ -292,7 +292,8 @@ export function setupPhotonAutocomplete(inputId, suggestionsId, onSelect, strict
 
         debounceTimer = setTimeout(async () => {
             try {
-                let url = `https://photon.komoot.io/api/?q=${encodeURIComponent(searchVal)}&lat=36.52&lon=-6.29&limit=5`;
+                const photonLang = ['en', 'de', 'fr', 'it'].includes(state.lang) ? state.lang : 'default';
+                let url = `https://photon.komoot.io/api/?q=${encodeURIComponent(searchVal)}&lat=36.52&lon=-6.29&limit=5&lang=${photonLang}`;
                 if (strictCadiz) {
                     url += "&bbox=-6.32,36.48,-6.25,36.54";
                 }
@@ -320,8 +321,8 @@ export function setupPhotonAutocomplete(inputId, suggestionsId, onSelect, strict
                         const name = props.name || props.street || "";
                         let city = props.city || props.town || props.village || props.county || props.state || "";
                         
-                        // Traducir nombres conflictivos del inglés al español si es necesario
-                        if (city) {
+                        // Traducir nombres al español solo si el usuario está navegando en español
+                        if (city && state.lang === 'es') {
                             city = city.replace(/Seville/ig, "Sevilla")
                                        .replace(/Andalusia/ig, "Andalucía")
                                        .replace(/Cadiz/ig, "Cádiz");
