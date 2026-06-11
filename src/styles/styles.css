@@ -2,9 +2,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap');
 
 :root {
-    --bg-base: #f8fafc;
+    --bg-base: #f1f5f9;
     --bg-secondary: #ffffff;
-    --bg-neutral: #f1f5f9;
+    --bg-neutral: #e2e8f0;
     --brand-cyan: #06b6d4;
     --brand-cyan-light: #0891b2;
     --brand-blue: #2563eb;
@@ -1708,7 +1708,7 @@ select:-webkit-autofill:focus {
     border: 1px solid var(--glass-border);
     border-radius: 24px;
     padding: 2rem;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.06);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 .pricing-card-modern:hover {
@@ -1732,8 +1732,8 @@ select:-webkit-autofill:focus {
 }
 .pricing-card-header .schedule {
     font-size: 0.85rem;
-    color: var(--brand-cyan-light);
-    font-weight: 600;
+    color: var(--brand-blue);
+    font-weight: 700;
 }
 .price-row-modern {
     display: flex;
