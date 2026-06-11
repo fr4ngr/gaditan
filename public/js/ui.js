@@ -1,5 +1,5 @@
 import { translations, state, routeState, routeData, calcState, calcContext } from './config.js';
-import { updatePriceUI, updateCalcPriceUI, calculateRoute, getRouteDetails, calculatePrice, isInterurban } from './pricing.js';
+import { updatePriceUI, updateCalcPriceUI, calculateRoute, getRouteDetails, calculatePrice, isInterurban, determineTariffMode } from './pricing.js';
 import { geocodeString } from './api.js';
 
 // Lógica del header dinámico eliminada a petición del usuario para simplificar.
@@ -537,9 +537,9 @@ export async function confirmReservation(event) {
         const parts = pickup.split(', ');
         if (parts.length > 1) {
             const city = parts.pop();
-            pickup = parts.join(', ') + `, Nº ${pickupNumEl.value.trim()}, ` + city;
+            pickup = parts.join(', ') + `, N° ${pickupNumEl.value.trim()}, ` + city;
         } else {
-            pickup += `, Nº ${pickupNumEl.value.trim()}`;
+            pickup += `, N° ${pickupNumEl.value.trim()}`;
         }
     }
     
@@ -549,9 +549,9 @@ export async function confirmReservation(event) {
         const parts = dropoff.split(', ');
         if (parts.length > 1) {
             const city = parts.pop();
-            dropoff = parts.join(', ') + `, Nº ${dropoffNumEl.value.trim()}, ` + city;
+            dropoff = parts.join(', ') + `, N° ${dropoffNumEl.value.trim()}, ` + city;
         } else {
-            dropoff += `, Nº ${dropoffNumEl.value.trim()}`;
+            dropoff += `, N° ${dropoffNumEl.value.trim()}`;
         }
     }
     
@@ -559,27 +559,64 @@ export async function confirmReservation(event) {
     const trainOrigin = document.getElementById('b-train-origin')?.checked;
     const pet = document.getElementById('b-pet')?.checked;
     const luggage = document.getElementById('b-luggage-qty')?.innerText || '0';
+    const luggageInt = parseInt(luggage) || 0;
     
     // Opciones extra
     let extras = [];
     if (trainOrigin) extras.push("Origen Estación de Tren Plaza Sevilla");
     if (pet) extras.push("Mascota (en transportín)");
-    if (parseInt(luggage) > 0) extras.push(`${luggage} Maleta(s) grande(s)`);
+    if (luggageInt > 0) extras.push(`${luggageInt} Maleta(s) grande(s)`);
 
-    // Componer el Email
-    const targetEmail = "reservas@radiotaxicadiz.com"; // Email base
-    const subject = encodeURIComponent(`🚕 SOLICITUD DE RESERVA: ${date} a las ${time}`);
+    // --- CÁLCULO DE PRECIO ESTIMADO ---
+    let estimatedPriceText = "";
+    if (calcContext.bookingOrigin && calcContext.bookingDest) {
+        try {
+            const targetDate = new Date(`${date}T${time}:00`);
+            const routeInfo = await getRouteDetails(calcContext.bookingOrigin, calcContext.bookingDest);
+            const tarifaMode = determineTariffMode(targetDate, routeInfo.isInter);
+            
+            // calculatePrice params: routeInfo, tarifaMode, hasRenfe, hasPuerto, hasCortadura, isAdapted, luggageCount
+            const result = calculatePrice(routeInfo, tarifaMode, trainOrigin, false, false, false, luggageInt);
+            const formattedPrice = result.precioTaximetro.toFixed(2).replace('.', ',');
+            estimatedPriceText = `(Estimación aproximada según calculador web: ~${formattedPrice}€)`;
+        } catch(e) {
+            console.error("Error calculando estimación para el correo:", e);
+        }
+    }
+
+    // --- COMPONER EL EMAIL ---
+    const targetEmail = "reservas@radiotaxicadiz.com";
     
-    let bodyText = `SOLICITUD DE RESERVA RECIBIDA DESDE CADIZ.TAXI\n\n`;
-    bodyText += `Hola,\n\nSolicito la reserva de un taxi con los siguientes detalles:\n\n`;
+    // Aleatorizar el asunto para no ser "spammy"
+    const subjects = [
+        `🚕 Reserva de taxi: ${date} a las ${time} (A nombre de ${name})`,
+        `Solicitud de Taxi para el ${date} - ${time}`,
+        `🚕 Nuevo viaje programado: ${date} a las ${time}`
+    ];
+    const rawSubject = subjects[Math.floor(Math.random() * subjects.length)];
+    const subject = encodeURIComponent(rawSubject);
+    
+    // Aleatorizar el saludo
+    const greetings = [
+        "Hola, equipo de Radio Taxi.\n\nMe gustaría dejar reservado un taxi con ustedes. Aquí tienen todos los detalles de mi viaje para que puedan registrarlo en su sistema:\n\n",
+        "Buenos días/tardes.\n\nLes escribo para solicitar un servicio de taxi programado. Les facilito los datos completos del trayecto:\n\n",
+        "Saludos.\n\nNecesito dejar agendado un viaje con antelación. A continuación detallo la información del pasajero y la ruta:\n\n"
+    ];
+    const rawGreeting = greetings[Math.floor(Math.random() * greetings.length)];
+    
+    let bodyText = rawGreeting;
     bodyText += `DATOS DEL PASAJERO:\n`;
-    bodyText += `Nombre: ${name}\n`;
-    bodyText += `Teléfono: ${phone}\n\n`;
+    bodyText += `- Nombre: ${name}\n`;
+    bodyText += `- Teléfono: ${phone}\n\n`;
     bodyText += `DATOS DEL VIAJE:\n`;
-    bodyText += `Fecha: ${date}\n`;
-    bodyText += `Hora: ${time}\n`;
-    bodyText += `Origen: ${pickup}\n`;
-    bodyText += `Destino: ${dropoff}\n\n`;
+    bodyText += `- Fecha: ${date}\n`;
+    bodyText += `- Hora: ${time}\n`;
+    bodyText += `- Recogida en: ${pickup}\n`;
+    bodyText += `- Destino: ${dropoff}\n\n`;
+    
+    if (estimatedPriceText) {
+        bodyText += `${estimatedPriceText}\n\n`;
+    }
     
     if (extras.length > 0) {
         bodyText += `EXTRAS SOLICITADOS:\n`;
@@ -587,7 +624,14 @@ export async function confirmReservation(event) {
         bodyText += `\n`;
     }
     
-    bodyText += `Por favor, respondan a este email confirmando la disponibilidad y el Precio Cerrado (si aplica según normativa).\n\nGracias.`;
+    // Aleatorizar despedida
+    const closures = [
+        "Por favor, confírmenme respondiendo a este correo que la reserva queda anotada.\nMuchas gracias por su ayuda.",
+        "Quedo a la espera de su confirmación para saber que el viaje está registrado.\nUn saludo y gracias.",
+        "Agradecería que me contesten a este email para confirmar que el taxi está reservado.\nGracias de antemano."
+    ];
+    const rawClosure = closures[Math.floor(Math.random() * closures.length)];
+    bodyText += rawClosure + "\n\n---\n🚕 Reserva enviada a través de cadiz.taxi";
     
     const body = encodeURIComponent(bodyText);
     
