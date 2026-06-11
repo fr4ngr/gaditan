@@ -6,29 +6,35 @@
                 <div class="booking-card glass" style="margin: 0 auto;">
                     <div style="display: flex; flex-direction: column; gap: 1.5rem;">
                         
-                        <!-- Origen con número -->
-                        <div class="form-group" style="gap: 0.25rem;">
-                            <label for="calc-origin"><span data-translate="form-pickup">Desde (Origen)</span></label>
-                            <div style="display: flex; gap: 0.5rem; position: relative; flex-wrap: nowrap;">
+                        <!-- Origen -->
+                        <div class="form-group integrated-pill-container" style="gap: 0;">
+                            <div class="integrated-pill">
                                 <div class="input-icon-wrapper" style="flex: 1; min-width: 0;">
-                                    <i data-lucide="locate" style="cursor: pointer; pointer-events: auto; color: var(--brand-cyan);" onclick="window.geolocateOrigin('calc-origin')"></i>
-                                    <input type="text" id="calc-origin" class="glass-input with-icon" placeholder="Origen (ej. Av. Andalucía)" autocomplete="off" style="width: 100%;">
+                                    <i data-lucide="locate" style="cursor: pointer; pointer-events: auto; color: var(--brand-cyan);" onclick="window.geolocateOrigin('calc-origin', 'calc-origin-num')"></i>
+                                    <input type="text" id="calc-origin" class="glass-input with-icon pill-left" placeholder="Origen (ej. Av. Andalucía)" autocomplete="off" style="width: 100%;">
                                     <div id="origin-suggestions" class="autocomplete-suggestions hidden"></div>
                                 </div>
-                                
+                                <div class="pill-divider"></div>
+                                <div class="input-icon-wrapper num-wrapper">
+                                    <input type="text" inputmode="numeric" id="calc-origin-num" class="glass-input pill-right" placeholder="Nº" style="width: 100%; text-align: center;" aria-label="Número de Origen">
+                                </div>
                             </div>
                         </div>
+                        </div>
                         
-                        <!-- Destino con número -->
-                        <div class="form-group" style="gap: 0.25rem;">
-                            <label for="calc-destination"><span data-translate="form-dropoff">Hasta (Destino)</span></label>
-                            <div style="display: flex; gap: 0.5rem; position: relative; flex-wrap: nowrap;">
+                        <!-- Destino -->
+                        <div class="form-group integrated-pill-container" style="gap: 0; margin-top: 1rem;">
+                            <div class="integrated-pill">
                                 <div class="input-icon-wrapper" style="flex: 1; min-width: 0;">
                                     <i data-lucide="flag"></i>
-                                    <input type="text" id="calc-destination" class="glass-input with-icon" placeholder="Destino (ej. Plaza Asdrúbal)" autocomplete="off" style="width: 100%;">
-                                <div id="dest-suggestions" class="autocomplete-suggestions hidden"></div>
+                                    <input type="text" id="calc-destination" class="glass-input with-icon pill-left" placeholder="Destino (ej. Plaza Asdrúbal)" autocomplete="off" style="width: 100%;">
+                                    <div id="dest-suggestions" class="autocomplete-suggestions hidden"></div>
+                                </div>
+                                <div class="pill-divider"></div>
+                                <div class="input-icon-wrapper num-wrapper">
+                                    <input type="text" inputmode="numeric" id="calc-dest-num" class="glass-input pill-right" placeholder="Nº" style="width: 100%; text-align: center;" aria-label="Número de Destino">
+                                </div>
                             </div>
-                            
                         </div>
 
                         <!-- Selector de Cuándo -->

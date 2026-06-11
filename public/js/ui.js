@@ -352,7 +352,44 @@ export function setupPhotonAutocomplete(inputId, suggestionsId, onSelect, strict
                         div.style.textOverflow = 'ellipsis';
                         div.innerHTML = displayName;
                         div.addEventListener('click', () => {
+                            const originalText = input.value.trim();
+                            let extractedNumber = "";
+                            const numRegex = /(?:nº|n|numero|num)?\s*(\d+[a-zA-Z]?)\s*(?:,.*)?$/i;
+                            const match = originalText.match(numRegex);
+                            if (match && match[1]) {
+                                extractedNumber = match[1];
+                            }
+                            
                             input.value = `${name}, ${city || 'Cádiz'}`.replace(/, $/, "");
+                            
+                            if (extractedNumber) {
+                                let numInputId = null;
+                                if (inputId === 'calc-origin') numInputId = 'calc-origin-num';
+                                else if (inputId === 'calc-destination') numInputId = 'calc-dest-num';
+                                else if (inputId === 'b-pickup') numInputId = 'b-pickup-num';
+                                else if (inputId === 'b-dropoff') numInputId = 'b-dropoff-num';
+                                
+                                if (numInputId) {
+                                    const numInput = document.getElementById(numInputId);
+                                    if (numInput) {
+                                        numInput.value = extractedNumber;
+                                        numInput.dispatchEvent(new Event('input'));
+                                    }
+                                }
+                            }
+                            
+                            setTimeout(() => {
+                                let numInputId = null;
+                                if (inputId === 'calc-origin') numInputId = 'calc-origin-num';
+                                else if (inputId === 'calc-destination') numInputId = 'calc-dest-num';
+                                if (numInputId) {
+                                    const numInput = document.getElementById(numInputId);
+                                    if (numInput && !numInput.value) {
+                                        numInput.focus();
+                                    }
+                                }
+                            }, 50);
+
                             const isStreet = feature.properties.osm_key === 'highway' || feature.properties.type === 'street' || /calle|avenida|plaza|paseo|avda|c\/|pza/i.test(name);
                             onSelect({
                                 name: name,
