@@ -272,11 +272,19 @@ export function setupPhotonAutocomplete(inputId, suggestionsId, onSelect, strict
         const val = this.value.trim();
         suggestionsBox.innerHTML = '';
         
+        // Magia: Extraer el número al vuelo para que Photon pueda encontrar la calle sin confundirse
+        let searchVal = val;
+        const numRegex = /(?:nº|n|numero|num)?\s*(\d+[a-zA-Z]?)\s*(?:,.*)?$/i;
+        const match = val.match(numRegex);
+        if (match && match[1]) {
+            searchVal = val.replace(numRegex, '').trim();
+        }
+        
         // Evitar búsquedas inútiles de palabras genéricas sueltas (ej: "hotel", "calle")
         const genericWords = ['hotel', 'calle', 'avenida', 'plaza', 'paseo', 'hospital', 'colegio', 'bar', 'restaurante', 'playa'];
-        const isGeneric = genericWords.includes(val.toLowerCase());
+        const isGeneric = genericWords.includes(searchVal.toLowerCase());
         
-        if (val.length < 3 || isGeneric) {
+        if (searchVal.length < 3 || isGeneric) {
             suggestionsBox.classList.add('hidden');
             onSelect(null);
             return;
@@ -284,7 +292,7 @@ export function setupPhotonAutocomplete(inputId, suggestionsId, onSelect, strict
 
         debounceTimer = setTimeout(async () => {
             try {
-                let url = `https://photon.komoot.io/api/?q=${encodeURIComponent(val)}&lat=36.52&lon=-6.29&limit=5`;
+                let url = `https://photon.komoot.io/api/?q=${encodeURIComponent(searchVal)}&lat=36.52&lon=-6.29&limit=5`;
                 if (strictCadiz) {
                     url += "&bbox=-6.32,36.48,-6.25,36.54";
                 }
