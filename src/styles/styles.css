@@ -1804,9 +1804,41 @@ select:-webkit-autofill:focus {
 
 
 /* ----------------- BORDES DE ACENTO (DÍA/NOCHE) ----------------- */
+
+
+
+/* ----------------- TARJETAS A TODO COLOR (PETICIÓN USUARIO) ----------------- */
 .pricing-card-day {
-    border-top: 5px solid var(--brand-cyan);
+    background-color: #e2e8f0 !important; /* Gris Claro */
+    border: none !important;
+    border-top: none !important;
 }
+.pricing-card-day .pricing-card-header h4, 
+.pricing-card-day .price-row-modern strong {
+    color: #0f172a !important; /* Texto Oscuro */
+}
+.pricing-card-day .price-row-modern span {
+    color: #475569 !important; /* Gris Oscuro */
+}
+.pricing-card-day .price-row-modern {
+    border-bottom: 1px dashed #cbd5e1 !important;
+}
+
 .pricing-card-night {
-    border-top: 5px solid #1e3a8a;
+    background-color: #1e293b !important; /* Azul Noche Oscuro */
+    border: none !important;
+    border-top: none !important;
+}
+.pricing-card-night .pricing-card-header h4, 
+.pricing-card-night .price-row-modern strong {
+    color: #f8fafc !important; /* Texto Blanco */
+}
+.pricing-card-night .price-row-modern span {
+    color: #94a3b8 !important; /* Gris Claro */
+}
+.pricing-card-night .price-row-modern {
+    border-bottom: 1px dashed #334155 !important;
+}
+.pricing-card-night .pricing-card-header .schedule {
+    color: var(--brand-cyan) !important;
 }
