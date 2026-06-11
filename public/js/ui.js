@@ -525,41 +525,21 @@ export function geolocateOrigin(inputId = 'calc-origin', numInputId = null) {
 
 export async function confirmReservation(event) {
     event.preventDefault();
-    let name = document.getElementById('b-name').value;
-    name = name.replace(/\b\w/g, c => c.toUpperCase());
-    const phone = document.getElementById('b-phone').value;
     
-    const when = document.getElementById('b-when').value;
-    let date = '';
-    let time = '';
-    let selectedDateTime = new Date();
-
-    if (when === 'later') {
-        date = document.getElementById('b-date').value;
-        time = document.getElementById('b-time').value;
-        if (!date || !time) {
-            alert("Por favor introduce fecha y hora.");
-            return false;
-        }
-        selectedDateTime = new Date(`${date}T${time}`);
-        const minDate = new Date();
-        minDate.setDate(minDate.getDate() + 1); // 48h aprox
-        minDate.setHours(23, 59, 59, 999);
-        
-        if (selectedDateTime <= minDate) {
-            const alertMsg = state.currentLanguage === 'es'
-                ? "Las reservas online solo pueden realizarse con un mínimo de 48h de antelación. Para reservas urgentes, por favor llame por teléfono."
-                : "Online bookings can only be made with a minimum of 48h notice. For urgent bookings, please call us.";
-            alert(alertMsg);
-            return false;
-        }
-    } else {
-        // "Ahora mismo"
-        date = selectedDateTime.toISOString().split('T')[0];
-        time = selectedDateTime.toTimeString().split(' ')[0].substring(0, 5);
+    // Recopilar datos del formulario
+    let name = document.getElementById('b-name')?.value || '';
+    name = name.replace(/\b\w/g, c => c.toUpperCase());
+    const phone = document.getElementById('b-phone')?.value || '';
+    
+    const date = document.getElementById('b-date')?.value || '';
+    const time = document.getElementById('b-time')?.value || '';
+    
+    if (!date || !time) {
+        alert(state.currentLanguage === 'es' ? "Por favor introduce fecha y hora." : "Please enter date and time.");
+        return false;
     }
     
-    let pickup = document.getElementById('b-pickup').value;
+    let pickup = document.getElementById('b-pickup')?.value || '';
     const pickupNumEl = document.getElementById('b-pickup-num');
     if (pickupNumEl && pickupNumEl.value.trim() !== '') {
         const parts = pickup.split(', ');
@@ -571,7 +551,7 @@ export async function confirmReservation(event) {
         }
     }
     
-    let dropoff = document.getElementById('b-dropoff').value;
+    let dropoff = document.getElementById('b-dropoff')?.value || '';
     const dropoffNumEl = document.getElementById('b-dropoff-num');
     if (dropoffNumEl && dropoffNumEl.value.trim() !== '') {
         const parts = dropoff.split(', ');
@@ -583,197 +563,59 @@ export async function confirmReservation(event) {
         }
     }
     
-    // Extraer campos opcionales
-    const chipPassengers = document.getElementById('chip-passengers');
-    const chipLuggage = document.getElementById('chip-luggage');
-    const chipPet = document.getElementById('chip-pet');
-    const paymentElement = document.getElementById('b-payment');
+    // Opcionales
+    const trainOrigin = document.getElementById('b-train-origin')?.checked;
+    const pet = document.getElementById('b-pet')?.checked;
+    const luggage = document.getElementById('b-luggage-qty')?.innerText || '0';
     
-    const passengers = chipPassengers ? chipPassengers.value : "1";
-    const luggage = chipLuggage ? chipLuggage.value : "0";
-    const pet = chipPet ? chipPet.value : "No";
-    const payment = paymentElement ? paymentElement.value : "Efectivo";
-    
-    const trainContainer = document.getElementById('b-train-container');
-    const trainInput = document.getElementById('b-train');
-    let hasRenfe = false;
-    let hasPuerto = false;
-    let hasCortadura = false;
-    
-    const pickupLower = pickup.toLowerCase();
-    if (pickupLower.includes('renfe') || pickupLower.includes('estacion') || pickupLower.includes('estación') || pickupLower.includes('sevilla') || pickupLower.includes('tren')) {
-        hasRenfe = true;
-    }
-    if (pickupLower.includes('puerto') || pickupLower.includes('maritimo') || pickupLower.includes('marítimo') || pickupLower.includes('crucero') || pickupLower.includes('terminal')) {
-        hasPuerto = true;
-    }
-    if (pickupLower.includes('cortadura')) {
-        hasCortadura = true;
-    }
+    // Opciones extra
+    let extras = [];
+    if (trainOrigin) extras.push("Origen Estación de Tren Plaza Sevilla");
+    if (pet) extras.push("Mascota (en transportín)");
+    if (parseInt(luggage) > 0) extras.push(`${luggage} Maleta(s) grande(s)`);
 
-    let trainNumberText = "";
-    if (trainContainer && !trainContainer.classList.contains('hidden') && trainInput && trainInput.value.trim() !== '') {
-        trainNumberText = `\n🚆 Nº de Tren/Vuelo: ${trainInput.value.trim()}`;
+    // Componer el Email
+    const targetEmail = "reservas@radiotaxicadiz.com"; // Email base
+    const subject = encodeURIComponent(`🚕 SOLICITUD DE RESERVA: ${date} a las ${time}`);
+    
+    let bodyText = `SOLICITUD DE RESERVA RECIBIDA DESDE CADIZ.TAXI\n\n`;
+    bodyText += `Hola,\n\nSolicito la reserva de un taxi con los siguientes detalles:\n\n`;
+    bodyText += `DATOS DEL PASAJERO:\n`;
+    bodyText += `Nombre: ${name}\n`;
+    bodyText += `Teléfono: ${phone}\n\n`;
+    bodyText += `DATOS DEL VIAJE:\n`;
+    bodyText += `Fecha: ${date}\n`;
+    bodyText += `Hora: ${time}\n`;
+    bodyText += `Origen: ${pickup}\n`;
+    bodyText += `Destino: ${dropoff}\n\n`;
+    
+    if (extras.length > 0) {
+        bodyText += `EXTRAS SOLICITADOS:\n`;
+        extras.forEach(e => bodyText += `- ${e}\n`);
+        bodyText += `\n`;
     }
     
-    const isAdapted = document.getElementById('check-disability') ? document.getElementById('check-disability').checked : false;
+    bodyText += `Por favor, respondan a este email confirmando la disponibilidad y el Precio Cerrado (si aplica según normativa).\n\nGracias.`;
     
-    // Validar direcciones
-    if(!pickup || !dropoff) {
-        alert("Por favor introduce origen y destino.");
-        return false;
-    }
-
-    const formSubmitBtn = document.getElementById('booking-submit-btn');
-    const originalBtnText = formSubmitBtn.innerHTML;
-    formSubmitBtn.innerHTML = '<i data-lucide="loader-2" class="spin" style="animation: spin 1s linear infinite;"></i> Procesando...';
-    formSubmitBtn.disabled = true;
+    const body = encodeURIComponent(bodyText);
     
-    try {
-        let exactOrigin = calcContext.bookingOrigin;
-        if (!exactOrigin || exactOrigin.name !== pickup.split(',')[0]) {
-            exactOrigin = await geocodeString(pickup, true) || { name: pickup, city: 'Cádiz', lat: 36.52, lon: -6.29 };
-        }
-        
-        let exactDest = calcContext.bookingDest;
-        if (!exactDest || exactDest.name !== dropoff.split(',')[0]) {
-            exactDest = await geocodeString(dropoff, false) || { name: dropoff, city: 'Cádiz', lat: 36.52, lon: -6.29 };
-        }
-
-        // Determinar hora y si es festivo
-        const hour = selectedDateTime.getHours();
-        const isNight = (hour >= 21 || hour < 7);
-        const dayOfWeek = selectedDateTime.getDay();
-        const isFestivo = (dayOfWeek === 0 || dayOfWeek === 6); // Sabado o Domingo
-        
-        const isInter = isInterurban(exactDest);
-        const routeDetails = await getRouteDetails(exactOrigin, exactDest);
-        const priceResult = calculatePrice(routeDetails, isNight, isFestivo, hasRenfe, hasPuerto, hasCortadura, isAdapted, parseInt(luggage));
-        
-        // Rellenar UI del funnel
-        document.getElementById('summary-name').innerText = name;
-        
-        const formattedPhone = phone.replace(/\D/g, '').replace(/(\d{3})(?=\d)/g, '$1 ');
-        document.getElementById('summary-phone').innerText = formattedPhone;
-        
-        document.getElementById('summary-origin').innerText = pickup;
-        document.getElementById('summary-dest').innerText = dropoff;
-        
-        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        const lang = state.currentLanguage === 'es' ? 'es-ES' : (state.currentLanguage === 'en' ? 'en-US' : (state.currentLanguage === 'fr' ? 'fr-FR' : (state.currentLanguage === 'de' ? 'de-DE' : navigator.language || 'es-ES')));
-        const formattedDate = selectedDateTime.toLocaleDateString(lang, options);
-        const timeParts = time.split(':');
-        document.getElementById('summary-datetime').innerText = `${formattedDate} - ${timeParts[0]}:${timeParts[1]} h`;
-        
-        let petText = (pet === 'Sí' || pet === 'S' || pet === 'Si' || pet === 'si') ? ', con mascota' : '';
-        document.getElementById('summary-details').innerText = `${passengers} pax, ${luggage} maletas${petText}, pago en ${payment}`;
-        
-        // Asignar precio dinámico a la tarjeta de Taxis Oficiales
-        const radioPriceEl = document.getElementById('summary-radio-price');
-        if (radioPriceEl) {
-            radioPriceEl.innerText = priceResult.price.toFixed(0) + '€';
-        }
-        
-        // Actualizar estadísticas OSRM
-        const osrmStatsEl = document.getElementById('summary-osrm-stats');
-        const radioTimeEl = document.getElementById('summary-radio-time');
-        
-        if (routeDetails) {
-            const km = routeDetails.finalDistanceKm.toFixed(1).replace('.', ',');
-            const mins = Math.ceil(routeDetails.osrmDurationMin);
-            
-            if (osrmStatsEl) {
-                osrmStatsEl.innerText = `Ruta calculada: ${km} km | Tiempo est. ${mins} min`;
-                osrmStatsEl.style.display = 'block';
-            }
-            
-            if (radioTimeEl) {
-                radioTimeEl.innerHTML = `<i data-lucide="clock" style="width: 14px; height: 14px;"></i> ${mins} min`;
-                // Re-inicializar iconos Lucide por si acaso
-                if (window.lucide) {
-                    window.lucide.createIcons();
-                }
-            }
-        }
-        
-        // Ocultar form, mostrar funnel
-        document.getElementById('booking-form').style.display = 'none';
-        document.getElementById('booking-results-funnel').style.display = 'block';
-        
-        // Asignar funciones de botones
-        const email = "reservas@radiotaxicadiz.es";
-        const subject = state.currentLanguage === 'es' 
-            ? `Solicitud de reserva de Taxi - ${name} - ${date}`
-            : `Taxi booking request - ${name} - ${date}`;
-        
-        const body = state.currentLanguage === 'es'
-            ? `¡Hola equipo de Taxis Oficiales Cádiz!\n\nSoy ${name} y necesito reservar un taxi con los siguientes detalles:\n\n📱 Teléfono: ${phone}\n📍 Recogida: ${pickup}\n🏁 Destino: ${dropoff}\n📅 Día: ${date}\n⏰ Hora: ${time}${trainNumberText}\n\n👥 Pasajeros: ${passengers}\n🧳 Maletas: ${luggage}\n🐾 Mascota: ${pet}\n💳 Pago: ${payment}\n\nQuedo a la espera de vuestra confirmación. ¡Muchas gracias y un saludo!\n\nAtentamente,\n${name}`
-            : `Hello Taxis Oficiales Cádiz team!\n\nMy name is ${name} and I would like to book a taxi with the following details:\n\n📱 Phone: ${phone}\n📍 Pickup: ${pickup}\n🏁 Destination: ${dropoff}\n📅 Date: ${date}\n⏰ Time: ${time}${trainNumberText}\n\n👥 Passengers: ${passengers}\n🧳 Luggage: ${luggage}\n🐾 Pet: ${pet === 'Sí' ? 'Yes' : 'No'}\n💳 Payment: ${payment === 'Efectivo o Tarjeta' ? 'Any' : (payment === 'Tarjeta' ? 'Card' : 'Cash')}\n\nI look forward to your confirmation. Thank you very much!\n\nBest regards,\n${name}`;
-        
-        const radioEmailBtn = document.getElementById('btn-radio-email');
-        if (radioEmailBtn) {
-            radioEmailBtn.onclick = function() {
-                window.location.href = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-            };
-        }
-        
-        document.getElementById('btn-edit-booking').onclick = function() {
-            document.getElementById('booking-results-funnel').style.display = 'none';
-            document.getElementById('booking-form').style.display = 'block';
-        };
-
-        // Renderizar Mapa
-        if (!state.bookingMapInstance) {
-            state.bookingMapInstance = L.map('booking-map', {
-                zoomControl: false,
-                dragging: false,
-                touchZoom: false,
-                scrollWheelZoom: false,
-                doubleClickZoom: false,
-                boxZoom: false,
-                keyboard: false,
-                tap: false
-            }).setView([36.52, -6.29], 13);
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-                attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
-                subdomains: 'abcd',
-                maxZoom: 19
-            }).addTo(state.bookingMapInstance);
-            state.bookingMapLayerGroup = L.featureGroup().addTo(state.bookingMapInstance);
-        } else {
-            state.bookingMapLayerGroup.clearLayers();
-        }
-        
-        const originMarker = L.marker([exactOrigin.lat, exactOrigin.lon]).bindPopup("Origen");
-        const destMarker = L.marker([exactDest.lat, exactDest.lon]).bindPopup("Destino");
-        state.bookingMapLayerGroup.addLayer(originMarker);
-        state.bookingMapLayerGroup.addLayer(destMarker);
-        
-        if (routeDetails.geometry) {
-            const routeLine = L.geoJSON(routeDetails.geometry, {
-                style: {
-                    color: '#00d2ff',
-                    weight: 4,
-                    opacity: 0.8
-                }
-            });
-            state.bookingMapLayerGroup.addLayer(routeLine);
-        }
-        
-        setTimeout(() => {
-            state.bookingMapInstance.invalidateSize();
-            state.bookingMapInstance.fitBounds(state.bookingMapLayerGroup.getBounds(), { padding: [20, 20] });
-        }, 100);
-
-    } catch (e) {
-        console.error(e);
-        alert("Hubo un problema al procesar la ruta. Verifica las direcciones.");
-    } finally {
-        formSubmitBtn.innerHTML = originalBtnText;
-        formSubmitBtn.disabled = false;
-        if(window.lucide) window.lucide.createIcons();
+    // Disparar Mailto
+    window.location.href = `mailto:${targetEmail}?subject=${subject}&body=${body}`;
+    
+    // Feedback local al usuario
+    const summaryCard = document.getElementById('b-summary-card');
+    if (summaryCard) {
+        summaryCard.style.display = 'block';
+        summaryCard.innerHTML = `
+            <div style="background: rgba(0, 255, 136, 0.1); border: 1px solid rgba(0, 255, 136, 0.3); border-radius: 12px; padding: 1.5rem; text-align: center; margin-top: 1rem;">
+                <i data-lucide="mail-check" style="width: 48px; height: 48px; color: #00ff88; margin-bottom: 1rem;"></i>
+                <h3 style="color: #00ff88; margin-top: 0; font-size: 1.2rem;">¡Borrador Generado con Éxito!</h3>
+                <p style="color: #cbd5e1; font-size: 0.95rem; line-height: 1.5; margin-bottom: 0;">Hemos abierto tu aplicación de correo predeterminada (Gmail, Apple Mail, etc.) con los datos listos para enviar a la central oficial de taxis. <br><br><strong style="color:#fff;">⚠️ IMPORTANTE: No olvides pulsar "Enviar" en tu aplicación de correo.</strong></p>
+            </div>
+        `;
     }
+    
+    if (typeof lucide !== 'undefined') lucide.createIcons();
     
     return false;
 }
-
