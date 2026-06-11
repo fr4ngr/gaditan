@@ -272,15 +272,18 @@ export function setupPhotonAutocomplete(inputId, suggestionsId, onSelect, strict
         const val = this.value.trim();
         suggestionsBox.innerHTML = '';
         
-        // Magia: Extraer el número al vuelo para que Photon pueda encontrar la calle sin confundirse
+        // Extraer el numero de forma segura sin caracteres raros
         let searchVal = val;
-        const numRegex = /(?:nº|n|numero|num)?\s*(\d+[a-zA-Z]?)\s*(?:,.*)?$/i;
+        let extractedNumber = "";
+        const numRegex = /(?:n\u00BA|n|numero|num)?\s*(\d+[a-zA-Z]?)\s*(?:,.*)?$/i;
         const match = val.match(numRegex);
+        
         if (match && match[1]) {
-            searchVal = val.replace(numRegex, '').trim();
+            extractedNumber = match[1];
+            // Tambien quitamos la coma si la puso antes del numero
+            searchVal = val.replace(numRegex, '').replace(/,$/, '').trim();
         }
         
-        // Evitar búsquedas inútiles de palabras genéricas sueltas (ej: "hotel", "calle")
         const genericWords = ['hotel', 'calle', 'avenida', 'plaza', 'paseo', 'hospital', 'colegio', 'bar', 'restaurante', 'playa'];
         const isGeneric = genericWords.includes(searchVal.toLowerCase());
         
@@ -292,7 +295,7 @@ export function setupPhotonAutocomplete(inputId, suggestionsId, onSelect, strict
 
         debounceTimer = setTimeout(async () => {
             try {
-                const photonLang = ['en', 'de', 'fr', 'it'].includes(state.lang) ? state.lang : 'default';
+                const photonLang = ['en', 'de', 'fr', 'it'].includes(state.currentLanguage) ? state.currentLanguage : 'default';
                 let url = `https://photon.komoot.io/api/?q=${encodeURIComponent(searchVal)}&lat=36.52&lon=-6.29&limit=5&lang=${photonLang}`;
                 if (strictCadiz) {
                     url += "&bbox=-6.32,36.48,-6.25,36.54";
@@ -302,7 +305,6 @@ export function setupPhotonAutocomplete(inputId, suggestionsId, onSelect, strict
                 
                 if (data.features && data.features.length > 0) {
                     suggestionsBox.classList.remove('hidden');
-                    
                     const seen = new Set();
                     let count = 0;
                     
@@ -312,7 +314,8 @@ export function setupPhotonAutocomplete(inputId, suggestionsId, onSelect, strict
                         return clean.trim();
                     };
                     
-                    const searchSanitized = sanitizeStr(searchVal);
+                    // Comparamos siempre SIN numeros
+                    const searchSanitized = sanitizeStr(searchVal).replace(/\d+/g, '').trim();
                     
                     data.features.forEach(feature => {
                         if (count >= 5) return;
@@ -321,17 +324,15 @@ export function setupPhotonAutocomplete(inputId, suggestionsId, onSelect, strict
                         const name = props.name || props.street || "";
                         let city = props.city || props.town || props.village || props.county || props.state || "";
                         
-                        // Traducir nombres al español solo si el usuario está navegando en español
-                        if (city && state.lang === 'es') {
-                            city = city.replace(/Seville/ig, "Sevilla")
-                                       .replace(/Andalusia/ig, "Andalucía")
-                                       .replace(/Cadiz/ig, "Cádiz");
+                        if (city && state.currentLanguage === 'es') {
+                            city = city.replace(/Seville/ig, "Sevilla").replace(/Andalusia/ig, "Andalucía").replace(/Cadiz/ig, "Cádiz");
                         }
                         
                         if (!name) return;
                         
-                        const nameSanitized = sanitizeStr(name);
-                        if (searchSanitized.length > 0 && !nameSanitized.includes(searchSanitized)) {
+                        const nameSanitized = sanitizeStr(name).replace(/\d+/g, '').trim();
+                        
+                        if (searchSanitized.length > 0 && !nameSanitized.includes(searchSanitized) && !searchSanitized.includes(nameSanitized)) {
                             return; 
                         }
                         
@@ -348,7 +349,6 @@ export function setupPhotonAutocomplete(inputId, suggestionsId, onSelect, strict
                         
                         count++;
                         
-                        const type = ""; // Quitamos los emojis horribles
                         const displayName = `<span style="font-weight: 400;">${name}</span> <span style="font-size:0.85em; color:var(--text-muted)">(${city || 'Cádiz'})</span>`;
                         
                         const div = document.createElement('div');
@@ -361,15 +361,9 @@ export function setupPhotonAutocomplete(inputId, suggestionsId, onSelect, strict
                         div.style.textOverflow = 'ellipsis';
                         div.innerHTML = displayName;
                         div.addEventListener('click', () => {
-                            const originalText = input.value.trim();
-                            let extractedNumber = "";
-                            const numRegex = /(?:nº|n|numero|num)?\s*(\d+[a-zA-Z]?)\s*(?:,.*)?$/i;
-                            const match = originalText.match(numRegex);
-                            if (match && match[1]) {
-                                extractedNumber = match[1];
-                            }
-                            
-                            input.value = `${name}, ${city || 'Cádiz'}`.replace(/, $/, "");
+                            // MOSTRAR NUMERO EN EL INPUT!
+                            const finalAddress = extractedNumber ? `${name} ${extractedNumber}, ${city || 'Cádiz'}` : `${name}, ${city || 'Cádiz'}`;
+                            input.value = finalAddress;
                             
                             if (extractedNumber) {
                                 let numInputId = null;
@@ -387,8 +381,6 @@ export function setupPhotonAutocomplete(inputId, suggestionsId, onSelect, strict
                                 }
                             }
                             
-
-
                             const isStreet = feature.properties.osm_key === 'highway' || feature.properties.type === 'street' || /calle|avenida|plaza|paseo|avda|c\/|pza/i.test(name);
                             onSelect({
                                 name: name,
@@ -411,13 +403,13 @@ export function setupPhotonAutocomplete(inputId, suggestionsId, onSelect, strict
                     suggestionsBox.classList.remove('hidden');
                 }
             } catch (e) {
-                console.error("Photon API Error:", e);
+                console.error(e);
             }
-        }, 300);
+        }, 500);
     });
 
     document.addEventListener('click', (e) => {
-        if (e.target !== input && e.target !== suggestionsBox) {
+        if (!input.contains(e.target) && !suggestionsBox.contains(e.target)) {
             suggestionsBox.classList.add('hidden');
         }
     });
