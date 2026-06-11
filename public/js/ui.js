@@ -378,17 +378,7 @@ export function setupPhotonAutocomplete(inputId, suggestionsId, onSelect, strict
                                 }
                             }
                             
-                            setTimeout(() => {
-                                let numInputId = null;
-                                if (inputId === 'calc-origin') numInputId = 'calc-origin-num';
-                                else if (inputId === 'calc-destination') numInputId = 'calc-dest-num';
-                                if (numInputId) {
-                                    const numInput = document.getElementById(numInputId);
-                                    if (numInput && !numInput.value) {
-                                        numInput.focus();
-                                    }
-                                }
-                            }, 50);
+
 
                             const isStreet = feature.properties.osm_key === 'highway' || feature.properties.type === 'street' || /calle|avenida|plaza|paseo|avda|c\/|pza/i.test(name);
                             onSelect({
