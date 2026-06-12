@@ -9,15 +9,23 @@
                 <h3 class="subsection-title" style="margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
                     <span data-translate="urban-fares-title">Viaje Urbano</span>
                 </h3>
+                                <div class="theme-toggle-wrapper">
+    <div class="theme-toggle-pill">
+        <div class="theme-toggle-slider"></div>
+        <button class="theme-toggle-btn btn-day" data-target="day">
+            <i data-lucide="sun" style="width: 18px; height: 18px;"></i>
+            <span data-translate="day-fare-btn">Día</span>
+        </button>
+        <button class="theme-toggle-btn btn-night" data-target="night">
+            <i data-lucide="moon" style="width: 18px; height: 18px;"></i>
+            <span data-translate="night-fare-btn">Noche/Festivos</span>
+        </button>
+    </div>
+</div>
                                 <div class="tarifas-grid single-card-mode">
                     <!-- Tarjeta Día -->
                     <div class="fare-wrapper fare-card-day" style="width: 100%; display: flex; flex-direction: column;">
-                        <div style="display: flex; justify-content: flex-end; margin-bottom: 0.8rem;">
-                            <button class="fare-toggle-btn" data-target="night" style="background: var(--brand-cyan); color: var(--bg-base); border: none; padding: 0.5rem 1.2rem; border-radius: 9999px; display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; font-weight: 800; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 15px rgba(6,182,212,0.3);" onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='translateY(0)';">
-                                <span data-translate="toggle-to-night">Ver Noche/Festivos</span>
-                                <i data-lucide="moon" style="width: 16px; height: 16px;"></i>
-                            </button>
-                        </div>
+                        
                         <div class="glass card tarifas-card-hover" style="padding: 0; overflow: hidden; display: flex; flex-direction: column; gap: 0; text-align: left; background: #ffffff; border: 1px solid rgba(6, 182, 212, 0.25);">
                         <div style="background: var(--brand-cyan); padding: 1.5rem 2rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; border-bottom: 1px solid rgba(15, 23, 42, 0.15);">
                             <div style="display: flex; align-items: center; gap: 1rem;">
@@ -54,12 +62,7 @@
 
                     <!-- Tarjeta Noche -->
                     <div class="fare-wrapper fare-card-night" style="width: 100%; display: none; flex-direction: column;">
-                        <div style="display: flex; justify-content: flex-end; margin-bottom: 0.8rem;">
-                            <button class="fare-toggle-btn" data-target="day" style="background: var(--brand-cyan); color: var(--bg-base); border: none; padding: 0.5rem 1.2rem; border-radius: 9999px; display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; font-weight: 800; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 15px rgba(6,182,212,0.3);" onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='translateY(0)';">
-                                <span data-translate="toggle-to-day">Ver Tarifa Diurna</span>
-                                <i data-lucide="sun" style="width: 16px; height: 16px;"></i>
-                            </button>
-                        </div>
+                        
                         <div class="glass card tarifas-card-hover" style="padding: 0; overflow: hidden; display: flex; flex-direction: column; gap: 0; text-align: left; background: #ffffff; border: 1px solid rgba(6, 182, 212, 0.25);">
                         <div style="background: var(--brand-cyan); padding: 1.5rem 2rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; border-bottom: 1px solid rgba(15, 23, 42, 0.15);">
                             <div style="display: flex; align-items: center; gap: 1rem;">
@@ -131,15 +134,23 @@
                         <i data-lucide="chevron-down" class="fare-icon" style="transition: transform 0.3s; transform: rotate(0deg); width: 20px; height: 20px;"></i>
                     </h3>
                     <div class="fare-content" style="overflow: hidden; transition: max-height 0.4s ease; max-height: 0px;">
-                        <div class="tarifas-grid single-card-mode" style="margin-top: 1rem;">
+                        <div class="theme-toggle-wrapper">
+                              <div class="theme-toggle-pill">
+                                  <div class="theme-toggle-slider"></div>
+                                  <button class="theme-toggle-btn btn-day" data-target="day">
+                                      <i data-lucide="sun" style="width: 18px; height: 18px;"></i>
+                                      <span data-translate="day-fare-btn">Día</span>
+                                  </button>
+                                  <button class="theme-toggle-btn btn-night" data-target="night">
+                                      <i data-lucide="moon" style="width: 18px; height: 18px;"></i>
+                                      <span data-translate="night-fare-btn">Noche/Festivos</span>
+                                  </button>
+                              </div>
+                          </div>
+                          <div class="tarifas-grid single-card-mode" style="margin-top: 1rem;">
                             <!-- Tarjeta Interurbana Día -->
                             <div class="fare-wrapper fare-card-day" style="width: 100%; display: flex; flex-direction: column;">
-                                    <div style="display: flex; justify-content: flex-end; margin-bottom: 0.8rem;">
-                                        <button class="fare-toggle-btn" data-target="night" style="background: var(--brand-cyan); color: var(--bg-base); border: none; padding: 0.5rem 1.2rem; border-radius: 9999px; display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; font-weight: 800; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 15px rgba(6,182,212,0.3);" onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='translateY(0)';">
-                                            <span data-translate="toggle-to-night">Ver Noche/Festivos</span>
-                                            <i data-lucide="moon" style="width: 16px; height: 16px;"></i>
-                                        </button>
-                                    </div>
+                                    
                                     <div class="glass card tarifas-card-hover" style="padding: 0; overflow: hidden; display: flex; flex-direction: column; gap: 0; text-align: left; background: #ffffff; border: 1px solid rgba(6, 182, 212, 0.25);">
                                 <div style="background: var(--brand-cyan); padding: 1.5rem 2rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; border-bottom: 1px solid rgba(15, 23, 42, 0.15);">
                                     <div style="display: flex; align-items: center; gap: 1rem;">
@@ -176,12 +187,7 @@
 
                             <!-- Tarjeta Interurbana Noche -->
                             <div class="fare-wrapper fare-card-night" style="width: 100%; display: none; flex-direction: column;">
-                                    <div style="display: flex; justify-content: flex-end; margin-bottom: 0.8rem;">
-                                        <button class="fare-toggle-btn" data-target="day" style="background: var(--brand-cyan); color: var(--bg-base); border: none; padding: 0.5rem 1.2rem; border-radius: 9999px; display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; font-weight: 800; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 15px rgba(6,182,212,0.3);" onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='translateY(0)';">
-                                            <span data-translate="toggle-to-day">Ver Tarifa Diurna</span>
-                                            <i data-lucide="sun" style="width: 16px; height: 16px;"></i>
-                                        </button>
-                                    </div>
+                                    
                                     <div class="glass card tarifas-card-hover" style="padding: 0; overflow: hidden; display: flex; flex-direction: column; gap: 0; text-align: left; background: #ffffff; border: 1px solid rgba(6, 182, 212, 0.25);">
                                 <div style="background: var(--brand-cyan); padding: 1.5rem 2rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; border-bottom: 1px solid rgba(15, 23, 42, 0.15);">
                                     <div style="display: flex; align-items: center; gap: 1rem;">
@@ -242,7 +248,70 @@
                 from { opacity: 0; transform: translateY(10px); }
                 to { opacity: 1; transform: translateY(0); }
             }
-        </style>
+        
+              .theme-toggle-wrapper {
+                  display: flex;
+                  justify-content: flex-end;
+                  margin-bottom: 1.5rem;
+              }
+              .theme-toggle-pill {
+                  position: relative;
+                  display: inline-flex;
+                  background: rgba(15, 23, 42, 0.08);
+                  border-radius: 9999px;
+                  padding: 0.3rem;
+                  box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+                  transition: background 0.4s ease;
+              }
+              .theme-toggle-pill.night-active {
+                  background: var(--bg-base);
+              }
+              .theme-toggle-slider {
+                  position: absolute;
+                  top: 0.3rem;
+                  bottom: 0.3rem;
+                  left: 0.3rem;
+                  width: calc(50% - 0.3rem);
+                  background: #ffffff;
+                  border-radius: 9999px;
+                  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+                  transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), background 0.4s ease;
+                  z-index: 1;
+              }
+              .theme-toggle-pill.night-active .theme-toggle-slider {
+                  transform: translateX(100%);
+                  background: var(--brand-cyan);
+              }
+              .theme-toggle-btn {
+                  position: relative;
+                  z-index: 2;
+                  flex: 1;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  gap: 0.5rem;
+                  padding: 0.6rem 1.2rem;
+                  font-size: 0.9rem;
+                  font-weight: 700;
+                  color: rgba(15, 23, 42, 0.6);
+                  border: none;
+                  background: transparent;
+                  cursor: pointer;
+                  transition: color 0.4s ease;
+              }
+              .theme-toggle-pill:not(.night-active) .theme-toggle-btn.btn-day {
+                  color: var(--bg-base);
+              }
+              .theme-toggle-pill:not(.night-active) .theme-toggle-btn.btn-night {
+                  color: rgba(15, 23, 42, 0.6);
+              }
+              .theme-toggle-pill.night-active .theme-toggle-btn.btn-day {
+                  color: rgba(255, 255, 255, 0.6);
+              }
+              .theme-toggle-pill.night-active .theme-toggle-btn.btn-night {
+                  color: var(--bg-base);
+              }
+</style>
 
         <script>
             const initFareToggles = () => {
