@@ -1809,12 +1809,19 @@ select:-webkit-autofill:focus {
 }
 
 .hero-slide-card .glass.card {
-    transition: transform 0.5s cubic-bezier(0.2, 0, 0, 1), opacity 0.5s ease, box-shadow 0.5s ease;
-    transform: scale(0.85);
-    opacity: 0.6;
+    transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.6s ease, box-shadow 0.6s cubic-bezier(0.2, 0.8, 0.2, 1), border 0.6s ease;
+    transform: scale(0.85) translateY(12px);
+    opacity: 0.5;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.03);
 }
 .hero-slide-card.active-slide .glass.card {
-    transform: scale(1);
+    transform: scale(1) translateY(0);
     opacity: 1;
-    box-shadow: 0 10px 20px rgba(6, 182, 212, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 
+        0 8px 25px -5px rgba(0, 0, 0, 0.6),           /* Sombra oscura de contacto directo */
+        0 30px 50px -15px rgba(0, 0, 0, 0.5),         /* Sombra oscura ambiental amplia (levitación) */
+        0 20px 60px -15px rgba(6, 182, 212, 0.2),     /* Resplandor turquesa ancho y difuso */
+        0 0 12px rgba(6, 182, 212, 0.08);             /* Aura turquesa sutil pegada al borde */
 }
