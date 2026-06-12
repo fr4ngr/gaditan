@@ -11,6 +11,7 @@ const translationsEN = {
     "hero-pretitle": "THE BEST INFO GUIDE FOR",
     "hero-title": "Official Taxis <br>in Cádiz",
     "hero-subtitle": "Order a taxi, estimate fares or find the nearest rank. All the info you need at cadiz.taxi",
+    "carousel-section-title": "POPULAR TOOLS",
     
     // Calculator
     "calc-title": "Smart Taximeter",
