@@ -1786,8 +1786,8 @@ select:-webkit-autofill:focus {
     width: 100%;
     overflow: hidden;
     position: relative;
-    margin-top: 3.5rem; /* Increased to give plenty of breathing room from the CTA button */
-    margin-bottom: 2rem; /* Separates the carousel from the trust badges horizontal scroll */
+    margin-top: 2.2rem; /* Gives breathing room from the CTA button */
+    margin-bottom: 1rem; /* Separates the carousel from the trust badges below */
     z-index: 2;
 }
 .hero-carousel-track {
@@ -1797,7 +1797,8 @@ select:-webkit-autofill:focus {
     scroll-behavior: smooth;
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */
-    padding-bottom: 1rem;
+    padding-top: 1.2rem; /* Clearance to prevent active card from cropping at the top when translating up */
+    padding-bottom: 1.8rem; /* Clearance for active card box-shadows and underglow */
     padding-left: 7.5%; /* 100 - 85 = 15 / 2 = 7.5% margin to center the 85% card */
     padding-right: 7.5%;
 }
