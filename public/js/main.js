@@ -319,29 +319,29 @@ document.addEventListener('DOMContentLoaded', () => {
         card.addEventListener('animationend', () => activateGlow(card), { once: true });
     };
 
-    // 1. Tabla urbana: pop-in al entrar en viewport
-    const urbanCard = document.querySelector('.pricing-section .tarifas-card-hover');
-    if (urbanCard) {
-        const observer = new IntersectionObserver((entries, obs) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    triggerPopIn(urbanCard);
-                    obs.unobserve(entry.target);
-                }
-            });
-        }, { threshold: 0.15 });
-        observer.observe(urbanCard);
-    }
+    // 1. Todas las tarjetas: pop-in al entrar en viewport
+    const observer = new IntersectionObserver((entries, obs) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                triggerPopIn(entry.target);
+                obs.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.15 });
+
+    tarifasCards.forEach(card => observer.observe(card));
 
     // 2. Tabla interurbana: pop-in al abrir el acordeón
     fareToggles.forEach(toggle => {
         toggle.addEventListener('click', () => {
             const group = toggle.closest('.fare-group');
             if (group && group.classList.contains('active')) {
-                const interCard = group.querySelector('.tarifas-card-hover');
-                if (interCard && !interCard.classList.contains('tarifas-glow-on')) {
-                    setTimeout(() => triggerPopIn(interCard), 50);
-                }
+                const interCards = group.querySelectorAll('.tarifas-card-hover');
+                interCards.forEach(interCard => {
+                    if (interCard && !interCard.classList.contains('tarifas-glow-on')) {
+                        setTimeout(() => triggerPopIn(interCard), 50);
+                    }
+                });
             }
         });
     });
