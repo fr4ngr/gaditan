@@ -249,7 +249,9 @@
         <!-- Dynamic style and script for single card toggle mode -->
         <style>
             .tarifas-grid.single-card-mode {
-                display: flex;
+                display: grid !important;
+                grid-template-columns: 1fr;
+                grid-template-rows: auto;
                 justify-content: center;
                 max-width: 580px;
                 margin-left: auto;
@@ -257,12 +259,22 @@
                 width: 100%;
             }
             .tarifas-grid.single-card-mode > .fare-wrapper {
+                grid-column: 1 / 2;
+                grid-row: 1 / 2;
                 width: 100%;
-                animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+                display: flex !important;
+                opacity: 0;
+                visibility: hidden;
+                pointer-events: none;
+                transform: translateY(10px);
+                transition: opacity 0.4s ease, visibility 0.4s ease, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+                animation: none !important;
             }
-            @keyframes fadeIn {
-                from { opacity: 0; transform: translateY(10px); }
-                to { opacity: 1; transform: translateY(0); }
+            .tarifas-grid.single-card-mode > .fare-wrapper.active-card {
+                opacity: 1;
+                visibility: visible;
+                pointer-events: auto;
+                transform: translateY(0);
             }
         
               /* From Uiverse.io by JustCode14 */ 
@@ -369,6 +381,13 @@
 
         <script>
             const initFareToggles = () => {
+                document.querySelectorAll('.tarifas-grid.single-card-mode').forEach(grid => {
+                    const dayCard = grid.querySelector('.fare-card-day');
+                    const nightCard = grid.querySelector('.fare-card-night');
+                    if (dayCard) dayCard.classList.add('active-card');
+                    if (nightCard) nightCard.classList.remove('active-card');
+                });
+
                 const toggles = document.querySelectorAll('.uiverse-toggle');
                 toggles.forEach(toggle => {
                     toggle.addEventListener('change', (e) => {
@@ -399,11 +418,11 @@
                         const nightCard = actualGrid.querySelector('.fare-card-night');
                         
                         if (target === 'night') {
-                            if (dayCard) dayCard.style.setProperty('display', 'none', 'important');
-                            if (nightCard) nightCard.style.setProperty('display', 'flex', 'important');
+                            if (dayCard) dayCard.classList.remove('active-card');
+                            if (nightCard) nightCard.classList.add('active-card');
                         } else {
-                            if (nightCard) nightCard.style.setProperty('display', 'none', 'important');
-                            if (dayCard) dayCard.style.setProperty('display', 'flex', 'important');
+                            if (nightCard) nightCard.classList.remove('active-card');
+                            if (dayCard) dayCard.classList.add('active-card');
                         }
                     });
                 });
