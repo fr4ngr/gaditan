@@ -1690,3 +1690,55 @@ select:-webkit-autofill:focus {
         width: 80px;
     }
 }
+
+
+/* ----------------- HERO CAROUSEL ----------------- */
+.hero-carousel-container {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    z-index: 2; /* Ensure it stays above hero-glow */
+}
+.hero-carousel-track {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+}
+.hero-carousel-track::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
+}
+.hero-slide {
+    flex: 0 0 100%;
+    width: 100%;
+    scroll-snap-align: start;
+    padding: 0 1rem;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.hero-dots {
+    display: flex;
+    justify-content: center;
+    gap: 0.8rem;
+    margin-top: 2rem;
+    padding-bottom: 1rem;
+}
+.hero-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+.hero-dot.active {
+    background: var(--brand-cyan);
+    width: 24px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(6, 182, 212, 0.5);
+}
