@@ -322,6 +322,19 @@ section { padding: 5rem 0; }
     .table-responsive { overflow-x: visible !important; padding: 1rem !important; }
 }
 
+/* Grid de Tarifas */
+.tarifas-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+@media (max-width: 768px) {
+    .tarifas-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
 /* Grid Cards */
 .pricing-grid, .grid-features { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; }
 .price-card, .card { 
