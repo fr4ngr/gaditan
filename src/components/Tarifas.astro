@@ -9,8 +9,8 @@
                 <h3 class="subsection-title" style="margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
                     <span data-translate="urban-fares-title">Viaje Urbano</span>
                 </h3>
-                                <div class="theme-toggle-wrapper" style="display: flex; align-items: center; justify-content: flex-end; gap: 1rem; margin-bottom: 0.5rem;">
-    <span class="label-day" style="font-weight: 700; color: var(--bg-base); font-size: 0.95rem; cursor: pointer;" onclick="let cb = this.nextElementSibling.querySelector('input'); if(!cb.checked) cb.click();" data-translate="day-fare-btn">Día</span>
+                                <div class="theme-toggle-wrapper" style="display: flex; align-items: center; justify-content: flex-end; gap: 1rem; margin-bottom: 1.5rem; max-width: 580px; margin-left: auto; margin-right: auto; width: 100%;">
+    <span class="label-day" style="font-weight: 700; color: white; font-size: 0.95rem; cursor: pointer;" onclick="let cb = this.nextElementSibling.querySelector('input'); if(!cb.checked) cb.click();" data-translate="day-fare-btn">Día</span>
     <label class="switch">
       <input checked="true" class="uiverse-toggle" type="checkbox" />
       <span class="slider">
@@ -26,7 +26,7 @@
         </svg>
       </span>
     </label>
-    <span class="label-night" style="font-weight: 700; color: rgba(15, 23, 42, 0.6); font-size: 0.95rem; cursor: pointer;" onclick="let cb = this.previousElementSibling.querySelector('input'); if(cb.checked) cb.click();" data-translate="night-fare-btn">Noche/Festivos</span>
+    <span class="label-night" style="font-weight: 700; color: rgba(255, 255, 255, 0.5); font-size: 0.95rem; cursor: pointer;" onclick="let cb = this.previousElementSibling.querySelector('input'); if(cb.checked) cb.click();" data-translate="night-fare-btn">Noche/Festivos</span>
 </div>
                                 <div class="tarifas-grid single-card-mode">
                     <!-- Tarjeta Día -->
@@ -140,8 +140,8 @@
                         <i data-lucide="chevron-down" class="fare-icon" style="transition: transform 0.3s; transform: rotate(0deg); width: 20px; height: 20px;"></i>
                     </h3>
                     <div class="fare-content" style="overflow: hidden; transition: max-height 0.4s ease; max-height: 0px;">
-                        <div class="theme-toggle-wrapper" style="display: flex; align-items: center; justify-content: flex-end; gap: 1rem; margin-bottom: 0.5rem;">
-    <span class="label-day" style="font-weight: 700; color: var(--bg-base); font-size: 0.95rem; cursor: pointer;" onclick="let cb = this.nextElementSibling.querySelector('input'); if(!cb.checked) cb.click();" data-translate="day-fare-btn">Día</span>
+                        <div class="theme-toggle-wrapper" style="display: flex; align-items: center; justify-content: flex-end; gap: 1rem; margin-bottom: 1.5rem; max-width: 580px; margin-left: auto; margin-right: auto; width: 100%;">
+    <span class="label-day" style="font-weight: 700; color: white; font-size: 0.95rem; cursor: pointer;" onclick="let cb = this.nextElementSibling.querySelector('input'); if(!cb.checked) cb.click();" data-translate="day-fare-btn">Día</span>
     <label class="switch">
       <input checked="true" class="uiverse-toggle" type="checkbox" />
       <span class="slider">
@@ -157,7 +157,7 @@
         </svg>
       </span>
     </label>
-    <span class="label-night" style="font-weight: 700; color: rgba(15, 23, 42, 0.6); font-size: 0.95rem; cursor: pointer;" onclick="let cb = this.previousElementSibling.querySelector('input'); if(cb.checked) cb.click();" data-translate="night-fare-btn">Noche/Festivos</span>
+    <span class="label-night" style="font-weight: 700; color: rgba(255, 255, 255, 0.5); font-size: 0.95rem; cursor: pointer;" onclick="let cb = this.previousElementSibling.querySelector('input'); if(cb.checked) cb.click();" data-translate="night-fare-btn">Noche/Festivos</span>
 </div>
                           <div class="tarifas-grid single-card-mode" style="margin-top: 1rem;">
                             <!-- Tarjeta Interurbana Día -->
@@ -384,11 +384,11 @@
                         const labelDay = wrapper.querySelector('.label-day');
                         const labelNight = wrapper.querySelector('.label-night');
                         if (isDay) {
-                            if (labelDay) labelDay.style.color = 'var(--bg-base)';
-                            if (labelNight) labelNight.style.color = 'rgba(15, 23, 42, 0.6)';
+                            if (labelDay) labelDay.style.color = 'white';
+                            if (labelNight) labelNight.style.color = 'rgba(255, 255, 255, 0.5)';
                         } else {
-                            if (labelDay) labelDay.style.color = 'rgba(15, 23, 42, 0.6)';
-                            if (labelNight) labelNight.style.color = 'var(--bg-base)';
+                            if (labelDay) labelDay.style.color = 'rgba(255, 255, 255, 0.5)';
+                            if (labelNight) labelNight.style.color = 'white';
                         }
                         
                         const dayCard = actualGrid.querySelector('.fare-card-day');
