@@ -38,7 +38,7 @@
   box-shadow: 0 0 3px #f6f6f6;
   filter: blur(.4px);
   position: relative;
-  overflow: hidden;
+  /* overflow: hidden removed to allow shadow to cover the border! */
 }
 
 .moon-shadow {
@@ -48,21 +48,17 @@
   background-color: var(--brand-cyan, #06b6d4); /* Use header background color so it looks transparent! */
   position: absolute;
   top: -10px;
-  left: 0;
-  animation: moon-animate 3s infinite 1.5s;
+  left: -10px;
+  animation: moon-animate 3s linear infinite;
 }
 
 @keyframes moon-animate {
   0% {
-    transform: translateX(110px);
-  }
-
-  50% {
-    transform: translateX(-20px);
+    transform: translateX(130px);
   }
 
   100% {
-    transform: translateX(-140px);
+    transform: translateX(-130px);
   }
 }
 </style>
