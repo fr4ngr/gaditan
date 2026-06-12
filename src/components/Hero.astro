@@ -19,8 +19,16 @@
     <div class="hero-subcards-carousel">
         <div class="hero-carousel-track" id="heroTrack">
             
+            <!-- CLON: Destinos (para el scroll infinito hacia atrás) -->
+            <a href="#destinos" class="hero-slide-card clone" data-real-index="2" style="text-decoration: none; display: block;">
+                <div class="glass card" style="padding: 1.2rem; text-align: left; height: 100%; display: flex; flex-direction: column; justify-content: center;">
+                    <h3 style="color: white; margin-bottom: 0.4rem; font-size: 1.3rem; line-height: 1.2;">Viajes a la Provincia</h3>
+                    <p style="color: rgba(255,255,255,0.7); font-size: 0.85rem; margin: 0; line-height: 1.4;">Conoce los pueblos blancos, playas o viaja al aeropuerto.</p>
+                </div>
+            </a>
+
             <!-- TARJETA 1: Calculadora -->
-            <a href="#calculadora" class="hero-slide-card active-slide" style="text-decoration: none; display: block;">
+            <a href="#calculadora" class="hero-slide-card" data-real-index="0" style="text-decoration: none; display: block;">
                 <div class="glass card" style="padding: 1.2rem; text-align: left; height: 100%; display: flex; flex-direction: column; justify-content: center;">
                     <h3 style="color: white; margin-bottom: 0.4rem; font-size: 1.3rem; line-height: 1.2;">Calculadora de Viaje</h3>
                     <p style="color: rgba(255,255,255,0.7); font-size: 0.85rem; margin: 0; line-height: 1.4;">Estima tu trayecto basado en las tarifas oficiales publicadas en el BOJA.</p>
@@ -28,7 +36,7 @@
             </a>
 
             <!-- TARJETA 2: Mapa de Paradas -->
-            <a href="#paradas" class="hero-slide-card" style="text-decoration: none; display: block;">
+            <a href="#paradas" class="hero-slide-card" data-real-index="1" style="text-decoration: none; display: block;">
                 <div class="glass card" style="padding: 1.2rem; text-align: left; height: 100%; display: flex; flex-direction: column; justify-content: center;">
                     <h3 style="color: white; margin-bottom: 0.4rem; font-size: 1.3rem; line-height: 1.2;">Mapa de Paradas</h3>
                     <p style="color: rgba(255,255,255,0.7); font-size: 0.85rem; margin: 0; line-height: 1.4;">Encuentra la parada oficial más cercana a tu ubicación actual.</p>
@@ -36,10 +44,18 @@
             </a>
 
             <!-- TARJETA 3: Destinos -->
-            <a href="#destinos" class="hero-slide-card" style="text-decoration: none; display: block;">
+            <a href="#destinos" class="hero-slide-card" data-real-index="2" style="text-decoration: none; display: block;">
                 <div class="glass card" style="padding: 1.2rem; text-align: left; height: 100%; display: flex; flex-direction: column; justify-content: center;">
                     <h3 style="color: white; margin-bottom: 0.4rem; font-size: 1.3rem; line-height: 1.2;">Viajes a la Provincia</h3>
                     <p style="color: rgba(255,255,255,0.7); font-size: 0.85rem; margin: 0; line-height: 1.4;">Conoce los pueblos blancos, playas o viaja al aeropuerto.</p>
+                </div>
+            </a>
+            
+            <!-- CLON: Calculadora (para el scroll infinito hacia adelante) -->
+            <a href="#calculadora" class="hero-slide-card clone" data-real-index="0" style="text-decoration: none; display: block;">
+                <div class="glass card" style="padding: 1.2rem; text-align: left; height: 100%; display: flex; flex-direction: column; justify-content: center;">
+                    <h3 style="color: white; margin-bottom: 0.4rem; font-size: 1.3rem; line-height: 1.2;">Calculadora de Viaje</h3>
+                    <p style="color: rgba(255,255,255,0.7); font-size: 0.85rem; margin: 0; line-height: 1.4;">Estima tu trayecto basado en las tarifas oficiales publicadas en el BOJA.</p>
                 </div>
             </a>
 
@@ -55,7 +71,7 @@
 </section>
 
 <script>
-    // Lógica del Carrusel Magnético Nativo (5s fijos por tarjeta con Barra de Progreso)
+    // Lógica del Carrusel Magnético Infinito
     document.addEventListener('DOMContentLoaded', () => {
         const track = document.getElementById('heroTrack');
         const dots = document.querySelectorAll('.hero-dot');
@@ -63,25 +79,39 @@
         
         if(!track || dots.length === 0) return;
 
-        let currentIndex = 0;
+        let currentDomIndex = 1; // 1 is the first REAL slide (since 0 is the clone of the last slide)
         let autoPlayTimer;
         const slideTime = 5000;
 
-        const updateDots = (index) => {
-            dots.forEach(dot => {
+        // Position initial scroll seamlessly
+        setTimeout(() => {
+            track.style.scrollBehavior = 'auto';
+            track.scrollTo({ left: slides[currentDomIndex].offsetLeft - track.offsetLeft - (track.offsetWidth * 0.075) });
+            setTimeout(() => {
+                track.style.scrollBehavior = 'smooth';
+                updateDotsAndClasses(currentDomIndex);
+                startAutoPlay();
+            }, 50);
+        }, 100);
+
+        const updateDotsAndClasses = (domIndex) => {
+            if(!slides[domIndex]) return;
+            const realIndex = parseInt(slides[domIndex].dataset.realIndex);
+            
+            dots.forEach((dot, i) => {
                 dot.classList.remove('active');
                 const progress = dot.querySelector('.hero-dot-progress');
                 if(progress) {
                     progress.style.transition = 'none';
                     progress.style.width = '0%';
                 }
+                if(i === realIndex) {
+                    dot.classList.add('active');
+                }
             });
-            if(dots[index]) {
-                dots[index].classList.add('active');
-            }
-
+            
             slides.forEach((slide, i) => {
-                if (i === index) {
+                if (i === domIndex) {
                     slide.classList.add('active-slide');
                 } else {
                     slide.classList.remove('active-slide');
@@ -89,31 +119,44 @@
             });
         };
 
-        const goToSlide = (index) => {
+        const goToDomIndex = (index, smooth = true) => {
             if(index < 0 || index >= slides.length) return;
-            currentIndex = index;
-            // Scroll exacto a la tarjeta teniendo en cuenta el padding inicial (7.5%)
+            currentDomIndex = index;
+            
+            track.style.scrollBehavior = smooth ? 'smooth' : 'auto';
             track.scrollTo({
-                left: slides[index].offsetLeft - track.offsetLeft - (track.offsetWidth * 0.075),
-                behavior: 'smooth'
+                left: slides[index].offsetLeft - track.offsetLeft - (track.offsetWidth * 0.075)
             });
-            updateDots(index);
-            startAutoPlay();
+            
+            updateDotsAndClasses(index);
+        };
+
+        const handleInfiniteScroll = () => {
+            // Wait for smooth scrolling to visually finish
+            setTimeout(() => {
+                if (currentDomIndex === slides.length - 1) {
+                    // Reached the end clone, silently jump to real first slide
+                    goToDomIndex(1, false);
+                } else if (currentDomIndex === 0) {
+                    // Reached the start clone, silently jump to real last slide
+                    goToDomIndex(slides.length - 2, false);
+                }
+            }, 400); 
         };
 
         const nextSlide = () => {
-            let nextIdx = currentIndex + 1;
-            if(nextIdx >= slides.length) nextIdx = 0;
-            goToSlide(nextIdx);
+            goToDomIndex(currentDomIndex + 1);
+            handleInfiniteScroll();
+            startAutoPlay();
         };
 
         const startAutoPlay = () => {
             clearTimeout(autoPlayTimer);
+            const realIndex = parseInt(slides[currentDomIndex].dataset.realIndex);
+            const activeProgress = dots[realIndex]?.querySelector('.hero-dot-progress');
             
-            // Start progress animation
-            const activeProgress = dots[currentIndex]?.querySelector('.hero-dot-progress');
             if(activeProgress) {
-                // Force reflow to ensure transition restarts
+                // Ensure the transition starts from 0 cleanly
                 activeProgress.style.transition = 'none';
                 activeProgress.style.width = '0%';
                 void activeProgress.offsetWidth; 
@@ -121,56 +164,66 @@
                 activeProgress.style.transition = `width ${slideTime}ms linear`;
                 activeProgress.style.width = '100%';
             }
-
             autoPlayTimer = setTimeout(nextSlide, slideTime);
         };
 
         const stopAutoPlay = () => {
             clearTimeout(autoPlayTimer);
-            const activeProgress = dots[currentIndex]?.querySelector('.hero-dot-progress');
+            const realIndex = parseInt(slides[currentDomIndex].dataset.realIndex);
+            const activeProgress = dots[realIndex]?.querySelector('.hero-dot-progress');
             if(activeProgress) {
-                // Freeze the progress bar where it is
                 const computedWidth = window.getComputedStyle(activeProgress).width;
                 activeProgress.style.transition = 'none';
                 activeProgress.style.width = computedWidth;
             }
         };
 
-        // Click en puntitos
+        // Determine which slide is visually closest to the center
+        const getClosestSlideIndex = () => {
+            let minDiff = Infinity;
+            let closestIndex = 1;
+            const trackCenter = track.scrollLeft + (track.offsetWidth / 2);
+            
+            slides.forEach((slide, index) => {
+                const slideCenter = slide.offsetLeft - track.offsetLeft + (slide.offsetWidth / 2);
+                const diff = Math.abs(trackCenter - slideCenter);
+                if (diff < minDiff) {
+                    minDiff = diff;
+                    closestIndex = index;
+                }
+            });
+            return closestIndex;
+        };
+
         dots.forEach(dot => {
             dot.addEventListener('click', (e) => {
-                // Find parent dot if click on progress inner div
                 const targetDot = e.target.closest('.hero-dot');
                 if(!targetDot) return;
-                const index = parseInt(targetDot.dataset.index);
-                goToSlide(index);
+                const realIndex = parseInt(targetDot.dataset.index);
+                // Map dot index to real slide DOM index (offset by 1 due to the first clone)
+                goToDomIndex(realIndex + 1);
+                startAutoPlay();
             });
         });
 
-        // Swipe manual táctil
         let isScrolling;
         track.addEventListener('scroll', () => {
             stopAutoPlay();
             
             window.clearTimeout(isScrolling);
             isScrolling = setTimeout(() => {
-                const scrollLeft = track.scrollLeft;
-                const slideWidth = slides[0].offsetWidth;
-                const newIndex = Math.round(scrollLeft / slideWidth);
+                const newIndex = getClosestSlideIndex();
                 
-                if (newIndex !== currentIndex && newIndex >= 0 && newIndex < slides.length) {
-                    currentIndex = newIndex;
-                    updateDots(currentIndex);
+                if (newIndex !== currentDomIndex) {
+                    currentDomIndex = newIndex;
+                    updateDotsAndClasses(currentDomIndex);
+                    handleInfiniteScroll();
                 } else {
-                    // Reset progress if they swiped but didn't change slide
-                    updateDots(currentIndex);
+                    updateDotsAndClasses(currentDomIndex);
                 }
                 
                 startAutoPlay();
             }, 150);
         });
-
-        // Iniciar
-        startAutoPlay();
     });
 </script>

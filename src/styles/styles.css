@@ -1816,5 +1816,5 @@ select:-webkit-autofill:focus {
 .hero-slide-card.active-slide .glass.card {
     transform: scale(1);
     opacity: 1;
-    box-shadow: 0 15px 35px rgba(6, 182, 212, 0.2);
+    box-shadow: 0 10px 20px rgba(6, 182, 212, 0.08);
 }
