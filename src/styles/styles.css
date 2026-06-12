@@ -1786,7 +1786,8 @@ select:-webkit-autofill:focus {
     width: 100%;
     overflow: hidden;
     position: relative;
-    margin-top: 1rem;
+    margin-top: 3.5rem; /* Increased to give plenty of breathing room from the CTA button */
+    margin-bottom: 2rem; /* Separates the carousel from the trust badges horizontal scroll */
     z-index: 2;
 }
 .hero-carousel-track {
@@ -1816,12 +1817,12 @@ select:-webkit-autofill:focus {
 .hero-slide-card::before {
     content: '';
     position: absolute;
-    top: 30%;
-    left: 15%;
-    right: 15%;
-    bottom: -5%;
+    top: 50%;
+    left: 20%;
+    right: 20%;
+    bottom: 5%;
     background: var(--brand-cyan);
-    filter: blur(25px);
+    filter: blur(15px); /* Tightened blur to keep the glow concentrated under the card */
     opacity: 0;
     border-radius: 50%;
     z-index: -1;
@@ -1830,8 +1831,8 @@ select:-webkit-autofill:focus {
     pointer-events: none;
 }
 .hero-slide-card.active-slide::before {
-    opacity: 0.45;
-    transform: translateY(2px) scale(1.05);
+    opacity: 0.35; /* Softened glow opacity */
+    transform: translateY(2px) scale(1.02);
 }
 
 .hero-dots {
@@ -1870,12 +1871,12 @@ select:-webkit-autofill:focus {
     opacity: 1;
     border: 1px solid rgba(255, 255, 255, 0.25);
     border-top: 1px solid rgba(255, 255, 255, 0.6); /* Reflejo superior intenso para volumen */
-    border-bottom: 1px solid rgba(6, 182, 212, 0.3); /* Reflejo del neón en el borde inferior */
+    border-bottom: 1px solid rgba(6, 182, 212, 0.2); /* Reflejo del neón en el borde inferior */
     box-shadow: 
-        0 12px 24px -4px rgba(0, 0, 0, 0.5), /* Sombra física pesada */
-        0 20px 40px -10px rgba(6, 182, 212, 0.5), /* Brillo turquesa proyectado volumétrico */
-        inset 0 1px 3px rgba(255, 255, 255, 0.6), /* Reflejo de bisel superior */
-        inset 0 -3px 10px rgba(6, 182, 212, 0.2); /* Luz rebotando dentro del cristal */
+        0 10px 20px -5px rgba(0, 0, 0, 0.5), /* Tighter physical shadow */
+        0 12px 24px -8px rgba(6, 182, 212, 0.4), /* Focused, compact cyan glow shadow */
+        inset 0 1px 3px rgba(255, 255, 255, 0.5), /* Reflejo de bisel superior */
+        inset 0 -2px 8px rgba(6, 182, 212, 0.15); /* Luz rebotando dentro del cristal */
 }
 
 /* Disable transitions during silent infinite carousel jumps to prevent flickering */
