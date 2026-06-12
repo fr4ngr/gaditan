@@ -66,7 +66,10 @@
 
         <!-- Paginación -->
         <div class="hero-dots" id="heroDots">
-            <div class="hero-dot active" data-index="0"></div>
+            <div class="hero-dot active" data-index="0"><div class="hero-dot-progress"></div></div>
+            <div class="hero-dot" data-index="1"><div class="hero-dot-progress"></div></div>
+            <div class="hero-dot" data-index="2"><div class="hero-dot-progress"></div></div>
+        </div>
             <div class="hero-dot" data-index="1"></div>
             <div class="hero-dot" data-index="2"></div>
         </div>
@@ -74,7 +77,7 @@
 </section>
 
 <script>
-    // Lógica del Carrusel Magnético Nativo (5s fijos por tarjeta)
+    // Lógica del Carrusel Magnético Nativo (5s fijos por tarjeta con Barra de Progreso)
     document.addEventListener('DOMContentLoaded', () => {
         const track = document.getElementById('heroTrack');
         const dots = document.querySelectorAll('.hero-dot');
@@ -84,13 +87,20 @@
 
         let currentIndex = 0;
         let autoPlayTimer;
-        
-        // Tiempo uniforme de 5s por tarjeta ya que el Héroe principal está fijo
         const slideTime = 5000;
 
         const updateDots = (index) => {
-            dots.forEach(dot => dot.classList.remove('active'));
-            if(dots[index]) dots[index].classList.add('active');
+            dots.forEach(dot => {
+                dot.classList.remove('active');
+                const progress = dot.querySelector('.hero-dot-progress');
+                if(progress) {
+                    progress.style.transition = 'none';
+                    progress.style.width = '0%';
+                }
+            });
+            if(dots[index]) {
+                dots[index].classList.add('active');
+            }
         };
 
         const goToSlide = (index) => {
@@ -113,13 +123,40 @@
 
         const startAutoPlay = () => {
             clearTimeout(autoPlayTimer);
+            
+            // Start progress animation
+            const activeProgress = dots[currentIndex]?.querySelector('.hero-dot-progress');
+            if(activeProgress) {
+                // Force reflow to ensure transition restarts
+                activeProgress.style.transition = 'none';
+                activeProgress.style.width = '0%';
+                void activeProgress.offsetWidth; 
+                
+                activeProgress.style.transition = `width ${slideTime}ms linear`;
+                activeProgress.style.width = '100%';
+            }
+
             autoPlayTimer = setTimeout(nextSlide, slideTime);
+        };
+
+        const stopAutoPlay = () => {
+            clearTimeout(autoPlayTimer);
+            const activeProgress = dots[currentIndex]?.querySelector('.hero-dot-progress');
+            if(activeProgress) {
+                // Freeze the progress bar where it is
+                const computedWidth = window.getComputedStyle(activeProgress).width;
+                activeProgress.style.transition = 'none';
+                activeProgress.style.width = computedWidth;
+            }
         };
 
         // Click en puntitos
         dots.forEach(dot => {
             dot.addEventListener('click', (e) => {
-                const index = parseInt(e.target.dataset.index);
+                // Find parent dot if click on progress inner div
+                const targetDot = e.target.closest('.hero-dot');
+                if(!targetDot) return;
+                const index = parseInt(targetDot.dataset.index);
                 goToSlide(index);
             });
         });
@@ -127,7 +164,7 @@
         // Swipe manual táctil
         let isScrolling;
         track.addEventListener('scroll', () => {
-            clearTimeout(autoPlayTimer);
+            stopAutoPlay();
             
             window.clearTimeout(isScrolling);
             isScrolling = setTimeout(() => {
@@ -137,6 +174,9 @@
                 
                 if (newIndex !== currentIndex && newIndex >= 0 && newIndex < slides.length) {
                     currentIndex = newIndex;
+                    updateDots(currentIndex);
+                } else {
+                    // Reset progress if they swiped but didn't change slide
                     updateDots(currentIndex);
                 }
                 

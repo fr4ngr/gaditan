@@ -1730,18 +1730,29 @@ select:-webkit-autofill:focus {
     padding-bottom: 1rem;
 }
 .hero-dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.3);
+    position: relative;
+    width: 8px;
+    height: 8px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.2);
     cursor: pointer;
-    transition: all 0.3s ease;
+    overflow: hidden;
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1), background 0.4s;
 }
 .hero-dot.active {
+    width: 40px;
+    background: rgba(255, 255, 255, 0.1);
+}
+.hero-dot-progress {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 0%;
     background: var(--brand-cyan);
-    width: 24px;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(6, 182, 212, 0.5);
+    border-radius: 4px;
+    box-shadow: 0 0 8px rgba(6, 182, 212, 0.6);
+    /* Transition is handled via JS */
 }
 
 
