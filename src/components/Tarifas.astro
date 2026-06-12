@@ -1,6 +1,4 @@
 ---
-import AnimatedSun from './AnimatedSun.astro';
-import AnimatedMoon from './AnimatedMoon.astro';
 ---
         <!-- Precios -->
         <section class="pricing-section" id="tarifas">
@@ -35,73 +33,38 @@ import AnimatedMoon from './AnimatedMoon.astro';
     </label>
 </div>
                                 <div class="tarifas-grid single-card-mode">
-                    <!-- Tarjeta Día -->
-                    <div class="fare-wrapper fare-card-day" style="width: 100%; display: flex; flex-direction: column;">
-                        
+                    <div class="fare-wrapper dynamic-fare-card" style="width: 100%; display: flex; flex-direction: column;" id="urban-fare-card">
                         <div class="glass card tarifas-card-hover" style="padding: 0; overflow: hidden; display: flex; flex-direction: column; gap: 0; text-align: left; background: #ffffff; border: 1px solid rgba(6, 182, 212, 0.25);">
-                        <div style="background: var(--brand-cyan); padding: 1.5rem 2rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; border-bottom: 1px solid rgba(15, 23, 42, 0.15);">
-                            <div style="display: flex; align-items: center; gap: 1rem;">
-                                <AnimatedSun />
-                                <div>
-                                    <h4 style="margin: 0; font-size: 1.25rem; font-weight: 800; color: var(--bg-base);" data-translate="day-fare">Tarifa Diurna</h4>
-                                    <p style="margin: 0.2rem 0 0 0; font-size: 0.85rem; color: rgba(15, 23, 42, 0.75); font-weight: 500;" data-translate="day-fare-sub">Lunes a Viernes (7h - 21h)</p>
+                            <div style="background: var(--brand-cyan); padding: 1.5rem 2rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; border-bottom: 1px solid rgba(15, 23, 42, 0.15);">
+                                <div style="display: flex; align-items: center; gap: 1rem;">
+                                    <div style="width: 80px; height: 80px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; margin-left: -10px;">
+                                        <lottie-player id="lottie-urban" src="/moon-lottie.json" background="transparent" speed="1.5" style="width: 100%; height: 100%;" mode="normal"></lottie-player>
+                                    </div>
+                                    <div>
+                                        <h4 class="dyn-title" style="margin: 0; font-size: 1.25rem; font-weight: 800; color: var(--bg-base); transition: opacity 0.3s;" data-day="Tarifa Diurna" data-night="Tarifa Nocturna / Festivos">Tarifa Diurna</h4>
+                                        <p class="dyn-subtitle" style="margin: 0.2rem 0 0 0; font-size: 0.85rem; color: rgba(15, 23, 42, 0.75); font-weight: 500; transition: opacity 0.3s;" data-day="Lunes a Viernes (7h - 21h)" data-night="Noches, Sábados, Domingos y Festivos">Lunes a Viernes (7h - 21h)</p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        
-                        <div style="padding: 2rem; display: flex; flex-direction: column; gap: 1rem; background: #ffffff;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(15, 23, 42, 0.1); padding-bottom: 0.5rem;">
-                                <span style="color: rgba(15, 23, 42, 0.75); font-weight: 500;" data-translate="min-fare">Carrera mínima</span>
-                                <strong style="color: var(--bg-base); font-size: 1.1rem;">3,56 €</strong>
-                            </div>
-                            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(15, 23, 42, 0.1); padding-bottom: 0.5rem;">
-                                <span style="color: rgba(15, 23, 42, 0.75); font-weight: 500;" data-translate="flag-drop">Bajada bandera</span>
-                                <strong style="color: var(--bg-base); font-size: 1.1rem;">1,39 €</strong>
-                            </div>
-                            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(15, 23, 42, 0.1); padding-bottom: 0.5rem;">
-                                <span style="color: rgba(15, 23, 42, 0.75); font-weight: 500;" data-translate="price-km">Precio kilómetro</span>
-                                <strong style="color: var(--bg-base); font-size: 1.1rem;">0,70 €</strong>
-                            </div>
-                            <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 0.2rem;">
-                                <span style="color: rgba(15, 23, 42, 0.75); font-weight: 500;" data-translate="waiting-hour">Hora de espera</span>
-                                <strong style="color: var(--bg-base); font-size: 1.1rem;">18,97 €</strong>
-                            </div>
-                        </div>
-                        </div>
-                    </div>
-
-                    <!-- Tarjeta Noche -->
-                    <div class="fare-wrapper fare-card-night" style="width: 100%; flex-direction: column;">
-                        
-                        <div class="glass card tarifas-card-hover" style="padding: 0; overflow: hidden; display: flex; flex-direction: column; gap: 0; text-align: left; background: #ffffff; border: 1px solid rgba(6, 182, 212, 0.25);">
-                        <div style="background: var(--brand-cyan); padding: 1.5rem 2rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; border-bottom: 1px solid rgba(15, 23, 42, 0.15);">
-                            <div style="display: flex; align-items: center; gap: 1rem;">
-                                <AnimatedMoon />
-                                <div>
-                                    <h4 style="margin: 0; font-size: 1.25rem; font-weight: 800; color: var(--bg-base);" data-translate="night-fare">Tarifa Nocturna / Festivos</h4>
-                                    <p style="margin: 0.2rem 0 0 0; font-size: 0.85rem; color: rgba(15, 23, 42, 0.75); font-weight: 500;" data-translate="night-fare-sub">Noches, Sábados, Domingos y Festivos</p>
+                            
+                            <div style="padding: 2rem; display: flex; flex-direction: column; gap: 1rem; background: #ffffff;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(15, 23, 42, 0.1); padding-bottom: 0.5rem;">
+                                    <span style="color: rgba(15, 23, 42, 0.75); font-weight: 500;" data-translate="min-fare">Carrera mínima</span>
+                                    <strong class="dyn-price" style="color: var(--bg-base); font-size: 1.1rem; transition: opacity 0.3s;" data-day="3,56 €" data-night="4,43 €">3,56 €</strong>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(15, 23, 42, 0.1); padding-bottom: 0.5rem;">
+                                    <span style="color: rgba(15, 23, 42, 0.75); font-weight: 500;" data-translate="flag-drop">Bajada bandera</span>
+                                    <strong class="dyn-price" style="color: var(--bg-base); font-size: 1.1rem; transition: opacity 0.3s;" data-day="1,39 €" data-night="1,73 €">1,39 €</strong>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(15, 23, 42, 0.1); padding-bottom: 0.5rem;">
+                                    <span style="color: rgba(15, 23, 42, 0.75); font-weight: 500;" data-translate="price-km">Precio kilómetro</span>
+                                    <strong class="dyn-price" style="color: var(--bg-base); font-size: 1.1rem; transition: opacity 0.3s;" data-day="0,70 €" data-night="0,90 €">0,70 €</strong>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 0.2rem;">
+                                    <span style="color: rgba(15, 23, 42, 0.75); font-weight: 500;" data-translate="waiting-hour">Hora de espera</span>
+                                    <strong class="dyn-price" style="color: var(--bg-base); font-size: 1.1rem; transition: opacity 0.3s;" data-day="18,97 €" data-night="23,66 €">18,97 €</strong>
                                 </div>
                             </div>
-                        </div>
-                        
-                        <div style="padding: 2rem; display: flex; flex-direction: column; gap: 1rem; background: #ffffff;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(15, 23, 42, 0.1); padding-bottom: 0.5rem;">
-                                <span style="color: rgba(15, 23, 42, 0.75); font-weight: 500;" data-translate="min-fare">Carrera mínima</span>
-                                <strong style="color: var(--bg-base); font-size: 1.1rem;">4,43 €</strong>
-                            </div>
-                            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(15, 23, 42, 0.1); padding-bottom: 0.5rem;">
-                                <span style="color: rgba(15, 23, 42, 0.75); font-weight: 500;" data-translate="flag-drop">Bajada bandera</span>
-                                <strong style="color: var(--bg-base); font-size: 1.1rem;">1,73 €</strong>
-                            </div>
-                            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(15, 23, 42, 0.1); padding-bottom: 0.5rem;">
-                                <span style="color: rgba(15, 23, 42, 0.75); font-weight: 500;" data-translate="price-km">Precio kilómetro</span>
-                                <strong style="color: var(--bg-base); font-size: 1.1rem;">0,90 €</strong>
-                            </div>
-                            <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 0.2rem;">
-                                <span style="color: rgba(15, 23, 42, 0.75); font-weight: 500;" data-translate="waiting-hour">Hora de espera</span>
-                                <strong style="color: var(--bg-base); font-size: 1.1rem;">23,66 €</strong>
-                            </div>
-                        </div>
                         </div>
                     </div>
                 </div>
@@ -164,73 +127,38 @@ import AnimatedMoon from './AnimatedMoon.astro';
     </label>
 </div>
                           <div class="tarifas-grid single-card-mode" style="margin-top: 1rem;">
-                            <!-- Tarjeta Interurbana Día -->
-                            <div class="fare-wrapper fare-card-day" style="width: 100%; display: flex; flex-direction: column;">
-                                    
-                                    <div class="glass card tarifas-card-hover" style="padding: 0; overflow: hidden; display: flex; flex-direction: column; gap: 0; text-align: left; background: #ffffff; border: 1px solid rgba(6, 182, 212, 0.25);">
-                                <div style="background: var(--brand-cyan); padding: 1.5rem 2rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; border-bottom: 1px solid rgba(15, 23, 42, 0.15);">
-                                    <div style="display: flex; align-items: center; gap: 1rem;">
-                                        <AnimatedSun />
-                                        <div>
-                                            <h4 style="margin: 0; font-size: 1.25rem; font-weight: 800; color: var(--bg-base);" data-translate="day-fare">Tarifa Diurna</h4>
-                                            <p style="margin: 0.2rem 0 0 0; font-size: 0.85rem; color: rgba(15, 23, 42, 0.75); font-weight: 500;" data-translate="inter-day-fare-sub">Lunes a Viernes (6h - 22h)</p>
+                            <div class="fare-wrapper dynamic-fare-card" style="width: 100%; display: flex; flex-direction: column;" id="interurban-fare-card">
+                                <div class="glass card tarifas-card-hover" style="padding: 0; overflow: hidden; display: flex; flex-direction: column; gap: 0; text-align: left; background: #ffffff; border: 1px solid rgba(6, 182, 212, 0.25);">
+                                    <div style="background: var(--brand-cyan); padding: 1.5rem 2rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; border-bottom: 1px solid rgba(15, 23, 42, 0.15);">
+                                        <div style="display: flex; align-items: center; gap: 1rem;">
+                                            <div style="width: 80px; height: 80px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; margin-left: -10px;">
+                                                <lottie-player id="lottie-interurban" src="/moon-lottie.json" background="transparent" speed="1.5" style="width: 100%; height: 100%;" mode="normal"></lottie-player>
+                                            </div>
+                                            <div>
+                                                <h4 class="dyn-title" style="margin: 0; font-size: 1.25rem; font-weight: 800; color: var(--bg-base); transition: opacity 0.3s;" data-day="Tarifa Diurna" data-night="Tarifa Nocturna / Festivos">Tarifa Diurna</h4>
+                                                <p class="dyn-subtitle" style="margin: 0.2rem 0 0 0; font-size: 0.85rem; color: rgba(15, 23, 42, 0.75); font-weight: 500; transition: opacity 0.3s;" data-day="Lunes a Viernes (6h - 22h)" data-night="Noches y Festivos">Lunes a Viernes (6h - 22h)</p>
+                                            </div>
                                         </div>
                                     </div>
-                                    </div>
-                                
-                                <div style="padding: 2rem; display: flex; flex-direction: column; gap: 1rem; background: #ffffff;">
-                                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(15, 23, 42, 0.1); padding-bottom: 0.5rem;">
-                                        <span style="color: rgba(15, 23, 42, 0.75); font-weight: 500;" data-translate="min-fare">Carrera mínima</span>
-                                        <strong style="color: var(--bg-base); font-size: 1.1rem;">3,83 €</strong>
-                                    </div>
-                                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(15, 23, 42, 0.1); padding-bottom: 0.5rem;">
-                                        <span style="color: rgba(15, 23, 42, 0.75); font-weight: 500;" data-translate="flag-drop">Bajada bandera</span>
-                                        <strong style="color: var(--bg-base); font-size: 1.1rem;">3,66 €</strong>
-                                    </div>
-                                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(15, 23, 42, 0.1); padding-bottom: 0.5rem;">
-                                        <span style="color: rgba(15, 23, 42, 0.75); font-weight: 500;" data-translate="price-km">Precio kilómetro</span>
-                                        <strong style="color: var(--bg-base); font-size: 1.1rem;">0,71 €</strong>
-                                    </div>
-                                    <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 0.2rem;">
-                                        <span style="color: rgba(15, 23, 42, 0.75); font-weight: 500;" data-translate="waiting-hour">Hora de espera</span>
-                                        <strong style="color: var(--bg-base); font-size: 1.1rem;">17,57 €</strong>
-                                    </div>
-                                </div>
-                                </div>
-                            </div>
-
-                            <!-- Tarjeta Interurbana Noche -->
-                            <div class="fare-wrapper fare-card-night" style="width: 100%; flex-direction: column;">
                                     
-                                    <div class="glass card tarifas-card-hover" style="padding: 0; overflow: hidden; display: flex; flex-direction: column; gap: 0; text-align: left; background: #ffffff; border: 1px solid rgba(6, 182, 212, 0.25);">
-                                <div style="background: var(--brand-cyan); padding: 1.5rem 2rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; border-bottom: 1px solid rgba(15, 23, 42, 0.15);">
-                                    <div style="display: flex; align-items: center; gap: 1rem;">
-                                        <AnimatedMoon />
-                                        <div>
-                                            <h4 style="margin: 0; font-size: 1.25rem; font-weight: 800; color: var(--bg-base);" data-translate="night-fare">Tarifa Nocturna / Festivos</h4>
-                                            <p style="margin: 0.2rem 0 0 0; font-size: 0.85rem; color: rgba(15, 23, 42, 0.75); font-weight: 500;" data-translate="inter-night-fare-sub">Noches y Festivos</p>
+                                    <div style="padding: 2rem; display: flex; flex-direction: column; gap: 1rem; background: #ffffff;">
+                                        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(15, 23, 42, 0.1); padding-bottom: 0.5rem;">
+                                            <span style="color: rgba(15, 23, 42, 0.75); font-weight: 500;" data-translate="min-fare">Carrera mínima</span>
+                                            <strong class="dyn-price" style="color: var(--bg-base); font-size: 1.1rem; transition: opacity 0.3s;" data-day="3,83 €" data-night="4,51 €">3,83 €</strong>
+                                        </div>
+                                        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(15, 23, 42, 0.1); padding-bottom: 0.5rem;">
+                                            <span style="color: rgba(15, 23, 42, 0.75); font-weight: 500;" data-translate="flag-drop">Bajada bandera</span>
+                                            <strong class="dyn-price" style="color: var(--bg-base); font-size: 1.1rem; transition: opacity 0.3s;" data-day="3,66 €" data-night="3,60 €">3,66 €</strong>
+                                        </div>
+                                        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(15, 23, 42, 0.1); padding-bottom: 0.5rem;">
+                                            <span style="color: rgba(15, 23, 42, 0.75); font-weight: 500;" data-translate="price-km">Precio kilómetro</span>
+                                            <strong class="dyn-price" style="color: var(--bg-base); font-size: 1.1rem; transition: opacity 0.3s;" data-day="0,71 €" data-night="0,82 €">0,71 €</strong>
+                                        </div>
+                                        <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 0.2rem;">
+                                            <span style="color: rgba(15, 23, 42, 0.75); font-weight: 500;" data-translate="waiting-hour">Hora de espera</span>
+                                            <strong class="dyn-price" style="color: var(--bg-base); font-size: 1.1rem; transition: opacity 0.3s;" data-day="17,57 €" data-night="20,71 €">17,57 €</strong>
                                         </div>
                                     </div>
-                                    </div>
-                                
-                                <div style="padding: 2rem; display: flex; flex-direction: column; gap: 1rem; background: #ffffff;">
-                                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(15, 23, 42, 0.1); padding-bottom: 0.5rem;">
-                                        <span style="color: rgba(15, 23, 42, 0.75); font-weight: 500;" data-translate="min-fare">Carrera mínima</span>
-                                        <strong style="color: var(--bg-base); font-size: 1.1rem;">4,51 €</strong>
-                                    </div>
-                                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(15, 23, 42, 0.1); padding-bottom: 0.5rem;">
-                                        <span style="color: rgba(15, 23, 42, 0.75); font-weight: 500;" data-translate="flag-drop">Bajada bandera</span>
-                                        <strong style="color: var(--bg-base); font-size: 1.1rem;">3,60 €</strong>
-                                    </div>
-                                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(15, 23, 42, 0.1); padding-bottom: 0.5rem;">
-                                        <span style="color: rgba(15, 23, 42, 0.75); font-weight: 500;" data-translate="price-km">Precio kilómetro</span>
-                                        <strong style="color: var(--bg-base); font-size: 1.1rem;">0,82 €</strong>
-                                    </div>
-                                    <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 0.2rem;">
-                                        <span style="color: rgba(15, 23, 42, 0.75); font-weight: 500;" data-translate="waiting-hour">Hora de espera</span>
-                                        <strong style="color: var(--bg-base); font-size: 1.1rem;">20,71 €</strong>
-                                    </div>
-                                </div>
                                 </div>
                             </div>
                         </div>
@@ -361,15 +289,9 @@ import AnimatedMoon from './AnimatedMoon.astro';
               }
 </style>
 
+        <script is:inline src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
         <script>
             const initFareToggles = () => {
-                document.querySelectorAll('.tarifas-grid.single-card-mode').forEach(grid => {
-                    const dayCard = grid.querySelector('.fare-card-day');
-                    const nightCard = grid.querySelector('.fare-card-night');
-                    if (dayCard) dayCard.classList.add('active-card');
-                    if (nightCard) nightCard.classList.remove('active-card');
-                });
-
                 const toggles = document.querySelectorAll('.uiverse-toggle');
                 toggles.forEach(toggle => {
                     toggle.addEventListener('change', (e) => {
@@ -396,16 +318,29 @@ import AnimatedMoon from './AnimatedMoon.astro';
                             if (labelNight) labelNight.style.display = 'inline';
                         }
                         
-                        const dayCard = actualGrid.querySelector('.fare-card-day');
-                        const nightCard = actualGrid.querySelector('.fare-card-night');
+                        const card = actualGrid.querySelector('.dynamic-fare-card');
+                        if (!card) return;
                         
-                        if (target === 'night') {
-                            if (dayCard) dayCard.classList.remove('active-card');
-                            if (nightCard) nightCard.classList.add('active-card');
-                        } else {
-                            if (nightCard) nightCard.classList.remove('active-card');
-                            if (dayCard) dayCard.classList.add('active-card');
+                        const lottiePlayer = card.querySelector('lottie-player');
+                        if (lottiePlayer) {
+                            if (target === 'night') {
+                                lottiePlayer.setDirection(1);
+                                lottiePlayer.play();
+                            } else {
+                                lottiePlayer.setDirection(-1);
+                                lottiePlayer.play();
+                            }
                         }
+
+                        // Animar textos
+                        const dynElements = card.querySelectorAll('.dyn-title, .dyn-subtitle, .dyn-price');
+                        dynElements.forEach(el => {
+                            el.style.opacity = '0';
+                            setTimeout(() => {
+                                el.textContent = el.getAttribute('data-' + target);
+                                el.style.opacity = '1';
+                            }, 150);
+                        });
                     });
                 });
             };
