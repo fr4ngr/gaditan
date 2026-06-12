@@ -1947,9 +1947,9 @@ select:-webkit-autofill:focus {
 
 /* Transparent circle with dark blue icon inside */
 .card-glow-circle {
-    width: 50px;
-    height: 50px;
-    min-width: 50px;
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
     border-radius: 50%;
     display: inline-flex;
     align-items: center;
