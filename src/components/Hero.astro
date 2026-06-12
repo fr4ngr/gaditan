@@ -21,41 +21,41 @@
             
             <!-- CLON: Destinos (para el scroll infinito hacia atrás) -->
             <a href="#destinos" class="hero-slide-card clone" data-real-index="2" style="text-decoration: none; display: block;">
-                <div class="glass card" style="padding: 1.6rem; text-align: left; height: 100%; display: flex; flex-direction: column; justify-content: center;">
-                    <h3 style="color: white; margin-bottom: 0.6rem; font-size: 1.3rem; line-height: 1.2;">Viajes a la Provincia</h3>
-                    <p style="color: rgba(255,255,255,0.7); font-size: 0.9rem; margin: 0; line-height: 1.4;">Pueblos, playas y traslados al aeropuerto.</p>
+                <div class="glass card" style="padding: 2.2rem; text-align: left; height: 100%; display: flex; flex-direction: column; justify-content: center;">
+                    <h3 style="color: white; margin-bottom: 0.6rem; font-size: 1.3rem; line-height: 1.2;">Taxi 24h</h3>
+                    <p style="color: rgba(255,255,255,0.7); font-size: 0.9rem; margin: 0; line-height: 1.4;">Disponible de día y noche.</p>
                 </div>
             </a>
 
             <!-- TARJETA 1: Calculadora -->
             <a href="#calculadora" class="hero-slide-card" data-real-index="0" style="text-decoration: none; display: block;">
-                <div class="glass card" style="padding: 1.6rem; text-align: left; height: 100%; display: flex; flex-direction: column; justify-content: center;">
-                    <h3 style="color: white; margin-bottom: 0.6rem; font-size: 1.3rem; line-height: 1.2;">Calculadora de Viaje</h3>
-                    <p style="color: rgba(255,255,255,0.7); font-size: 0.9rem; margin: 0; line-height: 1.4;">Calcula al instante el precio estimado de tu viaje.</p>
+                <div class="glass card" style="padding: 2.2rem; text-align: left; height: 100%; display: flex; flex-direction: column; justify-content: center;">
+                    <h3 style="color: white; margin-bottom: 0.6rem; font-size: 1.3rem; line-height: 1.2;">Calculadora</h3>
+                    <p style="color: rgba(255,255,255,0.7); font-size: 0.9rem; margin: 0; line-height: 1.4;">Calcula tu precio al instante.</p>
                 </div>
             </a>
 
             <!-- TARJETA 2: Mapa de Paradas -->
             <a href="#paradas" class="hero-slide-card" data-real-index="1" style="text-decoration: none; display: block;">
-                <div class="glass card" style="padding: 1.6rem; text-align: left; height: 100%; display: flex; flex-direction: column; justify-content: center;">
+                <div class="glass card" style="padding: 2.2rem; text-align: left; height: 100%; display: flex; flex-direction: column; justify-content: center;">
                     <h3 style="color: white; margin-bottom: 0.6rem; font-size: 1.3rem; line-height: 1.2;">Mapa de Paradas</h3>
-                    <p style="color: rgba(255,255,255,0.7); font-size: 0.9rem; margin: 0; line-height: 1.4;">Encuentra tu parada oficial más cercana.</p>
+                    <p style="color: rgba(255,255,255,0.7); font-size: 0.9rem; margin: 0; line-height: 1.4;">Tu parada más cercana.</p>
                 </div>
             </a>
 
             <!-- TARJETA 3: Destinos -->
             <a href="#destinos" class="hero-slide-card" data-real-index="2" style="text-decoration: none; display: block;">
-                <div class="glass card" style="padding: 1.6rem; text-align: left; height: 100%; display: flex; flex-direction: column; justify-content: center;">
-                    <h3 style="color: white; margin-bottom: 0.6rem; font-size: 1.3rem; line-height: 1.2;">Viajes a la Provincia</h3>
-                    <p style="color: rgba(255,255,255,0.7); font-size: 0.9rem; margin: 0; line-height: 1.4;">Pueblos, playas y traslados al aeropuerto.</p>
+                <div class="glass card" style="padding: 2.2rem; text-align: left; height: 100%; display: flex; flex-direction: column; justify-content: center;">
+                    <h3 style="color: white; margin-bottom: 0.6rem; font-size: 1.3rem; line-height: 1.2;">Taxi 24h</h3>
+                    <p style="color: rgba(255,255,255,0.7); font-size: 0.9rem; margin: 0; line-height: 1.4;">Disponible de día y noche.</p>
                 </div>
             </a>
             
             <!-- CLON: Calculadora (para el scroll infinito hacia adelante) -->
             <a href="#calculadora" class="hero-slide-card clone" data-real-index="0" style="text-decoration: none; display: block;">
-                <div class="glass card" style="padding: 1.6rem; text-align: left; height: 100%; display: flex; flex-direction: column; justify-content: center;">
-                    <h3 style="color: white; margin-bottom: 0.6rem; font-size: 1.3rem; line-height: 1.2;">Calculadora de Viaje</h3>
-                    <p style="color: rgba(255,255,255,0.7); font-size: 0.9rem; margin: 0; line-height: 1.4;">Calcula al instante el precio estimado de tu viaje.</p>
+                <div class="glass card" style="padding: 2.2rem; text-align: left; height: 100%; display: flex; flex-direction: column; justify-content: center;">
+                    <h3 style="color: white; margin-bottom: 0.6rem; font-size: 1.3rem; line-height: 1.2;">Calculadora</h3>
+                    <p style="color: rgba(255,255,255,0.7); font-size: 0.9rem; margin: 0; line-height: 1.4;">Calcula tu precio al instante.</p>
                 </div>
             </a>
 
@@ -123,10 +123,7 @@
             if(index < 0 || index >= slides.length) return;
             
             if (!smooth) {
-                slides.forEach(slide => {
-                    const card = slide.querySelector('.glass.card');
-                    if(card) card.style.transition = 'none';
-                });
+                track.classList.add('no-transition-jump');
             }
 
             currentDomIndex = index;
@@ -140,10 +137,9 @@
 
             if (!smooth) {
                 void track.offsetWidth; // Force reflow
-                slides.forEach(slide => {
-                    const card = slide.querySelector('.glass.card');
-                    if(card) card.style.transition = '';
-                });
+                setTimeout(() => {
+                    track.classList.remove('no-transition-jump');
+                }, 50);
             }
         };
 

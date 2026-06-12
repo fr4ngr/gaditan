@@ -99,4 +99,47 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.setItem('cadiz_visited', 'true');
         }, 3000);
     }
+    // 4. Battery Level Detection (if supported)
+    if ('getBattery' in navigator) {
+        navigator.getBattery().then(function(battery) {
+            function updateBatteryStatus() {
+                if (!battery.charging && battery.level <= 0.20) {
+                    // Battery is low! Make the main CTA an urgent call button
+                    const cta = document.querySelector('.hero-actions .btn-glow');
+                    if (cta) {
+                        cta.href = "tel:+34956212121";
+                        cta.style.animation = 'pulseIcon 1s infinite';
+                        cta.style.background = 'linear-gradient(135deg, #ef4444, #dc2626)';
+                        cta.style.boxShadow = '0 10px 25px -5px rgba(239, 68, 68, 0.5)';
+                        cta.style.borderColor = '#f87171';
+                        if (!isForeign) {
+                            cta.innerHTML = "<i data-lucide='phone-call'></i> Llama ya (Batería Baja)";
+                        } else {
+                            cta.innerHTML = "<i data-lucide='phone-call'></i> Call Now (Low Battery)";
+                        }
+                        if (window.lucide && window.lucide.createIcons) window.lucide.createIcons();
+                    }
+                }
+            }
+            updateBatteryStatus();
+            battery.addEventListener('levelchange', updateBatteryStatus);
+            battery.addEventListener('chargingchange', updateBatteryStatus);
+        }).catch(() => {
+            // Ignore errors if battery API is restricted
+        });
+    }
+
+    // 5. Connection Speed (reduce animations if slow)
+    if (navigator.connection) {
+        const speed = navigator.connection.effectiveType;
+        if (speed === 'slow-2g' || speed === '2g' || speed === '3g') {
+            document.body.classList.add('low-bandwidth');
+        }
+    }
+
+    // 6. Device Type (iOS vs Android)
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    if (isIOS) {
+        document.body.classList.add('is-ios');
+    }
 });
