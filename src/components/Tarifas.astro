@@ -11,18 +11,18 @@
                 </h3>
                 <div class="tarifas-grid">
                     <!-- Tarjeta Día -->
-                    <div class="glass card tarifas-card-hover" style="padding: 2rem; display: flex; flex-direction: column; gap: 1.5rem; text-align: left;">
-                        <div style="display: flex; align-items: center; gap: 1rem; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 1rem;">
-                            <div style="background: rgba(6, 182, 212, 0.15); padding: 0.8rem; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                    <div class="glass card tarifas-card-hover" style="padding: 0; overflow: hidden; display: flex; flex-direction: column; gap: 0; text-align: left; background: var(--bg-base); border: 1px solid rgba(6, 182, 212, 0.25);">
+                        <div style="background: rgba(6, 182, 212, 0.18); padding: 1.5rem 2rem; display: flex; align-items: center; gap: 1rem; border-bottom: 1px solid rgba(6, 182, 212, 0.25);">
+                            <div style="background: rgba(6, 182, 212, 0.2); padding: 0.8rem; border-radius: 12px; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(6, 182, 212, 0.25);">
                                 <i data-lucide="sun" style="color: var(--brand-cyan); width: 28px; height: 28px;"></i>
                             </div>
                             <div>
-                                <h4 style="margin: 0; font-size: 1.25rem; font-weight: 700; background: linear-gradient(135deg, var(--brand-cyan) 0%, #a5f3fc 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: inline-block;" data-translate="day-fare">Tarifa Diurna</h4>
-                                <p style="margin: 0.2rem 0 0 0; font-size: 0.85rem; color: var(--text-muted);" data-translate="day-fare-sub">Lunes a Viernes (7h - 21h)</p>
+                                <h4 style="margin: 0; font-size: 1.25rem; font-weight: 700; color: #ffffff;" data-translate="day-fare">Tarifa Diurna</h4>
+                                <p style="margin: 0.2rem 0 0 0; font-size: 0.85rem; color: var(--brand-cyan-light);" data-translate="day-fare-sub">Lunes a Viernes (7h - 21h)</p>
                             </div>
                         </div>
                         
-                        <div style="display: flex; flex-direction: column; gap: 1rem;">
+                        <div style="padding: 2rem; display: flex; flex-direction: column; gap: 1rem; background: var(--bg-base);">
                             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.5rem;">
                                 <span style="color: var(--text-muted); font-weight: 500;" data-translate="min-fare">Carrera mínima</span>
                                 <strong style="color: var(--text-main); font-size: 1.1rem;">3,56 €</strong>
@@ -43,18 +43,18 @@
                     </div>
 
                     <!-- Tarjeta Noche -->
-                    <div class="glass card tarifas-card-hover" style="padding: 2rem; display: flex; flex-direction: column; gap: 1.5rem; text-align: left;">
-                        <div style="display: flex; align-items: center; gap: 1rem; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 1rem;">
-                            <div style="background: rgba(59, 130, 246, 0.15); padding: 0.8rem; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                    <div class="glass card tarifas-card-hover" style="padding: 0; overflow: hidden; display: flex; flex-direction: column; gap: 0; text-align: left; background: var(--bg-base); border: 1px solid rgba(6, 182, 212, 0.25);">
+                        <div style="background: rgba(6, 182, 212, 0.18); padding: 1.5rem 2rem; display: flex; align-items: center; gap: 1rem; border-bottom: 1px solid rgba(6, 182, 212, 0.25);">
+                            <div style="background: rgba(59, 130, 246, 0.2); padding: 0.8rem; border-radius: 12px; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(59, 130, 246, 0.25);">
                                 <i data-lucide="moon" style="color: var(--brand-blue); width: 28px; height: 28px;"></i>
                             </div>
                             <div>
-                                <h4 style="margin: 0; font-size: 1.25rem; font-weight: 700; background: linear-gradient(135deg, #3b82f6 0%, #93c5fd 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: inline-block;" data-translate="night-fare">Tarifa Nocturna / Festivos</h4>
-                                <p style="margin: 0.2rem 0 0 0; font-size: 0.85rem; color: var(--text-muted);" data-translate="night-fare-sub">Noches, Sábados, Domingos y Festivos</p>
+                                <h4 style="margin: 0; font-size: 1.25rem; font-weight: 700; color: #ffffff;" data-translate="night-fare">Tarifa Nocturna / Festivos</h4>
+                                <p style="margin: 0.2rem 0 0 0; font-size: 0.85rem; color: var(--brand-cyan-light);" data-translate="night-fare-sub">Noches, Sábados, Domingos y Festivos</p>
                             </div>
                         </div>
                         
-                        <div style="display: flex; flex-direction: column; gap: 1rem;">
+                        <div style="padding: 2rem; display: flex; flex-direction: column; gap: 1rem; background: var(--bg-base);">
                             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.5rem;">
                                 <span style="color: var(--text-muted); font-weight: 500;" data-translate="min-fare">Carrera mínima</span>
                                 <strong style="color: var(--text-main); font-size: 1.1rem;">4,43 €</strong>
@@ -76,19 +76,21 @@
                 </div>
 
                 <!-- Tarjeta Unificada de Suplementos -->
-                <div class="glass card tarifas-card-hover" style="padding: 1.5rem 2rem; margin-bottom: 1.5rem; text-align: left;">
-                    <div style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 0.6rem;">
+                <div class="glass card tarifas-card-hover" style="padding: 0; overflow: hidden; display: flex; flex-direction: column; text-align: left; background: var(--bg-base); border: 1px solid rgba(6, 182, 212, 0.25); margin-bottom: 1.5rem;">
+                    <div style="background: rgba(6, 182, 212, 0.18); padding: 1.5rem 2rem; display: flex; align-items: center; gap: 0.6rem; border-bottom: 1px solid rgba(6, 182, 212, 0.25);">
                         <i data-lucide="plus-circle" style="color: var(--brand-cyan); width: 22px; height: 22px;"></i>
-                        <h4 style="margin: 0; font-size: 1.1rem; color: var(--text-main); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;" data-translate="supplements-title">Suplementos Municipales</h4>
+                        <h4 style="margin: 0; font-size: 1.1rem; color: #ffffff; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;" data-translate="supplements-title">Suplementos Municipales</h4>
                     </div>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.5rem;">
-                            <span style="color: var(--text-muted); font-size: 0.95rem;" data-translate="supp-train">Estación de Tren<sup>1</sup></span>
-                            <strong style="color: var(--text-main); font-size: 1.05rem;">0,82 €</strong>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.5rem;">
-                            <span style="color: var(--text-muted); font-size: 0.95rem;" data-translate="supp-luggage">Equipaje grande<sup>2</sup></span>
-                            <strong style="color: var(--text-main); font-size: 1.05rem;">0,51 €</strong>
+                    <div style="padding: 1.5rem 2rem; background: var(--bg-base);">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.5rem;">
+                                <span style="color: var(--text-muted); font-size: 0.95rem;" data-translate="supp-train">Estación de Tren<sup>1</sup></span>
+                                <strong style="color: var(--text-main); font-size: 1.05rem;">0,82 €</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.5rem;">
+                                <span style="color: var(--text-muted); font-size: 0.95rem;" data-translate="supp-luggage">Equipaje grande<sup>2</sup></span>
+                                <strong style="color: var(--text-main); font-size: 1.05rem;">0,51 €</strong>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -109,18 +111,18 @@
                     <div class="fare-content" style="overflow: hidden; transition: max-height 0.4s ease; max-height: 0px;">
                         <div class="tarifas-grid" style="margin-top: 1rem;">
                             <!-- Tarjeta Interurbana Día -->
-                            <div class="glass card tarifas-card-hover" style="padding: 2rem; display: flex; flex-direction: column; gap: 1.5rem; text-align: left;">
-                                <div style="display: flex; align-items: center; gap: 1rem; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 1rem;">
-                                    <div style="background: rgba(6, 182, 212, 0.15); padding: 0.8rem; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                            <div class="glass card tarifas-card-hover" style="padding: 0; overflow: hidden; display: flex; flex-direction: column; gap: 0; text-align: left; background: var(--bg-base); border: 1px solid rgba(6, 182, 212, 0.25);">
+                                <div style="background: rgba(6, 182, 212, 0.18); padding: 1.5rem 2rem; display: flex; align-items: center; gap: 1rem; border-bottom: 1px solid rgba(6, 182, 212, 0.25);">
+                                    <div style="background: rgba(6, 182, 212, 0.2); padding: 0.8rem; border-radius: 12px; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(6, 182, 212, 0.25);">
                                         <i data-lucide="sun" style="color: var(--brand-cyan); width: 28px; height: 28px;"></i>
                                     </div>
                                     <div>
-                                        <h4 style="margin: 0; font-size: 1.25rem; font-weight: 700; background: linear-gradient(135deg, var(--brand-cyan) 0%, #a5f3fc 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: inline-block;" data-translate="day-fare">Tarifa Diurna</h4>
-                                        <p style="margin: 0.2rem 0 0 0; font-size: 0.85rem; color: var(--text-muted);" data-translate="inter-day-fare-sub">Lunes a Viernes (6h - 22h)</p>
+                                        <h4 style="margin: 0; font-size: 1.25rem; font-weight: 700; color: #ffffff;" data-translate="day-fare">Tarifa Diurna</h4>
+                                        <p style="margin: 0.2rem 0 0 0; font-size: 0.85rem; color: var(--brand-cyan-light);" data-translate="inter-day-fare-sub">Lunes a Viernes (6h - 22h)</p>
                                     </div>
                                 </div>
                                 
-                                <div style="display: flex; flex-direction: column; gap: 1rem;">
+                                <div style="padding: 2rem; display: flex; flex-direction: column; gap: 1rem; background: var(--bg-base);">
                                     <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.5rem;">
                                         <span style="color: var(--text-muted); font-weight: 500;" data-translate="min-fare">Carrera mínima</span>
                                         <strong style="color: var(--text-main); font-size: 1.1rem;">3,83 €</strong>
@@ -141,18 +143,18 @@
                             </div>
 
                             <!-- Tarjeta Interurbana Noche -->
-                            <div class="glass card tarifas-card-hover" style="padding: 2rem; display: flex; flex-direction: column; gap: 1.5rem; text-align: left;">
-                                <div style="display: flex; align-items: center; gap: 1rem; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 1rem;">
-                                    <div style="background: rgba(59, 130, 246, 0.15); padding: 0.8rem; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                            <div class="glass card tarifas-card-hover" style="padding: 0; overflow: hidden; display: flex; flex-direction: column; gap: 0; text-align: left; background: var(--bg-base); border: 1px solid rgba(6, 182, 212, 0.25);">
+                                <div style="background: rgba(6, 182, 212, 0.18); padding: 1.5rem 2rem; display: flex; align-items: center; gap: 1rem; border-bottom: 1px solid rgba(6, 182, 212, 0.25);">
+                                    <div style="background: rgba(59, 130, 246, 0.2); padding: 0.8rem; border-radius: 12px; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(59, 130, 246, 0.25);">
                                         <i data-lucide="moon" style="color: var(--brand-blue); width: 28px; height: 28px;"></i>
                                     </div>
                                     <div>
-                                        <h4 style="margin: 0; font-size: 1.25rem; font-weight: 700; background: linear-gradient(135deg, #3b82f6 0%, #93c5fd 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: inline-block;" data-translate="night-fare">Tarifa Nocturna / Festivos</h4>
-                                        <p style="margin: 0.2rem 0 0 0; font-size: 0.85rem; color: var(--text-muted);" data-translate="inter-night-fare-sub">Noches y Festivos</p>
+                                        <h4 style="margin: 0; font-size: 1.25rem; font-weight: 700; color: #ffffff;" data-translate="night-fare">Tarifa Nocturna / Festivos</h4>
+                                        <p style="margin: 0.2rem 0 0 0; font-size: 0.85rem; color: var(--brand-cyan-light);" data-translate="inter-night-fare-sub">Noches y Festivos</p>
                                     </div>
                                 </div>
                                 
-                                <div style="display: flex; flex-direction: column; gap: 1rem;">
+                                <div style="padding: 2rem; display: flex; flex-direction: column; gap: 1rem; background: var(--bg-base);">
                                     <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.5rem;">
                                         <span style="color: var(--text-muted); font-weight: 500;" data-translate="min-fare">Carrera mínima</span>
                                         <strong style="color: var(--text-main); font-size: 1.1rem;">4,51 €</strong>
@@ -175,7 +177,6 @@
                         <div class="source-info" style="font-size: 0.85rem; color: var(--brand-cyan-light); opacity: 0.7; text-align: right; padding: 0 0.5rem; margin-top: 1rem; margin-bottom: 2rem; font-style: italic;">
                             FUENTE: Boletín Oficial de la Junta de Andalucía. Boletín número 49 de 12/03/2026
                         </div>
-                    </div>
                     </div>
                 </div>
             </div>
