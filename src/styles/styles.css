@@ -1863,9 +1863,9 @@ select:-webkit-autofill:focus {
 
 .hero-slide-card .glass.card {
     transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.2s ease, box-shadow 0.2s ease, border 0.2s ease, background 0.2s ease;
-    background: rgba(15, 23, 42, calc(0.65 + 0.2 * var(--active-factor))); /* Less transparent dark slate-900 glass */
-    backdrop-filter: blur(24px) saturate(120%); /* Deep blur and subtle color boost behind the card */
-    -webkit-backdrop-filter: blur(24px) saturate(120%);
+    background: rgb(15, 23, 42); /* Fully solid slate-900 background */
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
     transform: 
         scale(calc(0.85 + 0.15 * var(--active-factor))) 
         translateY(calc(12px - 20px * var(--active-factor))) 
@@ -1874,29 +1874,25 @@ select:-webkit-autofill:focus {
     opacity: calc(0.5 + 0.5 * var(--active-factor));
     aspect-ratio: 2.1 / 1;
     border-radius: 24px; /* Esquinas muy redondeadas para aspecto Squircle/App */
-    border: 1px solid rgba(255, 255, 255, calc(0.08 + 0.12 * var(--active-factor)));
-    border-top: 1px solid rgba(255, 255, 255, calc(0.08 + 0.12 * var(--active-factor)));
-    border-bottom: 1px solid rgba(255, 255, 255, calc(0.08 + 0.12 * var(--active-factor)));
+    border: 1px solid rgba(255, 255, 255, calc(0.05 + 0.1 * var(--active-factor)));
+    border-top: 1px solid rgba(255, 255, 255, calc(0.05 + 0.1 * var(--active-factor)));
+    border-bottom: 1px solid rgba(255, 255, 255, calc(0.05 + 0.1 * var(--active-factor)));
     box-shadow: 
-        0 0 0 1px rgba(0, 0, 0, calc(0.15 + 0.25 * var(--active-factor))), /* Ambient occlusion outline for sharp borders */
-        0 calc(4px + 12px * var(--active-factor)) calc(12px + 20px * var(--active-factor)) calc(-6px * var(--active-factor)) rgba(0, 0, 0, calc(0.3 + 0.3 * var(--active-factor))), /* Floating physical shadow */
-        0 calc(8px * var(--active-factor)) calc(16px * var(--active-factor)) calc(-4px * var(--active-factor)) rgba(6, 182, 212, calc(0.3 * var(--active-factor))), /* Layer 1: Dense cyan glow */
-        0 calc(16px * var(--active-factor)) calc(32px * var(--active-factor)) calc(-8px * var(--active-factor)) rgba(6, 182, 212, calc(0.2 * var(--active-factor))), /* Layer 2: Soft diffuse cyan glow */
-        inset 0 0 12px rgba(255, 255, 255, 0.03), /* Flat transparent glass reflection */
-        inset 0 calc(-2px * var(--active-factor)) calc(8px * var(--active-factor)) rgba(6, 182, 212, calc(0.12 * var(--active-factor))); /* Soft cyan inner bottom glow */
+        0 0 0 1px rgba(0, 0, 0, calc(0.3 + 0.5 * var(--active-factor))), /* Sharp outer stroke */
+        0 calc(6px + 14px * var(--active-factor)) calc(12px + 20px * var(--active-factor)) calc(-4px * var(--active-factor)) rgba(0, 0, 0, calc(0.45 + 0.35 * var(--active-factor))), /* Dense physical shadow */
+        0 calc(2px + 6px * var(--active-factor)) calc(4px + 8px * var(--active-factor)) calc(-2px * var(--active-factor)) rgba(0, 0, 0, calc(0.25 + 0.25 * var(--active-factor))), /* Sharp contact shadow */
+        inset 0 1px 0 rgba(255, 255, 255, calc(0.1 + 0.15 * var(--active-factor))); /* Subtle top reflection line */
 }
 .hero-slide-card.active-slide .glass.card {
     transform: scale(1) translateY(-8px) perspective(1000px) rotateX(0deg);
     opacity: 1;
-    background: rgba(15, 23, 42, 0.85); /* 85% opaque dark slate-900 glass */
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgb(15, 23, 42); /* Fully solid slate-900 background */
+    border: 1px solid rgba(255, 255, 255, 0.15);
     box-shadow: 
-        0 0 0 1px rgba(0, 0, 0, 0.4), /* Sharp dark outer outline */
-        0 16px 32px -6px rgba(0, 0, 0, 0.6), /* Physical shadow showing height */
-        0 8px 16px -4px rgba(6, 182, 212, 0.3), /* Layer 1 cyan glow */
-        0 16px 32px -8px rgba(6, 182, 212, 0.2), /* Layer 2 cyan glow */
-        inset 0 0 12px rgba(255, 255, 255, 0.03), /* Flat glass */
-        inset 0 -2px 8px rgba(6, 182, 212, 0.12); /* Soft inner cyan glow */
+        0 0 0 1px rgba(0, 0, 0, 0.8), /* Ultra-sharp outer black outline */
+        0 20px 32px -8px rgba(0, 0, 0, 0.8), /* Deep primary physical shadow */
+        0 8px 12px -4px rgba(0, 0, 0, 0.5), /* Sharp secondary contact shadow */
+        inset 0 1px 0 rgba(255, 255, 255, 0.25); /* Subtle top reflection line */
 }
 
 /* Disable transitions during silent infinite carousel jumps to prevent flickering */
