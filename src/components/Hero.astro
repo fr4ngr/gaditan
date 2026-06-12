@@ -1,63 +1,70 @@
 ---
 ---
-<!-- Hero Section con Carrusel Magnético -->
-<section class="hero">
+<!-- Hero Section Fija + Subtarjetas Magnéticas -->
+<section class="hero" style="padding-bottom: 2rem;">
     <div class="hero-glow"></div>
-    <div class="hero-carousel-container">
+    
+    <!-- CABECERA FIJA INTOCABLE -->
+    <div class="container hero-content" style="padding-bottom: 1rem;">
+        <div class="hero-badge" style="margin-inline: auto; width: fit-content;"><span class="pulse-dot"></span> <span data-translate="hero-pretitle">LA MEJOR GUÍA INFORMATIVA SOBRE</span></div>
+        <h1 class="hero-title" id="hero-title" data-translate="hero-title">Taxis Oficiales <br>en Cádiz</h1>
+        <p class="hero-subtitle" data-translate="hero-subtitle">Pide un taxi, resérvalo o consulta las tarifas. Toda la info que necesitas en cadiz.taxi</p>
+        
+        <div class="hero-actions" style="max-width: 600px; margin-inline: auto; display: flex; flex-direction: column; gap: 1.5rem; width: 100%;">
+            <a href="#reservas" class="btn btn-glow" style="width: 100%; justify-content: center; padding: 1rem;">
+                <i data-lucide="calculator"></i> Calculadora de Viaje
+            </a>
+            <div style="display: flex; gap: 1rem; width: 100%;">
+                <a href="#tarifas" class="btn" style="flex: 1; background: rgba(255,255,255,0.08); border: 1px solid var(--glass-border); justify-content: center; backdrop-filter: blur(10px); color: white; padding: 1rem 0.5rem;">
+                    <i data-lucide="badge-check" style="width:18px;height:18px;color:var(--brand-cyan);"></i> Tarifas
+                </a>
+                <a href="#reservas" class="btn" style="flex: 1; background: rgba(255,255,255,0.08); border: 1px solid var(--glass-border); justify-content: center; backdrop-filter: blur(10px); color: white; padding: 1rem 0.5rem;">
+                    <i data-lucide="calendar" style="width:18px;height:18px;"></i> Reservas
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- SUBTARJETAS DINÁMICAS (CARRUSEL 85%) -->
+    <div class="hero-subcards-carousel">
         <div class="hero-carousel-track" id="heroTrack">
-            <!-- SLIDE 1 (Principal) -->
-            <div class="hero-slide">
-                <div class="container hero-content" style="padding:0; margin:0;">
-                    <div class="hero-badge" style="margin-inline: auto; width: fit-content;"><span class="pulse-dot"></span> <span data-translate="hero-pretitle">LA MEJOR GUÍA INFORMATIVA SOBRE</span></div>
-                    <h1 class="hero-title" id="hero-title" data-translate="hero-title">Taxis Oficiales <br>en Cádiz</h1>
-                    <p class="hero-subtitle" data-translate="hero-subtitle">Pide un taxi, resérvalo o consulta las tarifas. Toda la info que necesitas en cadiz.taxi</p>
-                    <div class="hero-actions" style="max-width: 600px; margin-inline: auto; display: flex; flex-direction: column; gap: 1.5rem; width: 100%;">
-                        <a href="#reservas" class="btn btn-glow" style="width: 100%; justify-content: center; padding: 1rem;">
-                            <i data-lucide="calculator"></i> Calculadora de Viaje
-                        </a>
-                        <div style="display: flex; gap: 1rem; width: 100%;">
-                            <a href="#tarifas" class="btn" style="flex: 1; background: rgba(255,255,255,0.08); border: 1px solid var(--glass-border); justify-content: center; backdrop-filter: blur(10px); color: white; padding: 1rem 0.5rem;">
-                                <i data-lucide="badge-check" style="width:18px;height:18px;color:var(--brand-cyan);"></i> Tarifas
-                            </a>
-                            <a href="#reservas" class="btn" style="flex: 1; background: rgba(255,255,255,0.08); border: 1px solid var(--glass-border); justify-content: center; backdrop-filter: blur(10px); color: white; padding: 1rem 0.5rem;">
-                                <i data-lucide="calendar" style="width:18px;height:18px;"></i> Reservas
-                            </a>
-                        </div>
+            
+            <!-- TARJETA 1 -->
+            <div class="hero-slide-card">
+                <div class="glass card" style="padding: 1.2rem; text-align: left; height: 100%; display: flex; flex-direction: column; justify-content: center;">
+                    <div class="hero-badge" style="margin-bottom: 0.8rem; background: rgba(6, 182, 212, 0.15); border: 1px solid rgba(6, 182, 212, 0.3); color: var(--brand-cyan); width: fit-content; padding: 0.3rem 0.6rem;">
+                        <i data-lucide="briefcase" style="width:14px;height:14px;"></i> <span style="margin-left: 0.4rem; font-size: 0.75rem; font-weight: 700;">SERVICIOS PARA EMPRESAS</span>
                     </div>
+                    <h3 style="color: white; margin-bottom: 0.4rem; font-size: 1.3rem; line-height: 1.2;">Viajes de Negocios</h3>
+                    <p style="color: rgba(255,255,255,0.7); font-size: 0.85rem; margin: 0; line-height: 1.4;">Facturación mensual y recogidas VIP en aeropuerto.</p>
                 </div>
             </div>
 
-            <!-- SLIDE 2 (Empresas - Provisional) -->
-            <div class="hero-slide">
-                <div class="container hero-content" style="padding:0; margin:0;">
-                    <div class="hero-badge" style="margin-inline: auto; width: fit-content;"><i data-lucide="briefcase" style="width:14px;height:14px;"></i> <span style="margin-left: 0.4rem;">SERVICIOS PARA EMPRESAS</span></div>
-                    <h2 class="hero-title" style="font-size: 2.8rem; line-height: 1.2; margin-bottom: 1rem;">Viajes de<br>Negocios</h2>
-                    <p class="hero-subtitle">Facturación mensual, recogidas en el aeropuerto y puntualidad garantizada para ti y tus clientes.</p>
-                    <div class="hero-actions" style="max-width: 600px; margin-inline: auto; display: flex; flex-direction: column; gap: 1.5rem; width: 100%;">
-                        <a href="#faq" class="btn btn-glow" style="width: 100%; justify-content: center; padding: 1rem;">
-                            <i data-lucide="phone"></i> Contactar ahora
-                        </a>
+            <!-- TARJETA 2 -->
+            <div class="hero-slide-card">
+                <div class="glass card" style="padding: 1.2rem; text-align: left; height: 100%; display: flex; flex-direction: column; justify-content: center;">
+                    <div class="hero-badge" style="margin-bottom: 0.8rem; background: rgba(6, 182, 212, 0.15); border: 1px solid rgba(6, 182, 212, 0.3); color: var(--brand-cyan); width: fit-content; padding: 0.3rem 0.6rem;">
+                        <i data-lucide="map" style="width:14px;height:14px;"></i> <span style="margin-left: 0.4rem; font-size: 0.75rem; font-weight: 700;">DESCUBRE LA PROVINCIA</span>
                     </div>
+                    <h3 style="color: white; margin-bottom: 0.4rem; font-size: 1.3rem; line-height: 1.2;">Rutas y Turismo</h3>
+                    <p style="color: rgba(255,255,255,0.7); font-size: 0.85rem; margin: 0; line-height: 1.4;">Pueblos blancos, playas de la costa y excursiones a medida.</p>
                 </div>
             </div>
 
-            <!-- SLIDE 3 (Turismo - Provisional) -->
-            <div class="hero-slide">
-                <div class="container hero-content" style="padding:0; margin:0;">
-                    <div class="hero-badge" style="margin-inline: auto; width: fit-content;"><i data-lucide="map" style="width:14px;height:14px;"></i> <span style="margin-left: 0.4rem;">DESCUBRE LA PROVINCIA</span></div>
-                    <h2 class="hero-title" style="font-size: 2.8rem; line-height: 1.2; margin-bottom: 1rem;">Rutas y<br>Turismo</h2>
-                    <p class="hero-subtitle">Conoce los pueblos blancos, las playas de la costa o reserva excursiones a medida con nuestros conductores.</p>
-                    <div class="hero-actions" style="max-width: 600px; margin-inline: auto; display: flex; flex-direction: column; gap: 1.5rem; width: 100%;">
-                        <a href="#destinos" class="btn btn-glow" style="width: 100%; justify-content: center; padding: 1rem;">
-                            <i data-lucide="compass"></i> Ver Destinos
-                        </a>
+            <!-- TARJETA 3 -->
+            <div class="hero-slide-card">
+                <div class="glass card" style="padding: 1.2rem; text-align: left; height: 100%; display: flex; flex-direction: column; justify-content: center;">
+                    <div class="hero-badge" style="margin-bottom: 0.8rem; background: rgba(6, 182, 212, 0.15); border: 1px solid rgba(6, 182, 212, 0.3); color: var(--brand-cyan); width: fit-content; padding: 0.3rem 0.6rem;">
+                        <i data-lucide="baby" style="width:14px;height:14px;"></i> <span style="margin-left: 0.4rem; font-size: 0.75rem; font-weight: 700;">VIAJA SEGURO</span>
                     </div>
+                    <h3 style="color: white; margin-bottom: 0.4rem; font-size: 1.3rem; line-height: 1.2;">Sillas de Bebé</h3>
+                    <p style="color: rgba(255,255,255,0.7); font-size: 0.85rem; margin: 0; line-height: 1.4;">Solicita tu taxi con SRI adaptado para la seguridad infantil.</p>
                 </div>
             </div>
 
         </div>
 
-        <!-- Pagination Dots -->
+        <!-- Paginación -->
         <div class="hero-dots" id="heroDots">
             <div class="hero-dot active" data-index="0"></div>
             <div class="hero-dot" data-index="1"></div>
@@ -67,19 +74,19 @@
 </section>
 
 <script>
-    // Lógica del Carrusel Magnético Nativo
+    // Lógica del Carrusel Magnético Nativo (5s fijos por tarjeta)
     document.addEventListener('DOMContentLoaded', () => {
         const track = document.getElementById('heroTrack');
         const dots = document.querySelectorAll('.hero-dot');
-        const slides = document.querySelectorAll('.hero-slide');
+        const slides = document.querySelectorAll('.hero-slide-card');
         
         if(!track || dots.length === 0) return;
 
         let currentIndex = 0;
         let autoPlayTimer;
         
-        // Tiempos personalizados: 10s para la principal, 5s para las otras
-        const timings = [10000, 5000, 5000];
+        // Tiempo uniforme de 5s por tarjeta ya que el Héroe principal está fijo
+        const slideTime = 5000;
 
         const updateDots = (index) => {
             dots.forEach(dot => dot.classList.remove('active'));
@@ -89,8 +96,9 @@
         const goToSlide = (index) => {
             if(index < 0 || index >= slides.length) return;
             currentIndex = index;
+            // Scroll exacto a la tarjeta teniendo en cuenta el padding inicial (7.5%)
             track.scrollTo({
-                left: slides[index].offsetLeft,
+                left: slides[index].offsetLeft - track.offsetLeft - (track.offsetWidth * 0.075),
                 behavior: 'smooth'
             });
             updateDots(index);
@@ -105,11 +113,10 @@
 
         const startAutoPlay = () => {
             clearTimeout(autoPlayTimer);
-            const time = timings[currentIndex] || 5000;
-            autoPlayTimer = setTimeout(nextSlide, time);
+            autoPlayTimer = setTimeout(nextSlide, slideTime);
         };
 
-        // Interacción manual (click en puntitos)
+        // Click en puntitos
         dots.forEach(dot => {
             dot.addEventListener('click', (e) => {
                 const index = parseInt(e.target.dataset.index);
@@ -117,16 +124,15 @@
             });
         });
 
-        // Interacción manual (scroll/swipe táctil)
+        // Swipe manual táctil
         let isScrolling;
         track.addEventListener('scroll', () => {
-            clearTimeout(autoPlayTimer); // Pausar autoplay mientras se desliza
+            clearTimeout(autoPlayTimer);
             
-            // Detectar cuando el usuario suelta el dedo y se asienta la diapositiva
             window.clearTimeout(isScrolling);
             isScrolling = setTimeout(() => {
                 const scrollLeft = track.scrollLeft;
-                const slideWidth = track.offsetWidth;
+                const slideWidth = slides[0].offsetWidth;
                 const newIndex = Math.round(scrollLeft / slideWidth);
                 
                 if (newIndex !== currentIndex && newIndex >= 0 && newIndex < slides.length) {
@@ -134,12 +140,11 @@
                     updateDots(currentIndex);
                 }
                 
-                // Reanudar el temporizador inteligente
                 startAutoPlay();
             }, 150);
         });
 
-        // Iniciar motor
+        // Iniciar
         startAutoPlay();
     });
 </script>
