@@ -41,7 +41,26 @@ const translationsEN = {
     // Footer
     "footer-desc": "Independent tourist directory for mobility in the bay.",
     "footer-copyright": "&copy; 2026 Cádiz.Taxi. Designed to dazzle.",
-    "sponsor-sticky-btn": "cadiz.cab"
+    "sponsor-sticky-btn": "cadiz.cab",
+    
+    // Rates/Tarifas
+    "day-fare": "Day Rate",
+    "day-fare-sub": "Monday to Friday (7am - 9pm)",
+    "inter-day-fare-sub": "Monday to Friday (6am - 10pm)",
+    "inter-night-fare-sub": "Nights & Holidays",
+    "toggle-to-night": "Show Night/Holiday",
+    "toggle-to-day": "Show Day Rate",
+    "night-fare": "Night & Holiday Rate",
+    "night-fare-sub": "Nights, Saturdays, Sundays & Holidays",
+    "min-fare": "Minimum fare",
+    "flag-drop": "Flag drop rate",
+    "price-km": "Price per kilometer",
+    "waiting-hour": "Waiting hour rate",
+    "supplements-title": "Supplements",
+    "supp-train": "Train Station Origin <sup>1</sup>",
+    "supp-luggage": "Large Luggage/Item <sup>2</sup>",
+    "supp-info-text": "<p style=\"margin-bottom: 0.5rem;\"><strong>¹</strong> This supplement only applies if your trip starts from the Train Station located at Plaza Sevilla. It does not apply if your trip ends at the train station.</p><p><strong>²</strong> Supplement applicable to large suitcases or items. Does not apply to hand luggage/bags, backpacks, walkers, or wheelchairs.</p>",
+    "interurban-fares-title": "View Interurban Rates"
 };
 
 document.addEventListener('DOMContentLoaded', () => {

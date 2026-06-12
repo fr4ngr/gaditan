@@ -31,6 +31,8 @@ export const translations = {
         "day-fare-sub": "Lunes a Viernes (7h - 21h)",
         "inter-day-fare-sub": "Lunes a Viernes (6h - 22h)",
         "inter-night-fare-sub": "Noches y Festivos",
+        "toggle-to-night": "Ver Noche/Festivos",
+        "toggle-to-day": "Ver Tarifa Diurna",
 
         "night-fare": "Tarifa Nocturna / Festivos",
         "night-fare-sub": "Noches, Sábados, Domingos y Festivos",
@@ -104,7 +106,8 @@ export const translations = {
         "ad-title-afternoon": "¿Tarde de turismo o playa?",
         "ad-desc-afternoon": "Disfruta de atardeceres en barco, descuentos en chiringuitos selectos y visitas arqueológicas con tu CádizPass.",
         "ad-title-night": "Cádiz de noche y regreso en taxi",
-        "ad-desc-night": "Reserva mesa en los mejores restaurantes locales con descuento y asegura tu trayecto de taxi de vuelta con tranquilidad."
+        "ad-desc-night": "Reserva mesa en los mejores restaurantes locales con descuento y asegura tu trayecto de taxi de vuelta con tranquilidad.",
+        "interurban-fares-title": "Ver Tarifas Interurbanas"
     },
     en: {
         "badge-guaranteed": "GUARANTEED",
@@ -138,6 +141,8 @@ export const translations = {
         "day-fare-sub": "Monday to Friday (7am - 9pm)",
         "inter-day-fare-sub": "Monday to Friday (6am - 10pm)",
         "inter-night-fare-sub": "Nights & Holidays",
+        "toggle-to-night": "Show Night/Holiday",
+        "toggle-to-day": "Show Day Rate",
 
         "night-fare": "Night & Holiday Rate",
         "night-fare-sub": "Nights, Saturdays, Sundays & Holidays",
@@ -211,7 +216,8 @@ export const translations = {
         "ad-title-afternoon": "Sightseeing or beach afternoon?",
         "ad-desc-afternoon": "Enjoy sunset boat rides, discounts at selected beach bars, and archaeological visits with your CádizPass.",
         "ad-title-night": "Cádiz by night & safe taxi return",
-        "ad-desc-night": "Book a table at the best local restaurants with a discount and secure your taxi ride back with peace of mind."
+        "ad-desc-night": "Book a table at the best local restaurants with a discount and secure your taxi ride back with peace of mind.",
+        "interurban-fares-title": "View Interurban Rates"
     }
 };
 
