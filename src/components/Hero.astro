@@ -121,6 +121,14 @@
 
         const goToDomIndex = (index, smooth = true) => {
             if(index < 0 || index >= slides.length) return;
+            
+            if (!smooth) {
+                slides.forEach(slide => {
+                    const card = slide.querySelector('.glass.card');
+                    if(card) card.style.transition = 'none';
+                });
+            }
+
             currentDomIndex = index;
             
             track.style.scrollBehavior = smooth ? 'smooth' : 'auto';
@@ -129,6 +137,14 @@
             });
             
             updateDotsAndClasses(index);
+
+            if (!smooth) {
+                void track.offsetWidth; // Force reflow
+                slides.forEach(slide => {
+                    const card = slide.querySelector('.glass.card');
+                    if(card) card.style.transition = '';
+                });
+            }
         };
 
         const handleInfiniteScroll = () => {
