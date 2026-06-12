@@ -1863,9 +1863,9 @@ select:-webkit-autofill:focus {
 
 .hero-slide-card .glass.card {
     transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.2s ease, box-shadow 0.2s ease, border 0.2s ease, background 0.2s ease;
-    background: rgb(241, 245, 249) !important; /* Flat light slate gray (slate-100) */
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
+    background: rgba(6, 182, 212, calc(0.12 + 0.1 * var(--active-factor))) !important; /* Semi-transparent turquoise glass */
+    backdrop-filter: blur(12px) saturate(1.2) !important;
+    -webkit-backdrop-filter: blur(12px) saturate(1.2) !important;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -1882,23 +1882,19 @@ select:-webkit-autofill:focus {
     opacity: calc(0.75 + 0.25 * var(--active-factor));
     aspect-ratio: 1.8 / 1; /* Taller aspect ratio for spaciousness (Android 17 size) */
     border-radius: 28px; /* Slightly more rounded to fit the larger size */
-    border: 1px solid rgba(0, 0, 0, calc(0.04 + 0.04 * var(--active-factor))) !important;
+    border: 1px solid rgba(6, 182, 212, calc(0.2 + 0.2 * var(--active-factor))) !important;
     box-shadow: 
-        0 0 0 1px rgba(0, 0, 0, calc(0.02 + 0.04 * var(--active-factor))), /* Sharp outer stroke */
-        0 calc(6px + 14px * var(--active-factor)) calc(12px + 20px * var(--active-factor)) calc(-4px * var(--active-factor)) rgba(0, 0, 0, calc(0.12 + 0.12 * var(--active-factor))), /* Soft physical shadow */
-        0 calc(2px + 6px * var(--active-factor)) calc(4px + 8px * var(--active-factor)) calc(-2px * var(--active-factor)) rgba(0, 0, 0, calc(0.08 + 0.08 * var(--active-factor))), /* Soft contact shadow */
-        inset 0 1px 0 rgba(255, 255, 255, 0.8); /* Crisp highlight reflection for light solid card */
+        0 calc(6px + 14px * var(--active-factor)) calc(12px + 20px * var(--active-factor)) calc(-4px * var(--active-factor)) rgba(6, 182, 212, calc(0.08 + 0.12 * var(--active-factor))), /* Soft turquoise glow shadow */
+        inset 0 1px 0 rgba(255, 255, 255, calc(0.15 + 0.15 * var(--active-factor))); /* Subtle top reflection */
 }
 .hero-slide-card.active-slide .glass.card {
     transform: scale(1) translateY(-8px) perspective(1000px) rotateX(0deg);
     opacity: 1;
-    background: rgb(241, 245, 249) !important; /* Flat light slate gray (slate-100) */
-    border: 1px solid rgba(0, 0, 0, 0.1) !important;
+    background: rgba(6, 182, 212, 0.24) !important; /* Slightly more visible turquoise on active */
+    border: 1px solid rgba(6, 182, 212, 0.45) !important;
     box-shadow: 
-        0 0 0 1px rgba(0, 0, 0, 0.08), /* Sharp outer outline */
-        0 20px 32px -8px rgba(0, 0, 0, 0.22), /* Deep physical shadow */
-        0 8px 12px -4px rgba(0, 0, 0, 0.15), /* Sharp secondary contact shadow */
-        inset 0 1px 0 rgba(255, 255, 255, 0.9); /* Crisp highlight reflection */
+        0 16px 32px 0 rgba(6, 182, 212, 0.25), /* Vibrant cyan active shadow */
+        inset 0 1px 0 rgba(255, 255, 255, 0.35);
 }
 
 /* Disable transitions during silent infinite carousel jumps to prevent flickering */
@@ -1909,14 +1905,14 @@ select:-webkit-autofill:focus {
     transition: none !important;
 }
 
-/* High contrast dark text rules for light hero cards */
+/* Dark blue text rules for high readability on turquoise glass */
 .hero-slide-card h3 {
-    color: rgb(15, 23, 42) !important; /* Slate-900 (Almost black) */
+    color: rgb(15, 23, 42) !important; /* Dark blue background color */
     text-shadow: none !important;
     transition: color 0.2s ease;
 }
 .hero-slide-card p {
-    color: rgb(71, 85, 105) !important; /* Slate-600 (Dark gray subtitle) */
+    color: rgba(15, 23, 42, 0.8) !important; /* Dark blue at 80% opacity */
     text-shadow: none !important;
     transition: color 0.2s ease;
 }
@@ -1925,11 +1921,11 @@ select:-webkit-autofill:focus {
     text-shadow: none !important;
 }
 .hero-slide-card.active-slide p {
-    color: rgb(71, 85, 105) !important;
+    color: rgba(15, 23, 42, 0.82) !important;
     text-shadow: none !important;
 }
 
-/* Solid dark circular badge for high contrast inside the light gray card */
+/* Transparent circle with dark blue border and dark blue icon inside */
 .card-glow-circle {
     width: 50px;
     height: 50px;
@@ -1938,17 +1934,20 @@ select:-webkit-autofill:focus {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    background: rgb(15, 23, 42) !important; /* Slate-900 solid badge */
-    border: none !important;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15) !important;
-    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    background: rgba(15, 23, 42, 0.08) !important;
+    border: 1px solid rgba(15, 23, 42, 0.18) !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), background 0.3s, border 0.3s;
 }
 .hero-slide-card.active-slide .card-glow-circle {
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25) !important;
+    background: rgba(15, 23, 42, 0.14) !important;
+    border: 1px solid rgba(15, 23, 42, 0.3) !important;
     transform: scale(1.08) translateZ(0);
 }
 .card-glow-circle i, .card-glow-circle svg {
-    color: rgb(255, 255, 255) !important; /* White icon on slate-900 badge */
+    color: rgb(15, 23, 42) !important; /* Dark blue icon */
 }
 
 /* === 15. COMPORTAMIENTOS DINÁMICOS (JS INJECTED) === */
