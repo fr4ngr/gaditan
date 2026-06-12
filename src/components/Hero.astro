@@ -20,7 +20,7 @@
         <div class="hero-carousel-track" id="heroTrack">
             
             <!-- TARJETA 1: Calculadora -->
-            <a href="#calculadora" class="hero-slide-card" style="text-decoration: none; display: block;">
+            <a href="#calculadora" class="hero-slide-card active-slide" style="text-decoration: none; display: block;">
                 <div class="glass card" style="padding: 1.2rem; text-align: left; height: 100%; display: flex; flex-direction: column; justify-content: center;">
                     <h3 style="color: white; margin-bottom: 0.4rem; font-size: 1.3rem; line-height: 1.2;">Calculadora de Viaje</h3>
                     <p style="color: rgba(255,255,255,0.7); font-size: 0.85rem; margin: 0; line-height: 1.4;">Estima tu trayecto basado en las tarifas oficiales publicadas en el BOJA.</p>
@@ -79,6 +79,14 @@
             if(dots[index]) {
                 dots[index].classList.add('active');
             }
+
+            slides.forEach((slide, i) => {
+                if (i === index) {
+                    slide.classList.add('active-slide');
+                } else {
+                    slide.classList.remove('active-slide');
+                }
+            });
         };
 
         const goToSlide = (index) => {
