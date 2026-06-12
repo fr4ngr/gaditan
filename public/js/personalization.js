@@ -92,14 +92,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 3. Returning Visitor Logic (localStorage)
     const hasVisited = localStorage.getItem('cadiz_visited');
-    const heroSubtitle = document.querySelector('.hero-subtitle');
     
-    if (hasVisited) {
-        // Hide the subtitle to make the UI ultra minimal for returning users
-        if (heroSubtitle) {
-            heroSubtitle.style.display = 'none';
-        }
-    } else {
+    if (!hasVisited) {
         // Set the flag after 3 seconds so if they bounce immediately it doesn't count
         setTimeout(() => {
             localStorage.setItem('cadiz_visited', 'true');
