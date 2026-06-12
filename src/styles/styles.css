@@ -1871,26 +1871,26 @@ select:-webkit-autofill:focus {
     opacity: calc(0.5 + 0.5 * var(--active-factor));
     aspect-ratio: 2.1 / 1;
     border-radius: 24px; /* Esquinas muy redondeadas para aspecto Squircle/App */
-    border: 1px solid rgba(255, 255, 255, calc(0.08 + 0.17 * var(--active-factor)));
-    border-top: 1px solid rgba(255, 255, 255, calc(0.08 + 0.52 * var(--active-factor)));
-    border-bottom: 1px solid rgba(6, 182, 212, calc(0.2 * var(--active-factor)));
+    border: 1px solid rgba(255, 255, 255, calc(0.08 + 0.06 * var(--active-factor)));
+    border-top: 1px solid rgba(255, 255, 255, calc(0.08 + 0.06 * var(--active-factor)));
+    border-bottom: 1px solid rgba(255, 255, 255, calc(0.08 + 0.06 * var(--active-factor)));
     box-shadow: 
-        0 calc(4px + 6px * var(--active-factor)) calc(12px + 8px * var(--active-factor)) calc(-4px * var(--active-factor)) rgba(0, 0, 0, calc(0.3 + 0.2 * var(--active-factor))),
-        0 calc(12px * var(--active-factor)) calc(24px * var(--active-factor)) calc(-8px * var(--active-factor)) rgba(6, 182, 212, calc(0.4 * var(--active-factor))),
-        inset 0 1px 3px rgba(255, 255, 255, calc(0.2 + 0.3 * var(--active-factor))),
-        inset 0 calc(-2px * var(--active-factor)) calc(8px * var(--active-factor)) rgba(6, 182, 212, calc(0.15 * var(--active-factor)));
+        0 calc(4px + 12px * var(--active-factor)) calc(12px + 20px * var(--active-factor)) calc(-6px * var(--active-factor)) rgba(0, 0, 0, calc(0.3 + 0.3 * var(--active-factor))), /* Floating physical shadow */
+        0 calc(8px * var(--active-factor)) calc(16px * var(--active-factor)) calc(-4px * var(--active-factor)) rgba(6, 182, 212, calc(0.3 * var(--active-factor))), /* Layer 1: Dense cyan glow */
+        0 calc(16px * var(--active-factor)) calc(32px * var(--active-factor)) calc(-8px * var(--active-factor)) rgba(6, 182, 212, calc(0.2 * var(--active-factor))), /* Layer 2: Soft diffuse cyan glow */
+        inset 0 0 12px rgba(255, 255, 255, 0.03), /* Flat transparent glass reflection */
+        inset 0 calc(-2px * var(--active-factor)) calc(8px * var(--active-factor)) rgba(6, 182, 212, calc(0.12 * var(--active-factor))); /* Soft cyan inner bottom glow */
 }
 .hero-slide-card.active-slide .glass.card {
     transform: scale(1) translateY(-8px) perspective(1000px) rotateX(0deg);
     opacity: 1;
-    border: 1px solid rgba(255, 255, 255, 0.25);
-    border-top: 1px solid rgba(255, 255, 255, 0.6); /* Reflejo superior intenso para volumen */
-    border-bottom: 1px solid rgba(6, 182, 212, 0.2); /* Reflejo del neón en el borde inferior */
+    border: 1px solid rgba(255, 255, 255, 0.14);
     box-shadow: 
-        0 10px 20px -5px rgba(0, 0, 0, 0.5), /* Tighter physical shadow */
-        0 12px 24px -8px rgba(6, 182, 212, 0.4), /* Focused, compact cyan glow shadow */
-        inset 0 1px 3px rgba(255, 255, 255, 0.5), /* Reflejo de bisel superior */
-        inset 0 -2px 8px rgba(6, 182, 212, 0.15); /* Luz rebotando dentro del cristal */
+        0 16px 32px -6px rgba(0, 0, 0, 0.6), /* Physical shadow showing height */
+        0 8px 16px -4px rgba(6, 182, 212, 0.3), /* Layer 1 cyan glow */
+        0 16px 32px -8px rgba(6, 182, 212, 0.2), /* Layer 2 cyan glow */
+        inset 0 0 12px rgba(255, 255, 255, 0.03), /* Flat glass */
+        inset 0 -2px 8px rgba(6, 182, 212, 0.12); /* Soft inner cyan glow */
 }
 
 /* Disable transitions during silent infinite carousel jumps to prevent flickering */
