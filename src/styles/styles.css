@@ -1925,23 +1925,23 @@ select:-webkit-autofill:focus {
     transition: none !important;
 }
 
-/* White text rules for high readability on dark blue right side */
+/* Dark blue text rules for high readability on light right side */
 .hero-slide-card h3 {
-    color: var(--text-main) !important; /* White text */
+    color: var(--bg-base) !important; /* Dark blue text */
     text-shadow: none !important;
     transition: color 0.2s ease;
 }
 .hero-slide-card p {
-    color: var(--text-muted) !important; /* Light gray text */
+    color: rgba(15, 23, 42, 0.75) !important; /* Dark gray/blue text */
     text-shadow: none !important;
     transition: color 0.2s ease;
 }
 .hero-slide-card.active-slide h3 {
-    color: var(--text-main) !important;
+    color: var(--bg-base) !important;
     text-shadow: none !important;
 }
 .hero-slide-card.active-slide p {
-    color: var(--text-muted) !important;
+    color: rgba(15, 23, 42, 0.85) !important;
     text-shadow: none !important;
 }
 
