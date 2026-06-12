@@ -1901,6 +1901,22 @@ select:-webkit-autofill:focus {
     transition: none !important;
 }
 
+/* Sombras 3D realistas en los textos de las subtarjetas del Hero */
+.hero-slide-card h3 {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+    transition: text-shadow 0.2s ease;
+}
+.hero-slide-card p {
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+    transition: text-shadow 0.2s ease;
+}
+.hero-slide-card.active-slide h3 {
+    text-shadow: 0 3px 8px rgba(0, 0, 0, 0.65);
+}
+.hero-slide-card.active-slide p {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
 /* === 15. COMPORTAMIENTOS DINÁMICOS (JS INJECTED) === */
 @keyframes pulseIcon {
     0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
