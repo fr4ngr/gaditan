@@ -315,36 +315,47 @@
 
         <script>
             const initFareToggles = () => {
-                const toggleButtons = document.querySelectorAll('.fare-toggle-btn');
-                toggleButtons.forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        
-                        const grid = btn.closest('.tarifas-grid');
-                        if (!grid) return;
-                        
-                        const dayCard = grid.querySelector('.fare-card-day');
-                        const nightCard = grid.querySelector('.fare-card-night');
-                        const target = btn.getAttribute('data-target');
-                        
-                        if (target === 'night') {
-                            if (dayCard) dayCard.style.setProperty('display', 'none', 'important');
-                            if (nightCard) {
-                                nightCard.style.setProperty('display', 'flex', 'important');
-                                nightCard.style.animation = 'none';
-                                nightCard.offsetHeight; // trigger reflow
-                                nightCard.style.animation = '';
+                const pills = document.querySelectorAll('.theme-toggle-pill');
+                pills.forEach(pill => {
+                    const btns = pill.querySelectorAll('.theme-toggle-btn');
+                    btns.forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            
+                            const target = btn.getAttribute('data-target');
+                            
+                            if (target === 'night') {
+                                pill.classList.add('night-active');
+                            } else {
+                                pill.classList.remove('night-active');
                             }
-                        } else if (target === 'day') {
-                            if (nightCard) nightCard.style.setProperty('display', 'none', 'important');
-                            if (dayCard) {
-                                dayCard.style.setProperty('display', 'flex', 'important');
-                                dayCard.style.animation = 'none';
-                                dayCard.offsetHeight; // trigger reflow
-                                dayCard.style.animation = '';
+                            
+                            const wrapper = pill.closest('.theme-toggle-wrapper');
+                            const grid = wrapper ? wrapper.nextElementSibling : null;
+                            if (!grid || !grid.classList.contains('tarifas-grid')) return;
+                            
+                            const dayCard = grid.querySelector('.fare-card-day');
+                            const nightCard = grid.querySelector('.fare-card-night');
+                            
+                            if (target === 'night') {
+                                if (dayCard) dayCard.style.setProperty('display', 'none', 'important');
+                                if (nightCard) {
+                                    nightCard.style.setProperty('display', 'flex', 'important');
+                                    nightCard.style.animation = 'none';
+                                    nightCard.offsetHeight; // trigger reflow
+                                    nightCard.style.animation = '';
+                                }
+                            } else {
+                                if (nightCard) nightCard.style.setProperty('display', 'none', 'important');
+                                if (dayCard) {
+                                    dayCard.style.setProperty('display', 'flex', 'important');
+                                    dayCard.style.animation = 'none';
+                                    dayCard.offsetHeight; // trigger reflow
+                                    dayCard.style.animation = '';
+                                }
                             }
-                        }
+                        });
                     });
                 });
             };
