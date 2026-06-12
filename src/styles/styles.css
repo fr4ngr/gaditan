@@ -2035,11 +2035,11 @@ body.low-bandwidth .hero-slide-card.active-slide .glass.card {
     font-size: 1.7rem;
     line-height: 1.2;
     padding-bottom: 0.3rem;
-    color: var(--bg-base);
+    color: var(--bg-base) !important;
 }
 
 .section-header-subtitle {
-    color: var(--text-muted);
+    color: var(--bg-base) !important;
     margin: 0;
     font-size: 1.05rem;
     line-height: 1.4;
