@@ -1917,6 +1917,13 @@ select:-webkit-autofill:focus {
         inset 0 1px 0 rgba(255, 255, 255, 0.45);
 }
 
+@media (max-width: 768px) {
+    .hero-slide-card .glass.card {
+        aspect-ratio: auto;
+        min-height: 175px; /* Taller layout on mobile for better padding */
+    }
+}
+
 /* Disable transitions during silent infinite carousel jumps to prevent flickering */
 .hero-carousel-track.no-transition-jump .glass.card {
     transition: none !important;
