@@ -1,0 +1,72 @@
+---
+// AnimatedMoon.astro
+---
+<div class="uiverse-moon-wrapper">
+  <div class="uiverse-moon-container">
+    <div class="moon-loader">
+      <div class="moon-shadow"></div>
+    </div>
+  </div>
+</div>
+
+<style>
+/* From Uiverse.io by Yaya12085 */ 
+.uiverse-moon-wrapper {
+  width: 45px;
+  height: 45px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 50%;
+  background: rgba(15, 23, 42, 0.12); /* Matches the original circle background */
+  border: 1px solid rgba(15, 23, 42, 0.15);
+}
+
+.uiverse-moon-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: scale(0.35); /* Scale down the 100px loader to fit 45px wrapper */
+}
+
+.moon-loader {
+  height: 100px;
+  width: 100px;
+  border-radius: 50%;
+  background-color: #f6f6f6;
+  border: 4px solid #f6f6f6;
+  box-shadow: 0 0 3px #f6f6f6;
+  filter: blur(.4px);
+  position: relative;
+  overflow: hidden;
+}
+
+.moon-shadow {
+  height: 120px;
+  width: 120px;
+  border-radius: 50%;
+  background-color: var(--brand-cyan, #06b6d4); /* Use header background color so it looks transparent! */
+  position: absolute;
+  top: -10px;
+  left: 0;
+  animation: moon-animate 3s infinite 1.5s;
+}
+
+@keyframes moon-animate {
+  0% {
+    transform: translateX(110px);
+  }
+
+  50% {
+    transform: translateX(-20px);
+  }
+
+  100% {
+    transform: translateX(-140px);
+  }
+}
+</style>
