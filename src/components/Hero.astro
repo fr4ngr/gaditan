@@ -83,16 +83,47 @@
         let autoPlayTimer;
         const slideTime = 5000;
 
+        let slideCenters = [];
+        const cacheSlidePositions = () => {
+            slideCenters = Array.from(slides).map((slide) => {
+                return slide.offsetLeft - track.offsetLeft + (slide.offsetWidth / 2);
+            });
+        };
+
+        const updateActiveFactors = () => {
+            const trackCenter = track.scrollLeft + (track.offsetWidth / 2);
+            const slideWidth = slides[0].offsetWidth;
+            if (slideCenters.length === 0 || !slideWidth) return;
+            
+            for (let i = 0; i < slides.length; i++) {
+                const distance = Math.abs(trackCenter - slideCenters[i]);
+                let factor = 0;
+                if (distance < slideWidth) {
+                    factor = 1 - (distance / slideWidth);
+                    // Square it to make the transition peak more sharply in the center
+                    factor = factor * factor;
+                }
+                slides[i].style.setProperty('--active-factor', factor.toFixed(3));
+            }
+        };
+
         // Position initial scroll seamlessly
         setTimeout(() => {
             track.style.scrollBehavior = 'auto';
             track.scrollTo({ left: slides[currentDomIndex].offsetLeft - track.offsetLeft - (track.offsetWidth * 0.075) });
             setTimeout(() => {
                 track.style.scrollBehavior = 'smooth';
+                cacheSlidePositions();
+                updateActiveFactors();
                 updateDotsAndClasses(currentDomIndex);
                 startAutoPlay();
             }, 50);
         }, 100);
+
+        window.addEventListener('resize', () => {
+            cacheSlidePositions();
+            updateActiveFactors();
+        });
 
         const updateDotsAndClasses = (domIndex) => {
             if(!slides[domIndex]) return;
@@ -221,6 +252,7 @@
         let isScrolling;
         track.addEventListener('scroll', () => {
             stopAutoPlay();
+            updateActiveFactors(); // Update active card styling variable dynamically on scroll
             
             window.clearTimeout(isScrolling);
             isScrolling = setTimeout(() => {
