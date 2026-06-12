@@ -14,7 +14,7 @@ const translationsEN = {
     "carousel-section-title": "POPULAR TOOLS",
     
     // Calculator
-    "calc-title": "Smart Taximeter",
+    "calc-title": "Smart Calculator",
     "calc-subtitle": "Calculate your estimated fare instantly",
     "calc-dist": "Distance:",
     "calc-time": "Time:",
