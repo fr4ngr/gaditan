@@ -265,45 +265,48 @@ const mapManager = (() => {
         let distHtml = '';
         if (currentMode === 'cercana' && p.distance !== undefined) {
             distHtml = `
-                <div id="walk-info-pill" style="display: flex; align-items: center; justify-content: center; gap: 1rem; margin-top: 0.6rem; padding-top: 0.6rem; border-top: 1px solid rgba(6, 182, 212, 0.25); width: 100%;">
-                    <div style="font-size: 0.8rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.35rem;"><i data-lucide="loader-2" style="width:14px; height:14px; animation: spin 1s linear infinite;"></i> Calculando ruta...</div>
+                <div id="walk-info-pill" style="display: flex; align-items: center; justify-content: center; gap: 1rem; margin-top: 0.8rem; padding-top: 0.8rem; border-top: 1px solid rgba(15, 23, 42, 0.15); width: 100%;">
+                    <div style="font-size: 0.85rem; color: #0f172a; display: flex; align-items: center; gap: 0.35rem; font-weight: 600;"><i data-lucide="loader-2" style="width:16px; height:16px; animation: spin 1s linear infinite;"></i> Calculando ruta...</div>
                 </div>
             `;
         }
         
         overlay.innerHTML = `
-            <div style="background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.1); border-radius: 9999px; padding: 0.85rem 1.25rem; box-shadow: 0 10px 30px rgba(0,0,0,0.3); display: flex; flex-direction: column; width: 100%; box-sizing: border-box;">
-                <div style="display: flex; align-items: center; gap: 0.85rem; width: 100%;">
-                    <!-- Icono sin fondo -->
-                    <i data-lucide="map-pin" style="color: var(--brand-cyan); width: 28px; height: 28px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); flex-shrink: 0;"></i>
-                    <!-- Textos a la derecha -->
-                    <div style="display: flex; flex-direction: column; flex: 1; min-width: 0; justify-content: center;">
-                        <span style="color: var(--brand-cyan); font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.15rem;">PARADA DE TAXI</span>
-                        <strong style="color: #fff; font-size: 1.1rem; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.1;">${p.name}</strong>
-                        <span style="color: rgba(255,255,255,0.7); font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 0.1rem;">${p.address}, Cádiz</span>
-                    </div>
+            <div style="display: flex; align-items: center; gap: 0.85rem; width: 100%;">
+                <!-- Icono sin fondo -->
+                <i data-lucide="map-pin" style="color: #0f172a; width: 32px; height: 32px; flex-shrink: 0;"></i>
+                <!-- Textos a la derecha -->
+                <div style="display: flex; flex-direction: column; flex: 1; min-width: 0; justify-content: center;">
+                    <span style="color: rgba(15, 23, 42, 0.7); font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.15rem;">PARADA DE TAXI</span>
+                    <strong style="color: #0f172a; font-size: 1.3rem; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.1;">${p.name}</strong>
+                    <span style="color: rgba(15, 23, 42, 0.85); font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 0.1rem;">${p.address}, Cádiz</span>
                 </div>
-                ${distHtml}
             </div>
+            ${distHtml}
         `;
         
         if (typeof lucide !== 'undefined') lucide.createIcons();
         overlay.style.display = 'block';
-        // Fade in con traslación suave y retardo
         requestAnimationFrame(() => {
-            overlay.style.transition = 'all 0.8s cubic-bezier(0.1, 0.9, 0.2, 1) 0.4s';
+            overlay.style.padding = '1.25rem 1.5rem';
+            overlay.style.maxHeight = '200px';
             overlay.style.opacity = '1';
-            overlay.style.transform = 'translateY(0)';
+            
+            // Adjust aspect ratio since container now includes header
+            const mapEl = document.getElementById('map');
+            if (mapEl) mapEl.style.aspectRatio = '16/10';
         });
     };
 
     const hideMapOverlay = () => {
         const overlay = document.getElementById('map-overlay-info');
         if (overlay) {
-            overlay.style.transition = 'all 0.3s ease 0s';
+            overlay.style.maxHeight = '0';
             overlay.style.opacity = '0';
-            overlay.style.transform = 'translateY(-20px)';
-            setTimeout(() => { overlay.style.display = 'none'; }, 300);
+            overlay.style.padding = '0';
+            setTimeout(() => {
+                overlay.style.display = 'none';
+            }, 400); // Wait for transition
         }
     };
 
@@ -704,8 +707,8 @@ const mapManager = (() => {
                                     const walkMins = Math.max(1, Math.round(walkSecs / 60));
                                     const distStr = walkDist < 1000 ? Math.round(walkDist) + ' m' : (walkDist / 1000).toFixed(1) + ' km';
                                     pill.innerHTML = `
-                                        <div style="font-size: 0.8rem; color: var(--brand-cyan); font-weight: 600; display: flex; align-items: center; gap: 0.35rem;"><i data-lucide="footprints" style="width:15px; height:15px;"></i> ${distStr}</div>
-                                        <div style="font-size: 0.8rem; color: var(--brand-cyan); font-weight: 600; display: flex; align-items: center; gap: 0.35rem;"><i data-lucide="clock" style="width:15px; height:15px;"></i> ${walkMins} min a pie</div>
+                                        <div style="font-size: 0.85rem; color: #0f172a; font-weight: 700; display: flex; align-items: center; gap: 0.35rem;"><i data-lucide="footprints" style="width:16px; height:16px;"></i> ${distStr}</div>
+                                        <div style="font-size: 0.85rem; color: #0f172a; font-weight: 700; display: flex; align-items: center; gap: 0.35rem;"><i data-lucide="clock" style="width:16px; height:16px;"></i> ${walkMins} min a pie</div>
                                     `;
                                 }
                                 if (typeof lucide !== 'undefined') lucide.createIcons();
