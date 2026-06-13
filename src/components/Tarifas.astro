@@ -315,6 +315,9 @@
                                 const newLottieSrc = pill.getAttribute('data-lottie');
                                 if (lottiePlayer.getAttribute('src') !== newLottieSrc) {
                                     lottiePlayer.setAttribute('src', newLottieSrc);
+                                    if (typeof lottiePlayer.load === 'function') {
+                                        lottiePlayer.load(newLottieSrc);
+                                    }
                                 }
                                 
                                 if (newLottieSrc === '/moon-lottie.json') {
