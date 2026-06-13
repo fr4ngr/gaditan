@@ -138,8 +138,11 @@
                     </div>
                 </div>
 
-                <div class="source-info" style="font-size: 0.85rem; color: var(--brand-cyan-light); opacity: 0.7; text-align: right; padding: 0 0.5rem; margin-top: 0.5rem; margin-bottom: 2.5rem; font-style: italic;">
-                    FUENTE: Boletín Oficial de la Junta de Andalucía. Boletín número 10 de 16/01/2026
+                <div style="display: flex; justify-content: flex-end; margin-top: 0.5rem; margin-bottom: 2.5rem; padding: 0 0.5rem;">
+                    <div class="source-pill-badge" title="Boletín Oficial de la Junta de Andalucía. Boletín número 10 de 16/01/2026">
+                        <span>FUENTE: Boletín Oficial</span>
+                        <span class="flag-circle-andalucia"></span>
+                    </div>
                 </div>
                 </div>
 
@@ -191,8 +194,11 @@
                             </div>
                         </div>
                     </div>
-                    <div class="source-info" style="font-size: 0.85rem; color: var(--brand-cyan-light); opacity: 0.7; text-align: right; padding: 0 0.5rem; margin-top: 1rem; margin-bottom: 2rem; font-style: italic;">
-                        FUENTE: Boletín Oficial de la Junta de Andalucía. Boletín número 49 de 12/03/2026
+                    <div style="display: flex; justify-content: flex-end; margin-top: 1rem; margin-bottom: 2rem; padding: 0 0.5rem;">
+                        <div class="source-pill-badge" title="Boletín Oficial de la Junta de Andalucía. Boletín número 49 de 12/03/2026">
+                            <span>FUENTE: Boletín Oficial</span>
+                            <span class="flag-circle-andalucia"></span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -259,6 +265,34 @@
                 width: 17px;
                 height: 17px;
                 stroke-width: 3px;
+            }
+            .source-pill-badge {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.45rem;
+                background: rgba(255, 255, 255, 0.04);
+                border: 1px solid rgba(255, 255, 255, 0.08);
+                padding: 0.35rem 0.75rem;
+                border-radius: 9999px;
+                color: var(--brand-cyan-light);
+                font-size: 0.78rem;
+                font-weight: 700;
+                letter-spacing: 0.5px;
+                cursor: help;
+                transition: background 0.2s, border-color 0.2s;
+            }
+            .source-pill-badge:hover {
+                background: rgba(255, 255, 255, 0.08);
+                border-color: rgba(6, 182, 212, 0.3);
+            }
+            .flag-circle-andalucia {
+                width: 12px;
+                height: 12px;
+                border-radius: 50%;
+                background: linear-gradient(to bottom, #00875a 33.33%, #ffffff 33.33%, #ffffff 66.66%, #00875a 66.66%);
+                display: inline-block;
+                border: 1px solid rgba(255, 255, 255, 0.15);
+                flex-shrink: 0;
             }
             .scope-toggle-wrapper {
                 display: flex;
