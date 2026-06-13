@@ -270,13 +270,14 @@
                 display: inline-flex;
                 align-items: center;
                 gap: 0.6rem;
-                color: var(--brand-cyan-light);
+                color: #ffffff;
                 font-size: 0.82rem;
-                font-weight: 700;
+                font-weight: 500;
                 letter-spacing: 0.5px;
                 cursor: help;
                 opacity: 0.75;
                 transition: opacity 0.2s;
+                white-space: nowrap;
             }
             .source-free-text:hover {
                 opacity: 1;
@@ -297,6 +298,22 @@
                 font-size: 0.6rem;
                 font-weight: 900;
                 line-height: 1;
+            }
+            @media (max-width: 480px) {
+                .source-free-text {
+                    font-size: 0.68rem;
+                    gap: 0.4rem;
+                }
+                .flag-circle-andalucia {
+                    width: 18px;
+                    height: 18px;
+                    font-size: 0.45rem;
+                }
+            }
+            @media (max-width: 360px) {
+                .source-free-text {
+                    font-size: 0.58rem;
+                }
             }
             .scope-toggle-wrapper {
                 display: flex;
