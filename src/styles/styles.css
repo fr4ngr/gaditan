@@ -1167,7 +1167,38 @@ details.native-accordion.closing .native-content {
 }
 .stepper-btn:hover { background: rgba(0, 0, 0, 0.4); }
 .stepper-btn:active { transform: scale(0.9); }
-.custom-switch {
+/* Pill-based Theme Toggle for Fares */
+.theme-toggle-wrapper {
+    /* Container for pills */
+}
+
+.tarifa-pill {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.7);
+    padding: 0.6rem 1.2rem;
+    border-radius: 9999px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    font-family: 'Outfit', sans-serif;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.tarifa-pill:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.tarifa-pill.active {
+    background: var(--brand-cyan);
+    color: var(--bg-base);
+    border-color: var(--brand-cyan);
+    box-shadow: 0 2px 8px rgba(6, 182, 212, 0.4);
+}
+
+/* Original Switch styling (can be removed later if completely unused) */
+.switch {
     width: 36px;
     height: 20px;
     background: #ef4444;
@@ -2065,26 +2096,37 @@ body.low-bandwidth .hero-slide-card.active-slide .glass.card {
     }
 }
 
-@media (max-width: 400px) {
+@media (max-width: 600px) {
     .section-header-card {
-        border-radius: 20px;
+        flex-direction: column;
+        border-radius: 16px;
+        align-items: center;
+        text-align: center;
     }
     .section-header-icon {
-        width: 85px;
-        padding: 0.5rem;
+        width: 100%;
+        padding: 0.8rem;
+        background: transparent;
     }
-    .section-header-icon lottie-player {
-        width: 55px !important;
-        height: 55px !important;
+    .section-header-icon lottie-player, .section-header-icon i {
+        width: 60px !important;
+        height: 60px !important;
     }
     .section-header-content {
-        padding: 1rem;
+        padding: 1rem 1.5rem 1.5rem 1.5rem;
+        text-align: center;
+        align-items: center;
+        width: 100%;
+        border-radius: 0 0 16px 16px;
     }
     .section-header-title {
-        font-size: 1.25rem;
+        font-size: 1.4rem;
+        text-align: center;
+        justify-content: center;
     }
     .section-header-subtitle {
-        font-size: 0.85rem;
+        font-size: 0.9rem;
+        text-align: center;
     }
 }
 

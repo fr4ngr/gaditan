@@ -63,7 +63,7 @@ export async function getRouteDetails(exactOrigin, exactDest) {
     };
 }
 
-export function calculatePrice(routeInfo, tarifaMode, hasRenfe, hasPuerto, hasCortadura, isAdapted, luggageCount) {
+export function calculatePrice(routeInfo, tarifaMode, hasRenfe, hasPuerto, hasCortadura, isAdapted, luggageCount, extraPlazaCount = 0) {
     // tarifaMode is 1, 2, 3 (Urbano) or 7, 8 (Interurbano)
     let basePriceCerrado = 0;
     let basePriceTaximetro = 0;
@@ -118,6 +118,7 @@ export function calculatePrice(routeInfo, tarifaMode, hasRenfe, hasPuerto, hasCo
         if (hasPuerto) supps += supplements.puerto;
         if (hasCortadura) supps += supplements.cortadura;
         if (luggageCount > 0) supps += luggageCount * supplements.luggage;
+        if (extraPlazaCount > 0 && !isAdapted) supps += extraPlazaCount * supplements.extra_plaza;
         
         basePriceCerrado += supps;
         basePriceTaximetro += supps;
@@ -189,7 +190,7 @@ export function updateCalcPriceUI() {
     
     const tarifaMode = determineTariffMode(targetDate, calcContext.lastCalcRoute.isInter);
     
-    const result = calculatePrice(calcContext.lastCalcRoute, tarifaMode, renfeChecked, puertoChecked, cortaduraChecked, false, calcState.luggage);
+    const result = calculatePrice(calcContext.lastCalcRoute, tarifaMode, renfeChecked, puertoChecked, cortaduraChecked, false, calcState.luggage, calcState.extraPlaza);
     
     const formattedCerrado = result.precioCerrado.toFixed(2).replace('.', ',');
     const formattedTaximetro = result.precioTaximetro.toFixed(2).replace('.', ',');

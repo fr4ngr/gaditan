@@ -79,6 +79,16 @@
                                             <button type="button" class="stepper-btn-full" onclick="updateCalcLuggage(1)">+</button>
                                         </div>
                                     </div>
+                                    <div class="chip-wrapper">
+                                        <span class="chip-label">Plazas extra (6 y 7)</span>
+                                        <div class="booking-chip stepper-chip-container">
+                                            <button type="button" class="stepper-btn-full" onclick="updateCalcExtraPlaza(-1)">-</button>
+                                            <div class="stepper-content">
+                                                <i data-lucide="users" class="chip-icon"></i> <span class="chip-text" id="calc-extra-plaza">0</span>
+                                            </div>
+                                            <button type="button" class="stepper-btn-full" onclick="updateCalcExtraPlaza(1)">+</button>
+                                        </div>
+                                    </div>
                                     <div class="chip-wrapper" style="width: 100%; margin-top: 0.5rem; display: flex; flex-direction: column; gap: 0.5rem;">
                                         <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: var(--text-muted); font-size: 0.9rem;">
                                             <input type="checkbox" id="calc-renfe-toggle" onchange="window.triggerAutoCalc && window.triggerAutoCalc()" style="accent-color: var(--brand-cyan); width: 16px; height: 16px;">

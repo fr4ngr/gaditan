@@ -257,7 +257,8 @@ export const supplements = {
     luggage: 0.51,
     renfe: 0.82,
     puerto: 1.06,
-    cortadura: 4.46
+    cortadura: 4.46,
+    extra_plaza: 0.91
 };
 
 export const EXITS = [
@@ -266,7 +267,7 @@ export const EXITS = [
     { name: "San Fernando (Autovía)", lat: 36.4860, lon: -6.2560 }
 ];
 
-export const calcState = { isDay: true, isFestivo: false, hasRenfe: false, hasPuerto: false, hasCortadura: false, luggage: 0 };
+export const calcState = { isDay: true, isFestivo: false, hasRenfe: false, hasPuerto: false, hasCortadura: false, luggage: 0, extraPlaza: 0 };
 export const calcContext = {
     selectedOrigin: null,
     selectedDest: null,

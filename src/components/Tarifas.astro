@@ -11,27 +11,12 @@
                 <h3 class="subsection-title" style="margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
                     <span data-translate="urban-fares-title">Viaje Urbano</span>
                 </h3>
-                                <div class="theme-toggle-wrapper" style="display: flex; align-items: center; justify-content: flex-end; gap: 1rem; margin-bottom: 1.5rem; max-width: 580px; margin-left: auto; margin-right: auto; width: 100%;">
-    <div style="cursor: pointer; display: flex; align-items: center;" onclick="this.nextElementSibling.querySelector('input').click()">
-        <span class="label-day" style="font-weight: 700; color: white; font-size: 0.95rem;" data-translate="day-fare-btn">Día</span>
-        <span class="label-night" style="font-weight: 700; color: white; font-size: 0.95rem; display: none;" data-translate="night-fare-btn">Noche/Festivos</span>
-    </div>
-    <label class="switch">
-      <input checked="true" class="uiverse-toggle" type="checkbox" />
-      <span class="slider">
-        <div class="star star_1"></div>
-        <div class="star star_2"></div>
-        <div class="star star_3"></div>
-        <svg viewBox="0 0 16 16" class="cloud_1 cloud">
-          <path
-            transform="matrix(.77976 0 0 .78395-299.99-418.63)"
-            fill="#fff"
-            d="m391.84 540.91c-.421-.329-.949-.524-1.523-.524-1.351 0-2.451 1.084-2.485 2.435-1.395.526-2.388 1.88-2.388 3.466 0 1.874 1.385 3.423 3.182 3.667v.034h12.73v-.006c1.775-.104 3.182-1.584 3.182-3.395 0-1.747-1.309-3.186-2.994-3.379.007-.106.011-.214.011-.322 0-2.707-2.271-4.901-5.072-4.901-2.073 0-3.856 1.202-4.643 2.925"
-          ></path>
-        </svg>
-      </span>
-    </label>
-</div>
+                                <div class="theme-toggle-wrapper" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 1.5rem; max-width: 580px; margin-left: auto; margin-right: auto; width: 100%; flex-wrap: wrap;">
+                                    <button class="tarifa-pill active" data-target="day">Día</button>
+                                    <button class="tarifa-pill" data-target="night">Noche</button>
+                                    <button class="tarifa-pill" data-target="night">Fin de Semana</button>
+                                    <button class="tarifa-pill" data-target="night">Festivo</button>
+                                </div>
                                 <div class="tarifas-grid single-card-mode">
                     <div class="fare-wrapper dynamic-fare-card" style="width: 100%; display: flex; flex-direction: column;" id="urban-fare-card">
                         <div class="glass card tarifas-card-hover" style="padding: 0; overflow: hidden; display: flex; flex-direction: column; gap: 0; text-align: left; background: #ffffff; border: 1px solid rgba(6, 182, 212, 0.25);">
@@ -62,7 +47,7 @@
                                 </div>
                                 <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 0.2rem;">
                                     <span style="color: rgba(15, 23, 42, 0.75); font-weight: 500;" data-translate="waiting-hour">Hora de espera</span>
-                                    <strong class="dyn-price" style="color: var(--bg-base); font-size: 1.1rem; transition: opacity 0.3s;" data-day="18,97 €" data-night="23,66 €">18,97 €</strong>
+                                    <strong class="dyn-price" style="color: var(--bg-base); font-size: 1.1rem; transition: opacity 0.3s;" data-day="18,95 €" data-night="23,66 €">18,95 €</strong>
                                 </div>
                             </div>
                         </div>
@@ -87,6 +72,18 @@
                                 <span style="color: rgba(15, 23, 42, 0.75); font-size: 0.95rem;" data-translate="supp-luggage">Equipaje grande<sup>2</sup></span>
                                 <strong style="color: var(--bg-base); font-size: 1.05rem;">0,51 €</strong>
                             </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(15, 23, 42, 0.1); padding-bottom: 0.5rem;">
+                                <span style="color: rgba(15, 23, 42, 0.75); font-size: 0.95rem;">Puertos y astilleros</span>
+                                <strong style="color: var(--bg-base); font-size: 1.05rem;">1,06 €</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(15, 23, 42, 0.1); padding-bottom: 0.5rem;">
+                                <span style="color: rgba(15, 23, 42, 0.75); font-size: 0.95rem;">Cortadura - Torregorda</span>
+                                <strong style="color: var(--bg-base); font-size: 1.05rem;">4,46 €</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 0.5rem;">
+                                <span style="color: rgba(15, 23, 42, 0.75); font-size: 0.95rem;">6ª y 7ª plaza (por plaza)<sup>3</sup></span>
+                                <strong style="color: var(--bg-base); font-size: 1.05rem;">0,91 €</strong>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -95,8 +92,9 @@
                     FUENTE: Boletín Oficial de la Junta de Andalucía. Boletín número 10 de 16/01/2026
                 </div>
                 <div class="supplements-info" style="font-size: 0.95rem; color: var(--text-muted); opacity: 0.85; line-height: 1.5; margin-bottom: 3rem; padding: 0 0.5rem;" data-translate="supp-info-text">
-                    <p style="margin-bottom: 0.5rem;"><strong><sup>1</sup> Estación de Tren:</strong> Se aplica exclusivamente a viajes con origen en la parada de la estación. No se cobra si tu destino es la estación.</p>
-                    <p><strong><sup>2</sup> Equipaje grande:</strong> Aplicable a bultos que superen los 60 cm. Totalmente exentos: sillas de ruedas, andadores y carritos de bebé/compra.</p>
+                    <p style="margin-bottom: 0.5rem;"><strong><sup>1</sup> Estación de Tren:</strong> Se aplica exclusivamente a viajes con origen en la parada de la estación.</p>
+                    <p style="margin-bottom: 0.5rem;"><strong><sup>2</sup> Equipaje grande:</strong> Aplicable a maletas o bultos. <strong>Gratis:</strong> sillas infantiles, carros de bebé, patinetes eléctricos/VMP plegados o sillas de ruedas.</p>
+                    <p><strong><sup>3</sup> Plazas extra:</strong> Suplemento por el uso de la 6ª y 7ª plaza. Exento si viaja alguna persona con discapacidad.</p>
                 </div>
 
                 <div class="fare-group" style="text-align: center;">
@@ -105,27 +103,12 @@
                         <i data-lucide="chevron-down" class="fare-icon" style="transition: transform 0.3s; transform: rotate(0deg); width: 20px; height: 20px;"></i>
                     </h3>
                     <div class="fare-content" style="overflow: hidden; transition: max-height 0.4s ease; max-height: 0px;">
-                        <div class="theme-toggle-wrapper" style="display: flex; align-items: center; justify-content: flex-end; gap: 1rem; margin-bottom: 1.5rem; max-width: 580px; margin-left: auto; margin-right: auto; width: 100%;">
-    <div style="cursor: pointer; display: flex; align-items: center;" onclick="this.nextElementSibling.querySelector('input').click()">
-        <span class="label-day" style="font-weight: 700; color: white; font-size: 0.95rem;" data-translate="day-fare-btn">Día</span>
-        <span class="label-night" style="font-weight: 700; color: white; font-size: 0.95rem; display: none;" data-translate="night-fare-btn">Noche/Festivos</span>
-    </div>
-    <label class="switch">
-      <input checked="true" class="uiverse-toggle" type="checkbox" />
-      <span class="slider">
-        <div class="star star_1"></div>
-        <div class="star star_2"></div>
-        <div class="star star_3"></div>
-        <svg viewBox="0 0 16 16" class="cloud_1 cloud">
-          <path
-            transform="matrix(.77976 0 0 .78395-299.99-418.63)"
-            fill="#fff"
-            d="m391.84 540.91c-.421-.329-.949-.524-1.523-.524-1.351 0-2.451 1.084-2.485 2.435-1.395.526-2.388 1.88-2.388 3.466 0 1.874 1.385 3.423 3.182 3.667v.034h12.73v-.006c1.775-.104 3.182-1.584 3.182-3.395 0-1.747-1.309-3.186-2.994-3.379.007-.106.011-.214.011-.322 0-2.707-2.271-4.901-5.072-4.901-2.073 0-3.856 1.202-4.643 2.925"
-          ></path>
-        </svg>
-      </span>
-    </label>
-</div>
+                        <div class="theme-toggle-wrapper" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 1.5rem; max-width: 580px; margin-left: auto; margin-right: auto; width: 100%; flex-wrap: wrap;">
+                            <button class="tarifa-pill active" data-target="day">Día</button>
+                            <button class="tarifa-pill" data-target="night">Noche</button>
+                            <button class="tarifa-pill" data-target="night">Fin de Semana</button>
+                            <button class="tarifa-pill" data-target="night">Festivo</button>
+                        </div>
                           <div class="tarifas-grid single-card-mode" style="margin-top: 1rem;">
                             <div class="fare-wrapper dynamic-fare-card" style="width: 100%; display: flex; flex-direction: column;" id="interurban-fare-card">
                                 <div class="glass card tarifas-card-hover" style="padding: 0; overflow: hidden; display: flex; flex-direction: column; gap: 0; text-align: left; background: #ffffff; border: 1px solid rgba(6, 182, 212, 0.25);">
@@ -289,60 +272,55 @@
         <script is:inline src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
         <script>
             const initFareToggles = () => {
-                const toggles = document.querySelectorAll('.uiverse-toggle');
-                toggles.forEach(toggle => {
-                    toggle.addEventListener('change', (e) => {
-                        const isDay = toggle.checked;
-                        const target = isDay ? 'day' : 'night';
-                        
-                        const wrapper = toggle.closest('.theme-toggle-wrapper');
-                        const grid = wrapper ? wrapper.nextElementSibling : null;
-                        
-                        // Si hay saltos de linea, avanzamos hasta el div real
-                        let actualGrid = grid;
-                        while(actualGrid && actualGrid.nodeType !== 1) {
-                            actualGrid = actualGrid.nextSibling;
-                        }
-                        if (!actualGrid || !actualGrid.classList.contains('tarifas-grid')) return;
-                        
-                        const labelDay = wrapper.querySelector('.label-day');
-                        const labelNight = wrapper.querySelector('.label-night');
-                        if (isDay) {
-                            if (labelDay) labelDay.style.display = 'inline';
-                            if (labelNight) labelNight.style.display = 'none';
-                        } else {
-                            if (labelDay) labelDay.style.display = 'none';
-                            if (labelNight) labelNight.style.display = 'inline';
-                        }
-                        
-                        const card = actualGrid.querySelector('.dynamic-fare-card');
-                        if (!card) return;
-                        
-                        const lottiePlayer = card.querySelector('lottie-player');
-                        if (lottiePlayer) {
-                            if (target === 'night') {
-                                lottiePlayer.setDirection(1);
-                                lottiePlayer.play();
-                            } else {
-                                lottiePlayer.setDirection(-1);
-                                try {
-                                    const anim = lottiePlayer.getLottie();
-                                    if (anim && anim.currentFrame > 80) {
-                                        lottiePlayer.seek(80);
-                                    }
-                                } catch(e) {}
-                                lottiePlayer.play();
-                            }
-                        }
+                const wrappers = document.querySelectorAll('.theme-toggle-wrapper');
+                wrappers.forEach(wrapper => {
+                    const pills = wrapper.querySelectorAll('.tarifa-pill');
+                    pills.forEach(pill => {
+                        pill.addEventListener('click', (e) => {
+                            // Update active state of pills
+                            pills.forEach(p => p.classList.remove('active'));
+                            pill.classList.add('active');
 
-                        // Animar textos
-                        const dynElements = card.querySelectorAll('.dyn-title, .dyn-subtitle, .dyn-price');
-                        dynElements.forEach(el => {
-                            el.style.opacity = '0';
-                            setTimeout(() => {
-                                el.textContent = el.getAttribute('data-' + target);
-                                el.style.opacity = '1';
-                            }, 150);
+                            const target = pill.getAttribute('data-target'); // 'day' or 'night'
+                            
+                            const grid = wrapper.nextElementSibling;
+                            
+                            // Si hay saltos de linea, avanzamos hasta el div real
+                            let actualGrid = grid;
+                            while(actualGrid && actualGrid.nodeType !== 1) {
+                                actualGrid = actualGrid.nextSibling;
+                            }
+                            if (!actualGrid || !actualGrid.classList.contains('tarifas-grid')) return;
+                            
+                            const card = actualGrid.querySelector('.dynamic-fare-card');
+                            if (!card) return;
+                            
+                            const lottiePlayer = card.querySelector('lottie-player');
+                            if (lottiePlayer) {
+                                if (target === 'night') {
+                                    lottiePlayer.setDirection(1);
+                                    lottiePlayer.play();
+                                } else {
+                                    lottiePlayer.setDirection(-1);
+                                    try {
+                                        const anim = lottiePlayer.getLottie();
+                                        if (anim && anim.currentFrame > 80) {
+                                            lottiePlayer.seek(80);
+                                        }
+                                    } catch(e) {}
+                                    lottiePlayer.play();
+                                }
+                            }
+
+                            // Animar textos
+                            const dynElements = card.querySelectorAll('.dyn-title, .dyn-subtitle, .dyn-price');
+                            dynElements.forEach(el => {
+                                el.style.opacity = '0';
+                                setTimeout(() => {
+                                    el.textContent = el.getAttribute('data-' + target);
+                                    el.style.opacity = '1';
+                                }, 150);
+                            });
                         });
                     });
                 });

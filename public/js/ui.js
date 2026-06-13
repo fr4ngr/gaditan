@@ -220,16 +220,25 @@ export function toggleCalcRenfe() {
 export function updateCalcLuggage(delta) {
     let newL = calcState.luggage + delta;
     if (newL < 0) newL = 0;
-    if (newL > 2) newL = 2;
+    if (newL > 4) newL = 4;
     calcState.luggage = newL;
     document.getElementById('calc-luggage').innerText = newL;
     const container = document.getElementById('calc-maleta-container');
-    if (newL > 0) {
-        container.classList.add('active');
-    } else {
-        container.classList.remove('active');
+    if (container) {
+        if (newL > 0) container.classList.add('active');
+        else container.classList.remove('active');
     }
-    updateCalcPriceUI();
+    if(window.triggerAutoCalc) window.triggerAutoCalc();
+}
+
+export function updateCalcExtraPlaza(delta) {
+    let newP = (calcState.extraPlaza || 0) + delta;
+    if (newP < 0) newP = 0;
+    if (newP > 3) newP = 3; // Up to 3 extra plazas (5th, 6th, 7th passenger over 4)
+    calcState.extraPlaza = newP;
+    const el = document.getElementById('calc-extra-plaza');
+    if (el) el.innerText = newP;
+    if(window.triggerAutoCalc) window.triggerAutoCalc();
 }
 
 export function updateBookingStepper(type, delta) {
@@ -238,7 +247,7 @@ export function updateBookingStepper(type, delta) {
     const container = document.getElementById('container-' + type);
     
     let current = parseInt(input.value);
-    let max = type === 'passengers' ? 4 : (type === 'luggage' ? 2 : 10);
+    let max = type === 'passengers' ? 7 : (type === 'luggage' ? 4 : 10);
     let min = type === 'passengers' ? 1 : 0;
     
     let next = current + delta;
@@ -558,14 +567,23 @@ export async function confirmReservation(event) {
     // Opcionales
     const trainOrigin = document.getElementById('b-train-origin')?.checked;
     const pet = document.getElementById('b-pet')?.checked;
-    const luggage = document.getElementById('b-luggage-qty')?.innerText || '0';
+    const luggage = document.getElementById('chip-luggage')?.value || '0';
     const luggageInt = parseInt(luggage) || 0;
+    const passengers = document.getElementById('chip-passengers')?.value || '1';
+    const passengersInt = parseInt(passengers) || 1;
+    const isAdapted = document.getElementById('check-disability')?.checked || false;
     
+    // Extra plazas calculation (max 4 per standard taxi, anything above is extra plaza)
+    let extraPlazaInt = Math.max(0, passengersInt - 4);
+    if (isAdapted) { extraPlazaInt = 0; } // Exento si viaja persona con discapacidad
+
     // Opciones extra
     let extras = [];
     if (trainOrigin) extras.push("Origen Estación de Tren Plaza Sevilla");
     if (pet) extras.push("Mascota (en transportín)");
     if (luggageInt > 0) extras.push(`${luggageInt} Maleta(s) grande(s)`);
+    if (passengersInt > 4) extras.push(`Vehículo grande (${passengersInt} plazas)`);
+    if (isAdapted) extras.push("Taxi adaptado (PMR)");
 
     // --- CÁLCULO DE PRECIO ESTIMADO ---
     let estimatedPriceText = "";
@@ -575,8 +593,8 @@ export async function confirmReservation(event) {
             const routeInfo = await getRouteDetails(calcContext.bookingOrigin, calcContext.bookingDest);
             const tarifaMode = determineTariffMode(targetDate, routeInfo.isInter);
             
-            // calculatePrice params: routeInfo, tarifaMode, hasRenfe, hasPuerto, hasCortadura, isAdapted, luggageCount
-            const result = calculatePrice(routeInfo, tarifaMode, trainOrigin, false, false, false, luggageInt);
+            // calculatePrice params: routeInfo, tarifaMode, hasRenfe, hasPuerto, hasCortadura, isAdapted, luggageCount, extraPlazaCount
+            const result = calculatePrice(routeInfo, tarifaMode, trainOrigin, false, false, isAdapted, luggageInt, extraPlazaInt);
             const formattedPrice = result.precioTaximetro.toFixed(2).replace('.', ',');
             estimatedPriceText = `(Estimación aproximada según calculador web: ~${formattedPrice}€)`;
         } catch(e) {

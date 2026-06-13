@@ -11,6 +11,7 @@ import {
     toggleCalcFestivo,
     toggleCalcRenfe,
     updateCalcLuggage,
+    updateCalcExtraPlaza,
     setupPhotonAutocomplete,
     geolocateOrigin,
     confirmReservation,
@@ -37,6 +38,7 @@ window.toggleCalcTime = toggleCalcTime;
 window.toggleCalcFestivo = toggleCalcFestivo;
 window.toggleCalcRenfe = toggleCalcRenfe;
 window.updateCalcLuggage = updateCalcLuggage;
+window.updateCalcExtraPlaza = updateCalcExtraPlaza;
 window.toggleSupplements = toggleSupplements;
 window.toggleCalcSupplements = toggleCalcSupplements;
 window.updateCalcPriceUI = updateCalcPriceUI;
