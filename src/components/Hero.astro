@@ -364,7 +364,26 @@
         };
 
         initCarousel();
-        window.addEventListener('load', initCarousel);
+        window.addEventListener('load', () => {
+            initCarousel();
+            // Re-align after a small delay to override browser scroll restoration
+            setTimeout(() => {
+                isProgrammaticScroll = true;
+                track.classList.remove('snapping');
+                cacheSlidePositions();
+                track.style.scrollBehavior = 'auto';
+                track.scrollTo({ left: getCenterScrollLeft(currentDomIndex) });
+                setTimeout(() => {
+                    track.classList.add('snapping');
+                    track.style.scrollBehavior = 'smooth';
+                    updateActiveFactors();
+                    updateDotsAndClasses(currentDomIndex);
+                    setTimeout(() => {
+                        isProgrammaticScroll = false;
+                    }, 100);
+                }, 50);
+            }, 100);
+        });
 
         window.addEventListener('resize', () => {
             isProgrammaticScroll = true;
