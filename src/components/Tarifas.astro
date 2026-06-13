@@ -14,8 +14,8 @@
                                 <div class="theme-toggle-wrapper" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 1.5rem; max-width: 580px; margin-left: auto; margin-right: auto; width: 100%; flex-wrap: wrap;">
                                     <button class="tarifa-pill active" data-target="day" data-title="Tarifa Diurna" data-subtitle="Lunes a Viernes (7h - 21h)">Día</button>
                                     <button class="tarifa-pill" data-target="night" data-title="Tarifa Nocturna" data-subtitle="Lunes a Viernes de 21 a 7h">Noche</button>
-                                    <button class="tarifa-pill" data-target="night" data-title="Tarifa Fines de Semana" data-subtitle="">Fin de Semana</button>
-                                    <button class="tarifa-pill" data-target="night" data-title="Tarifa Días Festivos" data-subtitle="">Festivo</button>
+                                    <button class="tarifa-pill" data-target="night" data-title="Tarifa Fines&nbsp;de&nbsp;Semana" data-subtitle="">Fin de Semana</button>
+                                    <button class="tarifa-pill" data-target="night" data-title="Tarifa Días&nbsp;Festivos" data-subtitle="">Festivo</button>
                                 </div>
                                 <div class="tarifas-grid single-card-mode">
                     <div class="fare-wrapper dynamic-fare-card" style="width: 100%; display: flex; flex-direction: column;" id="urban-fare-card">
@@ -106,8 +106,8 @@
                         <div class="theme-toggle-wrapper" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 1.5rem; max-width: 580px; margin-left: auto; margin-right: auto; width: 100%; flex-wrap: wrap;">
                             <button class="tarifa-pill active" data-target="day" data-title="Tarifa Diurna" data-subtitle="Lunes a Viernes (6h - 22h)">Día</button>
                             <button class="tarifa-pill" data-target="night" data-title="Tarifa Nocturna" data-subtitle="Lunes a Viernes de 22 a 6h">Noche</button>
-                            <button class="tarifa-pill" data-target="night" data-title="Tarifa Fines de Semana" data-subtitle="">Fin de Semana</button>
-                            <button class="tarifa-pill" data-target="night" data-title="Tarifa Días Festivos" data-subtitle="">Festivo</button>
+                            <button class="tarifa-pill" data-target="night" data-title="Tarifa Fines&nbsp;de&nbsp;Semana" data-subtitle="">Fin de Semana</button>
+                            <button class="tarifa-pill" data-target="night" data-title="Tarifa Días&nbsp;Festivos" data-subtitle="">Festivo</button>
                         </div>
                           <div class="tarifas-grid single-card-mode" style="margin-top: 1rem;">
                             <div class="fare-wrapper dynamic-fare-card" style="width: 100%; display: flex; flex-direction: column;" id="interurban-fare-card">
@@ -320,12 +320,12 @@
                                 el.style.opacity = '0';
                                 setTimeout(() => {
                                     if (el.classList.contains('dyn-title') && pillTitle !== null) {
-                                        el.textContent = pillTitle;
+                                        el.innerHTML = pillTitle;
                                     } else if (el.classList.contains('dyn-subtitle') && pillSubtitle !== null) {
-                                        el.textContent = pillSubtitle;
+                                        el.innerHTML = pillSubtitle;
                                         el.style.display = pillSubtitle ? 'block' : 'none';
                                     } else {
-                                        el.textContent = el.getAttribute('data-' + target);
+                                        el.innerHTML = el.getAttribute('data-' + target);
                                     }
                                     el.style.opacity = '1';
                                 }, 150);
