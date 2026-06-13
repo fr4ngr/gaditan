@@ -11,7 +11,6 @@
         <p class="hero-subtitle" data-translate="hero-subtitle">Pide un taxi, resérvalo o consulta las tarifas. Toda la info que necesitas en cadiz.taxi</p>
         
         <div class="hero-actions" style="margin-bottom: 2rem; display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
-            <a href="tel:+34600000000" class="btn" style="background-color: #25D366; color: #fff; padding-left: 2rem; padding-right: 2rem; box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4); border: none;"><i data-lucide="phone"></i> Pedir Taxi Ya</a>
             <a href="#reservas" class="btn btn-turquoise" style="padding-left: 2rem; padding-right: 2rem;"><i data-lucide="calendar"></i> Reservar</a>
         </div>
     </div>
@@ -153,15 +152,23 @@
         
         if(!track || dots.length === 0) return;
 
-        let currentDomIndex = 1; // 1 is the first REAL slide (since 0 is the clone of the last slide)
+        let currentDomIndex = 1;
         let autoPlayTimer;
         const slideTime = 5000;
-
+        let isProgrammaticScroll = false;
         let slideCenters = [];
+
         const cacheSlidePositions = () => {
             slideCenters = Array.from(slides).map((slide) => {
                 return slide.offsetLeft - track.offsetLeft + (slide.offsetWidth / 2);
             });
+        };
+
+        const getCenterScrollLeft = (index) => {
+            const slide = slides[index];
+            if (!slide) return 0;
+            const slideLeft = slide.offsetLeft - track.offsetLeft;
+            return slideLeft + (slide.offsetWidth / 2) - (track.offsetWidth / 2);
         };
 
         const updateActiveFactors = () => {
@@ -174,30 +181,11 @@
                 let factor = 0;
                 if (distance < slideWidth) {
                     factor = 1 - (distance / slideWidth);
-                    // Square it to make the transition peak more sharply in the center
                     factor = factor * factor;
                 }
                 slides[i].style.setProperty('--active-factor', factor.toFixed(3));
             }
         };
-
-        // Position initial scroll seamlessly
-        setTimeout(() => {
-            track.style.scrollBehavior = 'auto';
-            track.scrollTo({ left: slides[currentDomIndex].offsetLeft - track.offsetLeft - (track.offsetWidth * 0.075) });
-            setTimeout(() => {
-                track.style.scrollBehavior = 'smooth';
-                cacheSlidePositions();
-                updateActiveFactors();
-                updateDotsAndClasses(currentDomIndex);
-                startAutoPlay();
-            }, 50);
-        }, 100);
-
-        window.addEventListener('resize', () => {
-            cacheSlidePositions();
-            updateActiveFactors();
-        });
 
         const updateDotsAndClasses = (domIndex) => {
             if(!slides[domIndex]) return;
@@ -224,56 +212,12 @@
             });
         };
 
-        const goToDomIndex = (index, smooth = true) => {
-            if(index < 0 || index >= slides.length) return;
-            
-            if (!smooth) {
-                track.classList.add('no-transition-jump');
-            }
-
-            currentDomIndex = index;
-            
-            track.style.scrollBehavior = smooth ? 'smooth' : 'auto';
-            track.scrollTo({
-                left: slides[index].offsetLeft - track.offsetLeft - (track.offsetWidth * 0.075)
-            });
-            
-            updateDotsAndClasses(index);
-
-            if (!smooth) {
-                void track.offsetWidth; // Force reflow
-                setTimeout(() => {
-                    track.classList.remove('no-transition-jump');
-                }, 50);
-            }
-        };
-
-        const handleInfiniteScroll = () => {
-            // Wait for smooth scrolling to visually finish
-            setTimeout(() => {
-                if (currentDomIndex === slides.length - 1) {
-                    // Reached the end clone, silently jump to real first slide
-                    goToDomIndex(1, false);
-                } else if (currentDomIndex === 0) {
-                    // Reached the start clone, silently jump to real last slide
-                    goToDomIndex(slides.length - 2, false);
-                }
-            }, 400); 
-        };
-
-        const nextSlide = () => {
-            goToDomIndex(currentDomIndex + 1);
-            handleInfiniteScroll();
-            startAutoPlay();
-        };
-
         const startAutoPlay = () => {
             clearTimeout(autoPlayTimer);
             const realIndex = parseInt(slides[currentDomIndex].dataset.realIndex);
             const activeProgress = dots[realIndex]?.querySelector('.hero-dot-progress');
             
             if(activeProgress) {
-                // Ensure the transition starts from 0 cleanly
                 activeProgress.style.transition = 'none';
                 activeProgress.style.width = '0%';
                 void activeProgress.offsetWidth; 
@@ -295,15 +239,13 @@
             }
         };
 
-        // Determine which slide is visually closest to the center
         const getClosestSlideIndex = () => {
             let minDiff = Infinity;
             let closestIndex = 1;
             const trackCenter = track.scrollLeft + (track.offsetWidth / 2);
             
-            slides.forEach((slide, index) => {
-                const slideCenter = slide.offsetLeft - track.offsetLeft + (slide.offsetWidth / 2);
-                const diff = Math.abs(trackCenter - slideCenter);
+            slideCenters.forEach((center, index) => {
+                const diff = Math.abs(trackCenter - center);
                 if (diff < minDiff) {
                     minDiff = diff;
                     closestIndex = index;
@@ -312,36 +254,120 @@
             return closestIndex;
         };
 
+        const goToDomIndex = (index, smooth = true) => {
+            if(index < 0 || index >= slides.length) return;
+            
+            isProgrammaticScroll = true;
+            
+            if (!smooth) {
+                track.classList.add('no-transition-jump');
+            }
+
+            currentDomIndex = index;
+            
+            track.style.scrollBehavior = smooth ? 'smooth' : 'auto';
+            track.scrollTo({
+                left: getCenterScrollLeft(index)
+            });
+            
+            updateDotsAndClasses(index);
+
+            if (!smooth) {
+                void track.offsetWidth; 
+                setTimeout(() => {
+                    track.classList.remove('no-transition-jump');
+                    isProgrammaticScroll = false;
+                    startAutoPlay();
+                }, 50);
+            } else {
+                setTimeout(() => {
+                    isProgrammaticScroll = false;
+                    
+                    if (currentDomIndex === slides.length - 1) {
+                        goToDomIndex(1, false);
+                    } else if (currentDomIndex === 0) {
+                        goToDomIndex(slides.length - 2, false);
+                    } else {
+                        startAutoPlay();
+                    }
+                }, 600); 
+            }
+        };
+
+        const nextSlide = () => {
+            goToDomIndex(currentDomIndex + 1);
+        };
+
         dots.forEach(dot => {
             dot.addEventListener('click', (e) => {
                 const targetDot = e.target.closest('.hero-dot');
                 if(!targetDot) return;
                 const realIndex = parseInt(targetDot.dataset.index);
-                // Map dot index to real slide DOM index (offset by 1 due to the first clone)
-                goToDomIndex(realIndex + 1);
-                startAutoPlay();
+                goToDomIndex(realIndex + 1, true);
             });
         });
 
         let isScrolling;
         track.addEventListener('scroll', () => {
+            updateActiveFactors(); 
+            
+            if (isProgrammaticScroll) return;
+            
             stopAutoPlay();
-            updateActiveFactors(); // Update active card styling variable dynamically on scroll
             
             window.clearTimeout(isScrolling);
             isScrolling = setTimeout(() => {
+                if (isProgrammaticScroll) return;
+                
                 const newIndex = getClosestSlideIndex();
+                currentDomIndex = newIndex;
+                updateDotsAndClasses(currentDomIndex);
                 
-                if (newIndex !== currentDomIndex) {
-                    currentDomIndex = newIndex;
-                    updateDotsAndClasses(currentDomIndex);
-                    handleInfiniteScroll();
+                if (currentDomIndex === slides.length - 1) {
+                    goToDomIndex(1, false);
+                } else if (currentDomIndex === 0) {
+                    goToDomIndex(slides.length - 2, false);
                 } else {
-                    updateDotsAndClasses(currentDomIndex);
+                    startAutoPlay();
                 }
-                
-                startAutoPlay();
             }, 150);
+        });
+
+        let isInitialized = false;
+        const initCarousel = () => {
+            if (isInitialized) return;
+            if (track.offsetWidth === 0) return;
+            isInitialized = true;
+
+            isProgrammaticScroll = true;
+            cacheSlidePositions();
+            track.style.scrollBehavior = 'auto';
+            track.scrollTo({ left: getCenterScrollLeft(currentDomIndex) });
+            
+            setTimeout(() => {
+                track.style.scrollBehavior = 'smooth';
+                updateActiveFactors();
+                updateDotsAndClasses(currentDomIndex);
+                startAutoPlay();
+                setTimeout(() => {
+                    isProgrammaticScroll = false;
+                }, 100);
+            }, 50);
+        };
+
+        initCarousel();
+        window.addEventListener('load', initCarousel);
+
+        window.addEventListener('resize', () => {
+            isProgrammaticScroll = true;
+            cacheSlidePositions();
+            track.style.scrollBehavior = 'auto';
+            track.scrollTo({ left: getCenterScrollLeft(currentDomIndex) });
+            updateActiveFactors();
+            setTimeout(() => {
+                track.style.scrollBehavior = 'smooth';
+                isProgrammaticScroll = false;
+            }, 50);
         });
     });
 </script>
