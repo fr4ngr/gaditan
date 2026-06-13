@@ -101,7 +101,7 @@
                             </button>
                         </div>
                         
-                        <div class="supplements-info" style="font-size: 0.82rem; color: rgba(15, 23, 42, 0.65); line-height: 1.4; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px dashed rgba(15, 23, 42, 0.1);" data-translate="supp-info-text">
+                        <div class="supplements-info" style="display: none; font-size: 0.82rem; color: var(--bg-base); opacity: 0.85; line-height: 1.4; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px dashed rgba(15, 23, 42, 0.1);" data-translate="supp-info-text">
                             <p style="margin-bottom: 0.4rem;"><strong><sup>1</sup> Estación de Tren:</strong> Se aplica exclusivamente a viajes con origen en la parada de la estación.</p>
                             <p style="margin-bottom: 0.4rem;"><strong><sup>2</sup> Equipaje grande:</strong> Aplicable a maletas o bultos. <strong>Gratis:</strong> sillas infantiles, carros de bebé, patinetes eléctricos/VMP plegados o sillas de ruedas.</p>
                             <p style="margin-bottom: 0.4rem;"><strong><sup>3</sup> Plazas extra:</strong> Suplemento por el uso de la 6ª y 7ª plaza. Exento si viaja alguna persona con discapacidad.</p>
@@ -515,6 +515,10 @@
                         extraItems.forEach(item => {
                             item.style.display = isCollapsed ? 'flex' : 'none';
                         });
+                        const notesBlock = document.querySelector('.supplements-info');
+                        if (notesBlock) {
+                            notesBlock.style.display = isCollapsed ? 'block' : 'none';
+                        }
                         suppText.textContent = isCollapsed ? 'Ver menos' : 'Ver todos los suplementos';
                         suppArrow.style.transform = isCollapsed ? 'rotate(180deg)' : 'rotate(0deg)';
                     });
