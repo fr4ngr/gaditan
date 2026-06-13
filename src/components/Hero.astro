@@ -336,7 +336,10 @@
         let isInitialized = false;
         const initCarousel = () => {
             if (isInitialized) return;
-            if (track.offsetWidth === 0) return;
+            if (track.offsetWidth === 0 || slides[0].offsetWidth === 0) {
+                setTimeout(initCarousel, 50);
+                return;
+            }
             isInitialized = true;
 
             isProgrammaticScroll = true;
