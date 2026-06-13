@@ -12,10 +12,10 @@
                     <span data-translate="urban-fares-title">Viaje Urbano</span>
                 </h3>
                                 <div class="theme-toggle-wrapper" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 1.5rem; max-width: 580px; margin-left: auto; margin-right: auto; width: 100%; flex-wrap: wrap;">
-                                    <button class="tarifa-pill active" data-target="day" data-title="Tarifa Diurna">Día</button>
-                                    <button class="tarifa-pill" data-target="night" data-title="Tarifa Nocturna">Noche</button>
-                                    <button class="tarifa-pill" data-target="night" data-title="Tarifa Fines de Semana">Fin de Semana</button>
-                                    <button class="tarifa-pill" data-target="night" data-title="Tarifa Días Festivos">Festivo</button>
+                                    <button class="tarifa-pill active" data-target="day" data-title="Tarifa Diurna" data-subtitle="Lunes a Viernes (7h - 21h)">Día</button>
+                                    <button class="tarifa-pill" data-target="night" data-title="Tarifa Nocturna" data-subtitle="Lunes a Viernes de 21 a 7h">Noche</button>
+                                    <button class="tarifa-pill" data-target="night" data-title="Tarifa Fines de Semana" data-subtitle="Sábados y Domingos (24h)">Fin de Semana</button>
+                                    <button class="tarifa-pill" data-target="night" data-title="Tarifa Días Festivos" data-subtitle="Festivos (24h)">Festivo</button>
                                 </div>
                                 <div class="tarifas-grid single-card-mode">
                     <div class="fare-wrapper dynamic-fare-card" style="width: 100%; display: flex; flex-direction: column;" id="urban-fare-card">
@@ -104,10 +104,10 @@
                     </h3>
                     <div class="fare-content" style="overflow: hidden; transition: max-height 0.4s ease; max-height: 0px;">
                         <div class="theme-toggle-wrapper" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 1.5rem; max-width: 580px; margin-left: auto; margin-right: auto; width: 100%; flex-wrap: wrap;">
-                            <button class="tarifa-pill active" data-target="day" data-title="Tarifa Diurna">Día</button>
-                            <button class="tarifa-pill" data-target="night" data-title="Tarifa Nocturna">Noche</button>
-                            <button class="tarifa-pill" data-target="night" data-title="Tarifa Fines de Semana">Fin de Semana</button>
-                            <button class="tarifa-pill" data-target="night" data-title="Tarifa Días Festivos">Festivo</button>
+                            <button class="tarifa-pill active" data-target="day" data-title="Tarifa Diurna" data-subtitle="Lunes a Viernes (6h - 22h)">Día</button>
+                            <button class="tarifa-pill" data-target="night" data-title="Tarifa Nocturna" data-subtitle="Lunes a Viernes de 22 a 6h">Noche</button>
+                            <button class="tarifa-pill" data-target="night" data-title="Tarifa Fines de Semana" data-subtitle="Sábados y Domingos (24h)">Fin de Semana</button>
+                            <button class="tarifa-pill" data-target="night" data-title="Tarifa Días Festivos" data-subtitle="Festivos (24h)">Festivo</button>
                         </div>
                           <div class="tarifas-grid single-card-mode" style="margin-top: 1rem;">
                             <div class="fare-wrapper dynamic-fare-card" style="width: 100%; display: flex; flex-direction: column;" id="interurban-fare-card">
@@ -315,11 +315,14 @@
                             // Animar textos
                             const dynElements = card.querySelectorAll('.dyn-title, .dyn-subtitle, .dyn-price');
                             const pillTitle = pill.getAttribute('data-title');
+                            const pillSubtitle = pill.getAttribute('data-subtitle');
                             dynElements.forEach(el => {
                                 el.style.opacity = '0';
                                 setTimeout(() => {
                                     if (el.classList.contains('dyn-title') && pillTitle) {
                                         el.textContent = pillTitle;
+                                    } else if (el.classList.contains('dyn-subtitle') && pillSubtitle) {
+                                        el.textContent = pillSubtitle;
                                     } else {
                                         el.textContent = el.getAttribute('data-' + target);
                                     }
