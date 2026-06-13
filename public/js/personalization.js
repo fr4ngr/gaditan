@@ -57,8 +57,8 @@ const translationsEN = {
     "price-km": "Price per kilometer",
     "waiting-hour": "Waiting hour rate",
     "supplements-title": "Supplements",
-    "supp-train": "Train Station Origin <sup>1</sup>",
-    "supp-luggage": "Large Luggage/Item <sup>2</sup>",
+    "supp-train": "Train Station Origin",
+    "supp-luggage": "Large Luggage/Item",
     "supp-info-text": "<p style=\"margin-bottom: 0.5rem;\"><strong>¹</strong> This supplement only applies if your trip starts from the Train Station located at Plaza Sevilla. It does not apply if your trip ends at the train station.</p><p><strong>²</strong> Supplement applicable to large suitcases or items. Does not apply to hand luggage/bags, backpacks, walkers, or wheelchairs.</p>",
     "interurban-fares-title": "View Interurban Rates"
 };
