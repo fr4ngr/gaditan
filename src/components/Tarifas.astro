@@ -72,8 +72,8 @@
                             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(15, 23, 42, 0.1); padding-bottom: 0.5rem;">
                                 <span style="color: rgba(15, 23, 42, 0.75); font-size: 0.95rem; display: flex; align-items: center; gap: 0.35rem;" data-translate="supp-train">
                                     Estación de Tren
-                                    <button class="supp-info-btn" onclick="openSupplementInfoModal('Estación de Tren', 'Se aplica exclusivamente a viajes con origen en la parada de la estación.')" style="background: rgba(15, 23, 42, 0.08); border: none; border-radius: 50%; width: 18px; height: 18px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; color: var(--bg-base); transition: background 0.2s;" title="Más información">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                                    <button class="supp-info-btn" onclick="openSupplementInfoModal('Estación de Tren', 'Se aplica exclusivamente a viajes con origen en la parada de la estación.')" title="Más información">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
                                     </button>
                                 </span>
                                 <strong style="color: var(--bg-base); font-size: 1.05rem;">0,82 €</strong>
@@ -81,25 +81,35 @@
                             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(15, 23, 42, 0.1); padding-bottom: 0.5rem;">
                                 <span style="color: rgba(15, 23, 42, 0.75); font-size: 0.95rem; display: flex; align-items: center; gap: 0.35rem;" data-translate="supp-luggage">
                                     Equipaje grande
-                                    <button class="supp-info-btn" onclick="openSupplementInfoModal('Equipaje grande', 'Aplicable a maletas o bultos.<br><br><strong>Gratis:</strong> transportar sillas infantiles, carros de bebé, patinetes eléctricos/VMP plegados o sillas de ruedas.')" style="background: rgba(15, 23, 42, 0.08); border: none; border-radius: 50%; width: 18px; height: 18px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; color: var(--bg-base); transition: background 0.2s;" title="Más información">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                                    <button class="supp-info-btn" onclick="openSupplementInfoModal('Equipaje grande', 'Aplicable a maletas o bultos.<br><br><strong>Gratis:</strong> transportar sillas infantiles, carros de bebé, patinetes eléctricos/VMP plegados o sillas de ruedas.')" title="Más información">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
                                     </button>
                                 </span>
                                 <strong style="color: var(--bg-base); font-size: 1.05rem;">0,51 €</strong>
                             </div>
                             <div class="supplement-item-extra" style="display: none; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(15, 23, 42, 0.1); padding-bottom: 0.5rem;">
-                                <span style="color: rgba(15, 23, 42, 0.75); font-size: 0.95rem;">Puertos y astilleros</span>
+                                <span style="color: rgba(15, 23, 42, 0.75); font-size: 0.95rem; display: flex; align-items: center; gap: 0.35rem;">
+                                    Puertos y astilleros
+                                    <button class="supp-info-btn" onclick="openSupplementInfoModal('Puertos y astilleros', 'Suplemento aplicable por la entrada o salida de las instalaciones de astilleros, muelles o espigones portuarios de Cádiz.')" title="Más información">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                                    </button>
+                                </span>
                                 <strong style="color: var(--bg-base); font-size: 1.05rem;">1,06 €</strong>
                             </div>
                             <div class="supplement-item-extra" style="display: none; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(15, 23, 42, 0.1); padding-bottom: 0.5rem;">
-                                <span style="color: rgba(15, 23, 42, 0.75); font-size: 0.95rem;">Cortadura - Torregorda</span>
+                                <span style="color: rgba(15, 23, 42, 0.75); font-size: 0.95rem; display: flex; align-items: center; gap: 0.35rem;">
+                                    Cortadura - Torregorda
+                                    <button class="supp-info-btn" onclick="openSupplementInfoModal('Cortadura - Torregorda', 'Suplemento aplicable en trayectos con origen o destino en la zona industrial o militar de Torregorda (límite del término municipal de Cádiz con San Fernando).')" title="Más información">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                                    </button>
+                                </span>
                                 <strong style="color: var(--bg-base); font-size: 1.05rem;">4,46 €</strong>
                             </div>
                             <div class="supplement-item-extra" style="display: none; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(15, 23, 42, 0.1); padding-bottom: 0.5rem;">
                                 <span style="color: rgba(15, 23, 42, 0.75); font-size: 0.95rem; display: flex; align-items: center; gap: 0.35rem;">
                                     6ª y 7ª plaza (por plaza)
-                                    <button class="supp-info-btn" onclick="openSupplementInfoModal('6ª y 7ª plaza', 'Suplemento por el uso de la 6ª y 7ª plaza.<br><br><strong>Exento:</strong> si viaja alguna persona con discapacidad.')" style="background: rgba(15, 23, 42, 0.08); border: none; border-radius: 50%; width: 18px; height: 18px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; color: var(--bg-base); transition: background 0.2s;" title="Más información">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                                    <button class="supp-info-btn" onclick="openSupplementInfoModal('6ª y 7ª plaza', 'Suplemento por el uso de la 6ª y 7ª plaza.<br><br><strong>Exento:</strong> si viaja alguna persona con discapacidad.')" title="Más información">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
                                     </button>
                                 </span>
                                 <strong style="color: var(--bg-base); font-size: 1.05rem;">0,91 €</strong>
@@ -107,8 +117,8 @@
                             <div class="supplement-item-extra" style="display: none; justify-content: space-between; align-items: center; padding-bottom: 0.5rem;">
                                 <span style="color: rgba(15, 23, 42, 0.75); font-size: 0.95rem; display: flex; align-items: center; gap: 0.35rem;">
                                     Madrugadas fin de semana
-                                    <button class="supp-info-btn" onclick="openSupplementInfoModal('Madrugadas', 'Aplica en madrugadas de:<br>• <strong>Sábados:</strong> de 03:00 a 06:00 h.<br>• <strong>Fines de semana y Festivos:</strong> de 03:00 a 07:00 h.<br><br>Incremento del 20% sobre la tarifa correspondiente.')" style="background: rgba(15, 23, 42, 0.08); border: none; border-radius: 50%; width: 18px; height: 18px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; color: var(--bg-base); transition: background 0.2s;" title="Más información">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                                    <button class="supp-info-btn" onclick="openSupplementInfoModal('Madrugadas', 'Aplica en madrugadas de:<br>• <strong>Sábados:</strong> de 03:00 a 06:00 h.<br>• <strong>Fines de semana y Festivos:</strong> de 03:00 a 07:00 h.<br><br>Incremento del 20% sobre la tarifa correspondiente.')" title="Más información">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
                                     </button>
                                 </span>
                                 <strong style="color: var(--bg-base); font-size: 1.05rem;">+20%</strong>
@@ -226,6 +236,29 @@
             .tarifas-grid.single-card-mode > .fare-wrapper {
                 width: 100%;
                 display: flex !important;
+            }
+            .supp-info-btn {
+                background: rgba(15, 23, 42, 0.08);
+                border: none;
+                border-radius: 50%;
+                width: 28px;
+                height: 28px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                color: var(--bg-base);
+                transition: background 0.2s, transform 0.2s;
+                flex-shrink: 0;
+            }
+            .supp-info-btn:hover {
+                background: rgba(15, 23, 42, 0.15);
+                transform: scale(1.1);
+            }
+            .supp-info-btn svg {
+                width: 17px;
+                height: 17px;
+                stroke-width: 3px;
             }
         
               /* From Uiverse.io by JustCode14 */ 
