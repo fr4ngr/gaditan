@@ -424,6 +424,7 @@
                 void modal.offsetWidth; // force reflow
                 modal.style.opacity = '1';
                 modal.querySelector('.card').style.transform = 'scale(1)';
+                document.body.style.overflow = 'hidden';
             };
 
             window.closeFestivosModal = function() {
@@ -432,6 +433,7 @@
                 modal.querySelector('.card').style.transform = 'scale(0.95)';
                 setTimeout(() => {
                     modal.style.display = 'none';
+                    document.body.style.overflow = '';
                 }, 300);
             };
             
