@@ -170,7 +170,6 @@
 
         <!-- Dynamic style and script for single card toggle mode -->
         <style>
-            /* Circle container for pricing Lotties */
             .lottie-container {
                 width: 70px !important;
                 height: 70px !important;
@@ -180,10 +179,9 @@
                 display: flex !important;
                 align-items: center !important;
                 justify-content: center !important;
-                box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+                box-shadow: 0 4px 12px rgba(15, 23, 42, 0.2) !important;
                 border: none !important;
-                background: linear-gradient(135deg, #5b98ff, #38bdf8); /* Default Day azul */
-                transition: background 0.6s ease-in-out, box-shadow 0.6s ease-in-out !important;
+                background: transparent !important;
                 flex-shrink: 0 !important;
                 margin-left: -5px;
             }
@@ -342,26 +340,7 @@
                             
                             const lottieContainer = card.querySelector('.lottie-container');
                             if (lottieContainer) {
-                                // Cambiar fondo y sombra dinámicamente
-                                let bgGradient = '';
-                                let shadowStyle = '';
-
-                                if (pillTitle === 'Día') {
-                                    bgGradient = 'linear-gradient(135deg, #5b98ff, #38bdf8)'; // Azul día
-                                    shadowStyle = '0 4px 12px rgba(59, 130, 246, 0.3)';
-                                } else if (pillTitle === 'Noche') {
-                                    bgGradient = 'linear-gradient(135deg, #20304b, #0f172a)'; // Azul noche
-                                    shadowStyle = '0 4px 12px rgba(15, 23, 42, 0.5)';
-                                } else if (pillTitle === 'Fin de semana') {
-                                    bgGradient = '#ffffff'; // Fondo blanco
-                                    shadowStyle = '0 4px 12px rgba(15, 23, 42, 0.15)';
-                                } else if (pillTitle === 'Festivos') {
-                                    bgGradient = 'transparent'; // Fondo transparente
-                                    shadowStyle = 'none';
-                                }
-
-                                if (bgGradient) lottieContainer.style.background = bgGradient;
-                                if (shadowStyle) lottieContainer.style.boxShadow = shadowStyle;
+                                // El contenedor permanece transparente con sombra estática para usar el fondo del Lottie
 
                                 // Controlar la animación del Lottie único
                                 const lottiePlayer = lottieContainer.querySelector('.lottie-default');
