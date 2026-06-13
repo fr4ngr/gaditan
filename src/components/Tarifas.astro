@@ -179,7 +179,12 @@
                                         <strong style="color: var(--bg-base); font-size: 1.1rem;"><span class="dyn-price" style="transition: opacity 0.3s;" data-day="3,83" data-night="4,51">3,83</span> €</strong>
                                     </div>
                                     <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(15, 23, 42, 0.1); padding-bottom: 0.5rem;">
-                                        <span style="color: rgba(15, 23, 42, 0.75); font-weight: 500;" data-translate="flag-drop">Bajada bandera</span>
+                                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                            <span style="color: rgba(15, 23, 42, 0.75); font-weight: 500;" data-translate="flag-drop">Bajada bandera</span>
+                                            <button class="supp-info-btn" style="width: 22px; height: 22px;" onclick="openSupplementInfoModal('flagDrop')" title="Más información">
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="width: 13px; height: 13px; stroke-width: 3px;"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                                            </button>
+                                        </div>
                                         <strong style="color: var(--bg-base); font-size: 1.1rem;"><span class="dyn-price" style="transition: opacity 0.3s;" data-day="3,66" data-night="3,60">3,66</span> €</strong>
                                     </div>
                                     <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(15, 23, 42, 0.1); padding-bottom: 0.5rem;">
@@ -690,6 +695,10 @@
                     early: {
                         title: "Madrugadas",
                         desc: "Aplica en madrugadas de:<br>• <strong>Sábados:</strong> de 03:00 a 06:00 h.<br>• <strong>Fines de semana y Festivos:</strong> de 03:00 a 07:00 h.<br><br>Incremento del 20% sobre la tarifa correspondiente."
+                    },
+                    flagDrop: {
+                        title: "Bajada de bandera",
+                        desc: "La bajada de bandera solo es aplicable si el trayecto es inferior a 12 kilómetros."
                     }
                 },
                 en: {
@@ -716,6 +725,10 @@
                     early: {
                         title: "Early mornings",
                         desc: "Applies during early mornings of:<br>• <strong>Saturdays:</strong> from 03:00 to 06:00 h.<br>• <strong>Weekends and Holidays:</strong> from 03:00 to 07:00 h.<br><br>20% increase on the corresponding rate."
+                    },
+                    flagDrop: {
+                        title: "Flag drop",
+                        desc: "The flag drop fee is only applicable if the journey is under 12 kilometers."
                     }
                 }
             };
