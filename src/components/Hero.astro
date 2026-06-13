@@ -258,6 +258,7 @@
             if(index < 0 || index >= slides.length) return;
             
             isProgrammaticScroll = true;
+            track.classList.remove('snapping');
             
             if (!smooth) {
                 track.classList.add('no-transition-jump');
@@ -276,11 +277,13 @@
                 void track.offsetWidth; 
                 setTimeout(() => {
                     track.classList.remove('no-transition-jump');
+                    track.classList.add('snapping');
                     isProgrammaticScroll = false;
                     startAutoPlay();
                 }, 50);
             } else {
                 setTimeout(() => {
+                    track.classList.add('snapping');
                     isProgrammaticScroll = false;
                     
                     if (currentDomIndex === slides.length - 1) {
@@ -343,11 +346,13 @@
             isInitialized = true;
 
             isProgrammaticScroll = true;
+            track.classList.remove('snapping');
             cacheSlidePositions();
             track.style.scrollBehavior = 'auto';
             track.scrollTo({ left: getCenterScrollLeft(currentDomIndex) });
             
             setTimeout(() => {
+                track.classList.add('snapping');
                 track.style.scrollBehavior = 'smooth';
                 updateActiveFactors();
                 updateDotsAndClasses(currentDomIndex);
@@ -363,12 +368,14 @@
 
         window.addEventListener('resize', () => {
             isProgrammaticScroll = true;
+            track.classList.remove('snapping');
             cacheSlidePositions();
             track.style.scrollBehavior = 'auto';
             track.scrollTo({ left: getCenterScrollLeft(currentDomIndex) });
             updateActiveFactors();
             setTimeout(() => {
                 track.style.scrollBehavior = 'smooth';
+                track.classList.add('snapping');
                 isProgrammaticScroll = false;
             }, 50);
         });

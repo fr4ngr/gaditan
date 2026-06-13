@@ -1797,10 +1797,12 @@ select:-webkit-autofill:focus {
 .hero-carousel-track {
     display: flex;
     overflow-x: auto;
-    scroll-snap-type: x mandatory;
     scroll-behavior: smooth;
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */
+}
+.hero-carousel-track.snapping {
+    scroll-snap-type: x mandatory;
 }
 .hero-carousel-track::-webkit-scrollbar {
     display: none; /* Chrome, Safari and Opera */
@@ -1862,7 +1864,6 @@ select:-webkit-autofill:focus {
 .hero-carousel-track {
     display: flex;
     overflow-x: auto;
-    scroll-snap-type: x mandatory;
     scroll-behavior: smooth;
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */
