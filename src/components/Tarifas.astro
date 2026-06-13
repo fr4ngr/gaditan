@@ -366,16 +366,16 @@
                                 let shadowStyle = '';
 
                                 if (newLottieSrc === '/festivos-lottie.json') {
-                                    bgGradient = 'linear-gradient(135deg, #fed7aa, #f97316)'; // Naranja cálido
-                                    shadowStyle = '0 4px 15px rgba(249, 115, 22, 0.4)';
+                                    bgGradient = 'transparent';
+                                    shadowStyle = 'none';
                                     
                                     const activeAnim = lottieContainer.querySelector('.lottie-festivos');
                                     if (activeAnim) {
                                         activeAnim.style.opacity = '1';
                                     }
                                 } else if (newLottieSrc === '/weekend-lottie.json') {
-                                    bgGradient = 'linear-gradient(135deg, #7b48fa, #6366f1)'; // Lila Cadizcab
-                                    shadowStyle = '0 4px 15px rgba(123, 72, 250, 0.4)';
+                                    bgGradient = '#ffffff';
+                                    shadowStyle = '0 4px 12px rgba(15, 23, 42, 0.15)';
                                     
                                     const activeAnim = lottieContainer.querySelector('.lottie-weekend');
                                     if (activeAnim) {
@@ -387,13 +387,13 @@
                                         defaultAnim.style.opacity = '1';
                                         if (target === 'night') {
                                             bgGradient = 'linear-gradient(135deg, #20304b, #0f172a)'; // Azul noche
-                                            shadowStyle = '0 4px 15px rgba(15, 23, 42, 0.6)';
+                                            shadowStyle = '0 4px 12px rgba(15, 23, 42, 0.5)';
                                             
                                             defaultAnim.setDirection(1);
                                             defaultAnim.play();
                                         } else {
                                             bgGradient = 'linear-gradient(135deg, #5b98ff, #38bdf8)'; // Azul día
-                                            shadowStyle = '0 4px 15px rgba(59, 130, 246, 0.4)';
+                                            shadowStyle = '0 4px 12px rgba(59, 130, 246, 0.3)';
                                             
                                             defaultAnim.setDirection(-1);
                                             try {
