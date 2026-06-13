@@ -12,10 +12,10 @@
                     <span data-translate="urban-fares-title">Viaje Urbano</span>
                 </h3>
                                 <div class="theme-toggle-wrapper" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 1.5rem; max-width: 580px; margin-left: auto; margin-right: auto; width: 100%; flex-wrap: wrap;">
-                                    <button class="tarifa-pill active" data-target="day" data-title="Día" data-subtitle="Lunes a Viernes (7h - 21h)">Día</button>
-                                    <button class="tarifa-pill" data-target="night" data-title="Noche" data-subtitle="Lunes a Viernes de 21 a 7h">Noche</button>
-                                    <button class="tarifa-pill" data-target="night" data-title="Fin de semana" data-subtitle="">Fin de Semana</button>
-                                    <button class="tarifa-pill" data-target="night" data-title="Festivos" data-subtitle="">Festivo</button>
+                                    <button class="tarifa-pill active" data-target="day" data-lottie="/moon-lottie.json" data-title="Día" data-subtitle="Lunes a Viernes (7h - 21h)">Día</button>
+                                    <button class="tarifa-pill" data-target="night" data-lottie="/moon-lottie.json" data-title="Noche" data-subtitle="Lunes a Viernes de 21 a 7h">Noche</button>
+                                    <button class="tarifa-pill" data-target="night" data-lottie="/weekend-lottie.json" data-title="Fin de semana" data-subtitle="">Fin de Semana</button>
+                                    <button class="tarifa-pill" data-target="night" data-lottie="/festivos-lottie.json" data-title="Festivos" data-subtitle="">Festivo</button>
                                 </div>
                                 <div class="tarifas-grid single-card-mode">
                     <div class="fare-wrapper dynamic-fare-card" style="width: 100%; display: flex; flex-direction: column;" id="urban-fare-card">
@@ -114,10 +114,10 @@
                     </h3>
                     <div class="fare-content" style="overflow: hidden; transition: max-height 0.4s ease; max-height: 0px;">
                         <div class="theme-toggle-wrapper" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 1.5rem; max-width: 580px; margin-left: auto; margin-right: auto; width: 100%; flex-wrap: wrap;">
-                            <button class="tarifa-pill active" data-target="day" data-title="Día" data-subtitle="Lunes a Viernes (6h - 22h)">Día</button>
-                            <button class="tarifa-pill" data-target="night" data-title="Noche" data-subtitle="Lunes a Viernes de 22 a 6h">Noche</button>
-                            <button class="tarifa-pill" data-target="night" data-title="Fin de semana" data-subtitle="">Fin de Semana</button>
-                            <button class="tarifa-pill" data-target="night" data-title="Festivos" data-subtitle="">Festivo</button>
+                            <button class="tarifa-pill active" data-target="day" data-lottie="/moon-lottie.json" data-title="Día" data-subtitle="Lunes a Viernes (6h - 22h)">Día</button>
+                            <button class="tarifa-pill" data-target="night" data-lottie="/moon-lottie.json" data-title="Noche" data-subtitle="Lunes a Viernes de 22 a 6h">Noche</button>
+                            <button class="tarifa-pill" data-target="night" data-lottie="/weekend-lottie.json" data-title="Fin de semana" data-subtitle="">Fin de Semana</button>
+                            <button class="tarifa-pill" data-target="night" data-lottie="/festivos-lottie.json" data-title="Festivos" data-subtitle="">Festivo</button>
                         </div>
                           <div class="tarifas-grid single-card-mode" style="margin-top: 1rem;">
                             <div class="fare-wrapper dynamic-fare-card" style="width: 100%; display: flex; flex-direction: column;" id="interurban-fare-card">
@@ -312,17 +312,27 @@
                             
                             const lottiePlayer = card.querySelector('lottie-player');
                             if (lottiePlayer) {
-                                if (target === 'night') {
-                                    lottiePlayer.setDirection(1);
-                                    lottiePlayer.play();
+                                const newLottieSrc = pill.getAttribute('data-lottie');
+                                if (lottiePlayer.getAttribute('src') !== newLottieSrc) {
+                                    lottiePlayer.setAttribute('src', newLottieSrc);
+                                }
+                                
+                                if (newLottieSrc === '/moon-lottie.json') {
+                                    if (target === 'night') {
+                                        lottiePlayer.setDirection(1);
+                                        lottiePlayer.play();
+                                    } else {
+                                        lottiePlayer.setDirection(-1);
+                                        try {
+                                            const anim = lottiePlayer.getLottie();
+                                            if (anim && anim.currentFrame > 80) {
+                                                lottiePlayer.seek(80);
+                                            }
+                                        } catch(e) {}
+                                        lottiePlayer.play();
+                                    }
                                 } else {
-                                    lottiePlayer.setDirection(-1);
-                                    try {
-                                        const anim = lottiePlayer.getLottie();
-                                        if (anim && anim.currentFrame > 80) {
-                                            lottiePlayer.seek(80);
-                                        }
-                                    } catch(e) {}
+                                    lottiePlayer.setDirection(1);
                                     lottiePlayer.play();
                                 }
                             }
