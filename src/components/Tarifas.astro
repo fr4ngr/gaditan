@@ -261,7 +261,7 @@
                 stroke-width: 3px;
             }
             .scope-toggle-wrapper {
-                display: inline-flex;
+                display: flex;
                 align-items: center;
                 justify-content: center;
                 background: rgba(255, 255, 255, 0.04);
@@ -269,9 +269,14 @@
                 padding: 0.25rem;
                 border-radius: 9999px;
                 flex-wrap: nowrap;
-                max-width: 100%;
+                width: 100%;
+                max-width: 480px;
+                margin-left: auto;
+                margin-right: auto;
             }
             .scope-pill {
+                flex: 1;
+                text-align: center;
                 border: none;
                 border-radius: 9999px;
                 font-weight: 800;
