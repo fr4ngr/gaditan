@@ -99,7 +99,6 @@ const mapManager = (() => {
 
         document.getElementById('btn-todas').addEventListener('click', () => setMode('todas'));
         document.getElementById('btn-cercana').addEventListener('click', () => setMode('cercana'));
-        document.getElementById('btn-elegir').addEventListener('click', () => setMode('elegir'));
 
         const observer = new IntersectionObserver((entries, obs) => {
             entries.forEach(entry => {
@@ -123,32 +122,6 @@ const mapManager = (() => {
                 if (currentMode === 'cercana' && userLocation) {
                     fetchRoute(userLocation.lat, userLocation.lon, p.lat, p.lon);
                 } else if (currentMode === 'todas') {
-                    setMode('elegir');
-                    const select = document.querySelector('#elegir-select-container select');
-                    if (select) {
-                        select.value = p.id;
-                        select.dispatchEvent(new Event('change'));
-                    }
-                    const originalScrollBehavior = document.documentElement.style.scrollBehavior;
-                    document.documentElement.style.scrollBehavior = 'auto';
-                    const mapControls = document.querySelector('.map-controls');
-                    if (mapControls) {
-                        const headerHeight = document.querySelector('.header')?.offsetHeight || 0;
-                        const offsetPosition = mapControls.getBoundingClientRect().top + window.scrollY - headerHeight - 5;
-                        window.scrollTo({ top: offsetPosition, behavior: 'auto' });
-                    } else {
-                        document.getElementById('map').scrollIntoView({ behavior: 'auto', block: 'start' });
-                    }
-                    requestAnimationFrame(() => {
-                        document.documentElement.style.scrollBehavior = originalScrollBehavior;
-                    });
-                } else if (currentMode === 'elegir') {
-                    // Seleccionar parada directamente desde el mapa en modo elegir
-                    const select = document.querySelector('#elegir-select-container select');
-                    if (select) {
-                        select.value = p.id;
-                        select.dispatchEvent(new Event('change'));
-                    }
                     // Flash visual en el pin para confirmar selección
                     const selectedIcon = L.divIcon({
                         className: 'custom-div-icon',
@@ -201,27 +174,12 @@ const mapManager = (() => {
 
 
         item.addEventListener('click', () => {
-            if (currentMode === 'todas') {
-                setMode('elegir');
-                const select = document.querySelector('#elegir-select-container select');
-                if (select) {
-                    select.value = p.id;
-                    select.dispatchEvent(new Event('change'));
+            map.flyTo([p.lat, p.lon], 17);
+            markersLayer.eachLayer(layer => {
+                if (layer.getLatLng().lat === p.lat && layer.getLatLng().lng === p.lon) {
+                    layer.openPopup();
                 }
-            } else if (currentMode === 'elegir') {
-                const select = document.querySelector('#elegir-select-container select');
-                if (select) {
-                    select.value = p.id;
-                    select.dispatchEvent(new Event('change'));
-                }
-            } else {
-                map.flyTo([p.lat, p.lon], 17);
-                markersLayer.eachLayer(layer => {
-                    if (layer.getLatLng().lat === p.lat && layer.getLatLng().lng === p.lon) {
-                        layer.openPopup();
-                    }
-                });
-            }
+            });
             
             const originalScrollBehavior = document.documentElement.style.scrollBehavior;
             document.documentElement.style.scrollBehavior = 'auto';
@@ -551,69 +509,6 @@ const mapManager = (() => {
         if (typeof lucide !== 'undefined') lucide.createIcons();
     };
 
-    const renderElegirView = (paradas) => {
-        const topContainer = document.getElementById('elegir-select-container');
-        const bottomContainer = document.getElementById('paradas-list-container');
-        if (!topContainer || !bottomContainer) return;
-        
-        topContainer.innerHTML = '';
-        bottomContainer.innerHTML = '';
-        topContainer.style.display = 'block';
-
-        // Select nativo pero estilizado (sin tarjeta, diseño suelto)
-        const selectContainer = document.createElement('div');
-        selectContainer.style.cssText = "position: relative; width: 100%;";
-        
-        const select = document.createElement('select');
-        select.style.cssText = "width: 100%; padding: 1rem 3rem 1rem 1.2rem; border-radius: 999px; background: rgba(255,255,255,0.08); color: #fff; border: 1px solid rgba(255,255,255,0.15); font-size: 1rem; appearance: none; outline: none; cursor: pointer; font-family: inherit; box-shadow: 0 4px 12px rgba(0,0,0,0.15); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);";
-        
-        const chevron = document.createElement('i');
-        chevron.setAttribute('data-lucide', 'chevron-down');
-        chevron.style.cssText = "position: absolute; right: 1.2rem; top: 50%; transform: translateY(-50%); color: var(--brand-cyan); pointer-events: none;";
-
-        const defaultOption = document.createElement('option');
-        defaultOption.value = "";
-        defaultOption.innerText = "Selecciona una parada";
-        defaultOption.disabled = true;
-        defaultOption.selected = true;
-        select.appendChild(defaultOption);
-
-        paradas.forEach(p => {
-            const opt = document.createElement('option');
-            opt.value = p.id;
-            opt.innerText = p.name;
-            opt.style.color = "#000"; // For mobile native dropdowns this works best
-            select.appendChild(opt);
-        });
-
-        select.addEventListener('change', (e) => {
-            const selectedId = e.target.value;
-            const parada = paradas.find(p => p.id === selectedId);
-            if (parada) {
-                // Ocultar la píldora negra de selección una vez seleccionada la parada
-                topContainer.style.display = 'none';
-                
-                // Dibujar solo ESE pin
-                renderMarkers([parada]);
-                
-                // Mostrar widget de la parada seleccionada
-                bottomContainer.innerHTML = '';
-                bottomContainer.appendChild(buildSelectedStopWidget(parada));
-                renderMapOverlay(parada);
-                if (typeof lucide !== 'undefined') lucide.createIcons();
-                
-                // Centrar mapa fluido sin saltos
-                map.flyTo([parada.lat, parada.lon], 16, { animate: true, duration: 1.2, easeLinearity: 0.25 });
-            }
-        });
-
-        selectContainer.appendChild(select);
-        selectContainer.appendChild(chevron);
-        topContainer.appendChild(selectContainer);
-        
-        if (typeof lucide !== 'undefined') lucide.createIcons();
-    };
-
     const clearRoute = () => {
         if (routePolyline) {
             map.removeLayer(routePolyline);
@@ -692,30 +587,35 @@ const mapManager = (() => {
         return 'arrow-up';
     };
 
+    const updateVisibleParadas = () => {
+        if (currentMode !== 'todas' || !map) return;
+        const bounds = map.getBounds();
+        const visibleParadas = dbParadas.filter(p => bounds.contains([p.lat, p.lon]));
+        currentPage = 1;
+        renderPaginatedList(visibleParadas);
+    };
+
     const setMode = (mode) => {
         currentMode = mode;
         const btnTodas = document.getElementById('btn-todas');
         const btnCercana = document.getElementById('btn-cercana');
-        const btnElegir = document.getElementById('btn-elegir');
-        const selectContainer = document.getElementById('elegir-select-container');
         
         clearRoute();
         
-        btnTodas.className = 'md3-btn md3-tonal';
-        btnCercana.className = 'md3-btn md3-tonal';
-        btnElegir.className = 'md3-btn md3-tonal';
-        if (selectContainer) selectContainer.style.display = 'none';
+        if(btnTodas) btnTodas.classList.remove('active');
+        if(btnCercana) btnCercana.classList.remove('active');
         
         if (mode === 'todas') {
-            btnTodas.className = 'md3-btn md3-primary';
+            if(btnTodas) btnTodas.classList.add('active');
             
             hideMapOverlay();
             const mapEl = document.getElementById('map');
             if (mapEl) mapEl.style.aspectRatio = '16/9';
             
             renderMarkers(dbParadas);
-            currentPage = 1;
-            renderPaginatedList(dbParadas);
+            // No renderizar inmediatamente todas si vamos a hacer flyToBounds, 
+            // pero para evitar parpadeos renderizamos visibles actualmente
+            updateVisibleParadas();
             
             if (userMarker) {
                 map.removeLayer(userMarker);
@@ -731,31 +631,15 @@ const mapManager = (() => {
                 }
             }, 400);
             
-        } else if (mode === 'elegir') {
-            btnElegir.className = 'md3-btn md3-primary';
-            
-            const mapEl = document.getElementById('map');
-            if (mapEl) mapEl.style.aspectRatio = '4/5';
-
-            renderMarkers(dbParadas);
-            renderElegirView(dbParadas);
-            
-            if (userMarker) {
-                map.removeLayer(userMarker);
-                userMarker = null;
-                userLocation = null;
-            }
-            
-            setTimeout(() => { 
-                if (map) {
-                    map.invalidateSize();
-                    const bounds = L.latLngBounds(dbParadas.map(p => [p.lat, p.lon]));
-                    map.flyToBounds(bounds, { padding: [20, 20], animate: true, duration: 1.0, easeLinearity: 0.25 });
-                }
-            }, 400);
+            // Listen for moveend to update the list
+            map.off('moveend', updateVisibleParadas);
+            map.on('moveend', updateVisibleParadas);
 
         } else if (mode === 'cercana') {
-            btnCercana.className = 'md3-btn md3-primary';
+            if(btnCercana) btnCercana.classList.add('active');
+            
+            // Remove the moveend listener for list updating when not in 'todas' mode
+            map.off('moveend', updateVisibleParadas);
             
             const mapEl = document.getElementById('map');
             if (mapEl) mapEl.style.aspectRatio = '4/5';
