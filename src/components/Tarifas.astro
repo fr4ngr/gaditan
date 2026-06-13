@@ -77,22 +77,28 @@
                                 <span style="color: rgba(15, 23, 42, 0.75); font-size: 0.95rem;" data-translate="supp-luggage">Equipaje grande<sup>2</sup></span>
                                 <strong style="color: var(--bg-base); font-size: 1.05rem;">0,51 €</strong>
                             </div>
-                            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(15, 23, 42, 0.1); padding-bottom: 0.5rem;">
+                            <div class="supplement-item-extra" style="display: none; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(15, 23, 42, 0.1); padding-bottom: 0.5rem;">
                                 <span style="color: rgba(15, 23, 42, 0.75); font-size: 0.95rem;">Puertos y astilleros</span>
                                 <strong style="color: var(--bg-base); font-size: 1.05rem;">1,06 €</strong>
                             </div>
-                            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(15, 23, 42, 0.1); padding-bottom: 0.5rem;">
+                            <div class="supplement-item-extra" style="display: none; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(15, 23, 42, 0.1); padding-bottom: 0.5rem;">
                                 <span style="color: rgba(15, 23, 42, 0.75); font-size: 0.95rem;">Cortadura - Torregorda</span>
                                 <strong style="color: var(--bg-base); font-size: 1.05rem;">4,46 €</strong>
                             </div>
-                            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(15, 23, 42, 0.1); padding-bottom: 0.5rem;">
+                            <div class="supplement-item-extra" style="display: none; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(15, 23, 42, 0.1); padding-bottom: 0.5rem;">
                                 <span style="color: rgba(15, 23, 42, 0.75); font-size: 0.95rem;">6ª y 7ª plaza (por plaza)<sup>3</sup></span>
                                 <strong style="color: var(--bg-base); font-size: 1.05rem;">0,91 €</strong>
                             </div>
-                            <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 0.5rem;">
+                            <div class="supplement-item-extra" style="display: none; justify-content: space-between; align-items: center; padding-bottom: 0.5rem;">
                                 <span style="color: rgba(15, 23, 42, 0.75); font-size: 0.95rem;">Madrugadas fin de semana<sup>4</sup></span>
                                 <strong style="color: var(--bg-base); font-size: 1.05rem;">+20%</strong>
                             </div>
+                        </div>
+                        <div style="text-align: center; margin-top: 1.5rem; border-top: 1px solid rgba(15, 23, 42, 0.08); padding-top: 1rem;">
+                            <button id="toggle-supplements-btn" style="background: rgba(15, 23, 42, 0.05); border: none; border-radius: 9999px; color: var(--bg-base); font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.9rem; padding: 0.6rem 1.2rem; transition: background 0.2s, color 0.2s;" onmouseover="this.style.background='rgba(15, 23, 42, 0.1)';" onmouseout="this.style.background='rgba(15, 23, 42, 0.05)';">
+                                <span id="toggle-supp-text">Ver todos los suplementos</span>
+                                <svg id="toggle-supp-arrow" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="transition: transform 0.3s;"><polyline points="6 9 12 15 18 9"/></svg>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -493,6 +499,23 @@
                         if (e.target === modal) {
                             closeFestivosModal();
                         }
+                    });
+                }
+
+                // Toggle Supplements Logic
+                const toggleBtn = document.getElementById('toggle-supplements-btn');
+                const extraItems = document.querySelectorAll('.supplement-item-extra');
+                const suppText = document.getElementById('toggle-supp-text');
+                const suppArrow = document.getElementById('toggle-supp-arrow');
+
+                if (toggleBtn) {
+                    toggleBtn.addEventListener('click', () => {
+                        const isCollapsed = extraItems[0].style.display === 'none' || extraItems[0].style.display === '';
+                        extraItems.forEach(item => {
+                            item.style.display = isCollapsed ? 'flex' : 'none';
+                        });
+                        suppText.textContent = isCollapsed ? 'Ver menos' : 'Ver todos los suplementos';
+                        suppArrow.style.transform = isCollapsed ? 'rotate(180deg)' : 'rotate(0deg)';
                     });
                 }
             });
