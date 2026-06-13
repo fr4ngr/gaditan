@@ -414,7 +414,7 @@
                         list.innerHTML += `
                             <li style="display: flex; align-items: center; gap: 1rem; border-bottom: 1px solid rgba(15, 23, 42, 0.08); padding-bottom: 1rem; margin-bottom: 1rem;">
                                 <span style="color: var(--brand-cyan); font-weight: 800; font-size: 0.9rem; background: rgba(6, 182, 212, 0.15); padding: 0.4rem 0.8rem; border-radius: 99px; flex-shrink: 0;">${formattedDate}</span>
-                                <span style="font-weight: 500; color: #0f172a; font-size: 1.05rem;">${f.name}</span>
+                                <span title="${f.name}" style="font-weight: 500; color: #0f172a; font-size: 1.05rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0;">${f.name}</span>
                             </li>
                         `;
                     });
