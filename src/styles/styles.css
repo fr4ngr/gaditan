@@ -1173,8 +1173,9 @@ details.native-accordion.closing .native-content {
     flex-wrap: nowrap !important;
     overflow-x: auto;
     overflow-y: hidden;
-    padding-bottom: 0.5rem; /* Space for scrollbar if needed */
-    justify-content: flex-start !important;
+    padding-bottom: 0.5rem;
+    justify-content: space-between !important;
+    gap: 0.5rem;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none; /* Firefox */
 }
@@ -1183,10 +1184,12 @@ details.native-accordion.closing .native-content {
 }
 
 .tarifa-pill {
+    flex: 1;
+    text-align: center;
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.1);
     color: rgba(255, 255, 255, 0.7);
-    padding: 0.5rem 1rem;
+    padding: 0.5rem 0.5rem;
     border-radius: 9999px;
     font-size: 0.85rem;
     font-weight: 600;
@@ -1740,6 +1743,9 @@ select:-webkit-autofill:focus {
     border-radius: 12px;
     transition: all 0.3s ease;
 }
+
+
+
 .integrated-pill:focus-within {
     border-color: var(--brand-cyan);
     box-shadow: 0 0 15px rgba(0, 210, 255, 0.2);
