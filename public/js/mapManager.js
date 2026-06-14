@@ -418,8 +418,8 @@ const mapManager = (() => {
         
         overlay.innerHTML = `
             <div style="display: flex; align-items: center; gap: 0.75rem; width: 100%;">
-                <!-- Señal TAXI -->
-                <div style="background-color: #0f172a; width: 38px; height: 38px; flex-shrink: 0; border-radius: 6px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.15);">
+                <!-- Señal TAXI (Traffic Sign Blue) -->
+                <div style="background-color: #2563eb; width: 38px; height: 38px; flex-shrink: 0; border-radius: 6px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.15);">
                     <div style="background-color: white; width: 32px; height: 32px; border-radius: 3px; display: flex; align-items: center; justify-content: center;">
                         <span style="color: #0f172a; font-family: 'Inter', sans-serif; font-weight: 900; font-size: 0.65rem; letter-spacing: 0;">TAXI</span>
                     </div>
