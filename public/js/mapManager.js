@@ -74,7 +74,7 @@ const mapManager = (() => {
                 <span style="color: black; font-weight: 900; font-size: 11px; letter-spacing: -0.5px;">TAXI</span>
             </div>
             <div style="display: flex; align-items: center; justify-content: center; flex-grow: 1;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                
             </div>
         </div>`,
         iconSize: [36, 46],
@@ -386,7 +386,7 @@ const mapManager = (() => {
                             <span style="color: black; font-weight: 900; font-size: 13px; letter-spacing: -0.5px;">TAXI</span>
                         </div>
                         <div style="display: flex; align-items: center; justify-content: center; flex-grow: 1;">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                            
                         </div>
                     </div>`,
                     iconSize: [42, 54],
@@ -472,7 +472,7 @@ const mapManager = (() => {
                                 <span style="color: black; font-weight: 900; font-size: 13px; letter-spacing: -0.5px;">TAXI</span>
                             </div>
                             <div style="display: flex; align-items: center; justify-content: center; flex-grow: 1;">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                                
                             </div>
                         </div>`,
                         iconSize: [42, 54],
@@ -563,7 +563,7 @@ const mapManager = (() => {
                                 <span style="color: black; font-weight: 900; font-size: 13px; letter-spacing: -0.5px;">TAXI</span>
                             </div>
                             <div style="display: flex; align-items: center; justify-content: center; flex-grow: 1;">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                                
                             </div>
                         </div>`,
                         iconSize: [42, 54],
