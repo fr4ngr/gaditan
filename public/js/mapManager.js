@@ -7,6 +7,12 @@ const mapManager = (() => {
     let currentMode = 'todas'; // 'todas' | 'cercana' | 'elegir'
     let userLocation = null; // { lat, lon }
     let selectedParada = null;
+    let isNavigating = false;
+    let currentRouteSteps = [];
+    let currentStepIndex = 0;
+    let watchPositionId = null;
+    let targetDestParada = null;
+    let navCurrentRouteLine = null;
     
     // Configuración visual de pines
     const customIcon = L.divIcon({
@@ -33,6 +39,27 @@ const mapManager = (() => {
             Math.sin(dLon/2) * Math.sin(dLon/2);
         const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
         return R * c;
+    };
+
+    const sqr = (x) => x * x;
+    const dist2 = (v, w) => sqr(v.lat - w.lat) + sqr(v.lng - w.lng);
+    const distToSegmentSquared = (p, v, w) => {
+        let l2 = dist2(v, w);
+        if (l2 === 0) return dist2(p, v);
+        let t = ((p.lat - v.lat) * (w.lat - v.lat) + (p.lng - v.lng) * (w.lng - v.lng)) / l2;
+        t = Math.max(0, Math.min(1, t));
+        return dist2(p, { lat: v.lat + t * (w.lat - v.lat), lng: v.lng + t * (w.lng - v.lng) });
+    };
+    const pointToLineDist = (pt, line) => {
+        if (!line || line.length < 2) return Infinity;
+        let minD = Infinity;
+        for (let i = 0; i < line.length - 1; i++) {
+            let v = { lat: line[i][0], lng: line[i][1] };
+            let w = { lat: line[i+1][0], lng: line[i+1][1] };
+            let d2 = distToSegmentSquared(pt, v, w);
+            if (d2 < minD) minD = d2;
+        }
+        return Math.sqrt(minD) * 111320;
     };
 
     const formatDistance = (distKm) => {
@@ -334,9 +361,9 @@ const mapManager = (() => {
         }
         
         banners.push(`
-            <a href="https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lon}&travelmode=walking" target="_blank" style="background-color: #2563eb; color: white; font-size: 0.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; padding: 0.75rem 1.5rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; border-top: 1px solid rgba(255,255,255,0.2); text-decoration: none; transition: background-color 0.2s;">
-                <i data-lucide="navigation" style="width:16px; height:16px;"></i> INICIAR RUTA GPS
-            </a>
+            <div onclick="mapManager.startNav(${p.lat}, ${p.lon}, '${p.name.replace(/'/g, "\\'")}')" style="background-color: #2563eb; color: white; font-size: 0.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; padding: 0.75rem 1.5rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; border-top: 1px solid rgba(255,255,255,0.2); text-decoration: none; transition: background-color 0.2s; cursor: pointer;">
+                <i data-lucide="navigation" style="width:16px; height:16px;"></i> INICIAR RUTA EN PANTALLA
+            </div>
         `);
         
         let bannersHtml = '';
@@ -594,9 +621,186 @@ const mapManager = (() => {
         if (dirContainer) dirContainer.innerHTML = '';
     };
 
+    const getManeuverIcon = (type, modifier) => {
+        if (type === 'depart') return 'arrow-up';
+        if (type === 'arrive') return 'map-pin';
+        if (modifier === 'uturn') return 'corner-down-left';
+        if (modifier && modifier.includes('right')) return 'corner-up-right';
+        if (modifier && modifier.includes('left')) return 'corner-up-left';
+        return 'arrow-up';
+    };
+
+    const translateManeuver = (step) => {
+        if (!step || !step.maneuver) return "Sigue recto";
+        const type = step.maneuver.type;
+        const modifier = step.maneuver.modifier;
+        const name = step.name || "la calle";
+        
+        let text = "Sigue recto";
+        if (type === 'depart') text = `Camina por ${name}`;
+        else if (type === 'arrive') text = `Has llegado a tu destino`;
+        else if (type === 'turn') {
+            if (modifier && modifier.includes('right')) text = `Gira a la derecha hacia ${name}`;
+            else if (modifier && modifier.includes('left')) text = `Gira a la izquierda hacia ${name}`;
+            else text = `Gira hacia ${name}`;
+        } else if (type === 'roundabout' || type === 'rotary') {
+            text = `En la rotonda, sal hacia ${name}`;
+        } else if (type === 'end of road') {
+            if (modifier && modifier.includes('right')) text = `Gira a la derecha hacia ${name}`;
+            else text = `Gira a la izquierda hacia ${name}`;
+        }
+        return text;
+    };
+
+    const renderNavStep = () => {
+        if (!isNavigating) return;
+        let navContainer = document.getElementById('nav-container');
+        if (!navContainer) {
+            navContainer = document.createElement('div');
+            navContainer.id = 'nav-container';
+            navContainer.style.cssText = `position: absolute; top: 1rem; left: 1rem; right: 1rem; background: #0f172a; border-radius: 1rem; z-index: 1000; padding: 1rem; color: white; display: flex; flex-direction: column; gap: 0.5rem; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1);`;
+            document.getElementById('map').appendChild(navContainer);
+        }
+        
+        if (currentStepIndex >= currentRouteSteps.length) {
+            navContainer.innerHTML = `
+                <div style="display:flex; align-items:center; gap: 1rem;">
+                    <div style="background: #10b981; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+                        <i data-lucide="map-pin" style="color: white; width: 20px; height: 20px;"></i>
+                    </div>
+                    <div style="display:flex; flex-direction:column; flex:1;">
+                        <strong style="font-size: 1.1rem;">Has llegado</strong>
+                        <span style="font-size: 0.8rem; color: rgba(255,255,255,0.7);">Destino a la vista</span>
+                    </div>
+                    <button id="btn-stop-nav" style="background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); border-radius: 99px; padding: 0.4rem 0.8rem; font-weight: bold; cursor: pointer;">SALIR</button>
+                </div>
+            `;
+            document.getElementById('btn-stop-nav').onclick = stopNavigation;
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+            return;
+        }
+
+        const step = currentRouteSteps[currentStepIndex];
+        const instruction = translateManeuver(step);
+        const icon = getManeuverIcon(step.maneuver.type, step.maneuver.modifier);
+        
+        let distHtml = '';
+        if (step.distance > 0) {
+            distHtml = `<span style="font-size: 0.85rem; font-weight: 800; color: #38bdf8;">${Math.round(step.distance)}m</span>`;
+        }
+
+        navContainer.innerHTML = `
+            <div style="display:flex; align-items:center; gap: 1rem;">
+                <div style="background: rgba(255,255,255,0.1); border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+                    <i data-lucide="${icon}" style="color: white; width: 20px; height: 20px;"></i>
+                </div>
+                <div style="display:flex; flex-direction:column; flex:1; overflow: hidden;">
+                    <strong style="font-size: 1.1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${instruction}</strong>
+                    ${distHtml}
+                </div>
+                <button id="btn-stop-nav" style="background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); border-radius: 99px; padding: 0.4rem 0.8rem; font-weight: bold; cursor: pointer;">SALIR</button>
+            </div>
+        `;
+        document.getElementById('btn-stop-nav').onclick = stopNavigation;
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+    };
+
+    const stopNavigation = () => {
+        isNavigating = false;
+        currentRouteSteps = [];
+        targetDestParada = null;
+        if (watchPositionId !== null) {
+            navigator.geolocation.clearWatch(watchPositionId);
+            watchPositionId = null;
+        }
+        const navContainer = document.getElementById('nav-container');
+        if (navContainer) navContainer.remove();
+        
+        if (selectedParada) {
+            renderMapOverlay(selectedParada);
+            map.flyToBounds([[selectedParada.lat, selectedParada.lon], [selectedParada.lat, selectedParada.lon]], { maxZoom: 17, paddingTopLeft: [0, 200] });
+        }
+    };
+
+    const startNavigation = (lat, lon, name) => {
+        if (!navigator.geolocation) return alert("Tu navegador no soporta geolocalización");
+        
+        isNavigating = true;
+        targetDestParada = { lat, lon, name };
+        const overlay = document.getElementById('map-overlay-info');
+        if (overlay) overlay.style.display = 'none';
+        
+        const navContainer = document.createElement('div');
+        navContainer.id = 'nav-container';
+        navContainer.style.cssText = `position: absolute; top: 1rem; left: 1rem; right: 1rem; background: #0f172a; border-radius: 1rem; z-index: 1000; padding: 1rem; color: white; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1);`;
+        navContainer.innerHTML = `<i data-lucide="loader-2" style="animation: spin 1s linear infinite; margin-right: 0.5rem;"></i> Calculando ruta...`;
+        document.getElementById('map').appendChild(navContainer);
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+
+        watchPositionId = navigator.geolocation.watchPosition(
+            (pos) => {
+                const uLat = pos.coords.latitude;
+                const uLon = pos.coords.longitude;
+                
+                if (!userMarker) {
+                    userMarker = L.marker([uLat, uLon], { icon: userIcon }).addTo(map);
+                } else {
+                    userMarker.setLatLng([uLat, uLon]);
+                }
+                
+                map.setView([uLat, uLon], 18, { animate: true });
+                
+                if (currentRouteSteps.length === 0) {
+                    fetchRoute(uLat, uLon, targetDestParada.lat, targetDestParada.lon);
+                } else {
+                    const distToDest = getDistance(uLat, uLon, targetDestParada.lat, targetDestParada.lon) * 1000;
+                    if (distToDest < 20) {
+                        currentStepIndex = currentRouteSteps.length;
+                        renderNavStep();
+                        return;
+                    }
+
+                    if (navCurrentRouteLine) {
+                        const devDist = pointToLineDist({lat: uLat, lng: uLon}, navCurrentRouteLine);
+                        if (devDist > 30) {
+                            currentRouteSteps = []; 
+                            navContainer.innerHTML = `<i data-lucide="refresh-cw" style="animation: spin 1s linear infinite; margin-right: 0.5rem;"></i> Recalculando...`;
+                            if (typeof lucide !== 'undefined') lucide.createIcons();
+                            fetchRoute(uLat, uLon, targetDestParada.lat, targetDestParada.lon);
+                            return;
+                        }
+                    }
+
+                    if (currentStepIndex < currentRouteSteps.length - 1) {
+                        const nextStep = currentRouteSteps[currentStepIndex + 1];
+                        if (nextStep && nextStep.maneuver && nextStep.maneuver.location) {
+                            const stepLat = nextStep.maneuver.location[1];
+                            const stepLon = nextStep.maneuver.location[0];
+                            const distToNextStep = getDistance(uLat, uLon, stepLat, stepLon) * 1000;
+                            if (distToNextStep < 15) {
+                                currentStepIndex++;
+                                renderNavStep();
+                            } else {
+                                currentRouteSteps[currentStepIndex].distance = distToNextStep;
+                                renderNavStep();
+                            }
+                        }
+                    } else {
+                         currentRouteSteps[currentStepIndex].distance = distToDest;
+                         renderNavStep();
+                    }
+                }
+            },
+            (err) => {
+                console.error("Error GPS nav:", err);
+            },
+            { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+        );
+    };
+
     const fetchRoute = async (lat1, lon1, lat2, lon2) => {
         try {
-            const url = `https://router.project-osrm.org/route/v1/foot/${lon1},${lat1};${lon2},${lat2}?steps=true&geometries=geojson&overview=full&language=es`;
+            const url = `https://router.project-osrm.org/route/v1/foot/${lon1},${lat1};${lon2},${lat2}?steps=true&geometries=geojson&overview=full`;
             const response = await fetch(url);
             const data = await response.json();
             
@@ -605,6 +809,13 @@ const mapManager = (() => {
             const route = data.routes[0];
             const coordinates = route.geometry.coordinates.map(c => [c[1], c[0]]);
             
+            if (isNavigating && route.legs && route.legs[0] && route.legs[0].steps) {
+                currentRouteSteps = route.legs[0].steps;
+                currentStepIndex = 0;
+                navCurrentRouteLine = coordinates;
+                renderNavStep();
+            }
+
             clearRoute();
             
             routePolyline = L.polyline(coordinates, {
@@ -615,45 +826,12 @@ const mapManager = (() => {
                 lineJoin: 'round'
             }).addTo(map);
             
-            map.fitBounds(routePolyline.getBounds(), { padding: [30, 30] });
-            
-            const dirContainer = document.getElementById('directions-container');
-            if (dirContainer) {
-                let stepsHtml = route.legs[0].steps.filter(s => s.maneuver.type !== "depart" && s.maneuver.type !== "arrive").map((step) => {
-                    return `
-                    <div style="display: flex; align-items: flex-start; gap: 1rem; padding: 0.8rem 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
-                        <div style="background: rgba(59, 130, 246, 0.1); padding: 0.5rem; border-radius: 50%; color: #60a5fa;">
-                            <i data-lucide="${getManeuverIcon(step.maneuver.type, step.maneuver.modifier)}" size="18"></i>
-                        </div>
-                        <div style="flex: 1;">
-                            <p style="margin: 0; color: #fff; font-size: 0.9rem;">${step.maneuver.instruction}</p>
-                            <small style="color: var(--text-muted); font-size: 0.75rem;">${Math.round(step.distance)} metros</small>
-                        </div>
-                    </div>`;
-                }).join('');
-                
-                dirContainer.innerHTML = `
-                <div class="glass" style="margin-top: 1rem; padding: 1.5rem; border-radius: 30px;">
-                    <h3 style="margin-top: 0; margin-bottom: 1rem; color: #fff; font-size: 1.1rem; display: flex; align-items: center; gap: 0.5rem;">
-                        <i data-lucide="navigation" style="color: var(--brand-cyan);"></i> Ruta a pie (${formatDistance(route.distance/1000)} - ${Math.round(route.duration/60)} min)
-                    </h3>
-                    <div style="display: flex; flex-direction: column;">
-                        ${stepsHtml}
-                        <div style="display: flex; align-items: flex-start; gap: 1rem; padding-top: 0.8rem;">
-                            <div style="background: rgba(16, 185, 129, 0.1); padding: 0.5rem; border-radius: 50%; color: #34d399;">
-                                <i data-lucide="map-pin" size="18"></i>
-                            </div>
-                            <div style="flex: 1; display: flex; align-items: center;">
-                                <p style="margin: 0; color: #34d399; font-weight: bold; font-size: 0.9rem;">Has llegado a la parada</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>`;
-                if (typeof lucide !== 'undefined') lucide.createIcons();
+            if (!isNavigating) {
+                map.fitBounds(routePolyline.getBounds(), { padding: [30, 30] });
             }
-
+            
             const pill = document.getElementById('walk-info-pill');
-            if (pill) {
+            if (pill && !isNavigating) {
                 const walkDist = route.distance;
                 const walkSecs = route.duration;
                 const walkMins = Math.max(1, Math.round(walkSecs / 60));
@@ -671,13 +849,6 @@ const mapManager = (() => {
         } catch (error) {
             console.error('Error fetching route:', error);
         }
-    };
-
-    const getManeuverIcon = (type, modifier) => {
-        if (modifier && modifier.includes('left')) return 'corner-up-left';
-        if (modifier && modifier.includes('right')) return 'corner-up-right';
-        if (type === 'roundabout') return 'rotate-cw';
-        return 'arrow-up';
     };
 
     const updateVisibleParadas = () => {
@@ -785,7 +956,7 @@ const mapManager = (() => {
         }
     };
 
-    return { init };
+    return { init, startNav: startNavigation };
 })();
 
 document.addEventListener('DOMContentLoaded', () => {
