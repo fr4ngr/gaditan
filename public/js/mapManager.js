@@ -308,8 +308,8 @@ const mapManager = (() => {
             const distStr = straightDist < 1000 ? Math.round(straightDist) + ' m' : (straightDist / 1000).toFixed(1) + ' km';
             
             banners.push(`
-                <div id="walk-info-pill" style="background-color: #10b981; color: white; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; padding: 0.5rem 1.5rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; border-top: 1px solid rgba(255,255,255,0.2);">
-                    <i data-lucide="footprints" style="width:14px; height:14px;"></i> A ${distStr} (${timeStr} APROX)
+                <div id="walk-info-pill" style="background-color: #10b981; color: white; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; padding: 0.5rem 1.5rem; display: flex; align-items: center; justify-content: center; gap: 0.4rem; border-top: 1px solid rgba(255,255,255,0.2);">
+                    <i data-lucide="navigation" style="width:14px; height:14px;"></i> A ${distStr} <span style="opacity: 0.5; margin: 0 0.2rem;">-</span> <i data-lucide="footprints" style="width:14px; height:14px;"></i> ${timeStr} APROX
                 </div>
             `);
         }
@@ -647,7 +647,7 @@ const mapManager = (() => {
                     timeStr = m > 0 ? `${h}h ${m}min` : `${h}h`;
                 }
                 const distStr = walkDist < 1000 ? Math.round(walkDist) + ' m' : (walkDist / 1000).toFixed(1) + ' km';
-                pill.innerHTML = `<i data-lucide="footprints" style="width:14px; height:14px;"></i> A ${distStr} (${timeStr} CAMINANDO)`;
+                pill.innerHTML = `<i data-lucide="navigation" style="width:14px; height:14px;"></i> A ${distStr} <span style="opacity: 0.5; margin: 0 0.2rem;">-</span> <i data-lucide="footprints" style="width:14px; height:14px;"></i> ${timeStr} CAMINANDO`;
                 if (typeof lucide !== 'undefined') lucide.createIcons();
             }
 
