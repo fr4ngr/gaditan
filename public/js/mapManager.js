@@ -1241,7 +1241,7 @@ const mapManager = (() => {
 
     const fetchRoute = async (lat1, lon1, lat2, lon2) => {
         try {
-            const url = `https://router.project-osrm.org/route/v1/foot/${lon1},${lat1};${lon2},${lat2}?steps=true&geometries=geojson&overview=full`;
+            const url = `https://routing.openstreetmap.de/routed-foot/route/v1/driving/${lon1},${lat1};${lon2},${lat2}?steps=true&geometries=geojson&overview=full`;
             const response = await fetch(url);
             const data = await response.json();
             
