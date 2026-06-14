@@ -323,16 +323,33 @@ const mapManager = (() => {
         dbPOIs.forEach(poi => {
             let currentIcon = poiIcon;
             if (poi.image) {
-                currentIcon = L.divIcon({
-                    className: 'custom-poi-img-icon',
-                    html: `
-                        <div style="width: 44px; height: 44px; border-radius: 50%; overflow: hidden; background: white; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.3);">
-                            <img src="${poi.image}" style="width: 100%; height: 100%; object-fit: contain; display: block;" />
-                        </div>
-                    `,
-                    iconSize: [44, 44],
-                    iconAnchor: [22, 22]
-                });
+                const isPng = poi.image.toLowerCase().endsWith('.png');
+                
+                if (isPng) {
+                    // Silueta transparente (PNG)
+                    currentIcon = L.divIcon({
+                        className: 'custom-poi-img-icon-silhouette',
+                        html: `
+                            <div style="width: 60px; height: 60px; display: flex; align-items: flex-end; justify-content: center; filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.5));">
+                                <img src="${poi.image}" style="max-width: 100%; max-height: 100%; object-fit: contain; display: block;" />
+                            </div>
+                        `,
+                        iconSize: [60, 60],
+                        iconAnchor: [30, 60]
+                    });
+                } else {
+                    // Foto en círculo (JPG u otros)
+                    currentIcon = L.divIcon({
+                        className: 'custom-poi-img-icon',
+                        html: `
+                            <div style="width: 44px; height: 44px; border-radius: 50%; overflow: hidden; background: white; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.3);">
+                                <img src="${poi.image}" style="width: 100%; height: 100%; object-fit: contain; display: block;" />
+                            </div>
+                        `,
+                        iconSize: [44, 44],
+                        iconAnchor: [22, 22]
+                    });
+                }
             }
             const marker = L.marker([poi.lat, poi.lon], { icon: currentIcon }).addTo(poiLayer);
             marker.bindPopup(`
