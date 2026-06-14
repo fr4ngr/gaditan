@@ -24,9 +24,14 @@ const mapManager = (() => {
 
     const userIcon = L.divIcon({
         className: 'user-div-icon',
-        html: `<div style="background-color: #3b82f6; width: 20px; height: 20px; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 10px rgba(59, 130, 246, 0.8);"></div>`,
-        iconSize: [20, 20],
-        iconAnchor: [10, 10]
+        html: `
+            <div id="user-marker-wrapper" style="position: relative; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; transition: transform 0.3s ease;">
+                <div id="user-heading-arrow" style="position: absolute; top: -10px; width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-bottom: 12px solid #3b82f6; opacity: 0; transition: opacity 0.3s ease;"></div>
+                <div style="background-color: #3b82f6; width: 16px; height: 16px; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 10px rgba(59, 130, 246, 0.8); position: relative; z-index: 2;"></div>
+            </div>
+        `,
+        iconSize: [22, 22],
+        iconAnchor: [11, 11]
     });
 
     const getDistance = (lat1, lon1, lat2, lon2) => {
@@ -787,11 +792,28 @@ const mapManager = (() => {
             (pos) => {
                 const uLat = pos.coords.latitude;
                 const uLon = pos.coords.longitude;
+                const heading = pos.coords.heading;
                 
                 if (!userMarker) {
                     userMarker = L.marker([uLat, uLon], { icon: userIcon }).addTo(map);
                 } else {
                     userMarker.setLatLng([uLat, uLon]);
+                }
+                
+                if (userMarker) {
+                    const el = userMarker.getElement();
+                    if (el) {
+                        const wrapper = el.querySelector('#user-marker-wrapper');
+                        const arrow = el.querySelector('#user-heading-arrow');
+                        if (wrapper && arrow) {
+                            if (heading !== null && !isNaN(heading)) {
+                                wrapper.style.transform = `rotate(${heading}deg)`;
+                                arrow.style.opacity = '1';
+                            } else {
+                                arrow.style.opacity = '0';
+                            }
+                        }
+                    }
                 }
                 
                 map.fitBounds([[uLat, uLon], [uLat, uLon]], { maxZoom: 18, paddingBottomRight: [0, 150], animate: true });
