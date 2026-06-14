@@ -366,9 +366,15 @@ const mapManager = (() => {
             btnStartNav.id = 'btn-start-nav';
             document.getElementById('map').appendChild(btnStartNav);
         }
-        btnStartNav.style.cssText = "position: absolute; top: 1rem; left: 50%; transform: translateX(-50%); z-index: 1000; background-color: #0f172a; color: #0ef5e3; font-size: 0.75rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; padding: 0.6rem 1.25rem; border-radius: 9999px; display: flex; align-items: center; justify-content: center; gap: 0.5rem; box-shadow: 0 10px 25px rgba(0,0,0,0.5); cursor: pointer; transition: transform 0.1s; border: 1px solid rgba(14, 245, 227, 0.3);";
+        btnStartNav.style.cssText = "position: absolute; top: 1rem; left: 50%; transform: translateX(-50%); z-index: 1000; background-color: #0f172a; color: #0ef5e3; font-size: 0.75rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; padding: 0.6rem 1.25rem; border-radius: 9999px; display: flex; align-items: center; justify-content: center; gap: 0.5rem; box-shadow: 0 10px 25px rgba(0,0,0,0.5); cursor: pointer; transition: transform 0.1s; border: 1px solid rgba(14, 245, 227, 0.3); pointer-events: auto;";
         btnStartNav.innerHTML = `<i data-lucide="navigation" style="width:16px; height:16px; color: #0ef5e3;"></i> VER INDICACIONES`;
-        btnStartNav.onclick = () => window.mapManager.startNav(p.lat, p.lon, p.name);
+        btnStartNav.onclick = (e) => {
+            e.stopPropagation();
+            startNavigation(p.lat, p.lon, p.name);
+        };
+        if (typeof L !== 'undefined') {
+            L.DomEvent.disableClickPropagation(btnStartNav);
+        }
         btnStartNav.style.display = 'flex';
         
         let bannersHtml = '';
