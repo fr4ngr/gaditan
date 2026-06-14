@@ -360,13 +360,16 @@ const mapManager = (() => {
             `);
         }
         
-        banners.push(`
-            <div style="padding: 0.75rem; display: flex; justify-content: center;">
-                <div onclick="mapManager.startNav(${p.lat}, ${p.lon}, '${p.name.replace(/'/g, "\\'")}')" style="background-color: #0ef5e3; color: #0f172a; font-size: 0.75rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; padding: 0.5rem 1.25rem; border-radius: 9999px; display: flex; align-items: center; justify-content: center; gap: 0.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.15); cursor: pointer; transition: transform 0.1s;">
-                    <i data-lucide="navigation" style="width:16px; height:16px; color: #0f172a;"></i> VER INDICACIONES
-                </div>
-            </div>
-        `);
+        let btnStartNav = document.getElementById('btn-start-nav');
+        if (!btnStartNav) {
+            btnStartNav = document.createElement('div');
+            btnStartNav.id = 'btn-start-nav';
+            document.getElementById('map').appendChild(btnStartNav);
+        }
+        btnStartNav.style.cssText = "position: absolute; top: 1rem; left: 50%; transform: translateX(-50%); z-index: 1000; background-color: #0f172a; color: #0ef5e3; font-size: 0.75rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; padding: 0.6rem 1.25rem; border-radius: 9999px; display: flex; align-items: center; justify-content: center; gap: 0.5rem; box-shadow: 0 10px 25px rgba(0,0,0,0.5); cursor: pointer; transition: transform 0.1s; border: 1px solid rgba(14, 245, 227, 0.3);";
+        btnStartNav.innerHTML = `<i data-lucide="navigation" style="width:16px; height:16px; color: #0ef5e3;"></i> VER INDICACIONES`;
+        btnStartNav.onclick = () => window.mapManager.startNav(p.lat, p.lon, p.name);
+        btnStartNav.style.display = 'flex';
         
         let bannersHtml = '';
         if (banners.length > 0) {
@@ -410,6 +413,8 @@ const mapManager = (() => {
                 overlay.style.display = 'none';
             }, 400); // Wait for transition
         }
+        const btnStartNav = document.getElementById('btn-start-nav');
+        if (btnStartNav) btnStartNav.remove();
     };
 
     const buildSelectedStopWidget = (p) => {
@@ -734,6 +739,9 @@ const mapManager = (() => {
         targetDestParada = { lat, lon, name };
         const banners = document.getElementById('map-overlay-banners');
         if (banners) banners.style.display = 'none';
+        
+        const btnStartNav = document.getElementById('btn-start-nav');
+        if (btnStartNav) btnStartNav.style.display = 'none';
         
         const navContainer = document.createElement('div');
         navContainer.id = 'nav-container';
