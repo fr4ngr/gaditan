@@ -369,7 +369,7 @@ const mapManager = (() => {
         let bannersHtml = '';
         if (banners.length > 0) {
             bannersHtml = `
-                <div style="margin: 1.25rem -1.5rem -1.25rem -1.5rem; display: flex; flex-direction: column;">
+                <div id="map-overlay-banners" style="margin: 1.25rem -1.5rem -1.25rem -1.5rem; display: flex; flex-direction: column;">
                     ${banners.join('')}
                 </div>
             `;
@@ -658,7 +658,7 @@ const mapManager = (() => {
         if (!navContainer) {
             navContainer = document.createElement('div');
             navContainer.id = 'nav-container';
-            navContainer.style.cssText = `position: absolute; top: 1rem; left: 1rem; right: 1rem; background: #0f172a; border-radius: 1rem; z-index: 1000; padding: 1rem; color: white; display: flex; flex-direction: column; gap: 0.5rem; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1);`;
+            navContainer.style.cssText = `position: absolute; bottom: 1.5rem; left: 1rem; right: 4.5rem; background: #0f172a; border-radius: 1rem; z-index: 1000; padding: 1rem; color: white; display: flex; flex-direction: column; gap: 0.5rem; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1);`;
             document.getElementById('map').appendChild(navContainer);
         }
         
@@ -716,6 +716,9 @@ const mapManager = (() => {
         const navContainer = document.getElementById('nav-container');
         if (navContainer) navContainer.remove();
         
+        const banners = document.getElementById('map-overlay-banners');
+        if (banners) banners.style.display = 'flex';
+        
         if (selectedParada) {
             renderMapOverlay(selectedParada);
             map.flyToBounds([[selectedParada.lat, selectedParada.lon], [selectedParada.lat, selectedParada.lon]], { maxZoom: 17, paddingTopLeft: [0, 200] });
@@ -727,12 +730,12 @@ const mapManager = (() => {
         
         isNavigating = true;
         targetDestParada = { lat, lon, name };
-        const overlay = document.getElementById('map-overlay-info');
-        if (overlay) overlay.style.display = 'none';
+        const banners = document.getElementById('map-overlay-banners');
+        if (banners) banners.style.display = 'none';
         
         const navContainer = document.createElement('div');
         navContainer.id = 'nav-container';
-        navContainer.style.cssText = `position: absolute; top: 1rem; left: 1rem; right: 1rem; background: #0f172a; border-radius: 1rem; z-index: 1000; padding: 1rem; color: white; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1);`;
+        navContainer.style.cssText = `position: absolute; bottom: 1.5rem; left: 1rem; right: 4.5rem; background: #0f172a; border-radius: 1rem; z-index: 1000; padding: 1rem; color: white; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1);`;
         navContainer.innerHTML = `<i data-lucide="loader-2" style="animation: spin 1s linear infinite; margin-right: 0.5rem;"></i> Calculando ruta...`;
         document.getElementById('map').appendChild(navContainer);
         if (typeof lucide !== 'undefined') lucide.createIcons();
