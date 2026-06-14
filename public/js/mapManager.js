@@ -13,7 +13,9 @@ const mapManager = (() => {
     let watchPositionId = null;
     let targetDestParada = null;
     let navCurrentRouteLine = null;
-    
+    let poiLayer = null;
+    let poisVisible = false;
+    let notifiedPOIs = new Set();
     // Configuración visual de pines
     const customIcon = L.divIcon({
         className: 'custom-div-icon',
@@ -32,6 +34,13 @@ const mapManager = (() => {
         `,
         iconSize: [22, 22],
         iconAnchor: [11, 11]
+    });
+
+    const poiIcon = L.divIcon({
+        className: 'custom-div-icon poi-icon',
+        html: `<div style="display: flex; justify-content: center; align-items: center; filter: drop-shadow(0 4px 4px rgba(0,0,0,0.5));"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="#ec4899" stroke="#111827" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path><circle cx="12" cy="10" r="3" fill="#111827"></circle></svg><div style="position: absolute; top: 6px; color: white;"><i data-lucide="camera" style="width: 10px; height: 10px;"></i></div></div>`,
+        iconSize: [28, 28],
+        iconAnchor: [14, 28]
     });
 
     const getDistance = (lat1, lon1, lat2, lon2) => {
@@ -96,6 +105,7 @@ const mapManager = (() => {
         }).addTo(map);
 
         markersLayer = L.layerGroup().addTo(map);
+        poiLayer = L.layerGroup().addTo(map);
 
         // Control de localización tipo mirilla
         const LocateControl = L.Control.extend({
@@ -130,6 +140,57 @@ const mapManager = (() => {
         });
         new LocateControl().addTo(map);
 
+        // Control para Descubrir Cerca (POIs)
+        const POIControl = L.Control.extend({
+            options: { position: 'bottomright' },
+            onAdd: function() {
+                const btn = L.DomUtil.create('button', 'map-poi-btn');
+                btn.title = 'Descubrir comercios y turismo cerca';
+                btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path><circle cx="12" cy="13" r="3"></circle>
+                </svg>`;
+                btn.style.cssText = `
+                    background: rgba(15, 23, 42, 0.85);
+                    border: 1px solid rgba(236, 72, 153, 0.4);
+                    border-radius: 50%;
+                    width: 40px; height: 40px;
+                    display: flex; align-items: center; justify-content: center;
+                    cursor: pointer;
+                    color: #ec4899;
+                    backdrop-filter: blur(10px);
+                    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+                    transition: all 0.2s;
+                    padding: 0;
+                    margin-bottom: 10px;
+                `;
+                btn.onmouseover = () => { btn.style.background = 'rgba(236, 72, 153, 0.2)'; btn.style.borderColor = '#ec4899'; };
+                btn.onmouseout  = () => { 
+                    if(!poisVisible) {
+                        btn.style.background = 'rgba(15, 23, 42, 0.85)'; 
+                        btn.style.borderColor = 'rgba(236, 72, 153, 0.4)'; 
+                    }
+                };
+                
+                L.DomEvent.on(btn, 'click', L.DomEvent.stopPropagation);
+                L.DomEvent.on(btn, 'click', () => {
+                    poisVisible = !poisVisible;
+                    if(poisVisible) {
+                        btn.style.background = 'rgba(236, 72, 153, 0.3)';
+                        btn.style.borderColor = '#ec4899';
+                        btn.style.boxShadow = '0 0 15px rgba(236, 72, 153, 0.5)';
+                        renderPOIs();
+                    } else {
+                        btn.style.background = 'rgba(15, 23, 42, 0.85)';
+                        btn.style.borderColor = 'rgba(236, 72, 153, 0.4)';
+                        btn.style.boxShadow = '0 4px 15px rgba(0,0,0,0.3)';
+                        poiLayer.clearLayers();
+                    }
+                });
+                return btn;
+            }
+        });
+        new POIControl().addTo(map);
+
         document.getElementById('btn-todas').addEventListener('click', () => setMode('todas'));
         document.getElementById('btn-cercana').addEventListener('click', () => setMode('cercana'));
 
@@ -144,6 +205,22 @@ const mapManager = (() => {
         observer.observe(mapElement);
     };
 
+    const renderPOIs = () => {
+        if (!poiLayer || typeof dbPOIs === 'undefined') return;
+        poiLayer.clearLayers();
+        dbPOIs.forEach(poi => {
+            const marker = L.marker([poi.lat, poi.lon], { icon: poiIcon }).addTo(poiLayer);
+            marker.bindPopup(`
+                <div style="font-family: 'Outfit', sans-serif; text-align: center; padding: 0.5rem;">
+                    <h3 style="margin: 0 0 0.5rem 0; font-weight: 800; color: #0f172a; font-size: 1rem;">${poi.name}</h3>
+                    <p style="margin: 0; font-size: 0.8rem; color: #475569;">${poi.description}</p>
+                </div>
+            `, {
+                closeButton: false,
+                className: 'poi-popup'
+            });
+        });
+    };
 
     const renderMarkers = (paradas) => {
         markersLayer.clearLayers();
@@ -826,10 +903,53 @@ const mapManager = (() => {
         }
     };
 
+    const showPOINotification = (poi, distance) => {
+        let container = document.getElementById('poi-notification-container');
+        if (!container) {
+            container = document.createElement('div');
+            container.id = 'poi-notification-container';
+            container.style.cssText = `position: absolute; top: 5rem; left: 50%; transform: translateX(-50%) translateY(-20px); z-index: 1100; width: 90%; max-width: 400px; display: flex; flex-direction: column; gap: 0.5rem; opacity: 0; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease; pointer-events: none;`;
+            document.getElementById('map').appendChild(container);
+        }
+
+        const notificationId = 'poi-notif-' + Date.now();
+        const notification = document.createElement('div');
+        notification.id = notificationId;
+        notification.style.cssText = `background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(236, 72, 153, 0.4); border-radius: 1rem; padding: 0.8rem 1rem; color: white; display: flex; align-items: center; gap: 0.8rem; box-shadow: 0 10px 25px rgba(236, 72, 153, 0.2); pointer-events: auto;`;
+        
+        notification.innerHTML = `
+            <div style="background: rgba(236, 72, 153, 0.2); border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: #ec4899;">
+                <i data-lucide="camera" style="width: 18px; height: 18px;"></i>
+            </div>
+            <div style="display:flex; flex-direction:column; flex:1;">
+                <span style="font-size: 0.7rem; font-weight: 800; color: #ec4899; text-transform: uppercase; letter-spacing: 0.5px;">En tu ruta (A ${Math.round(distance)}m)</span>
+                <strong style="font-size: 0.95rem; line-height: 1.2; margin-top: 0.1rem;">${poi.name}</strong>
+            </div>
+            <button onclick="document.getElementById('${notificationId}').remove()" style="background: transparent; border: none; color: #94a3b8; padding: 0.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                <i data-lucide="x" style="width: 18px; height: 18px;"></i>
+            </button>
+        `;
+        
+        container.appendChild(notification);
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+
+        requestAnimationFrame(() => {
+            container.style.transform = 'translateX(-50%) translateY(0)';
+            container.style.opacity = '1';
+        });
+
+        // Auto-hide after 8 seconds
+        setTimeout(() => {
+            const el = document.getElementById(notificationId);
+            if (el) el.remove();
+        }, 8000);
+    };
+
     const startNavigation = (lat, lon, name) => {
         if (!navigator.geolocation) return alert("Tu navegador no soporta geolocalización");
         
         isNavigating = true;
+        notifiedPOIs.clear();
         targetDestParada = { lat, lon, name };
         const banners = document.getElementById('map-overlay-banners');
         if (banners) banners.style.display = 'none';
@@ -878,6 +998,18 @@ const mapManager = (() => {
                 }
                 
                 map.fitBounds([[uLat, uLon], [uLat, uLon]], { maxZoom: 18, paddingBottomRight: [0, 150], animate: true });
+                
+                // --- Motor de Geofencing ---
+                if (typeof dbPOIs !== 'undefined') {
+                    dbPOIs.forEach(poi => {
+                        const distToPoi = getDistance(uLat, uLon, poi.lat, poi.lon) * 1000;
+                        if (distToPoi <= poi.radius && !notifiedPOIs.has(poi.id)) {
+                            notifiedPOIs.add(poi.id);
+                            showPOINotification(poi, distToPoi);
+                        }
+                    });
+                }
+                // ---------------------------
                 
                 if (currentRouteSteps.length === 0) {
                     fetchRoute(uLat, uLon, targetDestParada.lat, targetDestParada.lon);
