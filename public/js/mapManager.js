@@ -333,6 +333,12 @@ const mapManager = (() => {
             `);
         }
         
+        banners.push(`
+            <a href="https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lon}&travelmode=walking" target="_blank" style="background-color: #2563eb; color: white; font-size: 0.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; padding: 0.75rem 1.5rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; border-top: 1px solid rgba(255,255,255,0.2); text-decoration: none; transition: background-color 0.2s;">
+                <i data-lucide="navigation" style="width:16px; height:16px;"></i> INICIAR RUTA GPS
+            </a>
+        `);
+        
         let bannersHtml = '';
         if (banners.length > 0) {
             bannersHtml = `
