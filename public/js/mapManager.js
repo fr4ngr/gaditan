@@ -713,32 +713,42 @@ const mapManager = (() => {
                                 const walkSecs = data.routes[0].legs[0].duration; // segundos
                                 const speedKmh = (walkDist / 1000) / (walkSecs / 3600);
 
-                                // Validación: velocidad a pie imposible (>8 km/h) = resultado OSRM inválido
-                                // O distancia > 5km = demasiado lejos para ir a pie
-                                if (speedKmh > 8 || walkDist > 5000) {
-                                    const distStr = walkDist < 1000 ? Math.round(walkDist) + ' m' : (walkDist / 1000).toFixed(1) + ' km';
-                                    pill.innerHTML = `
-                                        <div style="font-size: 0.85rem; color: #0f172a; font-weight: 800; display: flex; align-items: center; justify-content: flex-end; gap: 0.35rem;"><i data-lucide="map-pin" style="width:14px; height:14px;"></i> ${distStr}</div>
-                                    `;
-                                } else {
-                                    const walkMins = Math.max(1, Math.round(walkSecs / 60));
-                                    const distStr = walkDist < 1000 ? Math.round(walkDist) + ' m' : (walkDist / 1000).toFixed(1) + ' km';
-                                    pill.innerHTML = `
-                                        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.2rem;">
-                                            <div style="font-size: 0.85rem; color: #0f172a; font-weight: 800; display: flex; align-items: center; gap: 0.35rem;"><i data-lucide="footprints" style="width:14px; height:14px;"></i> ${distStr}</div>
-                                            <div style="font-size: 0.85rem; color: #0f172a; font-weight: 800; display: flex; align-items: center; gap: 0.35rem;"><i data-lucide="clock" style="width:14px; height:14px;"></i> ${walkMins} min</div>
-                                        </div>
-                                    `;
+                                const walkMins = Math.max(1, Math.round(walkSecs / 60));
+                                let timeStr = walkMins + ' min';
+                                if (walkMins >= 60) {
+                                    const h = Math.floor(walkMins / 60);
+                                    const m = walkMins % 60;
+                                    timeStr = m > 0 ? `${h}h ${m}min` : `${h}h`;
                                 }
+                                
+                                const distStr = walkDist < 1000 ? Math.round(walkDist) + ' m' : (walkDist / 1000).toFixed(1) + ' km';
+                                pill.innerHTML = `
+                                    <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.2rem;">
+                                        <div style="font-size: 0.85rem; color: #0f172a; font-weight: 800; display: flex; align-items: center; gap: 0.35rem;"><i data-lucide="footprints" style="width:14px; height:14px;"></i> ${distStr}</div>
+                                        <div style="font-size: 0.85rem; color: #0f172a; font-weight: 800; display: flex; align-items: center; gap: 0.35rem;"><i data-lucide="clock" style="width:14px; height:14px;"></i> ${timeStr}</div>
+                                    </div>
+                                `;
                                 if (typeof lucide !== 'undefined') lucide.createIcons();
                             }
                         })
                         .catch(() => {
-                            // Si falla OSRM, mostramos la distancia en línea recta sin tiempo
+                            // Si falla OSRM, estimamos la caminata basándonos en línea recta (~5 km/h)
                             const pill = document.getElementById('walk-info-pill');
                             if (pill) {
+                                const straightDist = masCercana.distance * 1000;
+                                const walkMins = Math.max(1, Math.round(straightDist / 83.3));
+                                let timeStr = walkMins + ' min';
+                                if (walkMins >= 60) {
+                                    const h = Math.floor(walkMins / 60);
+                                    const m = walkMins % 60;
+                                    timeStr = m > 0 ? `${h}h ${m}min` : `${h}h`;
+                                }
+
                                 pill.innerHTML = `
-                                    <div style="font-size: 0.85rem; color: #0f172a; font-weight: 800; display: flex; align-items: center; justify-content: flex-end; gap: 0.35rem;"><i data-lucide="map-pin" style="width:14px; height:14px;"></i> ${formatDistance(masCercana.distance)}</div>
+                                    <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.2rem;">
+                                        <div style="font-size: 0.85rem; color: #0f172a; font-weight: 800; display: flex; align-items: center; gap: 0.35rem;"><i data-lucide="footprints" style="width:14px; height:14px;"></i> ${formatDistance(masCercana.distance)}</div>
+                                        <div style="font-size: 0.85rem; color: #0f172a; font-weight: 800; display: flex; align-items: center; gap: 0.35rem;"><i data-lucide="clock" style="width:14px; height:14px;"></i> ${timeStr}</div>
+                                    </div>
                                 `;
                                 if (typeof lucide !== 'undefined') lucide.createIcons();
                             }
