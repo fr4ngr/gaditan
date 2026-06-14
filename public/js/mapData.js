@@ -45,7 +45,8 @@ const dbParadas = [
     {
         id: "p_6",
         name: "La Punta",
-        address: "Paseo Almirante Pascual Pery (Solo noches de 22 a 7h)",
+        address: "Paseo Almirante Pascual Pery",
+        nocturna: true,
         lat: 36.537434,
         lon: -6.290726
     },

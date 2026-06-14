@@ -230,11 +230,13 @@ const mapManager = (() => {
             distHtml = `<div style="font-size: 0.7rem; color: var(--brand-cyan); font-weight: 600; display: flex; align-items: center; gap: 0.3rem; margin-top: 0.15rem;"><i data-lucide="footprints" style="width:12px; height:12px;"></i> ${formatDistance(p.distance)} &bull; ${timeMins} min a pie</div>`;
         }
 
+        let badgHtml = p.nocturna ? `<span style="background: rgba(239, 68, 68, 0.15); color: #fca5a5; font-size: 0.6rem; font-weight: 800; padding: 0.15rem 0.4rem; border-radius: 4px; margin-left: 0.4rem; border: 1px solid rgba(239, 68, 68, 0.3); vertical-align: middle;">NOCTURNA</span>` : '';
+
         item.innerHTML = `
             <div style="display: flex; align-items: center; gap: 0.6rem; min-width: 0; flex: 1;">
                 <i data-lucide="map-pin" style="width:20px; height:20px; color: var(--brand-cyan); flex-shrink: 0;"></i>
                 <div style="display: flex; flex-direction: column; min-width: 0;">
-                    <strong style="color: #fff; font-size: 0.88rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.name}</strong>
+                    <strong style="color: #fff; font-size: 0.88rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center;">${p.name}${badgHtml}</strong>
                     <span style="color: var(--text-muted); font-size: 0.72rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.address}</span>
                     ${distHtml}
                 </div>
@@ -288,6 +290,15 @@ const mapManager = (() => {
             `;
         }
         
+        let warningHtml = '';
+        if (p.nocturna) {
+            warningHtml = `
+                <div style="background-color: #ef4444; color: white; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; padding: 0.5rem 1.5rem; margin: 1.25rem -1.5rem -1.25rem -1.5rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                    <i data-lucide="moon" style="width: 14px; height: 14px;"></i> PARADA NOCTURNA SÓLO DE 22 A 7H
+                </div>
+            `;
+        }
+        
         overlay.innerHTML = `
             <div style="display: flex; align-items: center; gap: 0.85rem; width: 100%;">
                 <!-- Icono sin fondo -->
@@ -300,6 +311,7 @@ const mapManager = (() => {
                 </div>
             </div>
             ${distHtml}
+            ${warningHtml}
         `;
         
         if (typeof lucide !== 'undefined') lucide.createIcons();
