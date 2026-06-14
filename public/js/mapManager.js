@@ -330,8 +330,8 @@ const mapManager = (() => {
                     currentIcon = L.divIcon({
                         className: 'custom-poi-img-icon-silhouette',
                         html: `
-                            <div style="width: 60px; height: 60px; display: flex; align-items: flex-end; justify-content: center; filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.5));">
-                                <img src="${poi.image}" style="max-width: 100%; max-height: 100%; object-fit: contain; display: block;" />
+                            <div style="width: 100%; height: 100%; display: flex; align-items: flex-end; justify-content: center; filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.5));">
+                                <img src="${poi.image}" style="width: 100%; height: 100%; object-fit: contain; display: block;" />
                             </div>
                         `,
                         iconSize: [60, 60],
