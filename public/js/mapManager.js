@@ -295,22 +295,28 @@ const mapManager = (() => {
         const overlay = document.getElementById('map-overlay-info');
         if (!overlay) return;
         
-        let distHtml = '';
+        let banners = [];
         if (p.distance !== undefined) {
-            distHtml = `
-                <div id="walk-info-pill" style="position: absolute; top: 1.25rem; right: 1.5rem; text-align: right;">
-                    <div style="font-size: 0.8rem; color: #0f172a; display: flex; align-items: center; justify-content: flex-end; gap: 0.35rem; font-weight: 600; opacity: 0.7;">
-                        <i data-lucide="loader-2" style="width:14px; height:14px; animation: spin 1s linear infinite;"></i> Calc...
-                    </div>
+            banners.push(`
+                <div id="walk-info-pill" style="background-color: #10b981; color: white; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; padding: 0.5rem 1.5rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; border-top: 1px solid rgba(255,255,255,0.2);">
+                    <i data-lucide="loader-2" style="width:14px; height:14px; animation: spin 1s linear infinite;"></i> Calculando ruta...
                 </div>
-            `;
+            `);
         }
         
-        let warningHtml = '';
         if (p.nocturna) {
-            warningHtml = `
-                <div style="background-color: #ef4444; color: white; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; padding: 0.5rem 1.5rem; margin: 1.25rem -1.5rem -1.25rem -1.5rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+            banners.push(`
+                <div style="background-color: #ef4444; color: white; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; padding: 0.5rem 1.5rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; border-top: 1px solid rgba(255,255,255,0.2);">
                     <i data-lucide="moon" style="width: 14px; height: 14px;"></i> PARADA NOCTURNA SÓLO DE 22 A 7H
+                </div>
+            `);
+        }
+        
+        let bannersHtml = '';
+        if (banners.length > 0) {
+            bannersHtml = `
+                <div style="margin: 1.25rem -1.5rem -1.25rem -1.5rem; display: flex; flex-direction: column;">
+                    ${banners.join('')}
                 </div>
             `;
         }
@@ -320,14 +326,13 @@ const mapManager = (() => {
                 <!-- Icono sin fondo -->
                 <i data-lucide="map-pin" style="color: #0f172a; width: 32px; height: 32px; flex-shrink: 0;"></i>
                 <!-- Textos a la derecha -->
-                <div style="display: flex; flex-direction: column; flex: 1; min-width: 0; justify-content: center; padding-right: 5rem;">
+                <div style="display: flex; flex-direction: column; flex: 1; min-width: 0; justify-content: center;">
                     <span style="color: rgba(15, 23, 42, 0.7); font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.15rem;">PARADA DE TAXI</span>
                     <strong style="color: #0f172a; font-size: 1.3rem; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.1;">${p.name}</strong>
                     <span style="color: rgba(15, 23, 42, 0.85); font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 0.1rem;">${p.address}, Cádiz</span>
                 </div>
             </div>
-            ${distHtml}
-            ${warningHtml}
+            ${bannersHtml}
         `;
         
         if (typeof lucide !== 'undefined') lucide.createIcons();
@@ -619,8 +624,39 @@ const mapManager = (() => {
                 </div>`;
                 if (typeof lucide !== 'undefined') lucide.createIcons();
             }
+
+            const pill = document.getElementById('walk-info-pill');
+            if (pill) {
+                const walkDist = route.distance;
+                const walkSecs = route.duration;
+                const walkMins = Math.max(1, Math.round(walkSecs / 60));
+                let timeStr = walkMins + ' min';
+                if (walkMins >= 60) {
+                    const h = Math.floor(walkMins / 60);
+                    const m = walkMins % 60;
+                    timeStr = m > 0 ? `${h}h ${m}min` : `${h}h`;
+                }
+                const distStr = walkDist < 1000 ? Math.round(walkDist) + ' m' : (walkDist / 1000).toFixed(1) + ' km';
+                pill.innerHTML = `<i data-lucide="footprints" style="width:14px; height:14px;"></i> A ${distStr} (${timeStr} CAMINANDO)`;
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+            }
+
         } catch (error) {
             console.error('Error fetching route:', error);
+            const pill = document.getElementById('walk-info-pill');
+            if (pill) {
+                const straightDist = getDistance(lat1, lon1, lat2, lon2) * 1000;
+                const walkMins = Math.max(1, Math.round(straightDist / 83.3));
+                let timeStr = walkMins + ' min';
+                if (walkMins >= 60) {
+                    const h = Math.floor(walkMins / 60);
+                    const m = walkMins % 60;
+                    timeStr = m > 0 ? `${h}h ${m}min` : `${h}h`;
+                }
+                const distStr = straightDist < 1000 ? Math.round(straightDist) + ' m' : (straightDist / 1000).toFixed(1) + ' km';
+                pill.innerHTML = `<i data-lucide="footprints" style="width:14px; height:14px;"></i> A ${distStr} (${timeStr} APROX)`;
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+            }
         }
     };
 
@@ -720,58 +756,7 @@ const mapManager = (() => {
                     
                     map.flyToBounds(bounds, { paddingTopLeft: [20, 180], paddingBottomRight: [20, 20], animate: true, duration: 1.2, easeLinearity: 0.25 });
 
-                    // Obtener distancia y tiempo REAL caminando desde OSRM
-                    fetch(`https://router.project-osrm.org/route/v1/foot/${lon},${lat};${masCercana.lon},${masCercana.lat}?overview=false`)
-                        .then(r => r.json())
-                        .then(data => {
-                            const pill = document.getElementById('walk-info-pill');
-                            if (!pill) return;
-
-                            if (data.code === 'Ok' && data.routes && data.routes[0]) {
-                                const walkDist = data.routes[0].legs[0].distance; // metros
-                                const walkSecs = data.routes[0].legs[0].duration; // segundos
-                                const speedKmh = (walkDist / 1000) / (walkSecs / 3600);
-
-                                const walkMins = Math.max(1, Math.round(walkSecs / 60));
-                                let timeStr = walkMins + ' min';
-                                if (walkMins >= 60) {
-                                    const h = Math.floor(walkMins / 60);
-                                    const m = walkMins % 60;
-                                    timeStr = m > 0 ? `${h}h ${m}min` : `${h}h`;
-                                }
-                                
-                                const distStr = walkDist < 1000 ? Math.round(walkDist) + ' m' : (walkDist / 1000).toFixed(1) + ' km';
-                                pill.innerHTML = `
-                                    <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.2rem;">
-                                        <div style="font-size: 0.85rem; color: #0f172a; font-weight: 800; display: flex; align-items: center; gap: 0.35rem;"><i data-lucide="footprints" style="width:14px; height:14px;"></i> ${distStr}</div>
-                                        <div style="font-size: 0.85rem; color: #0f172a; font-weight: 800; display: flex; align-items: center; gap: 0.35rem;"><i data-lucide="clock" style="width:14px; height:14px;"></i> ${timeStr}</div>
-                                    </div>
-                                `;
-                                if (typeof lucide !== 'undefined') lucide.createIcons();
-                            }
-                        })
-                        .catch(() => {
-                            // Si falla OSRM, estimamos la caminata basándonos en línea recta (~5 km/h)
-                            const pill = document.getElementById('walk-info-pill');
-                            if (pill) {
-                                const straightDist = masCercana.distance * 1000;
-                                const walkMins = Math.max(1, Math.round(straightDist / 83.3));
-                                let timeStr = walkMins + ' min';
-                                if (walkMins >= 60) {
-                                    const h = Math.floor(walkMins / 60);
-                                    const m = walkMins % 60;
-                                    timeStr = m > 0 ? `${h}h ${m}min` : `${h}h`;
-                                }
-
-                                pill.innerHTML = `
-                                    <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.2rem;">
-                                        <div style="font-size: 0.85rem; color: #0f172a; font-weight: 800; display: flex; align-items: center; gap: 0.35rem;"><i data-lucide="footprints" style="width:14px; height:14px;"></i> ${formatDistance(masCercana.distance)}</div>
-                                        <div style="font-size: 0.85rem; color: #0f172a; font-weight: 800; display: flex; align-items: center; gap: 0.35rem;"><i data-lucide="clock" style="width:14px; height:14px;"></i> ${timeStr}</div>
-                                    </div>
-                                `;
-                                if (typeof lucide !== 'undefined') lucide.createIcons();
-                            }
-                        });
+                    fetchRoute(lat, lon, masCercana.lat, masCercana.lon);
 
 
                 }, (error) => {
