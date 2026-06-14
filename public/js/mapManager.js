@@ -383,16 +383,13 @@ const mapManager = (() => {
                 const selectedIcon = L.divIcon({
                     className: 'custom-div-icon',
                     html: `
-                        <div style="position: relative;">
-                            <dotlottie-player src="/lottie/moneda.lottie" background="transparent" speed="1" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 150px; height: 150px; z-index: -1; opacity: 0.5; pointer-events: none;" loop autoplay></dotlottie-player>
-                            <div style="position: relative; width: 42px; height: 48px; filter: drop-shadow(0 0 10px rgba(250,204,21,0.8));">
-                                <div style="background-color: #facc15; width: 100%; height: 100%; border-radius: 6px; padding: 4px; box-sizing: border-box; font-family: 'Outfit', sans-serif; display: flex; flex-direction: column;">
-                                    <div style="background-color: white; width: 100%; height: 26px; border-radius: 3px; display: flex; align-items: center; justify-content: center;">
-                                        <span style="color: black; font-weight: 900; font-size: 13px; letter-spacing: -0.5px;">TAXI</span>
-                                    </div>
+                        <div style="position: relative; width: 42px; height: 48px; filter: drop-shadow(0 0 10px rgba(250,204,21,0.8));">
+                            <div style="background-color: #facc15; width: 100%; height: 100%; border-radius: 6px; padding: 4px; box-sizing: border-box; font-family: 'Outfit', sans-serif; display: flex; flex-direction: column;">
+                                <div style="background-color: white; width: 100%; height: 26px; border-radius: 3px; display: flex; align-items: center; justify-content: center;">
+                                    <span style="color: black; font-weight: 900; font-size: 13px; letter-spacing: -0.5px;">TAXI</span>
                                 </div>
-                                <div style="position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 8px solid transparent; border-right: 8px solid transparent; border-top: 9px solid #facc15;"></div>
                             </div>
+                            <div style="position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 8px solid transparent; border-right: 8px solid transparent; border-top: 9px solid #facc15;"></div>
                         </div>
                     `,
                     iconSize: [42, 56],
@@ -474,16 +471,13 @@ const mapManager = (() => {
                     const selectedIcon = L.divIcon({
                         className: 'custom-div-icon',
                         html: `
-                            <div style="position: relative;">
-                                <dotlottie-player src="/lottie/moneda.lottie" background="transparent" speed="1" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 150px; height: 150px; z-index: -1; opacity: 0.5; pointer-events: none;" loop autoplay></dotlottie-player>
-                                <div style="position: relative; width: 42px; height: 48px; filter: drop-shadow(0 0 10px rgba(250,204,21,0.8));">
-                                    <div style="background-color: #facc15; width: 100%; height: 100%; border-radius: 6px; padding: 4px; box-sizing: border-box; font-family: 'Outfit', sans-serif; display: flex; flex-direction: column;">
-                                        <div style="background-color: white; width: 100%; height: 26px; border-radius: 3px; display: flex; align-items: center; justify-content: center;">
-                                            <span style="color: black; font-weight: 900; font-size: 13px; letter-spacing: -0.5px;">TAXI</span>
-                                        </div>
+                            <div style="position: relative; width: 42px; height: 48px; filter: drop-shadow(0 0 10px rgba(250,204,21,0.8));">
+                                <div style="background-color: #facc15; width: 100%; height: 100%; border-radius: 6px; padding: 4px; box-sizing: border-box; font-family: 'Outfit', sans-serif; display: flex; flex-direction: column;">
+                                    <div style="background-color: white; width: 100%; height: 26px; border-radius: 3px; display: flex; align-items: center; justify-content: center;">
+                                        <span style="color: black; font-weight: 900; font-size: 13px; letter-spacing: -0.5px;">TAXI</span>
                                     </div>
-                                    <div style="position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 8px solid transparent; border-right: 8px solid transparent; border-top: 9px solid #facc15;"></div>
                                 </div>
+                                <div style="position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 8px solid transparent; border-right: 8px solid transparent; border-top: 9px solid #facc15;"></div>
                             </div>
                         `,
                         iconSize: [42, 56],
@@ -570,16 +564,13 @@ const mapManager = (() => {
                     const selectedIcon = L.divIcon({
                         className: 'custom-div-icon',
                         html: `
-                            <div style="position: relative;">
-                                <dotlottie-player src="/lottie/moneda.lottie" background="transparent" speed="1" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 150px; height: 150px; z-index: -1; opacity: 0.5; pointer-events: none;" loop autoplay></dotlottie-player>
-                                <div style="position: relative; width: 42px; height: 48px; filter: drop-shadow(0 0 10px rgba(250,204,21,0.8));">
-                                    <div style="background-color: #facc15; width: 100%; height: 100%; border-radius: 6px; padding: 4px; box-sizing: border-box; font-family: 'Outfit', sans-serif; display: flex; flex-direction: column;">
-                                        <div style="background-color: white; width: 100%; height: 26px; border-radius: 3px; display: flex; align-items: center; justify-content: center;">
-                                            <span style="color: black; font-weight: 900; font-size: 13px; letter-spacing: -0.5px;">TAXI</span>
-                                        </div>
+                            <div style="position: relative; width: 42px; height: 48px; filter: drop-shadow(0 0 10px rgba(250,204,21,0.8));">
+                                <div style="background-color: #facc15; width: 100%; height: 100%; border-radius: 6px; padding: 4px; box-sizing: border-box; font-family: 'Outfit', sans-serif; display: flex; flex-direction: column;">
+                                    <div style="background-color: white; width: 100%; height: 26px; border-radius: 3px; display: flex; align-items: center; justify-content: center;">
+                                        <span style="color: black; font-weight: 900; font-size: 13px; letter-spacing: -0.5px;">TAXI</span>
                                     </div>
-                                    <div style="position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 8px solid transparent; border-right: 8px solid transparent; border-top: 9px solid #facc15;"></div>
                                 </div>
+                                <div style="position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 8px solid transparent; border-right: 8px solid transparent; border-top: 9px solid #facc15;"></div>
                             </div>
                         `,
                         iconSize: [42, 56],
