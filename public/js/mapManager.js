@@ -361,8 +361,10 @@ const mapManager = (() => {
         }
         
         banners.push(`
-            <div onclick="mapManager.startNav(${p.lat}, ${p.lon}, '${p.name.replace(/'/g, "\\'")}')" style="background-color: #2563eb; color: white; font-size: 0.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; padding: 0.75rem 1.5rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; border-top: 1px solid rgba(255,255,255,0.2); text-decoration: none; transition: background-color 0.2s; cursor: pointer;">
-                <i data-lucide="navigation" style="width:16px; height:16px;"></i> INICIAR RUTA EN PANTALLA
+            <div style="padding: 0.75rem; display: flex; justify-content: center;">
+                <div onclick="mapManager.startNav(${p.lat}, ${p.lon}, '${p.name.replace(/'/g, "\\'")}')" style="background-color: #0ef5e3; color: #0f172a; font-size: 0.75rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; padding: 0.5rem 1.25rem; border-radius: 9999px; display: flex; align-items: center; justify-content: center; gap: 0.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.15); cursor: pointer; transition: transform 0.1s;">
+                    <i data-lucide="navigation" style="width:16px; height:16px; color: #0f172a;"></i> VER INDICACIONES
+                </div>
             </div>
         `);
         
