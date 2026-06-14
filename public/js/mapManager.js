@@ -66,19 +66,20 @@ const mapManager = (() => {
     let poiLayer = null;
     let poisVisible = false;
     let notifiedPOIs = new Set();
-    // Configuración visual de pines
     const customIcon = L.divIcon({
         className: 'custom-div-icon',
-        html: `<div style="background-color: #2563eb; width: 36px; height: 46px; border-radius: 6px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 4px; box-sizing: border-box; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.4)); font-family: 'Outfit', sans-serif;">
-            <div style="background-color: white; width: 100%; height: 22px; border-radius: 3px; display: flex; align-items: center; justify-content: center;">
-                <span style="color: black; font-weight: 900; font-size: 11px; letter-spacing: -0.5px;">TAXI</span>
+        html: `
+            <div style="position: relative; width: 36px; height: 28px; filter: drop-shadow(0 4px 4px rgba(0,0,0,0.4));">
+                <div style="background-color: #2563eb; width: 100%; height: 100%; border-radius: 6px; padding: 3px; box-sizing: border-box; font-family: 'Outfit', sans-serif;">
+                    <div style="background-color: white; width: 100%; height: 100%; border-radius: 3px; display: flex; align-items: center; justify-content: center;">
+                        <span style="color: black; font-weight: 900; font-size: 11px; letter-spacing: -0.5px;">TAXI</span>
+                    </div>
+                </div>
+                <div style="position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 7px solid #2563eb;"></div>
             </div>
-            <div style="display: flex; align-items: center; justify-content: center; flex-grow: 1;">
-                
-            </div>
-        </div>`,
-        iconSize: [36, 46],
-        iconAnchor: [18, 46]
+        `,
+        iconSize: [36, 35],
+        iconAnchor: [18, 35]
     });
 
     const userIcon = L.divIcon({
@@ -381,16 +382,18 @@ const mapManager = (() => {
 
                 const selectedIcon = L.divIcon({
                     className: 'custom-div-icon',
-                    html: `<div style="background-color: #facc15; width: 42px; height: 54px; border-radius: 6px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 4px; box-sizing: border-box; filter: drop-shadow(0 0 10px rgba(250,204,21,0.8)); font-family: 'Outfit', sans-serif;">
-                        <div style="background-color: white; width: 100%; height: 26px; border-radius: 3px; display: flex; align-items: center; justify-content: center;">
-                            <span style="color: black; font-weight: 900; font-size: 13px; letter-spacing: -0.5px;">TAXI</span>
+                    html: `
+                        <div style="position: relative; width: 42px; height: 32px; filter: drop-shadow(0 0 10px rgba(250,204,21,0.8));">
+                            <div style="background-color: #facc15; width: 100%; height: 100%; border-radius: 6px; padding: 4px; box-sizing: border-box; font-family: 'Outfit', sans-serif;">
+                                <div style="background-color: white; width: 100%; height: 100%; border-radius: 3px; display: flex; align-items: center; justify-content: center;">
+                                    <span style="color: black; font-weight: 900; font-size: 13px; letter-spacing: -0.5px;">TAXI</span>
+                                </div>
+                            </div>
+                            <div style="position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 8px solid transparent; border-right: 8px solid transparent; border-top: 9px solid #facc15;"></div>
                         </div>
-                        <div style="display: flex; align-items: center; justify-content: center; flex-grow: 1;">
-                            
-                        </div>
-                    </div>`,
-                    iconSize: [42, 54],
-                    iconAnchor: [21, 54]
+                    `,
+                    iconSize: [42, 41],
+                    iconAnchor: [21, 41]
                 });
                 marker.setIcon(selectedIcon);
                 setTimeout(() => marker.setIcon(customIcon), 1500);
@@ -467,16 +470,18 @@ const mapManager = (() => {
                 if (layer.getLatLng().lat === p.lat && layer.getLatLng().lng === p.lon) {
                     const selectedIcon = L.divIcon({
                         className: 'custom-div-icon',
-                        html: `<div style="background-color: #facc15; width: 42px; height: 54px; border-radius: 6px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 4px; box-sizing: border-box; filter: drop-shadow(0 0 10px rgba(250,204,21,0.8)); font-family: 'Outfit', sans-serif;">
-                            <div style="background-color: white; width: 100%; height: 26px; border-radius: 3px; display: flex; align-items: center; justify-content: center;">
-                                <span style="color: black; font-weight: 900; font-size: 13px; letter-spacing: -0.5px;">TAXI</span>
+                        html: `
+                            <div style="position: relative; width: 42px; height: 32px; filter: drop-shadow(0 0 10px rgba(250,204,21,0.8));">
+                                <div style="background-color: #facc15; width: 100%; height: 100%; border-radius: 6px; padding: 4px; box-sizing: border-box; font-family: 'Outfit', sans-serif;">
+                                    <div style="background-color: white; width: 100%; height: 100%; border-radius: 3px; display: flex; align-items: center; justify-content: center;">
+                                        <span style="color: black; font-weight: 900; font-size: 13px; letter-spacing: -0.5px;">TAXI</span>
+                                    </div>
+                                </div>
+                                <div style="position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 8px solid transparent; border-right: 8px solid transparent; border-top: 9px solid #facc15;"></div>
                             </div>
-                            <div style="display: flex; align-items: center; justify-content: center; flex-grow: 1;">
-                                
-                            </div>
-                        </div>`,
-                        iconSize: [42, 54],
-                        iconAnchor: [21, 54]
+                        `,
+                        iconSize: [42, 41],
+                        iconAnchor: [21, 41]
                     });
                     layer.setIcon(selectedIcon);
                     setTimeout(() => layer.setIcon(customIcon), 1500);
@@ -558,16 +563,18 @@ const mapManager = (() => {
                 if (layer.getLatLng().lat === p.lat && layer.getLatLng().lng === p.lon) {
                     const selectedIcon = L.divIcon({
                         className: 'custom-div-icon',
-                        html: `<div style="background-color: #facc15; width: 42px; height: 54px; border-radius: 6px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 4px; box-sizing: border-box; filter: drop-shadow(0 0 10px rgba(250,204,21,0.8)); font-family: 'Outfit', sans-serif;">
-                            <div style="background-color: white; width: 100%; height: 26px; border-radius: 3px; display: flex; align-items: center; justify-content: center;">
-                                <span style="color: black; font-weight: 900; font-size: 13px; letter-spacing: -0.5px;">TAXI</span>
+                        html: `
+                            <div style="position: relative; width: 42px; height: 32px; filter: drop-shadow(0 0 10px rgba(250,204,21,0.8));">
+                                <div style="background-color: #facc15; width: 100%; height: 100%; border-radius: 6px; padding: 4px; box-sizing: border-box; font-family: 'Outfit', sans-serif;">
+                                    <div style="background-color: white; width: 100%; height: 100%; border-radius: 3px; display: flex; align-items: center; justify-content: center;">
+                                        <span style="color: black; font-weight: 900; font-size: 13px; letter-spacing: -0.5px;">TAXI</span>
+                                    </div>
+                                </div>
+                                <div style="position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 8px solid transparent; border-right: 8px solid transparent; border-top: 9px solid #facc15;"></div>
                             </div>
-                            <div style="display: flex; align-items: center; justify-content: center; flex-grow: 1;">
-                                
-                            </div>
-                        </div>`,
-                        iconSize: [42, 54],
-                        iconAnchor: [21, 54]
+                        `,
+                        iconSize: [42, 41],
+                        iconAnchor: [21, 41]
                     });
                     layer.setIcon(selectedIcon);
                     setTimeout(() => layer.setIcon(customIcon), 1500);
