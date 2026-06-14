@@ -326,15 +326,12 @@ const mapManager = (() => {
                 currentIcon = L.divIcon({
                     className: 'custom-poi-img-icon',
                     html: `
-                        <div style="position: relative; width: 44px; height: 44px;">
-                            <div style="width: 44px; height: 44px; border-radius: 50%; border: 3px solid #ec4899; box-shadow: 0 4px 10px rgba(0,0,0,0.4); overflow: hidden; background: white;">
-                                <img src="${poi.image}" style="width: 100%; height: 100%; object-fit: cover; display: block;" />
-                            </div>
-                            <div style="position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 8px solid #ec4899;"></div>
+                        <div style="width: 44px; height: 44px; border-radius: 50%; overflow: hidden; background: transparent;">
+                            <img src="${poi.image}" style="width: 100%; height: 100%; object-fit: cover; display: block;" />
                         </div>
                     `,
-                    iconSize: [44, 52],
-                    iconAnchor: [22, 52]
+                    iconSize: [44, 44],
+                    iconAnchor: [22, 22]
                 });
             }
             const marker = L.marker([poi.lat, poi.lon], { icon: currentIcon }).addTo(poiLayer);
