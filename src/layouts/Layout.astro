@@ -59,9 +59,18 @@ import '../styles/styles.css';
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
-    <script src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs" type="module"></script>
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
 </head>
 <body>
+    <!-- Global fixed background Lottie -->
+    <lottie-player 
+        src="/lottie/background.json" 
+        background="transparent" 
+        speed="1" 
+        style="position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 150vw; z-index: -1; opacity: 0.25; pointer-events: none; mask-image: linear-gradient(to bottom, transparent 0%, black 10%); -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 10%);" 
+        loop 
+        autoplay>
+    </lottie-player>
     <slot />
     <!-- Script genérico (carga diferida de módulos específicos) -->
     <script src="js/personalization.js?v=20260612a" defer></script>
