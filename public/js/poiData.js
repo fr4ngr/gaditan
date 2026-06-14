@@ -6,7 +6,8 @@ const dbPOIs = [
         lat: 36.5290,
         lon: -6.2949,
         description: "Joya arquitectónica con cúpula dorada.",
-        radius: 40
+        radius: 40,
+        image: "/images/catedral.jpg"
     },
     {
         id: "torre_tavira",
