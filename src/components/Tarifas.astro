@@ -703,12 +703,29 @@
                         pill.classList.add('active');
 
                         const scope = pill.getAttribute('data-scope');
+                        
+                        // Keep track of the currently selected tarifa mode (Día, Noche, etc.)
+                        const oldSection = document.querySelector('.scope-section.active-section');
+                        let activeTarifaTitle = null;
+                        if (oldSection) {
+                            const activeTarifa = oldSection.querySelector('.tarifa-pill.active');
+                            if (activeTarifa) {
+                                activeTarifaTitle = activeTarifa.getAttribute('data-title');
+                            }
+                        }
+
                         if (scope === 'urban') {
                             if (urbanSec && interurbanSec) {
                                 interurbanSec.classList.remove('active-section');
                                 setTimeout(() => {
                                     interurbanSec.style.display = 'none';
                                     urbanSec.style.display = 'block';
+                                    
+                                    if (activeTarifaTitle) {
+                                        const targetPill = Array.from(urbanSec.querySelectorAll('.tarifa-pill')).find(p => p.getAttribute('data-title') === activeTarifaTitle);
+                                        if (targetPill) targetPill.click();
+                                    }
+                                    
                                     setTimeout(() => urbanSec.classList.add('active-section'), 20);
                                 }, 300);
                             }
@@ -718,6 +735,12 @@
                                 setTimeout(() => {
                                     urbanSec.style.display = 'none';
                                     interurbanSec.style.display = 'block';
+                                    
+                                    if (activeTarifaTitle) {
+                                        const targetPill = Array.from(interurbanSec.querySelectorAll('.tarifa-pill')).find(p => p.getAttribute('data-title') === activeTarifaTitle);
+                                        if (targetPill) targetPill.click();
+                                    }
+                                    
                                     setTimeout(() => interurbanSec.classList.add('active-section'), 20);
                                 }, 300);
                             }
