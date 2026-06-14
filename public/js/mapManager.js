@@ -339,6 +339,7 @@ const mapManager = (() => {
         if (!overlay) return;
         
         let banners = [];
+        let walkInfoHtml = '';
         if (p.distance !== undefined) {
             const straightDist = p.distance * 1000;
             const walkMins = Math.max(1, Math.round(straightDist / 83.3));
@@ -350,11 +351,9 @@ const mapManager = (() => {
             }
             const distStr = straightDist < 1000 ? Math.round(straightDist) + ' m' : (straightDist / 1000).toFixed(1) + ' km';
             
-            banners.push(`
-                <div id="walk-info-pill" style="background-color: #10b981; color: white; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; padding: 0.5rem 1.5rem; display: flex; align-items: center; justify-content: center; gap: 0.4rem; border-top: 1px solid rgba(255,255,255,0.2);">
-                    <i data-lucide="navigation" style="width:14px; height:14px;"></i> A ${distStr} <span style="opacity: 0.5; margin: 0 0.2rem;">-</span> <i data-lucide="footprints" style="width:14px; height:14px;"></i> ${timeStr} APROX
-                </div>
-            `);
+            walkInfoHtml = `<div style="background-color: #10b981; color: white; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; padding: 0.6rem 1rem; border-radius: 9999px; display: flex; align-items: center; justify-content: center; gap: 0.4rem; box-shadow: 0 10px 25px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2);">
+                <i data-lucide="navigation" style="width:14px; height:14px;"></i> ${distStr} <span style="opacity: 0.5; margin: 0 0.1rem;">-</span> <i data-lucide="footprints" style="width:14px; height:14px;"></i> ${timeStr}
+            </div>`;
         }
         
         if (p.nocturna) {
@@ -365,36 +364,43 @@ const mapManager = (() => {
             `);
         }
         
-        let btnStartNav = document.getElementById('btn-start-nav');
-        if (!btnStartNav) {
-            btnStartNav = document.createElement('button');
-            btnStartNav.id = 'btn-start-nav';
-            document.getElementById('map').appendChild(btnStartNav);
+        let topControls = document.getElementById('top-nav-controls');
+        if (!topControls) {
+            topControls = document.createElement('div');
+            topControls.id = 'top-nav-controls';
+            topControls.style.cssText = "position: absolute; top: 1rem; left: 50%; transform: translateX(-50%); z-index: 1000; display: flex; gap: 0.5rem; align-items: center; white-space: nowrap;";
+            document.getElementById('map').appendChild(topControls);
             if (typeof L !== 'undefined') {
-                L.DomEvent.disableClickPropagation(btnStartNav);
+                L.DomEvent.disableClickPropagation(topControls);
             }
         }
-        btnStartNav.style.cssText = "position: absolute; top: 1rem; left: 50%; transform: translateX(-50%); z-index: 1000; background-color: #0f172a; color: #0ef5e3; font-size: 0.85rem; font-weight: 800; letter-spacing: 0.5px; padding: 0.6rem 1.25rem; border-radius: 9999px; display: flex; align-items: center; justify-content: center; gap: 0.5rem; box-shadow: 0 10px 25px rgba(0,0,0,0.5); cursor: pointer; transition: transform 0.1s; border: 1px solid rgba(14, 245, 227, 0.3); outline: none;";
-        btnStartNav.innerHTML = `<i data-lucide="navigation" style="width:16px; height:16px; color: #0ef5e3;"></i> Ver indicaciones`;
         
-        // Remove old listener if exists to prevent duplicates
-        if (btnStartNav._navHandler && typeof L !== 'undefined') {
-            L.DomEvent.off(btnStartNav, 'click', btnStartNav._navHandler);
-        }
-        btnStartNav._navHandler = (e) => {
-            if (e) {
-                e.preventDefault();
-                e.stopPropagation();
-            }
-            startNavigation(p.lat, p.lon, p.name);
-        };
+        topControls.innerHTML = `
+            ${walkInfoHtml}
+            <button id="btn-start-nav" style="background-color: #0f172a; color: #0ef5e3; font-size: 0.85rem; font-weight: 800; letter-spacing: 0.5px; padding: 0.6rem 1.25rem; border-radius: 9999px; display: flex; align-items: center; justify-content: center; gap: 0.5rem; box-shadow: 0 10px 25px rgba(0,0,0,0.5); cursor: pointer; transition: transform 0.1s; border: 1px solid rgba(14, 245, 227, 0.3); outline: none;">
+                <i data-lucide="navigation" style="width:16px; height:16px; color: #0ef5e3;"></i> Indicaciones
+            </button>
+        `;
         
+        const btnStartNav = document.getElementById('btn-start-nav');
         if (typeof L !== 'undefined') {
-            L.DomEvent.on(btnStartNav, 'click', btnStartNav._navHandler);
+            L.DomEvent.on(btnStartNav, 'click', (e) => {
+                if (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+                startNavigation(p.lat, p.lon, p.name);
+            });
         } else {
-            btnStartNav.onclick = btnStartNav._navHandler;
+            btnStartNav.onclick = (e) => {
+                if (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+                startNavigation(p.lat, p.lon, p.name);
+            };
         }
-        btnStartNav.style.display = 'flex';
+        topControls.style.display = 'flex';
         
         let bannersHtml = '';
         if (banners.length > 0) {
@@ -792,8 +798,8 @@ const mapManager = (() => {
         const banners = document.getElementById('map-overlay-banners');
         if (banners) banners.style.display = 'none';
         
-        const btnStartNav = document.getElementById('btn-start-nav');
-        if (btnStartNav) btnStartNav.style.display = 'none';
+        const topControls = document.getElementById('top-nav-controls');
+        if (topControls) topControls.style.display = 'none';
         
         const navContainer = document.createElement('div');
         navContainer.id = 'nav-container';
