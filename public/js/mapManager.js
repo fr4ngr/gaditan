@@ -418,10 +418,13 @@ const mapManager = (() => {
         
         overlay.innerHTML = `
             <div style="display: flex; align-items: center; gap: 0.75rem; width: 100%;">
-                <!-- Señal TAXI (Traffic Sign Blue) -->
-                <div style="background-color: #2563eb; width: 38px; height: 38px; flex-shrink: 0; border-radius: 6px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.15);">
-                    <div style="background-color: white; width: 32px; height: 32px; border-radius: 3px; display: flex; align-items: center; justify-content: center;">
-                        <span style="color: #0f172a; font-family: 'Inter', sans-serif; font-weight: 900; font-size: 0.65rem; letter-spacing: 0;">TAXI</span>
+                <!-- Señal TAXI (Traffic Sign Blue with Arrow) -->
+                <div style="background-color: #2563eb; width: 40px; height: 48px; flex-shrink: 0; border-radius: 4px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 3px; box-shadow: 0 4px 10px rgba(0,0,0,0.15);">
+                    <div style="background-color: white; width: 34px; height: 26px; border-radius: 2px; display: flex; align-items: center; justify-content: center;">
+                        <span style="color: black; font-family: 'Inter', sans-serif; font-weight: 900; font-size: 0.65rem; letter-spacing: -0.2px;">TAXI</span>
+                    </div>
+                    <div style="display: flex; align-items: center; justify-content: center; flex: 1;">
+                        <i data-lucide="arrow-right" style="color: white; width: 14px; height: 14px; stroke-width: 3px;"></i>
                     </div>
                 </div>
                 <!-- Textos a la derecha -->
