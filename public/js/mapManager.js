@@ -456,8 +456,8 @@ const mapManager = (() => {
                 overlay.style.display = 'none';
             }, 400); // Wait for transition
         }
-        const btnStartNav = document.getElementById('btn-start-nav');
-        if (btnStartNav) btnStartNav.remove();
+        const topControls = document.getElementById('top-nav-controls');
+        if (topControls) topControls.style.display = 'none';
     };
 
     const buildSelectedStopWidget = (p) => {
