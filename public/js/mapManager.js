@@ -162,12 +162,23 @@ const mapManager = (() => {
                 marker.setIcon(selectedIcon);
                 setTimeout(() => marker.setIcon(customIcon), 1500);
 
-                if (userLocation) {
+                const tryUpdateDistance = () => {
                     if (p.distance === undefined) p.distance = getDistance(userLocation.lat, userLocation.lon, p.lat, p.lon);
                     fetchRoute(userLocation.lat, userLocation.lon, p.lat, p.lon);
-                }
+                    if (selectedParada === p) renderMapOverlay(p);
+                };
 
-                renderMapOverlay(p);
+                if (userLocation) {
+                    tryUpdateDistance();
+                } else {
+                    renderMapOverlay(p);
+                    if (navigator.geolocation) {
+                        navigator.geolocation.getCurrentPosition((pos) => {
+                            userLocation = { lat: pos.coords.latitude, lon: pos.coords.longitude };
+                            tryUpdateDistance();
+                        }, () => {}, { timeout: 5000, maximumAge: 60000 });
+                    }
+                }
                 setTimeout(() => { if (map) map.invalidateSize(); }, 400);
 
                 if (currentMode === 'todas') {
@@ -234,12 +245,23 @@ const mapManager = (() => {
                 }
             });
             
-            if (userLocation) {
+            const tryUpdateDistanceList = () => {
                 if (p.distance === undefined) p.distance = getDistance(userLocation.lat, userLocation.lon, p.lat, p.lon);
                 fetchRoute(userLocation.lat, userLocation.lon, p.lat, p.lon);
-            }
+                if (selectedParada === p) renderMapOverlay(p);
+            };
 
-            renderMapOverlay(p);
+            if (userLocation) {
+                tryUpdateDistanceList();
+            } else {
+                renderMapOverlay(p);
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition((pos) => {
+                        userLocation = { lat: pos.coords.latitude, lon: pos.coords.longitude };
+                        tryUpdateDistanceList();
+                    }, () => {}, { timeout: 5000, maximumAge: 60000 });
+                }
+            }
             setTimeout(() => { if (map) map.invalidateSize(); }, 400);
 
             const listContainer = document.getElementById('paradas-list-container');
