@@ -378,7 +378,7 @@ const mapManager = (() => {
         topControls.innerHTML = `
             ${walkInfoHtml}
             <button id="btn-start-nav" style="background-color: #0f172a; color: #0ef5e3; font-size: 0.85rem; font-weight: 800; letter-spacing: 0.5px; padding: 0.6rem 1.25rem; border-radius: 9999px; display: flex; align-items: center; justify-content: center; gap: 0.5rem; box-shadow: 0 10px 25px rgba(0,0,0,0.5); cursor: pointer; transition: transform 0.1s; border: 1px solid rgba(14, 245, 227, 0.3); outline: none;">
-                <i data-lucide="navigation" style="width:16px; height:16px; color: #0ef5e3;"></i> Indicaciones
+                <i data-lucide="corner-up-right" style="width:16px; height:16px; color: #0ef5e3;"></i> Cómo llegar
             </button>
         `;
         
