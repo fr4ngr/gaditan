@@ -11,7 +11,7 @@
                     <span data-translate="pricing-title">Tarifas Oficiales</span>
                     <i data-lucide="badge-check" style="color: var(--brand-blue); fill: var(--brand-blue); stroke: #0f172a;" size="36"></i>
                 </h2>
-                <p class="section-subtitle" style="text-align: center; color: var(--text-muted); margin-bottom: 2.5rem; font-size: 1.1rem;">Precios regulados y aprobados por el Ayuntamiento de Cádiz</p>
+                <p id="tarifas-subtitle" class="section-subtitle" style="text-align: center; color: var(--text-muted); margin-bottom: 2.5rem; font-size: 1.1rem; transition: opacity 0.3s ease;">Precios regulados y aprobados por el Ayuntamiento de Cádiz</p>
                 <div style="text-align: center; margin-bottom: 2.5rem;">
                     <div class="scope-toggle-wrapper">
                         <button class="scope-pill active" data-scope="urban">Viaje Urbano</button>
@@ -716,6 +716,17 @@
                         pill.classList.add('active');
 
                         const scope = pill.getAttribute('data-scope');
+                        const subtitle = document.getElementById('tarifas-subtitle');
+                        
+                        if (subtitle) {
+                            subtitle.style.opacity = '0';
+                            setTimeout(() => {
+                                subtitle.innerText = scope === 'urban' 
+                                    ? 'Precios regulados y aprobados por el Ayuntamiento de Cádiz' 
+                                    : 'Precios regulados y aprobados por la Junta de Andalucía';
+                                subtitle.style.opacity = '1';
+                            }, 150);
+                        }
                         
                         // Keep track of the currently selected tarifa mode (Día, Noche, etc.)
                         const oldSection = document.querySelector('.scope-section.active-section');
