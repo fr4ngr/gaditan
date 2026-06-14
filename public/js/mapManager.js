@@ -280,8 +280,10 @@ const mapManager = (() => {
         let distHtml = '';
         if (currentMode === 'cercana' && p.distance !== undefined) {
             distHtml = `
-                <div id="walk-info-pill" style="display: flex; align-items: center; justify-content: center; gap: 1rem; margin-top: 0.8rem; padding-top: 0.8rem; border-top: 1px solid rgba(15, 23, 42, 0.15); width: 100%;">
-                    <div style="font-size: 0.85rem; color: #0f172a; display: flex; align-items: center; gap: 0.35rem; font-weight: 600;"><i data-lucide="loader-2" style="width:16px; height:16px; animation: spin 1s linear infinite;"></i> Calculando ruta...</div>
+                <div id="walk-info-pill" style="position: absolute; top: 1.25rem; right: 1.5rem; text-align: right;">
+                    <div style="font-size: 0.8rem; color: #0f172a; display: flex; align-items: center; justify-content: flex-end; gap: 0.35rem; font-weight: 600; opacity: 0.7;">
+                        <i data-lucide="loader-2" style="width:14px; height:14px; animation: spin 1s linear infinite;"></i> Calc...
+                    </div>
                 </div>
             `;
         }
@@ -291,7 +293,7 @@ const mapManager = (() => {
                 <!-- Icono sin fondo -->
                 <i data-lucide="map-pin" style="color: #0f172a; width: 32px; height: 32px; flex-shrink: 0;"></i>
                 <!-- Textos a la derecha -->
-                <div style="display: flex; flex-direction: column; flex: 1; min-width: 0; justify-content: center;">
+                <div style="display: flex; flex-direction: column; flex: 1; min-width: 0; justify-content: center; padding-right: 5rem;">
                     <span style="color: rgba(15, 23, 42, 0.7); font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.15rem;">PARADA DE TAXI</span>
                     <strong style="color: #0f172a; font-size: 1.3rem; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.1;">${p.name}</strong>
                     <span style="color: rgba(15, 23, 42, 0.85); font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 0.1rem;">${p.address}, Cádiz</span>
@@ -716,14 +718,16 @@ const mapManager = (() => {
                                 if (speedKmh > 8 || walkDist > 5000) {
                                     const distStr = walkDist < 1000 ? Math.round(walkDist) + ' m' : (walkDist / 1000).toFixed(1) + ' km';
                                     pill.innerHTML = `
-                                        <div style="font-size: 0.8rem; color: #f59e0b; font-weight: 600; display: flex; align-items: center; gap: 0.35rem;"><i data-lucide="map-pin" style="width:15px; height:15px;"></i> Parada más cercana: ${distStr}</div>
+                                        <div style="font-size: 0.85rem; color: #0f172a; font-weight: 800; display: flex; align-items: center; justify-content: flex-end; gap: 0.35rem;"><i data-lucide="map-pin" style="width:14px; height:14px;"></i> ${distStr}</div>
                                     `;
                                 } else {
                                     const walkMins = Math.max(1, Math.round(walkSecs / 60));
                                     const distStr = walkDist < 1000 ? Math.round(walkDist) + ' m' : (walkDist / 1000).toFixed(1) + ' km';
                                     pill.innerHTML = `
-                                        <div style="font-size: 0.85rem; color: #0f172a; font-weight: 700; display: flex; align-items: center; gap: 0.35rem;"><i data-lucide="footprints" style="width:16px; height:16px;"></i> ${distStr}</div>
-                                        <div style="font-size: 0.85rem; color: #0f172a; font-weight: 700; display: flex; align-items: center; gap: 0.35rem;"><i data-lucide="clock" style="width:16px; height:16px;"></i> ${walkMins} min a pie</div>
+                                        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.2rem;">
+                                            <div style="font-size: 0.85rem; color: #0f172a; font-weight: 800; display: flex; align-items: center; gap: 0.35rem;"><i data-lucide="footprints" style="width:14px; height:14px;"></i> ${distStr}</div>
+                                            <div style="font-size: 0.85rem; color: #0f172a; font-weight: 800; display: flex; align-items: center; gap: 0.35rem;"><i data-lucide="clock" style="width:14px; height:14px;"></i> ${walkMins} min</div>
+                                        </div>
                                     `;
                                 }
                                 if (typeof lucide !== 'undefined') lucide.createIcons();
@@ -734,7 +738,7 @@ const mapManager = (() => {
                             const pill = document.getElementById('walk-info-pill');
                             if (pill) {
                                 pill.innerHTML = `
-                                    <div style="font-size: 0.8rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.35rem;"><i data-lucide="map-pin" style="width:15px; height:15px;"></i> Parada más cercana: ${formatDistance(masCercana.distance)}</div>
+                                    <div style="font-size: 0.85rem; color: #0f172a; font-weight: 800; display: flex; align-items: center; justify-content: flex-end; gap: 0.35rem;"><i data-lucide="map-pin" style="width:14px; height:14px;"></i> ${formatDistance(masCercana.distance)}</div>
                                 `;
                                 if (typeof lucide !== 'undefined') lucide.createIcons();
                             }
