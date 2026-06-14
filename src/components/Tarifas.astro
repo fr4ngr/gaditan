@@ -123,7 +123,7 @@
                                     </button>
                                 </div>
                             </div>
-                            <div class="supplement-item supplement-item-extra" style="display: none; justify-content: space-between; align-items: center; padding-bottom: 0.5rem;">
+                            <div id="supp-madrugadas" data-weekend-only="false" class="supplement-item supplement-item-extra" style="display: none; justify-content: space-between; align-items: center; padding-bottom: 0.5rem;">
                                 <span style="color: rgba(15, 23, 42, 0.75); font-size: 0.95rem;">Madrugadas fin de semana</span>
                                 <div style="display: flex; align-items: center; gap: 0.5rem;">
                                     <strong style="color: var(--bg-base); font-size: 1.05rem;">+20%</strong>
@@ -680,6 +680,19 @@
                                 }
                             });
                             
+                            // Lógica para suplemento Madrugadas Fin de Semana
+                            const suppMadrugadas = document.getElementById('supp-madrugadas');
+                            if (suppMadrugadas && card.id === 'urban-fare-card') {
+                                const isCollapsed = document.getElementById('toggle-supp-text').textContent.includes('todos');
+                                if (pillTitle === 'Fin de semana') {
+                                    suppMadrugadas.setAttribute('data-weekend-only', 'true');
+                                    suppMadrugadas.style.display = isCollapsed ? 'none' : 'flex';
+                                } else {
+                                    suppMadrugadas.setAttribute('data-weekend-only', 'false');
+                                    suppMadrugadas.style.display = 'none';
+                                }
+                            }
+                            
                             if (infoBtn) {
                                 infoBtn.style.opacity = '0';
                                 setTimeout(() => {
@@ -948,9 +961,16 @@
 
                 if (toggleBtn) {
                     toggleBtn.addEventListener('click', () => {
-                        const isCollapsed = extraItems[0].style.display === 'none' || extraItems[0].style.display === '';
+                        // find a non-weekend item to check if it's collapsed
+                        const refItem = Array.from(extraItems).find(i => i.id !== 'supp-madrugadas');
+                        const isCollapsed = refItem.style.display === 'none' || refItem.style.display === '';
+                        
                         extraItems.forEach(item => {
-                            item.style.display = isCollapsed ? 'flex' : 'none';
+                            if (item.id === 'supp-madrugadas' && item.getAttribute('data-weekend-only') !== 'true') {
+                                item.style.display = 'none';
+                            } else {
+                                item.style.display = isCollapsed ? 'flex' : 'none';
+                            }
                         });
                         suppText.textContent = isCollapsed ? 'Ver menos' : 'Ver todos los suplementos';
                         suppArrow.style.transform = isCollapsed ? 'rotate(180deg)' : 'rotate(0deg)';
