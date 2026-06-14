@@ -347,13 +347,18 @@ const mapManager = (() => {
             if (walkMins >= 60) {
                 const h = Math.floor(walkMins / 60);
                 const m = walkMins % 60;
-                timeStr = m > 0 ? `${h}h ${m}min` : `${h}h`;
+                timeStr = m > 0 ? `${h}h ${m}m` : `${h}h`;
             }
-            const distStr = straightDist < 1000 ? Math.round(straightDist) + ' m' : (straightDist / 1000).toFixed(1) + ' km';
+            const distStr = straightDist < 1000 ? Math.round(straightDist) + 'm' : (straightDist / 1000).toFixed(1) + 'km';
             
-            walkInfoHtml = `<div style="background-color: #10b981; color: white; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; padding: 0.6rem 1rem; border-radius: 9999px; display: flex; align-items: center; justify-content: center; gap: 0.4rem; box-shadow: 0 10px 25px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2);">
-                <i data-lucide="navigation" style="width:14px; height:14px;"></i> ${distStr} <span style="opacity: 0.5; margin: 0 0.1rem;">-</span> <i data-lucide="footprints" style="width:14px; height:14px;"></i> ${timeStr}
-            </div>`;
+            walkInfoHtml = `
+                <div style="background-color: rgba(15, 23, 42, 0.85); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.1); color: white; font-size: 0.75rem; font-weight: 700; padding: 0.5rem 0.75rem; border-radius: 9999px; display: flex; align-items: center; justify-content: center; gap: 0.3rem; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+                    <i data-lucide="navigation" style="width:14px; height:14px; color: #94a3b8;"></i> ${distStr}
+                </div>
+                <div style="background-color: rgba(15, 23, 42, 0.85); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.1); color: white; font-size: 0.75rem; font-weight: 700; padding: 0.5rem 0.75rem; border-radius: 9999px; display: flex; align-items: center; justify-content: center; gap: 0.3rem; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+                    <i data-lucide="footprints" style="width:14px; height:14px; color: #94a3b8;"></i> ${timeStr}
+                </div>
+            `;
         }
         
         if (p.nocturna) {
@@ -368,7 +373,7 @@ const mapManager = (() => {
         if (!topControls) {
             topControls = document.createElement('div');
             topControls.id = 'top-nav-controls';
-            topControls.style.cssText = "position: absolute; top: 1rem; left: 50%; transform: translateX(-50%); z-index: 1000; display: flex; gap: 0.5rem; align-items: center; white-space: nowrap;";
+            topControls.style.cssText = "position: absolute; top: 1rem; left: 50%; transform: translateX(-50%); z-index: 1000; display: flex; gap: 0.4rem; align-items: center; white-space: nowrap; width: max-content; max-width: 95vw; justify-content: center;";
             document.getElementById('map').appendChild(topControls);
             if (typeof L !== 'undefined') {
                 L.DomEvent.disableClickPropagation(topControls);
@@ -377,8 +382,8 @@ const mapManager = (() => {
         
         topControls.innerHTML = `
             ${walkInfoHtml}
-            <button id="btn-start-nav" style="background-color: #0f172a; color: #0ef5e3; font-size: 0.85rem; font-weight: 800; letter-spacing: 0.5px; padding: 0.6rem 1.25rem; border-radius: 9999px; display: flex; align-items: center; justify-content: center; gap: 0.5rem; box-shadow: 0 10px 25px rgba(0,0,0,0.5); cursor: pointer; transition: transform 0.1s; border: 1px solid rgba(14, 245, 227, 0.3); outline: none;">
-                <i data-lucide="corner-up-right" style="width:16px; height:16px; color: #0ef5e3;"></i> Cómo llegar
+            <button id="btn-start-nav" style="background-color: #0f172a; color: #0ef5e3; font-size: 0.75rem; font-weight: 800; padding: 0.5rem 1rem; border-radius: 9999px; display: flex; align-items: center; justify-content: center; gap: 0.4rem; box-shadow: 0 4px 15px rgba(0,0,0,0.5); cursor: pointer; transition: transform 0.1s; border: 1px solid rgba(14, 245, 227, 0.4); outline: none;">
+                <i data-lucide="corner-up-right" style="width:14px; height:14px; color: #0ef5e3;"></i> Cómo llegar
             </button>
         `;
         
