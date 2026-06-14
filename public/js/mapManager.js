@@ -353,7 +353,7 @@ const mapManager = (() => {
             
             walkInfoHtml = `
                 <div style="background-color: rgba(15, 23, 42, 0.85); backdrop-filter: blur(8px); color: white; font-size: 0.75rem; font-weight: 700; padding: 0 0.75rem; height: 34px; border-radius: 9999px; display: flex; align-items: center; justify-content: center; gap: 0.3rem; white-space: nowrap; flex-shrink: 0;">
-                    <i data-lucide="ruler" style="width:14px; height:14px; color: #94a3b8;"></i> ${distStr}
+                    <i data-lucide="arrow-left-right" style="width:14px; height:14px; color: #94a3b8;"></i> ${distStr}
                 </div>
                 <div style="background-color: rgba(15, 23, 42, 0.85); backdrop-filter: blur(8px); color: white; font-size: 0.75rem; font-weight: 700; padding: 0 0.75rem; height: 34px; border-radius: 9999px; display: flex; align-items: center; justify-content: center; gap: 0.3rem; white-space: nowrap; flex-shrink: 0;">
                     <i data-lucide="footprints" style="width:14px; height:14px; color: #94a3b8;"></i> ${timeStr}
