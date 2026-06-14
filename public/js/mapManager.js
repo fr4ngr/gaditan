@@ -410,21 +410,21 @@ const mapManager = (() => {
         let bannersHtml = '';
         if (banners.length > 0) {
             bannersHtml = `
-                <div id="map-overlay-banners" style="margin: 1.25rem -1.5rem -1.25rem -1.5rem; display: flex; flex-direction: column;">
+                <div id="map-overlay-banners" style="margin: 0.75rem -1.25rem -0.75rem -1.25rem; display: flex; flex-direction: column;">
                     ${banners.join('')}
                 </div>
             `;
         }
         
         overlay.innerHTML = `
-            <div style="display: flex; align-items: center; gap: 0.85rem; width: 100%;">
+            <div style="display: flex; align-items: center; gap: 0.75rem; width: 100%;">
                 <!-- Icono sin fondo -->
-                <i data-lucide="map-pin" style="color: #0f172a; width: 32px; height: 32px; flex-shrink: 0;"></i>
+                <i data-lucide="map-pin" style="color: #0f172a; width: 28px; height: 28px; flex-shrink: 0;"></i>
                 <!-- Textos a la derecha -->
                 <div style="display: flex; flex-direction: column; flex: 1; min-width: 0; justify-content: center;">
-                    <span style="color: rgba(15, 23, 42, 0.7); font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.15rem;">PARADA DE TAXI</span>
-                    <strong style="color: #0f172a; font-size: 1.3rem; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.1;">${p.name}</strong>
-                    <span style="color: rgba(15, 23, 42, 0.85); font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 0.1rem;">${p.address}, Cádiz</span>
+                    <span style="color: rgba(15, 23, 42, 0.7); font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.1rem;">PARADA DE TAXI</span>
+                    <strong style="color: #0f172a; font-size: 1.2rem; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.1;">${p.name}</strong>
+                    <span style="color: rgba(15, 23, 42, 0.85); font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 0.1rem;">${p.address}, Cádiz</span>
                 </div>
             </div>
             ${bannersHtml}
@@ -433,7 +433,7 @@ const mapManager = (() => {
         if (typeof lucide !== 'undefined') lucide.createIcons();
         overlay.style.display = 'block';
         requestAnimationFrame(() => {
-            overlay.style.padding = '1.25rem 1.5rem';
+            overlay.style.padding = '0.75rem 1.25rem';
             overlay.style.maxHeight = '200px';
             overlay.style.opacity = '1';
         });
