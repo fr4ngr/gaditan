@@ -685,21 +685,23 @@ const mapManager = (() => {
         if (!navContainer) {
             navContainer = document.createElement('div');
             navContainer.id = 'nav-container';
-            navContainer.style.cssText = `position: absolute; bottom: 1.5rem; left: 1rem; right: 4.5rem; background: #0f172a; border-radius: 1rem; z-index: 1000; padding: 1rem; color: white; display: flex; flex-direction: column; gap: 0.5rem; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1);`;
+            navContainer.style.cssText = `position: absolute; bottom: 1.5rem; left: 1rem; right: 4.5rem; background: #0f172a; border-radius: 1rem; z-index: 1000; padding: 1rem; color: white; display: flex; flex-direction: column; gap: 0.5rem; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); transform: translateY(0); opacity: 1; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease;`;
             document.getElementById('map').appendChild(navContainer);
         }
         
         if (currentStepIndex >= currentRouteSteps.length) {
             navContainer.innerHTML = `
-                <div style="display:flex; align-items:center; gap: 1rem;">
-                    <div style="background: #10b981; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+                <div style="display:flex; align-items:flex-start; gap: 1rem;">
+                    <div style="background: #10b981; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                         <i data-lucide="map-pin" style="color: white; width: 20px; height: 20px;"></i>
                     </div>
                     <div style="display:flex; flex-direction:column; flex:1;">
-                        <strong style="font-size: 1.1rem;">Has llegado</strong>
-                        <span style="font-size: 0.8rem; color: rgba(255,255,255,0.7);">Destino a la vista</span>
+                        <strong style="font-size: 1.1rem; line-height: 1.2;">Has llegado</strong>
+                        <span style="font-size: 0.8rem; color: rgba(255,255,255,0.7); margin-top: 0.2rem;">Destino a la vista</span>
                     </div>
-                    <button id="btn-stop-nav" style="background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); border-radius: 99px; padding: 0.4rem 0.8rem; font-weight: bold; cursor: pointer;">SALIR</button>
+                    <button id="btn-stop-nav" style="background: transparent; color: #94a3b8; border: none; padding: 0.4rem; cursor: pointer; display: flex; align-items: center; justify-content: center; margin-top: -0.2rem; margin-right: -0.5rem; outline: none;">
+                        <i data-lucide="x" style="width: 22px; height: 22px;"></i>
+                    </button>
                 </div>
             `;
             document.getElementById('btn-stop-nav').onclick = stopNavigation;
@@ -713,19 +715,21 @@ const mapManager = (() => {
         
         let distHtml = '';
         if (step.distance > 0) {
-            distHtml = `<span style="font-size: 0.85rem; font-weight: 800; color: #38bdf8;">${Math.round(step.distance)}m</span>`;
+            distHtml = `<span style="font-size: 0.85rem; font-weight: 800; color: #38bdf8; margin-top: 0.2rem; display: block;">${Math.round(step.distance)}m</span>`;
         }
 
         navContainer.innerHTML = `
-            <div style="display:flex; align-items:center; gap: 1rem;">
-                <div style="background: rgba(255,255,255,0.1); border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+            <div style="display:flex; align-items:flex-start; gap: 1rem;">
+                <div style="background: rgba(255,255,255,0.1); border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                     <i data-lucide="${icon}" style="color: white; width: 20px; height: 20px;"></i>
                 </div>
-                <div style="display:flex; flex-direction:column; flex:1; overflow: hidden;">
-                    <strong style="font-size: 1.1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${instruction}</strong>
+                <div style="display:flex; flex-direction:column; flex:1;">
+                    <strong style="font-size: 1.1rem; line-height: 1.2;">${instruction}</strong>
                     ${distHtml}
                 </div>
-                <button id="btn-stop-nav" style="background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); border-radius: 99px; padding: 0.4rem 0.8rem; font-weight: bold; cursor: pointer;">SALIR</button>
+                <button id="btn-stop-nav" style="background: transparent; color: #94a3b8; border: none; padding: 0.4rem; cursor: pointer; display: flex; align-items: center; justify-content: center; margin-top: -0.2rem; margin-right: -0.5rem; outline: none;">
+                    <i data-lucide="x" style="width: 22px; height: 22px;"></i>
+                </button>
             </div>
         `;
         document.getElementById('btn-stop-nav').onclick = stopNavigation;
@@ -741,7 +745,11 @@ const mapManager = (() => {
             watchPositionId = null;
         }
         const navContainer = document.getElementById('nav-container');
-        if (navContainer) navContainer.remove();
+        if (navContainer) {
+            navContainer.style.transform = 'translateY(20px)';
+            navContainer.style.opacity = '0';
+            setTimeout(() => navContainer.remove(), 400);
+        }
         
         const banners = document.getElementById('map-overlay-banners');
         if (banners) banners.style.display = 'flex';
@@ -765,10 +773,15 @@ const mapManager = (() => {
         
         const navContainer = document.createElement('div');
         navContainer.id = 'nav-container';
-        navContainer.style.cssText = `position: absolute; bottom: 1.5rem; left: 1rem; right: 4.5rem; background: #0f172a; border-radius: 1rem; z-index: 1000; padding: 1rem; color: white; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1);`;
+        navContainer.style.cssText = `position: absolute; bottom: 1.5rem; left: 1rem; right: 4.5rem; background: #0f172a; border-radius: 1rem; z-index: 1000; padding: 1rem; color: white; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); transform: translateY(20px); opacity: 0; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease;`;
         navContainer.innerHTML = `<i data-lucide="loader-2" style="animation: spin 1s linear infinite; margin-right: 0.5rem;"></i> Calculando ruta...`;
         document.getElementById('map').appendChild(navContainer);
         if (typeof lucide !== 'undefined') lucide.createIcons();
+        
+        requestAnimationFrame(() => {
+            navContainer.style.transform = 'translateY(0)';
+            navContainer.style.opacity = '1';
+        });
 
         watchPositionId = navigator.geolocation.watchPosition(
             (pos) => {
@@ -781,7 +794,7 @@ const mapManager = (() => {
                     userMarker.setLatLng([uLat, uLon]);
                 }
                 
-                map.setView([uLat, uLon], 18, { animate: true });
+                map.fitBounds([[uLat, uLon], [uLat, uLon]], { maxZoom: 18, paddingBottomRight: [0, 150], animate: true });
                 
                 if (currentRouteSteps.length === 0) {
                     fetchRoute(uLat, uLon, targetDestParada.lat, targetDestParada.lon);
