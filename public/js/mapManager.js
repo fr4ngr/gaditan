@@ -1365,25 +1365,43 @@ const mapManager = (() => {
                     return { ...p, distance: getDistance(lat, lon, p.lat, p.lon) };
                 }).sort((a, b) => a.distance - b.distance);
                 
-                const masCercana = paradasConDistancia[0];
-                renderMarkers(paradasConDistancia);
+                const top5 = paradasConDistancia.slice(0, 5);
                 
-                const container = document.getElementById('paradas-list-container');
-                if (container) {
-                    container.innerHTML = '';
-                    container.appendChild(buildSelectedStopWidget(masCercana));
-                    renderMapOverlay(masCercana);
-                    if (typeof lucide !== 'undefined') lucide.createIcons();
-                }
-                
-                const bounds = L.latLngBounds([
-                    [lat, lon],
-                    [masCercana.lat, masCercana.lon]
-                ]);
-                
-                map.flyToBounds(bounds, { paddingTopLeft: [20, 180], paddingBottomRight: [20, 20], animate: true, duration: 1.2, easeLinearity: 0.25 });
+                Promise.all(top5.map(async (p) => {
+                    try {
+                        const url = `https://routing.openstreetmap.de/routed-foot/route/v1/driving/${lon},${lat};${p.lon},${p.lat}?overview=false`;
+                        const response = await fetch(url);
+                        const data = await response.json();
+                        if (data.code === 'Ok' && data.routes && data.routes.length > 0) {
+                            return { ...p, realDistance: data.routes[0].distance };
+                        }
+                        return { ...p, realDistance: Infinity };
+                    } catch (e) {
+                        return { ...p, realDistance: Infinity };
+                    }
+                })).then(resultados => {
+                    resultados.sort((a, b) => a.realDistance - b.realDistance);
+                    const masCercana = resultados[0];
+                    
+                    renderMarkers(paradasConDistancia);
+                    
+                    const container = document.getElementById('paradas-list-container');
+                    if (container) {
+                        container.innerHTML = '';
+                        container.appendChild(buildSelectedStopWidget(masCercana));
+                        renderMapOverlay(masCercana);
+                        if (typeof lucide !== 'undefined') lucide.createIcons();
+                    }
+                    
+                    const bounds = L.latLngBounds([
+                        [lat, lon],
+                        [masCercana.lat, masCercana.lon]
+                    ]);
+                    
+                    map.flyToBounds(bounds, { paddingTopLeft: [20, 180], paddingBottomRight: [20, 20], animate: true, duration: 1.2, easeLinearity: 0.25 });
 
-                fetchRoute(lat, lon, masCercana.lat, masCercana.lon);
+                    fetchRoute(lat, lon, masCercana.lat, masCercana.lon);
+                });
 
             }, (error) => {
                 console.error("Error geolocating:", error);
