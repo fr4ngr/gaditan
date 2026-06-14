@@ -694,15 +694,44 @@ const mapManager = (() => {
             document.getElementById('map').appendChild(navContainer);
         }
         
+        let contentInner = document.getElementById('nav-content-inner');
+        
         if (currentStepIndex >= currentRouteSteps.length) {
+            if (!document.getElementById('nav-is-arrived')) {
+                navContainer.innerHTML = `
+                    <div id="nav-is-arrived" style="display:flex; align-items:flex-start; gap: 1rem; width: 100%;">
+                        <div style="background: #10b981; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                            <i data-lucide="map-pin" style="color: white; width: 20px; height: 20px;"></i>
+                        </div>
+                        <div style="display:flex; flex-direction:column; flex:1;">
+                            <strong style="font-size: 1.1rem; line-height: 1.2;">Has llegado</strong>
+                            <span style="font-size: 0.8rem; color: rgba(255,255,255,0.7); margin-top: 0.2rem;">Destino a la vista</span>
+                        </div>
+                        <button id="btn-stop-nav" style="background: transparent; color: #94a3b8; border: none; padding: 0.4rem; cursor: pointer; display: flex; align-items: center; justify-content: center; margin-top: -0.2rem; margin-right: -0.5rem; outline: none;">
+                            <i data-lucide="x" style="width: 22px; height: 22px;"></i>
+                        </button>
+                    </div>
+                `;
+                document.getElementById('btn-stop-nav').onclick = stopNavigation;
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+            }
+            return;
+        }
+
+        const step = currentRouteSteps[currentStepIndex];
+        const instruction = translateManeuver(step);
+        const icon = getManeuverIcon(step.maneuver.type, step.maneuver.modifier);
+        const roundedDist = Math.round(step.distance);
+        
+        if (!contentInner || document.getElementById('nav-is-arrived')) {
             navContainer.innerHTML = `
-                <div style="display:flex; align-items:flex-start; gap: 1rem;">
-                    <div style="background: #10b981; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                        <i data-lucide="map-pin" style="color: white; width: 20px; height: 20px;"></i>
+                <div id="nav-content-inner" style="display:flex; align-items:flex-start; gap: 1rem; width: 100%;">
+                    <div id="nav-icon-wrapper" data-current-icon="${icon}" style="background: rgba(255,255,255,0.1); border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                        <i data-lucide="${icon}" style="color: white; width: 20px; height: 20px;"></i>
                     </div>
                     <div style="display:flex; flex-direction:column; flex:1;">
-                        <strong style="font-size: 1.1rem; line-height: 1.2;">Has llegado</strong>
-                        <span style="font-size: 0.8rem; color: rgba(255,255,255,0.7); margin-top: 0.2rem;">Destino a la vista</span>
+                        <strong id="nav-instruction" style="font-size: 1.1rem; line-height: 1.2;">${instruction}</strong>
+                        <span id="nav-distance" style="font-size: 0.85rem; font-weight: 800; color: #38bdf8; margin-top: 0.2rem; display: block;">${roundedDist > 0 ? roundedDist + 'm' : ''}</span>
                     </div>
                     <button id="btn-stop-nav" style="background: transparent; color: #94a3b8; border: none; padding: 0.4rem; cursor: pointer; display: flex; align-items: center; justify-content: center; margin-top: -0.2rem; margin-right: -0.5rem; outline: none;">
                         <i data-lucide="x" style="width: 22px; height: 22px;"></i>
@@ -714,31 +743,21 @@ const mapManager = (() => {
             return;
         }
 
-        const step = currentRouteSteps[currentStepIndex];
-        const instruction = translateManeuver(step);
-        const icon = getManeuverIcon(step.maneuver.type, step.maneuver.modifier);
+        const elInst = document.getElementById('nav-instruction');
+        if (elInst && elInst.innerText !== instruction) elInst.innerText = instruction;
         
-        let distHtml = '';
-        if (step.distance > 0) {
-            distHtml = `<span style="font-size: 0.85rem; font-weight: 800; color: #38bdf8; margin-top: 0.2rem; display: block;">${Math.round(step.distance)}m</span>`;
+        const elDist = document.getElementById('nav-distance');
+        if (elDist) {
+            const distTxt = roundedDist > 0 ? roundedDist + 'm' : '';
+            if (elDist.innerText !== distTxt) elDist.innerText = distTxt;
         }
-
-        navContainer.innerHTML = `
-            <div style="display:flex; align-items:flex-start; gap: 1rem;">
-                <div style="background: rgba(255,255,255,0.1); border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                    <i data-lucide="${icon}" style="color: white; width: 20px; height: 20px;"></i>
-                </div>
-                <div style="display:flex; flex-direction:column; flex:1;">
-                    <strong style="font-size: 1.1rem; line-height: 1.2;">${instruction}</strong>
-                    ${distHtml}
-                </div>
-                <button id="btn-stop-nav" style="background: transparent; color: #94a3b8; border: none; padding: 0.4rem; cursor: pointer; display: flex; align-items: center; justify-content: center; margin-top: -0.2rem; margin-right: -0.5rem; outline: none;">
-                    <i data-lucide="x" style="width: 22px; height: 22px;"></i>
-                </button>
-            </div>
-        `;
-        document.getElementById('btn-stop-nav').onclick = stopNavigation;
-        if (typeof lucide !== 'undefined') lucide.createIcons();
+        
+        const wrapper = document.getElementById('nav-icon-wrapper');
+        if (wrapper && wrapper.getAttribute('data-current-icon') !== icon) {
+            wrapper.setAttribute('data-current-icon', icon);
+            wrapper.innerHTML = `<i data-lucide="${icon}" style="color: white; width: 20px; height: 20px;"></i>`;
+            if (typeof lucide !== 'undefined') lucide.createIcons({ root: wrapper });
+        }
     };
 
     const stopNavigation = () => {
