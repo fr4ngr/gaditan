@@ -117,7 +117,6 @@ const mapManager = (() => {
         markersLayer.clearLayers();
         paradas.forEach(p => {
             const marker = L.marker([p.lat, p.lon], { icon: customIcon }).addTo(markersLayer);
-            marker.bindPopup(`<strong>${p.name}</strong><br>${p.address}`);
             marker.on('click', () => {
                 selectedParada = p;
                 map.flyToBounds([[p.lat, p.lon], [p.lat, p.lon]], { maxZoom: 17, paddingTopLeft: [0, 200] });
@@ -200,7 +199,6 @@ const mapManager = (() => {
                     });
                     layer.setIcon(selectedIcon);
                     setTimeout(() => layer.setIcon(customIcon), 1500);
-                    layer.openPopup();
                 }
             });
             
@@ -276,7 +274,6 @@ const mapManager = (() => {
                     });
                     layer.setIcon(selectedIcon);
                     setTimeout(() => layer.setIcon(customIcon), 1500);
-                    layer.openPopup();
                 }
             });
             
