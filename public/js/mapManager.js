@@ -6,6 +6,7 @@ const mapManager = (() => {
     let routePolyline = null;
     let currentMode = 'todas'; // 'todas' | 'cercana' | 'elegir'
     let userLocation = null; // { lat, lon }
+    let selectedParada = null;
     
     // Configuración visual de pines
     const customIcon = L.divIcon({
@@ -118,6 +119,7 @@ const mapManager = (() => {
             const marker = L.marker([p.lat, p.lon], { icon: customIcon }).addTo(markersLayer);
             marker.bindPopup(`<strong>${p.name}</strong><br>${p.address}`);
             marker.on('click', () => {
+                selectedParada = p;
                 map.flyToBounds([[p.lat, p.lon], [p.lat, p.lon]], { maxZoom: 17, paddingTopLeft: [0, 200] });
 
                 const selectedIcon = L.divIcon({
@@ -186,32 +188,43 @@ const mapManager = (() => {
 
 
         item.addEventListener('click', () => {
-            map.flyTo([p.lat, p.lon], 17);
+            selectedParada = p;
+            map.flyToBounds([[p.lat, p.lon], [p.lat, p.lon]], { maxZoom: 17, paddingTopLeft: [0, 200] });
             markersLayer.eachLayer(layer => {
                 if (layer.getLatLng().lat === p.lat && layer.getLatLng().lng === p.lon) {
+                    const selectedIcon = L.divIcon({
+                        className: 'custom-div-icon',
+                        html: `<div style="display: flex; justify-content: center; align-items: center; filter: drop-shadow(0 0 8px rgba(250,204,21,0.8));"><svg xmlns="http://www.w3.org/2000/svg" width="38" height="38" viewBox="0 0 24 24" fill="#facc15" stroke="#111827" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path><circle cx="12" cy="10" r="3" fill="#111827"></circle></svg></div>`,
+                        iconSize: [38, 38],
+                        iconAnchor: [19, 38]
+                    });
+                    layer.setIcon(selectedIcon);
+                    setTimeout(() => layer.setIcon(customIcon), 1500);
                     layer.openPopup();
                 }
             });
             
-            const originalScrollBehavior = document.documentElement.style.scrollBehavior;
-            document.documentElement.style.scrollBehavior = 'auto';
-            
-            const mapControls = document.querySelector('.map-controls');
-            if (mapControls) {
-                const headerHeight = document.querySelector('.header')?.offsetHeight || 0;
-                const offsetPosition = mapControls.getBoundingClientRect().top + window.scrollY - headerHeight - 5;
-                window.scrollTo({ top: offsetPosition, behavior: 'auto' });
-            } else {
-                document.getElementById('map').scrollIntoView({ behavior: 'auto', block: 'start' });
-            }
-            
-            requestAnimationFrame(() => {
-                document.documentElement.style.scrollBehavior = originalScrollBehavior;
-            });
-
-            if (currentMode === 'cercana' && userLocation) {
+            if (userLocation) {
+                if (p.distance === undefined) p.distance = getDistance(userLocation.lat, userLocation.lon, p.lat, p.lon);
                 fetchRoute(userLocation.lat, userLocation.lon, p.lat, p.lon);
             }
+
+            renderMapOverlay(p);
+            setTimeout(() => { if (map) map.invalidateSize(); }, 400);
+
+            const listContainer = document.getElementById('paradas-list-container');
+            if (listContainer) {
+                listContainer.innerHTML = '';
+                listContainer.appendChild(buildSelectedStopWidget(p));
+            }
+            
+            // Smooth scroll to map
+            setTimeout(() => {
+                const paradasSection = document.getElementById('paradas');
+                if (paradasSection) {
+                    paradasSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }, 50);
         });
         return item;
     };
@@ -251,6 +264,7 @@ const mapManager = (() => {
             <div class="plus-icon-btn" style="background: rgba(6,182,212,0.12); border: 1px solid rgba(6,182,212,0.35); width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 1.1rem; font-weight: 700; color: var(--brand-cyan); margin-left: 0.5rem; transition: all 0.3s ease;">+</div>
         `;
         item.addEventListener('click', () => {
+            selectedParada = p;
             map.flyToBounds([[p.lat, p.lon], [p.lat, p.lon]], { maxZoom: 17, paddingTopLeft: [0, 200] });
             markersLayer.eachLayer(layer => {
                 if (layer.getLatLng().lat === p.lat && layer.getLatLng().lng === p.lon) {
@@ -664,7 +678,7 @@ const mapManager = (() => {
     };
 
     const updateVisibleParadas = () => {
-        if (currentMode !== 'todas' || !map) return;
+        if (currentMode !== 'todas' || !map || selectedParada !== null) return;
         const bounds = map.getBounds();
         const visibleParadas = dbParadas.filter(p => bounds.contains([p.lat, p.lon]));
         currentPage = 1;
@@ -682,6 +696,7 @@ const mapManager = (() => {
         if(btnCercana) btnCercana.classList.remove('active');
         
         if (mode === 'todas') {
+            selectedParada = null;
             if(btnTodas) btnTodas.classList.add('active');
             
             hideMapOverlay();
