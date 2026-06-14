@@ -289,12 +289,12 @@ button.glass-badge:hover i, button.glass-badge:hover svg { color: var(--brand-cy
 
 
 /* ----------------- SECTIONS ----------------- */
-section { padding: 5rem 0; }
-.pricing-section { background-color: var(--bg-base); }
-.destination-section { background-color: var(--bg-neutral); }
-.calculator-section { background-color: var(--bg-base); }
-.booking-section { background-color: var(--bg-neutral); border-top: 1px solid var(--glass-border); border-bottom: 1px solid var(--glass-border); }
-.info-section { background-color: var(--bg-base); }
+section { padding: 5rem 0; position: relative; z-index: 1; }
+.pricing-section { background-color: transparent; }
+.destination-section { background-color: rgba(17, 24, 39, 0.4); }
+.calculator-section { background-color: transparent; }
+.booking-section { background-color: rgba(17, 24, 39, 0.4); border-top: 1px solid var(--glass-border); border-bottom: 1px solid var(--glass-border); }
+.info-section { background-color: transparent; }
 
 .section-title { font-size: clamp(1.8rem, 6vw, 2.5rem); font-weight: 600; text-align: center; margin-bottom: 0.5rem; white-space: nowrap; letter-spacing: -0.5px; }
 .section-subtitle { text-align: center; color: var(--text-muted); margin-bottom: 3rem; font-size: 1.1rem;}
@@ -510,7 +510,7 @@ section { padding: 5rem 0; }
 
 /* ----------------- PREGUNTAS FRECUENTES (FAQ ACORDEÃ“N) ----------------- */
 .faq-section {
-    background-color: var(--bg-secondary);
+    background-color: rgba(30, 41, 59, 0.4);
     border-top: 1px solid var(--glass-border);
     border-bottom: 1px solid var(--glass-border);
 }
@@ -572,7 +572,7 @@ section { padding: 5rem 0; }
 }
 
 /* ----------------- FOOTER ----------------- */
-.footer { padding: 4rem 0 2rem; margin-top: 4rem; border-top: 1px solid var(--glass-border); background: var(--bg-secondary); }
+.footer { padding: 4rem 0 2rem; margin-top: 4rem; border-top: 1px solid var(--glass-border); background: rgba(30, 41, 59, 0.4); position: relative; z-index: 1; }
 .footer-content { margin-bottom: 3rem; text-align: center; }
 .footer-brand .logo { justify-content: center; margin-bottom: 1rem; }
 .footer-brand p { color: var(--text-muted); }
