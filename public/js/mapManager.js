@@ -326,8 +326,8 @@ const mapManager = (() => {
                 currentIcon = L.divIcon({
                     className: 'custom-poi-img-icon',
                     html: `
-                        <div style="width: 44px; height: 44px; border-radius: 50%; overflow: hidden; background: transparent;">
-                            <img src="${poi.image}" style="width: 100%; height: 100%; object-fit: cover; display: block;" />
+                        <div style="width: 44px; height: 44px; border-radius: 50%; overflow: hidden; background: white; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.3);">
+                            <img src="${poi.image}" style="width: 100%; height: 100%; object-fit: contain; display: block;" />
                         </div>
                     `,
                     iconSize: [44, 44],
