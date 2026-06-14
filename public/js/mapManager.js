@@ -11,6 +11,56 @@ const mapManager = (() => {
     let currentRouteSteps = [];
     let currentStepIndex = 0;
     let watchPositionId = null;
+    
+    // --- Test Mode State ---
+    let testMode = false;
+    let testMarker = null;
+    let watchCallbacks = {};
+    let watchCounter = 0;
+
+    const geoService = {
+        getCurrentPosition: (success, error, options) => {
+            if (testMode && testMarker) {
+                const latlng = testMarker.getLatLng();
+                success({ coords: { latitude: latlng.lat, longitude: latlng.lng, heading: 0 } });
+            } else if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(success, error, options);
+            } else {
+                if (error) error(new Error("Geolocation not supported"));
+            }
+        },
+        watchPosition: (success, error, options) => {
+            if (testMode) {
+                const id = ++watchCounter;
+                watchCallbacks[id] = success;
+                if (testMarker) {
+                    const latlng = testMarker.getLatLng();
+                    success({ coords: { latitude: latlng.lat, longitude: latlng.lng, heading: 0 } });
+                }
+                return id;
+            } else if (navigator.geolocation) {
+                return navigator.geolocation.watchPosition(success, error, options);
+            }
+            return null;
+        },
+        clearWatch: (id) => {
+            if (testMode) {
+                delete watchCallbacks[id];
+            } else if (navigator.geolocation) {
+                navigator.geolocation.clearWatch(id);
+            }
+        },
+        triggerWatch: () => {
+            if (testMode && testMarker) {
+                const latlng = testMarker.getLatLng();
+                Object.values(watchCallbacks).forEach(cb => {
+                    cb({ coords: { latitude: latlng.lat, longitude: latlng.lng, heading: 0 } });
+                });
+            }
+        }
+    };
+    // -----------------------
+
     let targetDestParada = null;
     let navCurrentRouteLine = null;
     let poiLayer = null;
@@ -191,6 +241,68 @@ const mapManager = (() => {
         });
         new POIControl().addTo(map);
 
+        // Control para Modo Prueba (Simulador GPS)
+        const TestModeControl = L.Control.extend({
+            options: { position: 'topright' },
+            onAdd: function() {
+                const btn = L.DomUtil.create('button', 'map-test-btn');
+                btn.title = 'Activar/Desactivar Simulador GPS';
+                btn.innerHTML = `<span style="font-size:0.7rem; font-weight:800; letter-spacing:0.5px;">MODO PRUEBA</span>`;
+                btn.style.cssText = `
+                    background: rgba(245, 158, 11, 0.9);
+                    border: 2px solid #d97706;
+                    border-radius: 8px;
+                    padding: 0.4rem 0.8rem;
+                    color: white;
+                    cursor: pointer;
+                    backdrop-filter: blur(4px);
+                    box-shadow: 0 4px 10px rgba(245, 158, 11, 0.4);
+                    transition: all 0.2s;
+                    margin-top: 10px;
+                    margin-right: 10px;
+                `;
+                L.DomEvent.on(btn, 'click', L.DomEvent.stopPropagation);
+                L.DomEvent.on(btn, 'click', () => {
+                    testMode = !testMode;
+                    if (testMode) {
+                        btn.style.background = '#ef4444';
+                        btn.style.borderColor = '#b91c1c';
+                        btn.innerHTML = `<span style="font-size:0.7rem; font-weight:800; letter-spacing:0.5px;">PRUEBA ACTIVA</span>`;
+                        
+                        map.setView([36.529, -6.292], 16);
+                        
+                        const testIcon = L.divIcon({
+                            className: 'test-user-icon',
+                            html: `<div style="background:#ef4444; width:20px; height:20px; border-radius:50%; border:3px solid white; box-shadow: 0 0 10px rgba(239, 68, 68, 0.8);"></div><div style="position:absolute; top:-25px; left:-40px; background:#ef4444; color:white; font-size:10px; padding:2px 6px; border-radius:4px; font-weight:bold; white-space:nowrap;">Tú (Simulado)</div>`,
+                            iconSize: [20, 20],
+                            iconAnchor: [10, 10]
+                        });
+                        
+                        testMarker = L.marker([36.529, -6.292], { icon: testIcon, draggable: true, zIndexOffset: 1000 }).addTo(map);
+                        
+                        testMarker.on('drag', () => {
+                            geoService.triggerWatch();
+                        });
+                        
+                        alert("Modo Prueba Activado. Arrastra el marcador rojo para simular que caminas por Cádiz.");
+                        
+                    } else {
+                        btn.style.background = 'rgba(245, 158, 11, 0.9)';
+                        btn.style.borderColor = '#d97706';
+                        btn.innerHTML = `<span style="font-size:0.7rem; font-weight:800; letter-spacing:0.5px;">MODO PRUEBA</span>`;
+                        
+                        if (testMarker) {
+                            map.removeLayer(testMarker);
+                            testMarker = null;
+                        }
+                        alert("Modo Prueba Desactivado.");
+                    }
+                });
+                return btn;
+            }
+        });
+        new TestModeControl().addTo(map);
+
         document.getElementById('btn-todas').addEventListener('click', () => setMode('todas'));
         document.getElementById('btn-cercana').addEventListener('click', () => setMode('cercana'));
 
@@ -249,12 +361,10 @@ const mapManager = (() => {
                     tryUpdateDistance();
                 } else {
                     renderMapOverlay(p);
-                    if (navigator.geolocation) {
-                        navigator.geolocation.getCurrentPosition((pos) => {
-                            userLocation = { lat: pos.coords.latitude, lon: pos.coords.longitude };
-                            tryUpdateDistance();
-                        }, () => {}, { timeout: 5000, maximumAge: 60000 });
-                    }
+                    geoService.getCurrentPosition((pos) => {
+                        userLocation = { lat: pos.coords.latitude, lon: pos.coords.longitude };
+                        tryUpdateDistance();
+                    }, () => {}, { timeout: 5000, maximumAge: 60000 });
                 }
                 setTimeout(() => { if (map) map.invalidateSize(); }, 400);
 
@@ -332,12 +442,10 @@ const mapManager = (() => {
                 tryUpdateDistanceList();
             } else {
                 renderMapOverlay(p);
-                if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition((pos) => {
-                        userLocation = { lat: pos.coords.latitude, lon: pos.coords.longitude };
-                        tryUpdateDistanceList();
-                    }, () => {}, { timeout: 5000, maximumAge: 60000 });
-                }
+                geoService.getCurrentPosition((pos) => {
+                    userLocation = { lat: pos.coords.latitude, lon: pos.coords.longitude };
+                    tryUpdateDistanceList();
+                }, () => {}, { timeout: 5000, maximumAge: 60000 });
             }
             setTimeout(() => { if (map) map.invalidateSize(); }, 400);
 
@@ -884,7 +992,7 @@ const mapManager = (() => {
         currentRouteSteps = [];
         targetDestParada = null;
         if (watchPositionId !== null) {
-            navigator.geolocation.clearWatch(watchPositionId);
+            geoService.clearWatch(watchPositionId);
             watchPositionId = null;
         }
         const navContainer = document.getElementById('nav-container');
@@ -946,8 +1054,6 @@ const mapManager = (() => {
     };
 
     const startNavigation = (lat, lon, name) => {
-        if (!navigator.geolocation) return alert("Tu navegador no soporta geolocalización");
-        
         isNavigating = true;
         notifiedPOIs.clear();
         targetDestParada = { lat, lon, name };
@@ -969,7 +1075,7 @@ const mapManager = (() => {
             navContainer.style.opacity = '1';
         });
 
-        watchPositionId = navigator.geolocation.watchPosition(
+        watchPositionId = geoService.watchPosition(
             (pos) => {
                 const uLat = pos.coords.latitude;
                 const uLon = pos.coords.longitude;
@@ -1166,54 +1272,50 @@ const mapManager = (() => {
             
             setTimeout(() => { if (map) map.invalidateSize(); }, 400);
             
-            if (navigator.geolocation) {
-                document.getElementById('paradas-list-container').innerHTML = '<div style="text-align:center; padding: 2rem; color: var(--text-muted);"><i data-lucide="loader-2" class="spin" style="animation: spin 1s linear infinite;"></i> Localizando...</div>';
-                if (typeof lucide !== 'undefined') lucide.createIcons();
-
-                navigator.geolocation.getCurrentPosition((position) => {
-                    const lat = position.coords.latitude;
-                    const lon = position.coords.longitude;
-                    
-                    userLocation = { lat, lon };
-                    
-                    if (userMarker) map.removeLayer(userMarker);
-                    userMarker = L.marker([lat, lon], { icon: userIcon }).addTo(map);
-                    userMarker.bindPopup("Tu ubicación actual");
-
-                    const paradasConDistancia = dbParadas.map(p => {
-                        return { ...p, distance: getDistance(lat, lon, p.lat, p.lon) };
-                    }).sort((a, b) => a.distance - b.distance);
-                    
-                    const masCercana = paradasConDistancia[0];
-                    renderMarkers(paradasConDistancia);
-                    
-                    const container = document.getElementById('paradas-list-container');
-                    if (container) {
-                        container.innerHTML = '';
-                        container.appendChild(buildSelectedStopWidget(masCercana));
-                        renderMapOverlay(masCercana);
-                        if (typeof lucide !== 'undefined') lucide.createIcons();
-                    }
-                    
-                    const bounds = L.latLngBounds([
-                        [lat, lon],
-                        [masCercana.lat, masCercana.lon]
-                    ]);
-                    
-                    map.flyToBounds(bounds, { paddingTopLeft: [20, 180], paddingBottomRight: [20, 20], animate: true, duration: 1.2, easeLinearity: 0.25 });
-
-                    fetchRoute(lat, lon, masCercana.lat, masCercana.lon);
-
-
-                }, (error) => {
-                    console.error("Error geolocating:", error);
-                    alert("No hemos podido acceder a tu ubicación. Comprueba los permisos de tu navegador.");
-                    setMode('todas');
-                }, { timeout: 10000 });
-            } else {
-                alert("Tu navegador no soporta geolocalización.");
-                setMode('todas');
+            if (!userLocation) {
+                const btnCercanaEl = document.getElementById('btn-cercana');
+                if (btnCercanaEl) btnCercanaEl.innerHTML = `<i data-lucide="loader-2" style="width:16px; height:16px; animation: spin 1s linear infinite;"></i> Obteniendo ubicación...`;
             }
+
+            geoService.getCurrentPosition((position) => {
+                const lat = position.coords.latitude;
+                const lon = position.coords.longitude;
+                
+                userLocation = { lat, lon };
+                
+                if (userMarker) map.removeLayer(userMarker);
+                userMarker = L.marker([lat, lon], { icon: userIcon }).addTo(map);
+                userMarker.bindPopup("Tu ubicación actual");
+
+                const paradasConDistancia = dbParadas.map(p => {
+                    return { ...p, distance: getDistance(lat, lon, p.lat, p.lon) };
+                }).sort((a, b) => a.distance - b.distance);
+                
+                const masCercana = paradasConDistancia[0];
+                renderMarkers(paradasConDistancia);
+                
+                const container = document.getElementById('paradas-list-container');
+                if (container) {
+                    container.innerHTML = '';
+                    container.appendChild(buildSelectedStopWidget(masCercana));
+                    renderMapOverlay(masCercana);
+                    if (typeof lucide !== 'undefined') lucide.createIcons();
+                }
+                
+                const bounds = L.latLngBounds([
+                    [lat, lon],
+                    [masCercana.lat, masCercana.lon]
+                ]);
+                
+                map.flyToBounds(bounds, { paddingTopLeft: [20, 180], paddingBottomRight: [20, 20], animate: true, duration: 1.2, easeLinearity: 0.25 });
+
+                fetchRoute(lat, lon, masCercana.lat, masCercana.lon);
+
+            }, (error) => {
+                console.error("Error geolocating:", error);
+                alert("No hemos podido acceder a tu ubicación. Comprueba los permisos de tu navegador.");
+                setMode('todas');
+            }, { timeout: 10000 });
         }
     };
 
