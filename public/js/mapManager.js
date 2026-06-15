@@ -1362,10 +1362,9 @@ const mapManager = (() => {
 
     const updateVisibleParadas = () => {
         if (currentMode !== 'todas' || !map || selectedParada !== null) return;
-        const bounds = map.getBounds();
-        const visibleParadas = dbParadas.filter(p => bounds.contains([p.lat, p.lon]));
-        currentPage = 1;
-        renderPaginatedList(visibleParadas);
+        // El modo 'Todas' muestra siempre todas las paradas.
+        // Se evita filtrar por bounds para que la lista no desaparezca al hacer zoom.
+        renderPaginatedList(dbParadas);
     };
 
     const setMode = (mode) => {
@@ -1390,8 +1389,7 @@ const mapManager = (() => {
             hideMapOverlay();
             
             renderMarkers(dbParadas);
-            // No renderizar inmediatamente todas si vamos a hacer flyToBounds, 
-            // pero para evitar parpadeos renderizamos visibles actualmente
+            currentPage = 1;
             updateVisibleParadas();
             
             if (userMarker) {
@@ -1407,9 +1405,8 @@ const mapManager = (() => {
                 }
             }, 400);
             
-            // Listen for moveend to update the list
+            // Eliminamos la actualización por bounds para que la lista 'Todas' siempre esté disponible
             map.off('moveend', updateVisibleParadas);
-            map.on('moveend', updateVisibleParadas);
 
             autoLocateTimeoutId = setTimeout(() => {
                 geoService.getCurrentPosition((position) => {
