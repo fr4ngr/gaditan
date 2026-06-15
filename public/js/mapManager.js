@@ -1028,12 +1028,17 @@ const mapManager = (() => {
             navContainer.id = 'nav-container';
             navContainer.style.cssText = `position: absolute; bottom: 1.5rem; left: 1rem; right: 1rem; background: #0f172a; border-radius: 1rem; z-index: 1000; padding: 1rem; color: white; display: flex; flex-direction: column; gap: 0.5rem; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); transform: translateY(0); opacity: 1; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease;`;
             document.getElementById('map').appendChild(navContainer);
-            
-            const customControls = document.getElementById('map-custom-controls');
-            if (customControls) {
-                customControls.style.bottom = '7.5rem';
-            }
         }
+        
+        const adjustControls = () => {
+            requestAnimationFrame(() => {
+                const customControls = document.getElementById('map-custom-controls');
+                const nCont = document.getElementById('nav-container');
+                if (customControls && nCont) {
+                    customControls.style.bottom = `calc(2.5rem + ${nCont.offsetHeight}px)`;
+                }
+            });
+        };
         
         let contentInner = document.getElementById('nav-content-inner');
         
@@ -1056,6 +1061,7 @@ const mapManager = (() => {
                 document.getElementById('btn-stop-nav').onclick = stopNavigation;
                 if (typeof lucide !== 'undefined') lucide.createIcons();
             }
+            adjustControls();
             return;
         }
 
@@ -1081,6 +1087,7 @@ const mapManager = (() => {
             `;
             document.getElementById('btn-stop-nav').onclick = stopNavigation;
             if (typeof lucide !== 'undefined') lucide.createIcons();
+            adjustControls();
             return;
         }
 
@@ -1099,6 +1106,7 @@ const mapManager = (() => {
             wrapper.innerHTML = `<i data-lucide="${icon}" style="color: white; width: 20px; height: 20px;"></i>`;
             if (typeof lucide !== 'undefined') lucide.createIcons({ root: wrapper });
         }
+        adjustControls();
     };
 
     const stopNavigation = () => {
