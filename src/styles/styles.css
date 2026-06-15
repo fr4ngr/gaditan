@@ -2149,3 +2149,64 @@ body.low-bandwidth .hero-slide-card.active-slide .glass.card {
     }
 }
 
+/* Píldoras de Paradas de Taxi (Turquesa institucional con letras/iconos oscuros) */
+.pildora-parada {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.65rem 0.9rem;
+    border-radius: 9999px;
+    cursor: pointer;
+    background: var(--brand-cyan) !important;
+    border: 1px solid var(--brand-cyan) !important;
+    margin-bottom: 0.55rem;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(6, 182, 212, 0.15) !important;
+}
+
+.pildora-parada strong {
+    color: #0f172a !important;
+    font-weight: 800 !important;
+}
+
+.pildora-parada span {
+    color: rgba(15, 23, 42, 0.7) !important;
+    font-weight: 500 !important;
+}
+
+.pildora-parada i,
+.pildora-parada svg,
+.pildora-parada div {
+    color: #0f172a !important;
+}
+
+.pildora-parada .plus-icon-btn {
+    background: rgba(15, 23, 42, 0.1) !important;
+    border: 1px solid rgba(15, 23, 42, 0.25) !important;
+    color: #0f172a !important;
+    box-shadow: none !important;
+}
+
+/* Hover & Active / Glow */
+.pildora-parada.glow-active,
+.pildora-parada:hover {
+    background: var(--brand-cyan-light) !important;
+    border-color: var(--brand-cyan-light) !important;
+    box-shadow: 0 8px 25px rgba(34, 211, 238, 0.4) !important;
+    transform: translateY(-4px) !important;
+}
+
+.pildora-parada:active {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 15px rgba(34, 211, 238, 0.2) !important;
+}
+
+.pildora-parada.glow-active .plus-icon-btn,
+.pildora-parada:hover .plus-icon-btn {
+    background: #0f172a !important;
+    color: #ffffff !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+    box-shadow: 0 4px 10px rgba(15, 23, 42, 0.25) !important;
+    transform: scale(1.15) !important;
+}
+
