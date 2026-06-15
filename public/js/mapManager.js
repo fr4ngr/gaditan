@@ -161,7 +161,7 @@ const mapManager = (() => {
         const createCustomIconObj = (options) => { return { options }; };
     const init = () => {
         const mapElement = document.getElementById('map');
-        if (!mapElement || typeof L === 'undefined') return;
+        if (!mapElement || typeof maplibregl === 'undefined') return;
 
         map = new maplibregl.Map({
             container: 'map',
@@ -1430,13 +1430,13 @@ const mapManager = (() => {
 
             clearRoute();
             
-            routePolyline = L.polyline(coordinates, {
-                color: '#3b82f6',
-                weight: 5,
-                opacity: 0.8,
-                dashArray: '10, 10',
-                lineJoin: 'round'
-            }).addTo(map);
+            const geojson = { type: 'Feature', properties: {}, geometry: { type: 'LineString', coordinates: coordinates.map(c => [c[1], c[0]]) } };
+            if (map.getSource(routePolylineId)) {
+                map.getSource(routePolylineId).setData(geojson);
+            } else {
+                map.addSource(routePolylineId, { type: 'geojson', data: geojson });
+                map.addLayer({ id: routePolylineId, type: 'line', source: routePolylineId, layout: { 'line-join': 'round', 'line-cap': 'round' }, paint: { 'line-color': '#3b82f6', 'line-width': 6, 'line-opacity': 0.8 } });
+            }
             
             if (!isNavigating) { const bounds = new maplibregl.LngLatBounds(); coordinates.forEach(c => bounds.extend([c[1], c[0]])); map.fitBounds(bounds, { padding: {top: 200, bottom: 20, left: 20, right: 20}, animate: true }); }
             
