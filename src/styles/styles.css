@@ -2152,9 +2152,9 @@ body.low-bandwidth .hero-slide-card.active-slide .glass.card {
 /* Píldoras de Paradas de Taxi (Turquesa institucional con letras/iconos oscuros) */
 .pildora-parada.pildora-hover {
     display: flex;
-    align-items: center;
+    align-items: stretch;
     justify-content: space-between;
-    padding: 0.35rem 0.8rem 0.35rem 0.35rem;
+    padding: 0;
     border-radius: 9999px;
     cursor: pointer;
     background: #ffffff !important;
