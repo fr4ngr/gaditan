@@ -438,30 +438,19 @@ const mapManager = (() => {
 
     const renderMarkers = (paradas) => {
         markersLayer.clearLayers();
-        paradas.forEach(p => {
+        const paradasToRender = selectedParada !== null ? [selectedParada] : paradas;
+        paradasToRender.forEach(p => {
             const marker = L.marker([p.lat, p.lon], { icon: customIcon }).addTo(markersLayer);
             marker.paradaData = p;
             marker.on('click', () => {
+                if (selectedParada === p) {
+                    map.flyToBounds([[p.lat, p.lon], [p.lat, p.lon]], { maxZoom: 17, paddingTopLeft: [0, 200] });
+                    return;
+                }
+                
                 selectedParada = p;
+                renderMarkers(dbParadas);
                 map.flyToBounds([[p.lat, p.lon], [p.lat, p.lon]], { maxZoom: 17, paddingTopLeft: [0, 200] });
-
-                const selectedIcon = L.divIcon({
-                    className: 'custom-div-icon',
-                    html: `
-                        <div style="position: relative; width: 36px; height: 40px; filter: drop-shadow(0 0 8px rgba(250,204,21,0.8));">
-                            <div style="background-color: #facc15; width: 100%; height: 100%; border-radius: 6px; padding: 3px; box-sizing: border-box; font-family: 'Outfit', sans-serif; display: flex; flex-direction: column;">
-                                <div style="background-color: white; width: 100%; height: 22px; border-radius: 3px; display: flex; align-items: center; justify-content: center;">
-                                    <span style="color: black; font-weight: 900; font-size: 11px; letter-spacing: -0.5px; line-height: 1;">TAXI</span>
-                                </div>
-                            </div>
-                            <div style="position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 7px solid #facc15;"></div>
-                        </div>
-                    `,
-                    iconSize: [36, 46],
-                    iconAnchor: [18, 46]
-                });
-                marker.setIcon(selectedIcon);
-                setTimeout(() => marker.setIcon(customIcon), 1500);
 
                 const tryUpdateDistance = () => {
                     if (p.distance === undefined) p.distance = getDistance(userLocation.lat, userLocation.lon, p.lat, p.lon);
@@ -530,28 +519,8 @@ const mapManager = (() => {
 
         item.addEventListener('click', () => {
             selectedParada = p;
+            renderMarkers(dbParadas);
             map.flyToBounds([[p.lat, p.lon], [p.lat, p.lon]], { maxZoom: 17, paddingTopLeft: [0, 200] });
-            markersLayer.eachLayer(layer => {
-                if (layer instanceof L.Marker && layer.paradaData && layer.paradaData.id === p.id) {
-                    const selectedIcon = L.divIcon({
-                        className: 'custom-div-icon',
-                        html: `
-                            <div style="position: relative; width: 36px; height: 40px; filter: drop-shadow(0 0 8px rgba(250,204,21,0.8));">
-                                <div style="background-color: #facc15; width: 100%; height: 100%; border-radius: 6px; padding: 3px; box-sizing: border-box; font-family: 'Outfit', sans-serif; display: flex; flex-direction: column;">
-                                    <div style="background-color: white; width: 100%; height: 22px; border-radius: 3px; display: flex; align-items: center; justify-content: center;">
-                                        <span style="color: black; font-weight: 900; font-size: 11px; letter-spacing: -0.5px; line-height: 1;">TAXI</span>
-                                    </div>
-                                </div>
-                                <div style="position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 7px solid #facc15;"></div>
-                            </div>
-                        `,
-                        iconSize: [36, 46],
-                        iconAnchor: [18, 46]
-                    });
-                    layer.setIcon(selectedIcon);
-                    setTimeout(() => layer.setIcon(customIcon), 1500);
-                }
-            });
             
             const tryUpdateDistanceList = () => {
                 if (p.distance === undefined) p.distance = getDistance(userLocation.lat, userLocation.lon, p.lat, p.lon);
@@ -623,28 +592,8 @@ const mapManager = (() => {
         `;
         item.addEventListener('click', () => {
             selectedParada = p;
+            renderMarkers(dbParadas);
             map.flyToBounds([[p.lat, p.lon], [p.lat, p.lon]], { maxZoom: 17, paddingTopLeft: [0, 200] });
-            markersLayer.eachLayer(layer => {
-                if (layer instanceof L.Marker && layer.paradaData && layer.paradaData.id === p.id) {
-                    const selectedIcon = L.divIcon({
-                        className: 'custom-div-icon',
-                        html: `
-                            <div style="position: relative; width: 36px; height: 40px; filter: drop-shadow(0 0 8px rgba(250,204,21,0.8));">
-                                <div style="background-color: #facc15; width: 100%; height: 100%; border-radius: 6px; padding: 3px; box-sizing: border-box; font-family: 'Outfit', sans-serif; display: flex; flex-direction: column;">
-                                    <div style="background-color: white; width: 100%; height: 22px; border-radius: 3px; display: flex; align-items: center; justify-content: center;">
-                                        <span style="color: black; font-weight: 900; font-size: 11px; letter-spacing: -0.5px; line-height: 1;">TAXI</span>
-                                    </div>
-                                </div>
-                                <div style="position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 7px solid #facc15;"></div>
-                            </div>
-                        `,
-                        iconSize: [36, 46],
-                        iconAnchor: [18, 46]
-                    });
-                    layer.setIcon(selectedIcon);
-                    setTimeout(() => layer.setIcon(customIcon), 1500);
-                }
-            });
             
             if (userLocation) {
                 if (p.distance === undefined) p.distance = getDistance(userLocation.lat, userLocation.lon, p.lat, p.lon);
