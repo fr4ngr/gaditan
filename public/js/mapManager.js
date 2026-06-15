@@ -70,17 +70,23 @@ const mapManager = (() => {
     const customIcon = L.divIcon({
         className: 'custom-div-icon',
         html: `
-            <div style="position: relative; width: 24px; height: 26px; filter: drop-shadow(0 3px 3px rgba(0,0,0,0.3));">
-                <div style="background-color: #2563eb; width: 100%; height: 100%; border-radius: 4px; padding: 2px; box-sizing: border-box; font-family: 'Outfit', sans-serif; display: flex; flex-direction: column;">
-                    <div style="background-color: white; width: 100%; height: 14px; border-radius: 2px; display: flex; align-items: center; justify-content: center;">
-                        <span style="color: black; font-weight: 950; font-size: 7.5px; letter-spacing: -0.4px; line-height: 1;">TAXI</span>
+            <div style="position: relative; width: 26px; height: 32px; filter: drop-shadow(0 3px 3px rgba(0,0,0,0.35));">
+                <div style="background-color: #2563eb; width: 100%; height: 100%; border-radius: 6px; padding: 2.5px; box-sizing: border-box; font-family: 'Inter', sans-serif; display: flex; flex-direction: column;">
+                    <div style="background-color: white; width: 100%; height: 14px; border-radius: 3.5px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+                        <span style="color: black; font-weight: 900; font-size: 7.2px; letter-spacing: 0.4px; line-height: 1; display: block;">TAXI</span>
+                    </div>
+                    <div style="display: flex; align-items: center; justify-content: center; flex: 1; padding-top: 1px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" style="display: block;">
+                            <path d="M5 12h14"></path>
+                            <path d="m12 5 7 7-7 7"></path>
+                        </svg>
                     </div>
                 </div>
-                <div style="position: absolute; bottom: -4px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 5px solid #2563eb;"></div>
+                <div style="position: absolute; bottom: -5px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 6px solid #2563eb;"></div>
             </div>
         `,
-        iconSize: [24, 30],
-        iconAnchor: [12, 30]
+        iconSize: [26, 37],
+        iconAnchor: [13, 37]
     });
 
     const userIcon = L.divIcon({
