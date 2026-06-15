@@ -67,7 +67,7 @@ const mapManager = (() => {
     let poiLayer = null;
     let poisVisible = false;
     let notifiedPOIs = new Set();
-    const customIcon = L.divIcon({
+    const customIcon = createCustomIconObj({
         className: 'custom-div-icon',
         html: `
             <div style="position: relative; width: 26px; height: 42px; filter: drop-shadow(0 3px 3px rgba(0,0,0,0.35)); display: flex; flex-direction: column; align-items: center;">
@@ -83,7 +83,7 @@ const mapManager = (() => {
         iconAnchor: [13, 42]
     });
 
-    const selectedCustomIcon = L.divIcon({
+    const selectedCustomIcon = createCustomIconObj({
         className: 'custom-div-icon',
         html: `
             <div class="animated-sign animated-selected-sign" style="position: relative; width: 26px; height: 42px; filter: drop-shadow(0 3px 3px rgba(0,0,0,0.35)); display: flex; flex-direction: column; align-items: center;">
@@ -99,7 +99,7 @@ const mapManager = (() => {
         iconAnchor: [13, 42]
     });
 
-    const userIcon = L.divIcon({
+    const userIcon = createCustomIconObj({
         className: 'user-div-icon',
         html: `
             <div id="user-marker-wrapper" style="position: relative; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; transition: transform 0.3s ease;">
@@ -111,7 +111,7 @@ const mapManager = (() => {
         iconAnchor: [11, 11]
     });
 
-    const poiIcon = L.divIcon({
+    const poiIcon = createCustomIconObj({
         className: 'custom-div-icon poi-icon',
         html: `<div style="display: flex; justify-content: center; align-items: center; filter: drop-shadow(0 4px 4px rgba(0,0,0,0.5));"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="#ec4899" stroke="#111827" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path><circle cx="12" cy="10" r="3" fill="#111827"></circle></svg><div style="position: absolute; top: 6px; color: white;"><i data-lucide="camera" style="width: 10px; height: 10px;"></i></div></div>`,
         iconSize: [28, 28],
@@ -158,216 +158,30 @@ const mapManager = (() => {
         return distKm.toFixed(1) + ' km';
     };
 
-    const init = () => {
+    
+    const createCustomIconObj = (options) => {
+        return { options };
+    };
+    
+const init = () => {
         const mapElement = document.getElementById('map');
         if (!mapElement || typeof L === 'undefined') return;
 
-        map = L.map('map', {
-            zoomControl: false,
-            attributionControl: false,
-            scrollWheelZoom: false,
-            dragging: !L.Browser.mobile,
-            tap: false
-        }).setView([36.529, -6.292], 13);
-        
-        L.control.attribution({ position: 'bottomright' }).addTo(map);
-        
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-            attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
-            maxZoom: 19
-        }).addTo(map);
-
-        markersLayer = L.layerGroup().addTo(map);
-        poiLayer = L.layerGroup().addTo(map);
-
-        // Contenedor de controles horizontales personalizados
-        const customControls = document.createElement('div');
-        customControls.id = 'map-custom-controls';
-        customControls.style.cssText = `
-            position: absolute;
-            bottom: 1.5rem;
-            right: 1rem;
-            z-index: 1001;
-            display: flex;
-            flex-direction: row;
-            gap: 0.5rem;
-            transition: bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            pointer-events: auto;
-        `;
-        document.getElementById('map').appendChild(customControls);
-        if (typeof L !== 'undefined') {
-            L.DomEvent.disableClickPropagation(customControls);
-        }
-
-        // 1. Botón de POIs (Cámara)
-        const poiBtn = document.createElement('button');
-        poiBtn.title = 'Descubrir comercios y turismo cerca';
-        poiBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path><circle cx="12" cy="13" r="3"></circle>
-        </svg>`;
-        poiBtn.style.cssText = `
-            background: rgba(15, 23, 42, 0.85);
-            border: 1px solid rgba(236, 72, 153, 0.4);
-            border-radius: 50%;
-            width: 40px; height: 40px;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer;
-            color: #ec4899;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            transition: all 0.2s;
-            padding: 0;
-        `;
-        poiBtn.onmouseover = () => {
-            poiBtn.style.background = 'rgba(236, 72, 153, 0.2)';
-            poiBtn.style.borderColor = '#ec4899';
-        };
-        poiBtn.onmouseout = () => {
-            if (!poisVisible) {
-                poiBtn.style.background = 'rgba(15, 23, 42, 0.85)';
-                poiBtn.style.borderColor = 'rgba(236, 72, 153, 0.4)';
-            } else {
-                poiBtn.style.background = 'rgba(236, 72, 153, 0.3)';
-                poiBtn.style.borderColor = '#ec4899';
-            }
-        };
-        poiBtn.onclick = (e) => {
-            if (e) {
-                e.preventDefault();
-                e.stopPropagation();
-            }
-            poisVisible = !poisVisible;
-            if (poisVisible) {
-                poiBtn.style.background = 'rgba(236, 72, 153, 0.3)';
-                poiBtn.style.borderColor = '#ec4899';
-                poiBtn.style.boxShadow = '0 0 15px rgba(236, 72, 153, 0.5)';
-                renderPOIs();
-            } else {
-                poiBtn.style.background = 'rgba(15, 23, 42, 0.85)';
-                poiBtn.style.borderColor = 'rgba(236, 72, 153, 0.4)';
-                poiBtn.style.boxShadow = '0 4px 15px rgba(0,0,0,0.3)';
-                poiLayer.clearLayers();
-            }
-        };
-        customControls.appendChild(poiBtn);
-
-        // 2. Cápsula de Zoom Horizontal (- +)
-        const zoomCapsule = document.createElement('div');
-        zoomCapsule.id = 'custom-zoom-capsule';
-        zoomCapsule.style.cssText = `
-            background: rgba(15, 23, 42, 0.85);
-            border: 1px solid rgba(6, 182, 212, 0.4);
-            border-radius: 20px;
-            display: flex;
-            flex-direction: row;
-            height: 40px;
-            overflow: hidden;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            pointer-events: auto;
-        `;
-
-        // Botón de Zoom Out (-)
-        const zoomOutBtn = document.createElement('button');
-        zoomOutBtn.title = 'Alejar';
-        zoomOutBtn.innerHTML = `<span style="font-size: 1.5rem; line-height: 1; margin-top: -2px;">−</span>`;
-        zoomOutBtn.style.cssText = `
-            background: transparent;
-            border: none;
-            border-right: 1px solid rgba(6, 182, 212, 0.25);
-            color: #06b6d4;
-            width: 40px; height: 40px;
-            cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-            font-weight: 600;
-            transition: all 0.2s;
-            padding: 0;
-        `;
-        zoomOutBtn.onmouseover = () => {
-            zoomOutBtn.style.background = 'rgba(6, 182, 212, 0.2)';
-        };
-        zoomOutBtn.onmouseout = () => {
-            zoomOutBtn.style.background = 'transparent';
-        };
-        zoomOutBtn.onclick = (e) => {
-            if (e) {
-                e.preventDefault();
-                e.stopPropagation();
-            }
-            map.zoomOut();
-        };
-        zoomCapsule.appendChild(zoomOutBtn);
-
-        // Botón de Zoom In (+)
-        const zoomInBtn = document.createElement('button');
-        zoomInBtn.title = 'Acercar';
-        zoomInBtn.innerHTML = `<span style="font-size: 1.5rem; line-height: 1; margin-top: -2px;">+</span>`;
-        zoomInBtn.style.cssText = `
-            background: transparent;
-            border: none;
-            color: #06b6d4;
-            width: 40px; height: 40px;
-            cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-            font-weight: 600;
-            transition: all 0.2s;
-            padding: 0;
-        `;
-        zoomInBtn.onmouseover = () => {
-            zoomInBtn.style.background = 'rgba(6, 182, 212, 0.2)';
-        };
-        zoomInBtn.onmouseout = () => {
-            zoomInBtn.style.background = 'transparent';
-        };
-        zoomInBtn.onclick = (e) => {
-            if (e) {
-                e.preventDefault();
-                e.stopPropagation();
-            }
-            map.zoomIn();
-        };
-        zoomCapsule.appendChild(zoomInBtn);
-
-        customControls.appendChild(zoomCapsule);
-
-        // Control para Modo Prueba (Simulador GPS)
-        const TestModeControl = L.Control.extend({
-            options: { position: 'topright' },
-            onAdd: function() {
-                const btn = L.DomUtil.create('button', 'map-test-btn');
-                btn.title = 'Activar/Desactivar Simulador GPS';
-                btn.innerHTML = `<span style="font-size:0.7rem; font-weight:800; letter-spacing:0.5px;">MODO PRUEBA</span>`;
-                btn.style.cssText = `
-                    background: rgba(245, 158, 11, 0.9);
-                    border: 2px solid #d97706;
-                    border-radius: 8px;
-                    padding: 0.4rem 0.8rem;
-                    color: white;
-                    cursor: pointer;
-                    backdrop-filter: blur(4px);
-                    box-shadow: 0 4px 10px rgba(245, 158, 11, 0.4);
-                    transition: all 0.2s;
-                    margin-top: 10px;
-                    margin-right: 10px;
-                `;
-                L.DomEvent.on(btn, 'click', L.DomEvent.stopPropagation);
-                L.DomEvent.on(btn, 'click', () => {
-                    testMode = !testMode;
-                    if (testMode) {
-                        btn.style.background = '#ef4444';
-                        btn.style.borderColor = '#b91c1c';
-                        btn.innerHTML = `<span style="font-size:0.7rem; font-weight:800; letter-spacing:0.5px;">PRUEBA ACTIVA</span>`;
+        map = new maplibregl.Map({
+            container: 'map',
+            style: 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
+            center: [-6.2925, 36.5271],
+            zoom: 13,
+            attributionControl: false
+        });
+        map.addControl(new maplibregl.AttributionControl({ compact: true }), 'bottom-right');
                         
-                        map.setView([36.529, -6.292], 16);
-                        
-                        const testIcon = L.divIcon({
-                            className: 'test-user-icon',
-                            html: `<div style="background:#ef4444; width:20px; height:20px; border-radius:50%; border:3px solid white; box-shadow: 0 0 10px rgba(239, 68, 68, 0.8);"></div><div style="position:absolute; top:-25px; left:-40px; background:#ef4444; color:white; font-size:10px; padding:2px 6px; border-radius:4px; font-weight:bold; white-space:nowrap;">Tú (Simulado)</div>`,
-                            iconSize: [20, 20],
-                            iconAnchor: [10, 10]
-                        });
-                        
-                        testMarker = L.marker([36.529, -6.292], { icon: testIcon, draggable: true, zIndexOffset: 1000 }).addTo(map);
+                        const el = document.createElement('div');
+                        el.innerHTML = testIcon.options.html;
+                        el.className = testIcon.options.className;
+                        testMarker = new maplibregl.Marker({ element: el, draggable: true })
+                            .setLngLat([-6.292, 36.529])
+                            .addTo(map);
                         
                         testMarker.on('drag', () => {
                             geoService.triggerWatch();
@@ -408,7 +222,7 @@ const mapManager = (() => {
 
     const renderPOIs = () => {
         if (!poiLayer || typeof dbPOIs === 'undefined') return;
-        poiLayer.clearLayers();
+        poiMarkers.forEach(m => m.remove()); poiMarkers = [];
         dbPOIs.forEach(poi => {
             let currentIcon = poiIcon;
             if (poi.image) {
@@ -416,7 +230,7 @@ const mapManager = (() => {
                 
                 if (isPng) {
                     // Silueta transparente (PNG)
-                    currentIcon = L.divIcon({
+                    currentIcon = createCustomIconObj({
                         className: 'custom-poi-img-icon-silhouette',
                         html: `
                             <div style="width: 100%; height: 100%; display: flex; align-items: flex-end; justify-content: center; filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.5));">
@@ -428,7 +242,7 @@ const mapManager = (() => {
                     });
                 } else {
                     // Foto en círculo (JPG u otros)
-                    currentIcon = L.divIcon({
+                    currentIcon = createCustomIconObj({
                         className: 'custom-poi-img-icon',
                         html: `
                             <div style="width: 44px; height: 44px; border-radius: 50%; overflow: hidden; background: white; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.3);">
@@ -440,7 +254,13 @@ const mapManager = (() => {
                     });
                 }
             }
-            const marker = L.marker([poi.lat, poi.lon], { icon: currentIcon }).addTo(poiLayer);
+            const el = document.createElement('div');
+            el.innerHTML = currentIcon.options.html;
+            if (currentIcon.options.className) el.className = currentIcon.options.className;
+            const marker = new maplibregl.Marker({ element: el })
+                .setLngLat([poi.lon, poi.lat])
+                .addTo(map);
+            poiMarkers.push(marker);
             marker.bindPopup(`
                 <div style="font-family: 'Outfit', sans-serif; text-align: center; padding: 0.5rem;">
                     <h3 style="margin: 0 0 0.5rem 0; font-weight: 800; color: #0f172a; font-size: 1rem;">${poi.name}</h3>
@@ -454,18 +274,24 @@ const mapManager = (() => {
     };
 
     const renderMarkers = (paradas) => {
-        markersLayer.clearLayers();
+        markers.forEach(m => m.remove()); markers = [];
         const paradasToRender = selectedParada !== null ? [selectedParada] : paradas;
         paradasToRender.forEach(p => {
             const currentMarkerIcon = selectedParada !== null ? selectedCustomIcon : customIcon;
-            const marker = L.marker([p.lat, p.lon], { icon: currentMarkerIcon }).addTo(markersLayer);
+            const el = document.createElement('div');
+            el.innerHTML = currentMarkerIcon.options.html;
+            if (currentMarkerIcon.options.className) el.className = currentMarkerIcon.options.className;
+            const marker = new maplibregl.Marker({ element: el })
+                .setLngLat([p.lon, p.lat])
+                .addTo(map);
+            markers.push(marker);
             marker.paradaData = p;
             marker.on('click', () => {
                 if (selectedParada === p) {
                     if (routePolyline && !isNavigating) {
-                        map.fitBounds(routePolyline.getBounds(), { paddingTopLeft: [20, 200], paddingBottomRight: [20, 20], animate: true });
+                        // fit bounds to route manually later or use bbox
                     } else {
-                        map.flyToBounds([[p.lat, p.lon], [p.lat, p.lon]], { maxZoom: 17, paddingTopLeft: [0, 200] });
+                        map.fitBounds([[p.lon, p.lat], [p.lon, p.lat]], { maxZoom: 17, padding: { top: 200, left: 0, bottom: 20, right: 20 }, animate: true });
                     }
                     return;
                 }
@@ -486,7 +312,7 @@ const mapManager = (() => {
                 if (userLocation) {
                     tryUpdateDistance();
                 } else {
-                    map.flyToBounds([[p.lat, p.lon], [p.lat, p.lon]], { maxZoom: 17, paddingTopLeft: [0, 200] });
+                    map.fitBounds([[p.lon, p.lat], [p.lon, p.lat]], { maxZoom: 17, padding: { top: 200, left: 0, bottom: 20, right: 20 }, animate: true });
                     renderMapOverlay(p);
                     geoService.getCurrentPosition((pos) => {
                         userLocation = { lat: pos.coords.latitude, lon: pos.coords.longitude };
@@ -554,7 +380,7 @@ const mapManager = (() => {
             if (userLocation) {
                 tryUpdateDistanceList();
             } else {
-                map.flyToBounds([[p.lat, p.lon], [p.lat, p.lon]], { maxZoom: 17, paddingTopLeft: [0, 200] });
+                map.fitBounds([[p.lon, p.lat], [p.lon, p.lat]], { maxZoom: 17, padding: { top: 200, left: 0, bottom: 20, right: 20 }, animate: true });
                 renderMapOverlay(p);
                 geoService.getCurrentPosition((pos) => {
                     userLocation = { lat: pos.coords.latitude, lon: pos.coords.longitude };
@@ -631,7 +457,7 @@ const mapManager = (() => {
                 if (p.distance === undefined) p.distance = getDistance(userLocation.lat, userLocation.lon, p.lat, p.lon);
                 fetchRoute(userLocation.lat, userLocation.lon, p.lat, p.lon);
             } else {
-                map.flyToBounds([[p.lat, p.lon], [p.lat, p.lon]], { maxZoom: 17, paddingTopLeft: [0, 200] });
+                map.fitBounds([[p.lon, p.lat], [p.lon, p.lat]], { maxZoom: 17, padding: { top: 200, left: 0, bottom: 20, right: 20 }, animate: true });
             }
 
             renderMapOverlay(p);
@@ -709,9 +535,9 @@ const mapManager = (() => {
             topControls.id = 'top-nav-controls';
             topControls.style.cssText = "position: absolute; top: 1rem; right: 1rem; z-index: 1000; display: flex; gap: 0.4rem; align-items: center; justify-content: flex-end; max-width: calc(100vw - 2rem);";
             document.getElementById('map').appendChild(topControls);
-            if (typeof L !== 'undefined') {
-                L.DomEvent.disableClickPropagation(topControls);
-            }
+            topControls.addEventListener('wheel', e => e.stopPropagation());
+            topControls.addEventListener('mousedown', e => e.stopPropagation());
+            topControls.addEventListener('touchstart', e => e.stopPropagation(), {passive: false});
         }
         
         topControls.innerHTML = `
@@ -991,9 +817,9 @@ const mapManager = (() => {
     };
 
     const clearRoute = () => {
-        if (routePolyline) {
-            map.removeLayer(routePolyline);
-            routePolyline = null;
+        if (map.getSource(routePolylineId)) {
+            map.removeLayer(routePolylineId);
+            map.removeSource(routePolylineId);
         }
         const dirContainer = document.getElementById('directions-container');
         if (dirContainer) dirContainer.innerHTML = '';
@@ -1091,8 +917,10 @@ const mapManager = (() => {
 
     const stopNavigation = () => {
         isNavigating = false;
-        currentRouteSteps = [];
+        notifiedPOIs.clear();
         targetDestParada = null;
+        
+        map.easeTo({ pitch: 0, bearing: 0 });
         if (watchPositionId !== null) {
             geoService.clearWatch(watchPositionId);
             watchPositionId = null;
@@ -1114,7 +942,7 @@ const mapManager = (() => {
         
         if (selectedParada) {
             renderMapOverlay(selectedParada);
-            map.flyToBounds([[selectedParada.lat, selectedParada.lon], [selectedParada.lat, selectedParada.lon]], { maxZoom: 17, paddingTopLeft: [0, 200] });
+            map.fitBounds([[selectedParada.lon, selectedParada.lat], [selectedParada.lon, selectedParada.lat]], { maxZoom: 17, padding: { top: 200, left: 0, bottom: 20, right: 20 }, animate: true });
         }
     };
 
@@ -1160,6 +988,17 @@ const mapManager = (() => {
         }, 8000);
     };
 
+    const calculateBearing = (lat1, lon1, lat2, lon2) => {
+        const toRad = Math.PI / 180;
+        const toDeg = 180 / Math.PI;
+        const dLon = (lon2 - lon1) * toRad;
+        const y = Math.sin(dLon) * Math.cos(lat2 * toRad);
+        const x = Math.cos(lat1 * toRad) * Math.sin(lat2 * toRad) -
+                  Math.sin(lat1 * toRad) * Math.cos(lat2 * toRad) * Math.cos(dLon);
+        let brng = Math.atan2(y, x) * toDeg;
+        return (brng + 360) % 360;
+    };
+
     const startNavigation = (lat, lon, name) => {
         isNavigating = true;
         notifiedPOIs.clear();
@@ -1190,9 +1029,14 @@ const mapManager = (() => {
                 const heading = pos.coords.heading;
                 
                 if (!userMarker) {
-                    userMarker = L.marker([uLat, uLon], { icon: userIcon }).addTo(map);
+                    const el = document.createElement('div');
+                    el.innerHTML = userIcon.options.html;
+                    if (userIcon.options.className) el.className = userIcon.options.className;
+                    userMarker = new maplibregl.Marker({ element: el })
+                        .setLngLat([uLon, uLat])
+                        .addTo(map);
                 } else {
-                    userMarker.setLatLng([uLat, uLon]);
+                    userMarker.setLngLat([uLon, uLat]);
                 }
                 
                 if (userMarker) {
@@ -1201,17 +1045,27 @@ const mapManager = (() => {
                         const wrapper = el.querySelector('#user-marker-wrapper');
                         const arrow = el.querySelector('#user-heading-arrow');
                         if (wrapper && arrow) {
-                            if (heading !== null && !isNaN(heading)) {
-                                wrapper.style.transform = `rotate(${heading}deg)`;
-                                arrow.style.opacity = '1';
-                            } else {
-                                arrow.style.opacity = '0';
-                            }
+                            // If map rotates, marker doesn't need to rotate to point forward
+                            wrapper.style.transform = `rotate(0deg)`;
+                            arrow.style.opacity = '1';
                         }
                     }
                 }
                 
-                map.fitBounds([[uLat, uLon], [uLat, uLon]], { maxZoom: 18, paddingBottomRight: [0, 150], animate: true });
+                let targetBearing = 0;
+                if (heading !== null && !isNaN(heading)) {
+                    targetBearing = heading;
+                } else if (typeof navCurrentRouteLine !== 'undefined' && navCurrentRouteLine.length > 1) {
+                    targetBearing = calculateBearing(uLat, uLon, navCurrentRouteLine[1][0], navCurrentRouteLine[1][1]);
+                }
+                
+                map.easeTo({
+                    center: [uLon, uLat],
+                    zoom: 18,
+                    pitch: 60,
+                    bearing: targetBearing,
+                    padding: { bottom: 150 }
+                });
                 
                 // --- Motor de Geofencing ---
                 if (typeof dbPOIs !== 'undefined') {
@@ -1350,20 +1204,27 @@ const mapManager = (() => {
 
             clearRoute();
             
-            routePolyline = L.polyline(coordinates, {
-                color: '#3b82f6',
-                weight: 5,
-                opacity: 0.8,
-                dashArray: '10, 10',
-                lineJoin: 'round'
-            }).addTo(map);
+            const routeGeoJSON = {
+                'type': 'Feature',
+                'properties': {},
+                'geometry': {
+                    'type': 'LineString',
+                    'coordinates': coordinates.map(c => [c[1], c[0]])
+                }
+            };
+            map.addSource(routePolylineId, { 'type': 'geojson', 'data': routeGeoJSON });
+            map.addLayer({
+                'id': routePolylineId,
+                'type': 'line',
+                'source': routePolylineId,
+                'layout': { 'line-join': 'round', 'line-cap': 'round' },
+                'paint': { 'line-color': '#06b6d4', 'line-width': 4 }
+            });
             
             if (!isNavigating) {
-                map.fitBounds(routePolyline.getBounds(), {
-                    paddingTopLeft: [20, 200],
-                    paddingBottomRight: [20, 20],
-                    animate: true
-                });
+                const bounds = new maplibregl.LngLatBounds();
+                coordinates.forEach(c => bounds.extend([c[1], c[0]]));
+                map.fitBounds(bounds, { padding: {top: 200, bottom: 20, left: 20, right: 20}, animate: true });
             }
             
             const pill = document.getElementById('walk-info-pill');
@@ -1428,7 +1289,8 @@ const mapManager = (() => {
             setTimeout(() => { 
                 if (map) {
                     map.invalidateSize();                    
-                    const bounds = L.latLngBounds(dbParadas.map(p => [p.lat, p.lon]));
+                    const bounds = new maplibregl.LngLatBounds();
+                    dbParadas.map(p => [p.lat, p.lon]).forEach(c => bounds.extend([c[1], c[0]]));
                     map.flyToBounds(bounds, { padding: [20, 20], animate: true, duration: 1.0, easeLinearity: 0.25 });
                 }
             }, 400);
@@ -1443,7 +1305,12 @@ const mapManager = (() => {
                         const lon = position.coords.longitude;
                         userLocation = { lat, lon };
                         if (userMarker) map.removeLayer(userMarker);
-                        userMarker = L.marker([lat, lon], { icon: userIcon }).addTo(map);
+                        const el = document.createElement('div');
+                    el.innerHTML = userIcon.options.html;
+                    if (userIcon.options.className) el.className = userIcon.options.className;
+                    userMarker = new maplibregl.Marker({ element: el })
+                        .setLngLat([lon, lat])
+                        .addTo(map);
                         userMarker.bindPopup("Tu ubicación actual");
                         map.flyTo([lat, lon], 16, { animate: true, duration: 1.5 });
                     }
@@ -1466,7 +1333,12 @@ const mapManager = (() => {
                 userLocation = { lat, lon };
                 
                 if (userMarker) map.removeLayer(userMarker);
-                userMarker = L.marker([lat, lon], { icon: userIcon }).addTo(map);
+                const el = document.createElement('div');
+                    el.innerHTML = userIcon.options.html;
+                    if (userIcon.options.className) el.className = userIcon.options.className;
+                    userMarker = new maplibregl.Marker({ element: el })
+                        .setLngLat([lon, lat])
+                        .addTo(map);
                 userMarker.bindPopup("Tu ubicación actual");
 
                 const paradasConDistancia = dbParadas.map(p => {
@@ -1506,12 +1378,11 @@ const mapManager = (() => {
                     renderMapOverlay(masCercana);
                     startNavigation(masCercana.lat, masCercana.lon, masCercana.name);
                     
-                    const bounds = L.latLngBounds([
-                        [lat, lon],
-                        [masCercana.lat, masCercana.lon]
-                    ]);
+                    const bounds = new maplibregl.LngLatBounds();
+                    bounds.extend([lon, lat]);
+                    bounds.extend([masCercana.lon, masCercana.lat]);
                     
-                    map.flyToBounds(bounds, { paddingTopLeft: [20, 180], paddingBottomRight: [20, 20], animate: true, duration: 1.2, easeLinearity: 0.25 });
+                    map.fitBounds(bounds, { padding: {top: 180, left: 20, bottom: 20, right: 20}, duration: 1200 });
 
                     fetchRoute(lat, lon, masCercana.lat, masCercana.lon);
                 });
