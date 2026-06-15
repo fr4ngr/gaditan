@@ -1,9 +1,10 @@
 // Gestor del Mapa Interactivo (Leaflet + OSRM)
 const mapManager = (() => {
     let map = null;
-    let markersLayer = null;
+    let markers = [];
+    let poiMarkers = [];
+    let routePolylineId = 'route-line';
     let userMarker = null;
-    let routePolyline = null;
     let currentMode = 'todas'; // 'todas' | 'cercana' | 'elegir'
     let userLocation = null; // { lat, lon }
     let selectedParada = null;
@@ -169,12 +170,61 @@ const init = () => {
 
         map = new maplibregl.Map({
             container: 'map',
-            style: 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
+            style: 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json',
             center: [-6.2925, 36.5271],
             zoom: 13,
             attributionControl: false
         });
         map.addControl(new maplibregl.AttributionControl({ compact: true }), 'bottom-right');
+        
+        // Add satellite toggle button
+        const satBtn = document.createElement('button');
+        satBtn.id = 'btn-satellite-toggle';
+        satBtn.innerHTML = '<i data-lucide="satellite"></i>';
+        satBtn.style.cssText = 'position: absolute; top: 10px; right: 10px; z-index: 1000; background: white; border: 2px solid rgba(0,0,0,0.2); border-radius: 8px; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #333; box-shadow: 0 2px 6px rgba(0,0,0,0.3);';
+        
+        let isSatellite = false;
+        satBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            isSatellite = !isSatellite;
+            if (isSatellite) {
+                map.setLayoutProperty('satellite-layer', 'visibility', 'visible');
+                satBtn.style.background = '#06b6d4';
+                satBtn.style.color = 'white';
+            } else {
+                map.setLayoutProperty('satellite-layer', 'visibility', 'none');
+                satBtn.style.background = 'white';
+                satBtn.style.color = '#333';
+            }
+        });
+        
+        map.on('load', () => {
+            document.getElementById('map').appendChild(satBtn);
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+            
+            map.addSource('satellite', {
+                type: 'raster',
+                tiles: ['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'],
+                tileSize: 256
+            });
+            
+            // Find the first symbol layer to insert satellite below it, so street labels stay on top
+            const layers = map.getStyle().layers;
+            let firstSymbolId;
+            for (let i = 0; i < layers.length; i++) {
+                if (layers[i].type === 'symbol') {
+                    firstSymbolId = layers[i].id;
+                    break;
+                }
+            }
+            
+            map.addLayer({
+                id: 'satellite-layer',
+                type: 'raster',
+                source: 'satellite',
+                layout: { visibility: 'none' }
+            }, firstSymbolId);
+        });
                         
                         const el = document.createElement('div');
                         el.innerHTML = testIcon.options.html;
