@@ -155,8 +155,6 @@ const mapManager = (() => {
         
         L.control.attribution({ position: 'bottomright' }).addTo(map);
         
-        L.control.zoom({ position: 'bottomright' }).addTo(map);
-        
         L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
             attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
             maxZoom: 19
@@ -165,89 +163,184 @@ const mapManager = (() => {
         markersLayer = L.layerGroup().addTo(map);
         poiLayer = L.layerGroup().addTo(map);
 
-        // Control de localización tipo mirilla
-        const LocateControl = L.Control.extend({
-            options: { position: 'bottomright' },
-            onAdd: function() {
-                const btn = L.DomUtil.create('button', 'map-locate-btn');
-                btn.title = 'Localizar parada más cercana';
-                btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="8"/><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/>
-                    <line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/>
-                    <circle cx="12" cy="12" r="2" fill="currentColor"/>
-                </svg>`;
-                btn.style.cssText = `
-                    background: rgba(15, 23, 42, 0.85);
-                    border: 1px solid rgba(6, 182, 212, 0.4);
-                    border-radius: 50%;
-                    width: 40px; height: 40px;
-                    display: flex; align-items: center; justify-content: center;
-                    cursor: pointer;
-                    color: #06b6d4;
-                    backdrop-filter: blur(10px);
-                    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-                    transition: all 0.2s;
-                    padding: 0;
-                `;
-                btn.onmouseover = () => { btn.style.background = 'rgba(6, 182, 212, 0.2)'; btn.style.borderColor = '#06b6d4'; };
-                btn.onmouseout  = () => { btn.style.background = 'rgba(15, 23, 42, 0.85)'; btn.style.borderColor = 'rgba(6, 182, 212, 0.4)'; };
-                L.DomEvent.on(btn, 'click', L.DomEvent.stopPropagation);
-                L.DomEvent.on(btn, 'click', () => setMode('cercana'));
-                return btn;
-            }
-        });
-        new LocateControl().addTo(map);
+        // Contenedor de controles horizontales personalizados
+        const customControls = document.createElement('div');
+        customControls.id = 'map-custom-controls';
+        customControls.style.cssText = `
+            position: absolute;
+            bottom: 1.5rem;
+            right: 1rem;
+            z-index: 1001;
+            display: flex;
+            flex-direction: row;
+            gap: 0.5rem;
+            transition: bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            pointer-events: auto;
+        `;
+        document.getElementById('map').appendChild(customControls);
+        if (typeof L !== 'undefined') {
+            L.DomEvent.disableClickPropagation(customControls);
+        }
 
-        // Control para Descubrir Cerca (POIs)
-        const POIControl = L.Control.extend({
-            options: { position: 'bottomright' },
-            onAdd: function() {
-                const btn = L.DomUtil.create('button', 'map-poi-btn');
-                btn.title = 'Descubrir comercios y turismo cerca';
-                btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path><circle cx="12" cy="13" r="3"></circle>
-                </svg>`;
-                btn.style.cssText = `
-                    background: rgba(15, 23, 42, 0.85);
-                    border: 1px solid rgba(236, 72, 153, 0.4);
-                    border-radius: 50%;
-                    width: 40px; height: 40px;
-                    display: flex; align-items: center; justify-content: center;
-                    cursor: pointer;
-                    color: #ec4899;
-                    backdrop-filter: blur(10px);
-                    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-                    transition: all 0.2s;
-                    padding: 0;
-                    margin-bottom: 10px;
-                `;
-                btn.onmouseover = () => { btn.style.background = 'rgba(236, 72, 153, 0.2)'; btn.style.borderColor = '#ec4899'; };
-                btn.onmouseout  = () => { 
-                    if(!poisVisible) {
-                        btn.style.background = 'rgba(15, 23, 42, 0.85)'; 
-                        btn.style.borderColor = 'rgba(236, 72, 153, 0.4)'; 
-                    }
-                };
-                
-                L.DomEvent.on(btn, 'click', L.DomEvent.stopPropagation);
-                L.DomEvent.on(btn, 'click', () => {
-                    poisVisible = !poisVisible;
-                    if(poisVisible) {
-                        btn.style.background = 'rgba(236, 72, 153, 0.3)';
-                        btn.style.borderColor = '#ec4899';
-                        btn.style.boxShadow = '0 0 15px rgba(236, 72, 153, 0.5)';
-                        renderPOIs();
-                    } else {
-                        btn.style.background = 'rgba(15, 23, 42, 0.85)';
-                        btn.style.borderColor = 'rgba(236, 72, 153, 0.4)';
-                        btn.style.boxShadow = '0 4px 15px rgba(0,0,0,0.3)';
-                        poiLayer.clearLayers();
-                    }
-                });
-                return btn;
+        // 1. Botón de POIs (Cámara)
+        const poiBtn = document.createElement('button');
+        poiBtn.title = 'Descubrir comercios y turismo cerca';
+        poiBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path><circle cx="12" cy="13" r="3"></circle>
+        </svg>`;
+        poiBtn.style.cssText = `
+            background: rgba(15, 23, 42, 0.85);
+            border: 1px solid rgba(236, 72, 153, 0.4);
+            border-radius: 50%;
+            width: 40px; height: 40px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            color: #ec4899;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: all 0.2s;
+            padding: 0;
+        `;
+        poiBtn.onmouseover = () => {
+            poiBtn.style.background = 'rgba(236, 72, 153, 0.2)';
+            poiBtn.style.borderColor = '#ec4899';
+        };
+        poiBtn.onmouseout = () => {
+            if (!poisVisible) {
+                poiBtn.style.background = 'rgba(15, 23, 42, 0.85)';
+                poiBtn.style.borderColor = 'rgba(236, 72, 153, 0.4)';
+            } else {
+                poiBtn.style.background = 'rgba(236, 72, 153, 0.3)';
+                poiBtn.style.borderColor = '#ec4899';
             }
-        });
-        new POIControl().addTo(map);
+        };
+        poiBtn.onclick = (e) => {
+            if (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            poisVisible = !poisVisible;
+            if (poisVisible) {
+                poiBtn.style.background = 'rgba(236, 72, 153, 0.3)';
+                poiBtn.style.borderColor = '#ec4899';
+                poiBtn.style.boxShadow = '0 0 15px rgba(236, 72, 153, 0.5)';
+                renderPOIs();
+            } else {
+                poiBtn.style.background = 'rgba(15, 23, 42, 0.85)';
+                poiBtn.style.borderColor = 'rgba(236, 72, 153, 0.4)';
+                poiBtn.style.boxShadow = '0 4px 15px rgba(0,0,0,0.3)';
+                poiLayer.clearLayers();
+            }
+        };
+        customControls.appendChild(poiBtn);
+
+        // 2. Botón de Localizar (Mirilla)
+        const locateBtn = document.createElement('button');
+        locateBtn.title = 'Localizar parada más cercana';
+        locateBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="8"/><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/>
+            <line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/>
+            <circle cx="12" cy="12" r="2" fill="currentColor"/>
+        </svg>`;
+        locateBtn.style.cssText = `
+            background: rgba(15, 23, 42, 0.85);
+            border: 1px solid rgba(6, 182, 212, 0.4);
+            border-radius: 50%;
+            width: 40px; height: 40px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            color: #06b6d4;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: all 0.2s;
+            padding: 0;
+        `;
+        locateBtn.onmouseover = () => {
+            locateBtn.style.background = 'rgba(6, 182, 212, 0.2)';
+            locateBtn.style.borderColor = '#06b6d4';
+        };
+        locateBtn.onmouseout = () => {
+            locateBtn.style.background = 'rgba(15, 23, 42, 0.85)';
+            locateBtn.style.borderColor = 'rgba(6, 182, 212, 0.4)';
+        };
+        locateBtn.onclick = (e) => {
+            if (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            setMode('cercana');
+        };
+        customControls.appendChild(locateBtn);
+
+        // 3. Botón de Zoom In (+)
+        const zoomInBtn = document.createElement('button');
+        zoomInBtn.title = 'Acercar';
+        zoomInBtn.innerHTML = `<span style="font-size: 1.5rem; line-height: 1; margin-top: -2px;">+</span>`;
+        zoomInBtn.style.cssText = `
+            background: rgba(15, 23, 42, 0.85);
+            border: 1px solid rgba(6, 182, 212, 0.4);
+            border-radius: 50%;
+            width: 40px; height: 40px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            color: #06b6d4;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: all 0.2s;
+            padding: 0;
+            font-weight: 600;
+        `;
+        zoomInBtn.onmouseover = () => {
+            zoomInBtn.style.background = 'rgba(6, 182, 212, 0.2)';
+            zoomInBtn.style.borderColor = '#06b6d4';
+        };
+        zoomInBtn.onmouseout = () => {
+            zoomInBtn.style.background = 'rgba(15, 23, 42, 0.85)';
+            zoomInBtn.style.borderColor = 'rgba(6, 182, 212, 0.4)';
+        };
+        zoomInBtn.onclick = (e) => {
+            if (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            map.zoomIn();
+        };
+        customControls.appendChild(zoomInBtn);
+
+        // 4. Botón de Zoom Out (-)
+        const zoomOutBtn = document.createElement('button');
+        zoomOutBtn.title = 'Alejar';
+        zoomOutBtn.innerHTML = `<span style="font-size: 1.5rem; line-height: 1; margin-top: -2px;">−</span>`;
+        zoomOutBtn.style.cssText = `
+            background: rgba(15, 23, 42, 0.85);
+            border: 1px solid rgba(6, 182, 212, 0.4);
+            border-radius: 50%;
+            width: 40px; height: 40px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            color: #06b6d4;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: all 0.2s;
+            padding: 0;
+            font-weight: 600;
+        `;
+        zoomOutBtn.onmouseover = () => {
+            zoomOutBtn.style.background = 'rgba(6, 182, 212, 0.2)';
+            zoomOutBtn.style.borderColor = '#06b6d4';
+        };
+        zoomOutBtn.onmouseout = () => {
+            zoomOutBtn.style.background = 'rgba(15, 23, 42, 0.85)';
+            zoomOutBtn.style.borderColor = 'rgba(6, 182, 212, 0.4)';
+        };
+        zoomOutBtn.onclick = (e) => {
+            if (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            map.zoomOut();
+        };
+        customControls.appendChild(zoomOutBtn);
 
         // Control para Modo Prueba (Simulador GPS)
         const TestModeControl = L.Control.extend({
@@ -970,8 +1063,13 @@ const mapManager = (() => {
         if (!navContainer) {
             navContainer = document.createElement('div');
             navContainer.id = 'nav-container';
-            navContainer.style.cssText = `position: absolute; bottom: 1.5rem; left: 1rem; right: 4.5rem; background: #0f172a; border-radius: 1rem; z-index: 1000; padding: 1rem; color: white; display: flex; flex-direction: column; gap: 0.5rem; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); transform: translateY(0); opacity: 1; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease;`;
+            navContainer.style.cssText = `position: absolute; bottom: 1.5rem; left: 1rem; right: 1rem; background: #0f172a; border-radius: 1rem; z-index: 1000; padding: 1rem; color: white; display: flex; flex-direction: column; gap: 0.5rem; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); transform: translateY(0); opacity: 1; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease;`;
             document.getElementById('map').appendChild(navContainer);
+            
+            const customControls = document.getElementById('map-custom-controls');
+            if (customControls) {
+                customControls.style.bottom = '7.5rem';
+            }
         }
         
         let contentInner = document.getElementById('nav-content-inner');
@@ -1054,6 +1152,11 @@ const mapManager = (() => {
             navContainer.style.opacity = '0';
             setTimeout(() => navContainer.remove(), 400);
         }
+
+        const customControls = document.getElementById('map-custom-controls');
+        if (customControls) {
+            customControls.style.bottom = '1.5rem';
+        }
         
         const banners = document.getElementById('map-overlay-banners');
         if (banners) banners.style.display = 'flex';
@@ -1118,11 +1221,16 @@ const mapManager = (() => {
         
         const navContainer = document.createElement('div');
         navContainer.id = 'nav-container';
-        navContainer.style.cssText = `position: absolute; bottom: 1.5rem; left: 1rem; right: 4.5rem; background: #0f172a; border-radius: 1rem; z-index: 1000; padding: 1rem; color: white; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); transform: translateY(20px); opacity: 0; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease;`;
+        navContainer.style.cssText = `position: absolute; bottom: 1.5rem; left: 1rem; right: 1rem; background: #0f172a; border-radius: 1rem; z-index: 1000; padding: 1rem; color: white; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); transform: translateY(20px); opacity: 0; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease;`;
         navContainer.innerHTML = `<i data-lucide="loader-2" style="animation: spin 1s linear infinite; margin-right: 0.5rem;"></i> Calculando ruta...`;
         document.getElementById('map').appendChild(navContainer);
         if (typeof lucide !== 'undefined') lucide.createIcons();
         
+        const customControls = document.getElementById('map-custom-controls');
+        if (customControls) {
+            customControls.style.bottom = '7.5rem';
+        }
+
         requestAnimationFrame(() => {
             navContainer.style.transform = 'translateY(0)';
             navContainer.style.opacity = '1';
