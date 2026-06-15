@@ -1165,6 +1165,7 @@ const mapManager = (() => {
         notifiedPOIs.clear();
         targetDestParada = { lat, lon, name };
         
+        document.querySelectorAll('#nav-container').forEach(el => el.remove());
         const navContainer = document.createElement('div');
         navContainer.id = 'nav-container';
         navContainer.style.cssText = `position: absolute; bottom: 1.5rem; left: 1rem; right: 1rem; background: rgba(15, 23, 42, 0.45); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-radius: 1rem; z-index: 1000; padding: 1rem; color: white; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 25px rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); transform: translateY(20px); opacity: 0; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease;`;
