@@ -707,7 +707,7 @@ const mapManager = (() => {
         if (!topControls) {
             topControls = document.createElement('div');
             topControls.id = 'top-nav-controls';
-            topControls.style.cssText = "position: absolute; top: 1rem; left: 50%; transform: translateX(-50%); z-index: 1000; display: flex; gap: 0.4rem; align-items: center; justify-content: center; max-width: 95vw;";
+            topControls.style.cssText = "position: absolute; top: 1rem; right: 1rem; z-index: 1000; display: flex; gap: 0.4rem; align-items: center; justify-content: flex-end; max-width: calc(100vw - 2rem);";
             document.getElementById('map').appendChild(topControls);
             if (typeof L !== 'undefined') {
                 L.DomEvent.disableClickPropagation(topControls);
@@ -1502,6 +1502,7 @@ const mapManager = (() => {
                     
                     renderMarkers(paradasConDistancia);
                     renderList([masCercana], document.getElementById('paradas-list-container'));
+                    renderMapOverlay(masCercana);
                     startNavigation(masCercana.lat, masCercana.lon, masCercana.name);
                     
                     const bounds = L.latLngBounds([
