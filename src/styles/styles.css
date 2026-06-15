@@ -2150,7 +2150,7 @@ body.low-bandwidth .hero-slide-card.active-slide .glass.card {
 }
 
 /* Píldoras de Paradas de Taxi (Turquesa institucional con letras/iconos oscuros) */
-.pildora-parada {
+.pildora-parada.pildora-hover {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -2188,15 +2188,15 @@ body.low-bandwidth .hero-slide-card.active-slide .glass.card {
 }
 
 /* Hover & Active / Glow */
-.pildora-parada.glow-active,
-.pildora-parada:hover {
+.pildora-parada.pildora-hover.glow-active,
+.pildora-parada.pildora-hover:hover {
     background: var(--brand-cyan-light) !important;
     border-color: var(--brand-cyan-light) !important;
     box-shadow: 0 8px 25px rgba(34, 211, 238, 0.4) !important;
     transform: scale(1.02) !important;
 }
 
-.pildora-parada:active {
+.pildora-parada.pildora-hover:active {
     transform: scale(0.98) !important;
     box-shadow: 0 4px 15px rgba(34, 211, 238, 0.2) !important;
 }
