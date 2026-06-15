@@ -28,7 +28,25 @@ const destinosMapManager = (() => {
 
         const mapInstance = new maplibregl.Map({
             container: mapElementId,
-            style: 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json',
+            style: {
+                "version": 8,
+                "sources": {
+                    "osm": {
+                        "type": "raster",
+                        "tiles": ["https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png"],
+                        "tileSize": 256,
+                        "attribution": "© OpenStreetMap © CartoDB"
+                    }
+                },
+                "layers": [
+                    {
+                        "id": "osm-layer",
+                        "type": "raster",
+                        "source": "osm",
+                        "layout": { "visibility": "visible" }
+                    }
+                ]
+            },
             center: [originLon, originLat],
             zoom: 13,
             attributionControl: false

@@ -237,7 +237,25 @@ export async function calculateRoute() {
         if (!calcContext.calcMapInstance) {
             calcContext.calcMapInstance = new maplibregl.Map({
                 container: 'calc-map',
-                style: 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json',
+                style: {
+                    "version": 8,
+                    "sources": {
+                        "osm": {
+                            "type": "raster",
+                            "tiles": ["https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png"],
+                            "tileSize": 256,
+                            "attribution": "© OpenStreetMap © CartoDB"
+                        }
+                    },
+                    "layers": [
+                        {
+                            "id": "osm-layer",
+                            "type": "raster",
+                            "source": "osm",
+                            "layout": { "visibility": "visible" }
+                        }
+                    ]
+                },
                 center: [-6.29, 36.52],
                 zoom: 13,
                 attributionControl: false

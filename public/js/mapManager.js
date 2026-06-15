@@ -167,9 +167,41 @@ const mapManager = (() => {
         const mapElement = document.getElementById('map');
         if (!mapElement || typeof maplibregl === 'undefined') return;
 
+        const styleJSON = {
+            "version": 8,
+            "sources": {
+                "osm": {
+                    "type": "raster",
+                    "tiles": ["https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png"],
+                    "tileSize": 256,
+                    "attribution": "© OpenStreetMap © CartoDB"
+                },
+                "satellite": {
+                    "type": "raster",
+                    "tiles": ["https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"],
+                    "tileSize": 256,
+                    "attribution": "Tiles © Esri"
+                }
+            },
+            "layers": [
+                {
+                    "id": "osm-layer",
+                    "type": "raster",
+                    "source": "osm",
+                    "layout": { "visibility": "visible" }
+                },
+                {
+                    "id": "satellite-layer",
+                    "type": "raster",
+                    "source": "satellite",
+                    "layout": { "visibility": "visible" }
+                }
+            ]
+        };
+
         map = new maplibregl.Map({
             container: 'map',
-            style: 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json',
+            style: styleJSON,
             center: [-6.2925, 36.5271],
             zoom: 13,
             attributionControl: false
@@ -181,7 +213,7 @@ const mapManager = (() => {
         satBtn.innerHTML = '<i data-lucide="satellite"></i>';
         satBtn.style.cssText = 'position: absolute; top: 10px; right: 10px; z-index: 1000; background: white; border: 2px solid rgba(0,0,0,0.2); border-radius: 8px; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #333; box-shadow: 0 2px 6px rgba(0,0,0,0.3);';
         
-        let isSatellite = false;
+        let isSatellite = true;
         satBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             isSatellite = !isSatellite;
@@ -199,28 +231,13 @@ const mapManager = (() => {
         map.on('load', () => {
             document.getElementById('map').appendChild(satBtn);
             if (typeof lucide !== 'undefined') lucide.createIcons();
-            
-            map.addSource('satellite', {
-                type: 'raster',
-                tiles: ['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'],
-                tileSize: 256
-            });
-            
-            const layers = map.getStyle().layers;
-            let firstSymbolId;
-            for (let i = 0; i < layers.length; i++) {
-                if (layers[i].type === 'symbol') {
-                    firstSymbolId = layers[i].id;
-                    break;
-                }
+
+            if (isSatellite) {
+                satBtn.style.background = '#06b6d4';
+                satBtn.style.color = 'white';
+            } else {
+                map.setLayoutProperty('satellite-layer', 'visibility', 'none');
             }
-            
-            map.addLayer({
-                id: 'satellite-layer',
-                type: 'raster',
-                source: 'satellite',
-                layout: { visibility: 'none' }
-            }, firstSymbolId);
         });
         
         markers = [];
@@ -1537,7 +1554,7 @@ const mapManager = (() => {
                         .setLngLat([lon, lat])
                         .addTo(map);
                         userMarker.setPopup(new maplibregl.Popup().setText("Tu ubicación actual"));
-                        map.flyTo([lat, lon], 16, { animate: true, duration: 1.5 });
+                        map.flyTo({ center: [lon, lat], zoom: 16, duration: 1500 });
                     }
                 }, (err) => {
                     console.log("Auto-location failed:", err);
