@@ -955,35 +955,13 @@ const mapManager = (() => {
         if (dirContainer) dirContainer.innerHTML = '';
     };
 
-    const getManeuverIcon = (type, modifier) => {
-        if (type === 'depart') return 'arrow-up';
-        if (type === 'arrive') return 'map-pin';
-        if (modifier === 'uturn') return 'corner-down-left';
-        if (modifier && modifier.includes('right')) return 'corner-up-right';
-        if (modifier && modifier.includes('left')) return 'corner-up-left';
+    const getManeuverIconValhalla = (type) => {
+        if (type === 1 || type === 2 || type === 3) return 'arrow-up';
+        if (type === 4 || type === 5 || type === 6) return 'map-pin';
+        if (type === 9 || type === 10 || type === 11 || type === 18 || type === 20 || type === 23 || type === 38 || type === 26 || type === 27) return 'corner-up-right';
+        if (type === 14 || type === 15 || type === 16 || type === 19 || type === 21 || type === 24 || type === 39) return 'corner-up-left';
+        if (type === 12 || type === 13) return 'corner-down-left';
         return 'arrow-up';
-    };
-
-    const translateManeuver = (step) => {
-        if (!step || !step.maneuver) return "Sigue recto";
-        const type = step.maneuver.type;
-        const modifier = step.maneuver.modifier;
-        const name = step.name || "la calle";
-        
-        let text = "Sigue recto";
-        if (type === 'depart') text = `Camina por ${name}`;
-        else if (type === 'arrive') text = `Has llegado a tu destino`;
-        else if (type === 'turn') {
-            if (modifier && modifier.includes('right')) text = `Gira a la derecha hacia ${name}`;
-            else if (modifier && modifier.includes('left')) text = `Gira a la izquierda hacia ${name}`;
-            else text = `Gira hacia ${name}`;
-        } else if (type === 'roundabout' || type === 'rotary') {
-            text = `En la rotonda, sal hacia ${name}`;
-        } else if (type === 'end of road') {
-            if (modifier && modifier.includes('right')) text = `Gira a la derecha hacia ${name}`;
-            else text = `Gira a la izquierda hacia ${name}`;
-        }
-        return text;
     };
 
     const renderNavStep = () => {
@@ -1021,9 +999,9 @@ const mapManager = (() => {
         }
 
         const step = currentRouteSteps[currentStepIndex];
-        const instruction = translateManeuver(step);
-        const icon = getManeuverIcon(step.maneuver.type, step.maneuver.modifier);
-        const roundedDist = Math.round(step.distance);
+        const instruction = step.instruction || "Sigue recto";
+        const icon = getManeuverIconValhalla(step.type);
+        const roundedDist = Math.round(step.length * 1000);
         
         if (!contentInner || document.getElementById('nav-is-arrived')) {
             navContainer.innerHTML = `
@@ -1215,20 +1193,23 @@ const mapManager = (() => {
 
                     if (currentStepIndex < currentRouteSteps.length - 1) {
                         const nextStep = currentRouteSteps[currentStepIndex + 1];
-                        if (nextStep && nextStep.maneuver && nextStep.maneuver.location) {
-                            const stepLat = nextStep.maneuver.location[1];
-                            const stepLon = nextStep.maneuver.location[0];
-                            const distToNextStep = getDistance(uLat, uLon, stepLat, stepLon) * 1000;
-                            if (distToNextStep < 15) {
-                                currentStepIndex++;
-                                renderNavStep();
-                            } else {
-                                currentRouteSteps[currentStepIndex].distance = distToNextStep;
-                                renderNavStep();
+                        if (nextStep) {
+                            const nextStepCoord = navCurrentRouteLine[nextStep.begin_shape_index];
+                            if (nextStepCoord) {
+                                const stepLat = nextStepCoord[0];
+                                const stepLon = nextStepCoord[1];
+                                const distToNextStep = getDistance(uLat, uLon, stepLat, stepLon) * 1000;
+                                if (distToNextStep < 15) {
+                                    currentStepIndex++;
+                                    renderNavStep();
+                                } else {
+                                    currentRouteSteps[currentStepIndex].length = distToNextStep / 1000;
+                                    renderNavStep();
+                                }
                             }
                         }
                     } else {
-                         currentRouteSteps[currentStepIndex].distance = distToDest;
+                         currentRouteSteps[currentStepIndex].length = distToDest / 1000;
                          renderNavStep();
                     }
                 }
@@ -1240,19 +1221,73 @@ const mapManager = (() => {
         );
     };
 
+    const decodePolyline = (str, precision) => {
+        let index = 0,
+            lat = 0,
+            lng = 0,
+            coordinates = [],
+            shift = 0,
+            result = 0,
+            byte = null,
+            latitude_change,
+            longitude_change,
+            factor = Math.pow(10, precision || 5);
+
+        while (index < str.length) {
+            byte = null;
+            shift = 0;
+            result = 0;
+
+            do {
+                byte = str.charCodeAt(index++) - 63;
+                result |= (byte & 0x1f) << shift;
+                shift += 5;
+            } while (byte >= 0x20);
+
+            latitude_change = ((result & 1) ? ~(result >> 1) : (result >> 1));
+
+            shift = 0;
+            result = 0;
+
+            do {
+                byte = str.charCodeAt(index++) - 63;
+                result |= (byte & 0x1f) << shift;
+                shift += 5;
+            } while (byte >= 0x20);
+
+            longitude_change = ((result & 1) ? ~(result >> 1) : (result >> 1));
+
+            lat += latitude_change;
+            lng += longitude_change;
+
+            coordinates.push([lat / factor, lng / factor]);
+        }
+
+        return coordinates;
+    };
+
     const fetchRoute = async (lat1, lon1, lat2, lon2) => {
         try {
-            const url = `https://routing.openstreetmap.de/routed-foot/route/v1/driving/${lon1},${lat1};${lon2},${lat2}?steps=true&geometries=geojson&overview=full`;
+            const json = {
+                locations: [
+                    { lat: lat1, lon: lon1 },
+                    { lat: lat2, lon: lon2 }
+                ],
+                costing: "pedestrian",
+                language: "es-ES",
+                units: "kilometers"
+            };
+            const url = `https://valhalla1.openstreetmap.de/route?json=${encodeURIComponent(JSON.stringify(json))}`;
             const response = await fetch(url);
             const data = await response.json();
             
-            if (data.code !== 'Ok' || !data.routes || data.routes.length === 0) return;
+            if (!data.trip || !data.trip.legs || data.trip.legs.length === 0) return;
             
-            const route = data.routes[0];
-            const coordinates = route.geometry.coordinates.map(c => [c[1], c[0]]);
+            const leg = data.trip.legs[0];
+            const coordinates = decodePolyline(leg.shape, 6);
             
-            if (isNavigating && route.legs && route.legs[0] && route.legs[0].steps) {
-                currentRouteSteps = route.legs[0].steps;
+            if (isNavigating) {
+                currentRouteSteps = leg.maneuvers;
                 currentStepIndex = 0;
                 navCurrentRouteLine = coordinates;
                 renderNavStep();
@@ -1274,8 +1309,8 @@ const mapManager = (() => {
             
             const pill = document.getElementById('walk-info-pill');
             if (pill && !isNavigating) {
-                const walkDist = route.distance;
-                const walkSecs = route.duration;
+                const walkDist = data.trip.summary.length * 1000;
+                const walkSecs = data.trip.summary.time;
                 const walkMins = Math.max(1, Math.round(walkSecs / 60));
                 let timeStr = walkMins + ' min';
                 if (walkMins >= 60) {
@@ -1370,11 +1405,19 @@ const mapManager = (() => {
                 
                 Promise.all(top5.map(async (p) => {
                     try {
-                        const url = `https://routing.openstreetmap.de/routed-foot/route/v1/driving/${lon},${lat};${p.lon},${p.lat}?overview=false`;
+                        const json = {
+                            locations: [
+                                { lat: lat, lon: lon },
+                                { lat: p.lat, lon: p.lon }
+                            ],
+                            costing: "pedestrian",
+                            units: "kilometers"
+                        };
+                        const url = `https://valhalla1.openstreetmap.de/route?json=${encodeURIComponent(JSON.stringify(json))}`;
                         const response = await fetch(url);
                         const data = await response.json();
-                        if (data.code === 'Ok' && data.routes && data.routes.length > 0) {
-                            return { ...p, realDistance: data.routes[0].distance };
+                        if (data.trip && data.trip.summary) {
+                            return { ...p, realDistance: data.trip.summary.length * 1000 };
                         }
                         return { ...p, realDistance: Infinity };
                     } catch (e) {
