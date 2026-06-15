@@ -383,6 +383,26 @@ const mapManager = (() => {
                 if (entry.isIntersecting) {
                     setMode('todas');
                     obs.unobserve(entry.target);
+                    
+                    // Auto-localizar tras 2 segundos de carga inicial
+                    setTimeout(() => {
+                        geoService.getCurrentPosition((position) => {
+                            // Solo si el usuario sigue en modo 'todas' y no ha seleccionado ninguna parada manualmente
+                            if (currentMode === 'todas' && selectedParada === null) {
+                                const lat = position.coords.latitude;
+                                const lon = position.coords.longitude;
+                                userLocation = { lat, lon };
+                                
+                                if (userMarker) map.removeLayer(userMarker);
+                                userMarker = L.marker([lat, lon], { icon: userIcon }).addTo(map);
+                                userMarker.bindPopup("Tu ubicación actual");
+                                
+                                map.flyTo([lat, lon], 16, { animate: true, duration: 1.5 });
+                            }
+                        }, (err) => {
+                            console.log("Auto-location on load failed:", err);
+                        }, { timeout: 6000, maximumAge: 60000 });
+                    }, 2000);
                 }
             });
         }, { rootMargin: "200px" });
