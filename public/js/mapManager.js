@@ -444,13 +444,16 @@ const mapManager = (() => {
             marker.paradaData = p;
             marker.on('click', () => {
                 if (selectedParada === p) {
-                    map.flyToBounds([[p.lat, p.lon], [p.lat, p.lon]], { maxZoom: 17, paddingTopLeft: [0, 200] });
+                    if (routePolyline && !isNavigating) {
+                        map.fitBounds(routePolyline.getBounds(), { paddingTopLeft: [20, 200], paddingBottomRight: [20, 20], animate: true });
+                    } else {
+                        map.flyToBounds([[p.lat, p.lon], [p.lat, p.lon]], { maxZoom: 17, paddingTopLeft: [0, 200] });
+                    }
                     return;
                 }
                 
                 selectedParada = p;
                 renderMarkers(dbParadas);
-                map.flyToBounds([[p.lat, p.lon], [p.lat, p.lon]], { maxZoom: 17, paddingTopLeft: [0, 200] });
 
                 const tryUpdateDistance = () => {
                     if (p.distance === undefined) p.distance = getDistance(userLocation.lat, userLocation.lon, p.lat, p.lon);
@@ -461,6 +464,7 @@ const mapManager = (() => {
                 if (userLocation) {
                     tryUpdateDistance();
                 } else {
+                    map.flyToBounds([[p.lat, p.lon], [p.lat, p.lon]], { maxZoom: 17, paddingTopLeft: [0, 200] });
                     renderMapOverlay(p);
                     geoService.getCurrentPosition((pos) => {
                         userLocation = { lat: pos.coords.latitude, lon: pos.coords.longitude };
@@ -520,7 +524,6 @@ const mapManager = (() => {
         item.addEventListener('click', () => {
             selectedParada = p;
             renderMarkers(dbParadas);
-            map.flyToBounds([[p.lat, p.lon], [p.lat, p.lon]], { maxZoom: 17, paddingTopLeft: [0, 200] });
             
             const tryUpdateDistanceList = () => {
                 if (p.distance === undefined) p.distance = getDistance(userLocation.lat, userLocation.lon, p.lat, p.lon);
@@ -531,6 +534,7 @@ const mapManager = (() => {
             if (userLocation) {
                 tryUpdateDistanceList();
             } else {
+                map.flyToBounds([[p.lat, p.lon], [p.lat, p.lon]], { maxZoom: 17, paddingTopLeft: [0, 200] });
                 renderMapOverlay(p);
                 geoService.getCurrentPosition((pos) => {
                     userLocation = { lat: pos.coords.latitude, lon: pos.coords.longitude };
@@ -593,11 +597,12 @@ const mapManager = (() => {
         item.addEventListener('click', () => {
             selectedParada = p;
             renderMarkers(dbParadas);
-            map.flyToBounds([[p.lat, p.lon], [p.lat, p.lon]], { maxZoom: 17, paddingTopLeft: [0, 200] });
             
             if (userLocation) {
                 if (p.distance === undefined) p.distance = getDistance(userLocation.lat, userLocation.lon, p.lat, p.lon);
                 fetchRoute(userLocation.lat, userLocation.lon, p.lat, p.lon);
+            } else {
+                map.flyToBounds([[p.lat, p.lon], [p.lat, p.lon]], { maxZoom: 17, paddingTopLeft: [0, 200] });
             }
 
             renderMapOverlay(p);
@@ -1332,7 +1337,11 @@ const mapManager = (() => {
             }).addTo(map);
             
             if (!isNavigating) {
-                map.fitBounds(routePolyline.getBounds(), { padding: [30, 30] });
+                map.fitBounds(routePolyline.getBounds(), {
+                    paddingTopLeft: [20, 200],
+                    paddingBottomRight: [20, 20],
+                    animate: true
+                });
             }
             
             const pill = document.getElementById('walk-info-pill');
