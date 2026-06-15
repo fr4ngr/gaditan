@@ -83,6 +83,22 @@ const mapManager = (() => {
         iconAnchor: [13, 42]
     });
 
+    const selectedCustomIcon = L.divIcon({
+        className: 'custom-div-icon',
+        html: `
+            <div class="animated-sign animated-selected-sign" style="position: relative; width: 26px; height: 42px; filter: drop-shadow(0 3px 3px rgba(0,0,0,0.35)); display: flex; flex-direction: column; align-items: center;">
+                <div style="background-color: #0f172a; width: 26px; height: 32px; border-radius: 6px; padding: 2.5px; box-sizing: border-box; font-family: 'Inter', sans-serif; display: flex; flex-direction: column; z-index: 2;">
+                    <div style="background-color: white; width: 100%; height: 14px; border-radius: 3.5px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+                        <span style="color: black; font-weight: 900; font-size: 6.8px; letter-spacing: 0.8px; line-height: 1; display: block; -webkit-text-stroke: 0.2px black;">TAXI</span>
+                    </div>
+                </div>
+                <div style="width: 2px; height: 10px; background-color: #475569; margin-top: -1px; z-index: 1; box-shadow: 1px 0 2px rgba(0,0,0,0.15);"></div>
+            </div>
+        `,
+        iconSize: [26, 42],
+        iconAnchor: [13, 42]
+    });
+
     const userIcon = L.divIcon({
         className: 'user-div-icon',
         html: `
@@ -441,7 +457,8 @@ const mapManager = (() => {
         markersLayer.clearLayers();
         const paradasToRender = selectedParada !== null ? [selectedParada] : paradas;
         paradasToRender.forEach(p => {
-            const marker = L.marker([p.lat, p.lon], { icon: customIcon }).addTo(markersLayer);
+            const currentMarkerIcon = selectedParada !== null ? selectedCustomIcon : customIcon;
+            const marker = L.marker([p.lat, p.lon], { icon: currentMarkerIcon }).addTo(markersLayer);
             marker.paradaData = p;
             marker.on('click', () => {
                 if (selectedParada === p) {
@@ -577,7 +594,7 @@ const mapManager = (() => {
         item.innerHTML = `
             <div style="display: flex; align-items: stretch; min-width: 0; flex: 1;">
                 <div style="background: var(--brand-cyan); width: 60px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                    <div style="position: relative; width: 26px; height: 42px; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.25)); display: flex; flex-direction: column; align-items: center;">
+                    <div class="animated-sign" style="position: relative; width: 26px; height: 42px; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.25)); display: flex; flex-direction: column; align-items: center;">
                         <div style="background-color: #0f172a; width: 26px; height: 32px; border-radius: 6px; padding: 2.5px; box-sizing: border-box; font-family: 'Inter', sans-serif; display: flex; flex-direction: column; z-index: 2;">
                             <div style="background-color: white; width: 100%; height: 14px; border-radius: 3.5px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
                                 <span style="color: black; font-weight: 900; font-size: 6.8px; letter-spacing: 0.8px; line-height: 1; display: block; -webkit-text-stroke: 0.2px black;">TAXI</span>
@@ -727,7 +744,7 @@ const mapManager = (() => {
         overlay.innerHTML = `
             <div style="display: flex; align-items: center; gap: 0.75rem; width: 100%;">
                 <!-- Señal TAXI con palo (Traffic Sign Blue with Pole) -->
-                <div style="position: relative; width: 40px; height: 60px; display: flex; flex-direction: column; align-items: center; flex-shrink: 0; margin-right: 0.1rem;">
+                <div class="animated-sign animated-selected-sign" style="position: relative; width: 40px; height: 60px; display: flex; flex-direction: column; align-items: center; flex-shrink: 0; margin-right: 0.1rem;">
                     <div style="background-color: #0f172a; width: 40px; height: 48px; border-radius: 9px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); box-sizing: border-box; z-index: 2;">
                         <div style="background-color: white; width: 32px; height: 22px; border-radius: 5.5px; display: flex; align-items: center; justify-content: center;">
                             <span style="color: black; font-family: 'Inter', sans-serif; font-weight: 900; font-size: 0.6rem; letter-spacing: 1px; line-height: 1; -webkit-text-stroke: 0.3px black;">TAXI</span>

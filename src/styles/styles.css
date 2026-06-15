@@ -2169,6 +2169,35 @@ body.low-bandwidth .hero-slide-card.active-slide .glass.card {
     font-weight: 800 !important;
 }
 
+/* --- ANIMACIONES PARA SEÑAL TAXI --- */
+@keyframes sign-wink {
+    0% { transform: rotate(0deg) translateY(0); }
+    20% { transform: rotate(8deg) translateY(-2px); }
+    40% { transform: rotate(-6deg) translateY(-1px); }
+    60% { transform: rotate(4deg) translateY(0); }
+    80% { transform: rotate(-2deg) translateY(0); }
+    100% { transform: rotate(0deg) translateY(0); }
+}
+
+@keyframes sign-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+}
+
+.animated-sign {
+    transform-origin: bottom center;
+}
+
+/* Hover en la píldora: guiño rápido */
+.pildora-parada.pildora-hover:hover .animated-sign {
+    animation: sign-wink 0.8s ease-in-out;
+}
+
+/* Estado seleccionado: guiño inicial y luego flotar continuo */
+.animated-selected-sign {
+    animation: sign-wink 0.8s ease-in-out, sign-float 3s ease-in-out infinite 0.8s;
+}
+
 .pildora-parada span {
     color: rgba(15, 23, 42, 0.6) !important;
     font-weight: 500 !important;
