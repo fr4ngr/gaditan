@@ -70,17 +70,17 @@ const mapManager = (() => {
     const customIcon = L.divIcon({
         className: 'custom-div-icon',
         html: `
-            <div style="position: relative; width: 26px; height: 26px; filter: drop-shadow(0 3px 3px rgba(0,0,0,0.35));">
-                <div style="background-color: #2563eb; width: 100%; height: 100%; border-radius: 6px; display: flex; align-items: center; justify-content: center; box-sizing: border-box; font-family: 'Inter', sans-serif;">
-                    <div style="background-color: white; width: 20px; height: 14px; border-radius: 3.5px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+            <div style="position: relative; width: 26px; height: 32px; filter: drop-shadow(0 3px 3px rgba(0,0,0,0.35));">
+                <div style="background-color: #2563eb; width: 100%; height: 100%; border-radius: 6px; padding: 2.5px; box-sizing: border-box; font-family: 'Inter', sans-serif; display: flex; flex-direction: column;">
+                    <div style="background-color: white; width: 100%; height: 14px; border-radius: 3.5px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
                         <span style="color: black; font-weight: 900; font-size: 7.2px; letter-spacing: 0.4px; line-height: 1; display: block;">TAXI</span>
                     </div>
                 </div>
                 <div style="position: absolute; bottom: -5px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 6px solid #2563eb;"></div>
             </div>
         `,
-        iconSize: [26, 31],
-        iconAnchor: [13, 31]
+        iconSize: [26, 37],
+        iconAnchor: [13, 37]
     });
 
     const userIcon = L.divIcon({
@@ -734,7 +734,7 @@ const mapManager = (() => {
         overlay.innerHTML = `
             <div style="display: flex; align-items: center; gap: 0.75rem; width: 100%;">
                 <!-- Señal TAXI (Traffic Sign Blue rounded) -->
-                <div style="background-color: #2563eb; width: 40px; height: 40px; flex-shrink: 0; border-radius: 9px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.15);">
+                <div style="background-color: #2563eb; width: 40px; height: 48px; flex-shrink: 0; border-radius: 9px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); box-sizing: border-box;">
                     <div style="background-color: white; width: 32px; height: 22px; border-radius: 5.5px; display: flex; align-items: center; justify-content: center;">
                         <span style="color: black; font-family: 'Inter', sans-serif; font-weight: 900; font-size: 0.65rem; letter-spacing: 0.6px; line-height: 1;">TAXI</span>
                     </div>
