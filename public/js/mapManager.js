@@ -578,12 +578,12 @@ const mapManager = (() => {
             <div style="display: flex; align-items: stretch; min-width: 0; flex: 1;">
                 <div style="background: var(--brand-cyan); width: 60px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                     <div style="position: relative; width: 26px; height: 42px; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.25)); display: flex; flex-direction: column; align-items: center;">
-                        <div style="background-color: #2563eb; width: 26px; height: 32px; border-radius: 6px; padding: 2.5px; box-sizing: border-box; font-family: 'Inter', sans-serif; display: flex; flex-direction: column; z-index: 2;">
+                        <div style="background-color: #0f172a; width: 26px; height: 32px; border-radius: 6px; padding: 2.5px; box-sizing: border-box; font-family: 'Inter', sans-serif; display: flex; flex-direction: column; z-index: 2;">
                             <div style="background-color: white; width: 100%; height: 14px; border-radius: 3.5px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
                                 <span style="color: black; font-weight: 900; font-size: 7.2px; letter-spacing: 0.4px; line-height: 1; display: block;">TAXI</span>
                             </div>
                         </div>
-                        <div style="width: 2px; height: 10px; background-color: #94a3b8; margin-top: -1px; z-index: 1;"></div>
+                        <div style="width: 2px; height: 10px; background-color: #475569; margin-top: -1px; z-index: 1;"></div>
                     </div>
                 </div>
                 <div style="display: flex; flex-direction: column; justify-content: center; min-width: 0; padding: 0.7rem 0.8rem; flex: 1;">
