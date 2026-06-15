@@ -206,11 +206,7 @@ export function updateCalcPriceUI() {
     if(taximetroEl) taximetroEl.innerText = '~ ' + formattedTaximetro + '€';
 }
 
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => pricingCalc.init());
-} else {
-    pricingCalc.init();
-}
+// Removed broken pricingCalc reference
 
 export async function calculateRoute() {
     const errorDiv = document.getElementById('calc-error');
