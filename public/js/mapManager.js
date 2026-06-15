@@ -11,6 +11,8 @@ const mapManager = (() => {
     let currentRouteSteps = [];
     let currentStepIndex = 0;
     let watchPositionId = null;
+    let highlightCycleInterval = null;
+    let currentlyHighlightedMarker = null;
     
     // --- Test Mode State ---
     let testMode = false;
@@ -80,6 +82,19 @@ const mapManager = (() => {
         `,
         iconSize: [36, 46],
         iconAnchor: [18, 46]
+    });
+
+    const stopDotIcon = L.divIcon({
+        className: 'stop-dot-icon',
+        html: `
+            <div style="position: relative; width: 22px; height: 22px; border-radius: 50%; background-color: #2563eb; border: 2px solid white; box-shadow: 0 2px 6px rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center;">
+                <div style="width: 12px; height: 12px; border-radius: 50%; background-color: white; display: flex; align-items: center; justify-content: center;">
+                    <span style="color: #0f172a; font-family: 'Outfit', sans-serif; font-weight: 950; font-size: 9px; line-height: 1; transform: translateY(-0.5px);">T</span>
+                </div>
+            </div>
+        `,
+        iconSize: [22, 22],
+        iconAnchor: [11, 11]
     });
 
     const userIcon = L.divIcon({
@@ -372,10 +387,73 @@ const mapManager = (() => {
         });
     };
 
+    const refreshMarkerIcons = () => {
+        markersLayer.eachLayer(layer => {
+            if (layer instanceof L.Marker && layer.paradaData) {
+                const p = layer.paradaData;
+                if (selectedParada && p.id === selectedParada.id) {
+                    layer.setIcon(customIcon);
+                } else if (currentlyHighlightedMarker && currentlyHighlightedMarker.paradaData.id === p.id && currentMode === 'todas') {
+                    layer.setIcon(customIcon);
+                } else {
+                    layer.setIcon(stopDotIcon);
+                }
+            }
+        });
+    };
+
+    const startHighlightCycle = () => {
+        if (highlightCycleInterval) {
+            clearInterval(highlightCycleInterval);
+            highlightCycleInterval = null;
+        }
+        highlightCycleInterval = setInterval(() => {
+            if (currentMode !== 'todas' || isNavigating) return;
+
+            const layers = [];
+            markersLayer.eachLayer(layer => {
+                if (layer instanceof L.Marker && layer.paradaData) {
+                    layers.push(layer);
+                }
+            });
+
+            if (layers.length === 0) return;
+
+            const availableLayers = layers.filter(layer => {
+                if (selectedParada && layer.paradaData.id === selectedParada.id) {
+                    return false;
+                }
+                return true;
+            });
+
+            if (availableLayers.length === 0) return;
+
+            const randomMarker = availableLayers[Math.floor(Math.random() * availableLayers.length)];
+            currentlyHighlightedMarker = randomMarker;
+            refreshMarkerIcons();
+        }, 3000);
+    };
+
+    const stopHighlightCycle = () => {
+        if (highlightCycleInterval) {
+            clearInterval(highlightCycleInterval);
+            highlightCycleInterval = null;
+        }
+        currentlyHighlightedMarker = null;
+    };
+
     const renderMarkers = (paradas) => {
         markersLayer.clearLayers();
         paradas.forEach(p => {
-            const marker = L.marker([p.lat, p.lon], { icon: customIcon }).addTo(markersLayer);
+            let initialIcon = stopDotIcon;
+            if (selectedParada && p.id === selectedParada.id) {
+                initialIcon = customIcon;
+            } else if (currentlyHighlightedMarker && currentlyHighlightedMarker.paradaData.id === p.id && currentMode === 'todas') {
+                initialIcon = customIcon;
+            }
+            
+            const marker = L.marker([p.lat, p.lon], { icon: initialIcon }).addTo(markersLayer);
+            marker.paradaData = p;
             marker.on('click', () => {
                 selectedParada = p;
                 map.flyToBounds([[p.lat, p.lon], [p.lat, p.lon]], { maxZoom: 17, paddingTopLeft: [0, 200] });
@@ -396,7 +474,7 @@ const mapManager = (() => {
                     iconAnchor: [21, 56]
                 });
                 marker.setIcon(selectedIcon);
-                setTimeout(() => marker.setIcon(customIcon), 1500);
+                setTimeout(() => refreshMarkerIcons(), 1500);
 
                 const tryUpdateDistance = () => {
                     if (p.distance === undefined) p.distance = getDistance(userLocation.lat, userLocation.lon, p.lat, p.lon);
@@ -424,6 +502,12 @@ const mapManager = (() => {
                 }
             });
         });
+
+        if (currentMode === 'todas') {
+            startHighlightCycle();
+        } else {
+            stopHighlightCycle();
+        }
     };
 
 
@@ -467,7 +551,7 @@ const mapManager = (() => {
             selectedParada = p;
             map.flyToBounds([[p.lat, p.lon], [p.lat, p.lon]], { maxZoom: 17, paddingTopLeft: [0, 200] });
             markersLayer.eachLayer(layer => {
-                if (layer.getLatLng().lat === p.lat && layer.getLatLng().lng === p.lon) {
+                if (layer instanceof L.Marker && layer.paradaData && layer.paradaData.id === p.id) {
                     const selectedIcon = L.divIcon({
                         className: 'custom-div-icon',
                         html: `
@@ -484,7 +568,7 @@ const mapManager = (() => {
                         iconAnchor: [21, 56]
                     });
                     layer.setIcon(selectedIcon);
-                    setTimeout(() => layer.setIcon(customIcon), 1500);
+                    setTimeout(() => refreshMarkerIcons(), 1500);
                 }
             });
             
@@ -560,7 +644,7 @@ const mapManager = (() => {
             selectedParada = p;
             map.flyToBounds([[p.lat, p.lon], [p.lat, p.lon]], { maxZoom: 17, paddingTopLeft: [0, 200] });
             markersLayer.eachLayer(layer => {
-                if (layer.getLatLng().lat === p.lat && layer.getLatLng().lng === p.lon) {
+                if (layer instanceof L.Marker && layer.paradaData && layer.paradaData.id === p.id) {
                     const selectedIcon = L.divIcon({
                         className: 'custom-div-icon',
                         html: `
@@ -577,7 +661,7 @@ const mapManager = (() => {
                         iconAnchor: [21, 56]
                     });
                     layer.setIcon(selectedIcon);
-                    setTimeout(() => layer.setIcon(customIcon), 1500);
+                    setTimeout(() => refreshMarkerIcons(), 1500);
                 }
             });
             
@@ -1383,6 +1467,7 @@ const mapManager = (() => {
                     resultados.sort((a, b) => a.realDistance - b.realDistance);
                     const masCercana = resultados[0];
                     
+                    selectedParada = masCercana;
                     renderMarkers(paradasConDistancia);
                     
                     const container = document.getElementById('paradas-list-container');
