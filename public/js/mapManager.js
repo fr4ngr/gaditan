@@ -2,6 +2,10 @@
 const mapManager = (() => {
     let map = null;
     let markersLayer = null;
+    let markers = [];
+    let poiMarkers = [];
+    const routePolylineId = 'route-polyline';
+    let currentRouteCoords = null;
     let userMarker = null;
     let routePolyline = null;
     let currentMode = 'todas'; // 'todas' | 'cercana' | 'elegir'
@@ -21,7 +25,7 @@ const mapManager = (() => {
     const geoService = {
         getCurrentPosition: (success, error, options) => {
             if (testMode && testMarker) {
-                const latlng = testMarker.getLatLng();
+                const latlng = testMarker.getLngLat();
                 success({ coords: { latitude: latlng.lat, longitude: latlng.lng, heading: 0 } });
             } else if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(success, error, options);
@@ -34,7 +38,7 @@ const mapManager = (() => {
                 const id = ++watchCounter;
                 watchCallbacks[id] = success;
                 if (testMarker) {
-                    const latlng = testMarker.getLatLng();
+                    const latlng = testMarker.getLngLat();
                     success({ coords: { latitude: latlng.lat, longitude: latlng.lng, heading: 0 } });
                 }
                 return id;
@@ -52,7 +56,7 @@ const mapManager = (() => {
         },
         triggerWatch: () => {
             if (testMode && testMarker) {
-                const latlng = testMarker.getLatLng();
+                const latlng = testMarker.getLngLat();
                 Object.values(watchCallbacks).forEach(cb => {
                     cb({ coords: { latitude: latlng.lat, longitude: latlng.lng, heading: 0 } });
                 });
@@ -373,66 +377,65 @@ const mapManager = (() => {
         customControls.appendChild(zoomCapsule);
 
         // Control para Modo Prueba (Simulador GPS)
-        const TestModeControl = L.Control.extend({
-            options: { position: 'topright' },
-            onAdd: function() {
-                const btn = L.DomUtil.create('button', 'map-test-btn');
-                btn.title = 'Activar/Desactivar Simulador GPS';
-                btn.innerHTML = `<span style="font-size:0.7rem; font-weight:800; letter-spacing:0.5px;">MODO PRUEBA</span>`;
-                btn.style.cssText = `
-                    background: rgba(245, 158, 11, 0.9);
-                    border: 2px solid #d97706;
-                    border-radius: 8px;
-                    padding: 0.4rem 0.8rem;
-                    color: white;
-                    cursor: pointer;
-                    backdrop-filter: blur(4px);
-                    box-shadow: 0 4px 10px rgba(245, 158, 11, 0.4);
-                    transition: all 0.2s;
-                    margin-top: 10px;
-                    margin-right: 10px;
-                `;
-                L.DomEvent.on(btn, 'click', L.DomEvent.stopPropagation);
-                L.DomEvent.on(btn, 'click', () => {
-                    testMode = !testMode;
-                    if (testMode) {
-                        btn.style.background = '#ef4444';
-                        btn.style.borderColor = '#b91c1c';
-                        btn.innerHTML = `<span style="font-size:0.7rem; font-weight:800; letter-spacing:0.5px;">PRUEBA ACTIVA</span>`;
-                        
-                        map.setView([36.529, -6.292], 16);
-                        
-                        const testIcon = createCustomIconObj({
-                            className: 'test-user-icon',
-                            html: `<div style="background:#ef4444; width:20px; height:20px; border-radius:50%; border:3px solid white; box-shadow: 0 0 10px rgba(239, 68, 68, 0.8);"></div><div style="position:absolute; top:-25px; left:-40px; background:#ef4444; color:white; font-size:10px; padding:2px 6px; border-radius:4px; font-weight:bold; white-space:nowrap;">Tú (Simulado)</div>`,
-                            iconSize: [20, 20],
-                            iconAnchor: [10, 10]
-                        });
-                        
-                        const el = document.createElement('div'); el.innerHTML = testIcon.options.html; el.className = testIcon.options.className; testMarker = new maplibregl.Marker({ element: el, draggable: true }).setLngLat([-6.292, 36.529]).addTo(map);
-                        
-                        testMarker.on('drag', () => {
-                            geoService.triggerWatch();
-                        });
-                        
-                        alert("Modo Prueba Activado. Arrastra el marcador rojo para simular que caminas por Cádiz.");
-                        
-                    } else {
-                        btn.style.background = 'rgba(245, 158, 11, 0.9)';
-                        btn.style.borderColor = '#d97706';
-                        btn.innerHTML = `<span style="font-size:0.7rem; font-weight:800; letter-spacing:0.5px;">MODO PRUEBA</span>`;
-                        
-                        if (testMarker) {
-                            map.removeLayer(testMarker);
-                            testMarker = null;
-                        }
-                        alert("Modo Prueba Desactivado.");
-                    }
+        const btnTestMode = document.createElement('button');
+        btnTestMode.title = 'Activar/Desactivar Simulador GPS';
+        btnTestMode.innerHTML = `<span style="font-size:0.7rem; font-weight:800; letter-spacing:0.5px;">MODO PRUEBA</span>`;
+        btnTestMode.style.cssText = `
+            position: absolute;
+            top: 10px;
+            right: 60px;
+            z-index: 1000;
+            background: rgba(245, 158, 11, 0.9);
+            border: 2px solid #d97706;
+            border-radius: 8px;
+            padding: 0.4rem 0.8rem;
+            color: white;
+            cursor: pointer;
+            backdrop-filter: blur(4px);
+            box-shadow: 0 4px 10px rgba(245, 158, 11, 0.4);
+            transition: all 0.2s;
+        `;
+        document.getElementById('map').appendChild(btnTestMode);
+        
+        btnTestMode.addEventListener('mousedown', e => e.stopPropagation());
+        btnTestMode.addEventListener('touchstart', e => e.stopPropagation(), {passive: false});
+        btnTestMode.addEventListener('click', (e) => {
+            e.stopPropagation();
+            testMode = !testMode;
+            if (testMode) {
+                btnTestMode.style.background = '#ef4444';
+                btnTestMode.style.borderColor = '#b91c1c';
+                btnTestMode.innerHTML = `<span style="font-size:0.7rem; font-weight:800; letter-spacing:0.5px;">PRUEBA ACTIVA</span>`;
+                
+                map.flyTo({ center: [-6.292, 36.529], zoom: 16 });
+                
+                const testIcon = createCustomIconObj({
+                    className: 'test-user-icon',
+                    html: `<div style="background:#ef4444; width:20px; height:20px; border-radius:50%; border:3px solid white; box-shadow: 0 0 10px rgba(239, 68, 68, 0.8);"></div><div style="position:absolute; top:-25px; left:-40px; background:#ef4444; color:white; font-size:10px; padding:2px 6px; border-radius:4px; font-weight:bold; white-space:nowrap;">Tú (Simulado)</div>`,
+                    iconSize: [20, 20],
+                    iconAnchor: [10, 10]
                 });
-                return btn;
+                
+                const el = document.createElement('div'); el.innerHTML = testIcon.options.html; el.className = testIcon.options.className; testMarker = new maplibregl.Marker({ element: el, draggable: true }).setLngLat([-6.292, 36.529]).addTo(map);
+                
+                testMarker.on('drag', () => {
+                    geoService.triggerWatch();
+                });
+                
+                alert("Modo Prueba Activado. Arrastra el marcador rojo para simular que caminas por Cádiz.");
+                
+            } else {
+                btnTestMode.style.background = 'rgba(245, 158, 11, 0.9)';
+                btnTestMode.style.borderColor = '#d97706';
+                btnTestMode.innerHTML = `<span style="font-size:0.7rem; font-weight:800; letter-spacing:0.5px;">MODO PRUEBA</span>`;
+                
+                if (testMarker) {
+                    testMarker.remove();
+                    testMarker = null;
+                }
+                alert("Modo Prueba Desactivado.");
             }
         });
-        new TestModeControl().addTo(map);
 
         document.getElementById('btn-todas').addEventListener('click', () => setMode('todas'));
         document.getElementById('btn-cercana').addEventListener('click', () => setMode('cercana'));
@@ -489,15 +492,14 @@ const mapManager = (() => {
                 .setLngLat([poi.lon, poi.lat])
                 .addTo(map);
             poiMarkers.push(marker);
-            marker.bindPopup(`
-                <div style="font-family: 'Outfit', sans-serif; text-align: center; padding: 0.5rem;">
-                    <h3 style="margin: 0 0 0.5rem 0; font-weight: 800; color: #0f172a; font-size: 1rem;">${poi.name}</h3>
-                    <p style="margin: 0; font-size: 0.8rem; color: #475569;">${poi.description}</p>
-                </div>
-            `, {
-                closeButton: false,
-                className: 'poi-popup'
-            });
+            const popup = new maplibregl.Popup({ closeButton: false, className: 'poi-popup' })
+                .setHTML(`
+                    <div style="font-family: 'Outfit', sans-serif; text-align: center; padding: 0.5rem;">
+                        <h3 style="margin: 0 0 0.5rem 0; font-weight: 800; color: #0f172a; font-size: 1rem;">${poi.name}</h3>
+                        <p style="margin: 0; font-size: 0.8rem; color: #475569;">${poi.description}</p>
+                    </div>
+                `);
+            marker.setPopup(popup);
         });
     };
 
@@ -514,10 +516,12 @@ const mapManager = (() => {
                 .addTo(map);
             markers.push(marker);
             marker.paradaData = p;
-            marker.on('click', () => {
+            el.addEventListener('click', (e) => {
+                e.stopPropagation();
                 if (selectedParada === p) {
-                    if (routePolyline && !isNavigating) {
-                        map.fitBounds(routePolyline.getBounds(), { paddingTopLeft: [20, 200], paddingBottomRight: [20, 20], animate: true });
+                    const bounds = getRouteBounds();
+                    if (bounds && !isNavigating) {
+                        map.fitBounds(bounds, { padding: { top: 200, left: 20, bottom: 20, right: 20 }, animate: true });
                     } else {
                         map.fitBounds([[p.lon, p.lat], [p.lon, p.lat]], { maxZoom: 17, padding: { top: 200, left: 0, bottom: 20, right: 20 }, animate: true });
                     }
@@ -550,7 +554,7 @@ const mapManager = (() => {
                 
                 // Start navigation immediately
                 startNavigation(p.lat, p.lon, p.name);
-                setTimeout(() => { if (map) map.invalidateSize(); }, 400);
+                setTimeout(() => { if (map) map.resize(); }, 400);
 
                 if (currentMode === 'todas') {
                     const listContainer = document.getElementById('paradas-list-container');
@@ -615,7 +619,7 @@ const mapManager = (() => {
                     tryUpdateDistanceList();
                 }, () => {}, { timeout: 5000, maximumAge: 60000 });
             }
-            setTimeout(() => { if (map) map.invalidateSize(); }, 400);
+            setTimeout(() => { if (map) map.resize(); }, 400);
 
             const listContainer = document.getElementById('paradas-list-container');
             if (listContainer) {
@@ -689,7 +693,7 @@ const mapManager = (() => {
             }
 
             renderMapOverlay(p);
-            setTimeout(() => { if (map) map.invalidateSize(); }, 400);
+            setTimeout(() => { if (map) map.resize(); }, 400);
 
             const listContainer = document.getElementById('paradas-list-container');
             if (listContainer) {
@@ -1042,6 +1046,13 @@ const mapManager = (() => {
             container.appendChild(pager);
         }
         if (typeof lucide !== 'undefined') lucide.createIcons();
+    };
+
+    const getRouteBounds = () => {
+        if (!currentRouteCoords || currentRouteCoords.length === 0) return null;
+        const bounds = new maplibregl.LngLatBounds();
+        currentRouteCoords.forEach(c => bounds.extend([c[1], c[0]]));
+        return bounds;
     };
 
     const clearRoute = () => {
@@ -1420,6 +1431,7 @@ const mapManager = (() => {
             
             const leg = data.trip.legs[0];
             const coordinates = decodePolyline(leg.shape, 6);
+            currentRouteCoords = coordinates;
             
             if (isNavigating) {
                 currentRouteSteps = leg.maneuvers;
@@ -1495,16 +1507,16 @@ const mapManager = (() => {
             updateVisibleParadas();
             
             if (userMarker) {
-                map.removeLayer(userMarker);
+                userMarker.remove();
                 userMarker = null;
             }
             
             setTimeout(() => { 
                 if (map) {
-                    map.invalidateSize();                    
+                    map.resize();                    
                     const bounds = new maplibregl.LngLatBounds();
                     dbParadas.map(p => [p.lat, p.lon]).forEach(c => bounds.extend([c[1], c[0]]));
-                    map.flyToBounds(bounds, { padding: [20, 20], animate: true, duration: 1.0, easeLinearity: 0.25 });
+                    map.fitBounds(bounds, { padding: 20, duration: 1000 });
                 }
             }, 400);
             
@@ -1517,14 +1529,14 @@ const mapManager = (() => {
                         const lat = position.coords.latitude;
                         const lon = position.coords.longitude;
                         userLocation = { lat, lon };
-                        if (userMarker) map.removeLayer(userMarker);
+                        if (userMarker) userMarker.remove();
                         const el = document.createElement('div');
                     el.innerHTML = userIcon.options.html;
                     if (userIcon.options.className) el.className = userIcon.options.className;
                     userMarker = new maplibregl.Marker({ element: el })
                         .setLngLat([lon, lat])
                         .addTo(map);
-                        userMarker.bindPopup("Tu ubicación actual");
+                        userMarker.setPopup(new maplibregl.Popup().setText("Tu ubicación actual"));
                         map.flyTo([lat, lon], 16, { animate: true, duration: 1.5 });
                     }
                 }, (err) => {
@@ -1537,7 +1549,7 @@ const mapManager = (() => {
             
             map.off('moveend', updateVisibleParadas);
             
-            setTimeout(() => { if (map) map.invalidateSize(); }, 400);
+            setTimeout(() => { if (map) map.resize(); }, 400);
             
             geoService.getCurrentPosition((position) => {
                 const lat = position.coords.latitude;
@@ -1545,14 +1557,14 @@ const mapManager = (() => {
                 
                 userLocation = { lat, lon };
                 
-                if (userMarker) map.removeLayer(userMarker);
+                if (userMarker) userMarker.remove();
                 const el = document.createElement('div');
                     el.innerHTML = userIcon.options.html;
                     if (userIcon.options.className) el.className = userIcon.options.className;
                     userMarker = new maplibregl.Marker({ element: el })
                         .setLngLat([lon, lat])
                         .addTo(map);
-                userMarker.bindPopup("Tu ubicación actual");
+                userMarker.setPopup(new maplibregl.Popup().setText("Tu ubicación actual"));
 
                 const paradasConDistancia = dbParadas.map(p => {
                     return { ...p, distance: getDistance(lat, lon, p.lat, p.lon) };
@@ -1591,10 +1603,9 @@ const mapManager = (() => {
                     renderMapOverlay(masCercana);
                     startNavigation(masCercana.lat, masCercana.lon, masCercana.name);
                     
-                    const bounds = L.latLngBounds([
-                        [lat, lon],
-                        [masCercana.lat, masCercana.lon]
-                    ]);
+                    const bounds = new maplibregl.LngLatBounds();
+                    bounds.extend([lon, lat]);
+                    bounds.extend([masCercana.lon, masCercana.lat]);
                     
                     map.fitBounds(bounds, { padding: {top: 180, left: 20, bottom: 20, right: 20}, duration: 1200 });
 

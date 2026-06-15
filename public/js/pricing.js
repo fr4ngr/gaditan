@@ -235,36 +235,77 @@ export async function calculateRoute() {
         mapDiv.style.display = 'block';
         
         if (!calcContext.calcMapInstance) {
-            calcContext.calcMapInstance = L.map('calc-map').setView([36.52, -6.29], 13);
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-                attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
-                subdomains: 'abcd',
-                maxZoom: 19
-            }).addTo(calcContext.calcMapInstance);
-            calcContext.calcMapLayerGroup = L.featureGroup().addTo(calcContext.calcMapInstance);
+            calcContext.calcMapInstance = new maplibregl.Map({
+                container: 'calc-map',
+                style: 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json',
+                center: [-6.29, 36.52],
+                zoom: 13,
+                attributionControl: false
+            });
+            calcContext.calcMapInstance.addControl(new maplibregl.AttributionControl({ compact: true }), 'bottom-right');
+            calcContext.calcMapMarkers = [];
         } else {
-            calcContext.calcMapLayerGroup.clearLayers();
+            // Limpiar marcadores
+            if (calcContext.calcMapMarkers) {
+                calcContext.calcMapMarkers.forEach(m => m.remove());
+            }
+            calcContext.calcMapMarkers = [];
+            // Limpiar ruta
+            if (calcContext.calcMapInstance.getLayer('calc-route-line')) {
+                calcContext.calcMapInstance.removeLayer('calc-route-line');
+                calcContext.calcMapInstance.removeSource('calc-route-line');
+            }
         }
         
-        const originMarker = L.marker([exactOrigin.lat, exactOrigin.lon]).bindPopup("Origen");
-        const destMarker = L.marker([exactDest.lat, exactDest.lon]).bindPopup("Destino");
-        calcContext.calcMapLayerGroup.addLayer(originMarker);
-        calcContext.calcMapLayerGroup.addLayer(destMarker);
+        const originMarker = new maplibregl.Marker()
+            .setLngLat([exactOrigin.lon, exactOrigin.lat])
+            .setPopup(new maplibregl.Popup().setText("Origen"))
+            .addTo(calcContext.calcMapInstance);
+            
+        const destMarker = new maplibregl.Marker()
+            .setLngLat([exactDest.lon, exactDest.lat])
+            .setPopup(new maplibregl.Popup().setText("Destino"))
+            .addTo(calcContext.calcMapInstance);
+            
+        calcContext.calcMapMarkers.push(originMarker, destMarker);
         
         if (routeDetails.geometry) {
-            const routeLine = L.geoJSON(routeDetails.geometry, {
-                style: {
-                    color: '#00d2ff',
-                    weight: 4,
-                    opacity: 0.8
+            // MapLibre espera GeoJSON
+            calcContext.calcMapInstance.addSource('calc-route-line', {
+                type: 'geojson',
+                data: {
+                    type: 'Feature',
+                    properties: {},
+                    geometry: routeDetails.geometry
                 }
             });
-            calcContext.calcMapLayerGroup.addLayer(routeLine);
+            
+            calcContext.calcMapInstance.addLayer({
+                id: 'calc-route-line',
+                type: 'line',
+                source: 'calc-route-line',
+                layout: {
+                    'line-join': 'round',
+                    'line-cap': 'round'
+                },
+                paint: {
+                    'line-color': '#06b6d4',
+                    'line-width': 4,
+                    'line-opacity': 0.8
+                }
+            });
+        }
+        
+        const bounds = new maplibregl.LngLatBounds();
+        bounds.extend([exactOrigin.lon, exactOrigin.lat]);
+        bounds.extend([exactDest.lon, exactDest.lat]);
+        if (routeDetails.geometry && routeDetails.geometry.coordinates) {
+            routeDetails.geometry.coordinates.forEach(coord => bounds.extend(coord));
         }
         
         setTimeout(() => {
-            calcContext.calcMapInstance.invalidateSize();
-            calcContext.calcMapInstance.fitBounds(calcContext.calcMapLayerGroup.getBounds(), { padding: [20, 20] });
+            calcContext.calcMapInstance.resize();
+            calcContext.calcMapInstance.fitBounds(bounds, { padding: 20 });
         }, 100);
 
         loadingDiv.style.display = 'none';
