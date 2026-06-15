@@ -234,104 +234,43 @@ const mapManager = (() => {
         };
         customControls.appendChild(poiBtn);
 
-        // 2. Botón de Localizar (Mirilla)
-        const locateBtn = document.createElement('button');
-        locateBtn.title = 'Localizar parada más cercana';
-        locateBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="8"/><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/>
-            <line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/>
-            <circle cx="12" cy="12" r="2" fill="currentColor"/>
-        </svg>`;
-        locateBtn.style.cssText = `
+        // 2. Cápsula de Zoom Horizontal (- +)
+        const zoomCapsule = document.createElement('div');
+        zoomCapsule.id = 'custom-zoom-capsule';
+        zoomCapsule.style.cssText = `
             background: rgba(15, 23, 42, 0.85);
             border: 1px solid rgba(6, 182, 212, 0.4);
-            border-radius: 50%;
-            width: 40px; height: 40px;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer;
-            color: #06b6d4;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: row;
+            height: 40px;
+            overflow: hidden;
             backdrop-filter: blur(10px);
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            transition: all 0.2s;
-            padding: 0;
+            pointer-events: auto;
         `;
-        locateBtn.onmouseover = () => {
-            locateBtn.style.background = 'rgba(6, 182, 212, 0.2)';
-            locateBtn.style.borderColor = '#06b6d4';
-        };
-        locateBtn.onmouseout = () => {
-            locateBtn.style.background = 'rgba(15, 23, 42, 0.85)';
-            locateBtn.style.borderColor = 'rgba(6, 182, 212, 0.4)';
-        };
-        locateBtn.onclick = (e) => {
-            if (e) {
-                e.preventDefault();
-                e.stopPropagation();
-            }
-            setMode('cercana');
-        };
-        customControls.appendChild(locateBtn);
 
-        // 3. Botón de Zoom In (+)
-        const zoomInBtn = document.createElement('button');
-        zoomInBtn.title = 'Acercar';
-        zoomInBtn.innerHTML = `<span style="font-size: 1.5rem; line-height: 1; margin-top: -2px;">+</span>`;
-        zoomInBtn.style.cssText = `
-            background: rgba(15, 23, 42, 0.85);
-            border: 1px solid rgba(6, 182, 212, 0.4);
-            border-radius: 50%;
-            width: 40px; height: 40px;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer;
-            color: #06b6d4;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            transition: all 0.2s;
-            padding: 0;
-            font-weight: 600;
-        `;
-        zoomInBtn.onmouseover = () => {
-            zoomInBtn.style.background = 'rgba(6, 182, 212, 0.2)';
-            zoomInBtn.style.borderColor = '#06b6d4';
-        };
-        zoomInBtn.onmouseout = () => {
-            zoomInBtn.style.background = 'rgba(15, 23, 42, 0.85)';
-            zoomInBtn.style.borderColor = 'rgba(6, 182, 212, 0.4)';
-        };
-        zoomInBtn.onclick = (e) => {
-            if (e) {
-                e.preventDefault();
-                e.stopPropagation();
-            }
-            map.zoomIn();
-        };
-        customControls.appendChild(zoomInBtn);
-
-        // 4. Botón de Zoom Out (-)
+        // Botón de Zoom Out (-)
         const zoomOutBtn = document.createElement('button');
         zoomOutBtn.title = 'Alejar';
         zoomOutBtn.innerHTML = `<span style="font-size: 1.5rem; line-height: 1; margin-top: -2px;">−</span>`;
         zoomOutBtn.style.cssText = `
-            background: rgba(15, 23, 42, 0.85);
-            border: 1px solid rgba(6, 182, 212, 0.4);
-            border-radius: 50%;
-            width: 40px; height: 40px;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer;
+            background: transparent;
+            border: none;
+            border-right: 1px solid rgba(6, 182, 212, 0.25);
             color: #06b6d4;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            width: 40px; height: 40px;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 600;
             transition: all 0.2s;
             padding: 0;
-            font-weight: 600;
         `;
         zoomOutBtn.onmouseover = () => {
             zoomOutBtn.style.background = 'rgba(6, 182, 212, 0.2)';
-            zoomOutBtn.style.borderColor = '#06b6d4';
         };
         zoomOutBtn.onmouseout = () => {
-            zoomOutBtn.style.background = 'rgba(15, 23, 42, 0.85)';
-            zoomOutBtn.style.borderColor = 'rgba(6, 182, 212, 0.4)';
+            zoomOutBtn.style.background = 'transparent';
         };
         zoomOutBtn.onclick = (e) => {
             if (e) {
@@ -340,7 +279,39 @@ const mapManager = (() => {
             }
             map.zoomOut();
         };
-        customControls.appendChild(zoomOutBtn);
+        zoomCapsule.appendChild(zoomOutBtn);
+
+        // Botón de Zoom In (+)
+        const zoomInBtn = document.createElement('button');
+        zoomInBtn.title = 'Acercar';
+        zoomInBtn.innerHTML = `<span style="font-size: 1.5rem; line-height: 1; margin-top: -2px;">+</span>`;
+        zoomInBtn.style.cssText = `
+            background: transparent;
+            border: none;
+            color: #06b6d4;
+            width: 40px; height: 40px;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 600;
+            transition: all 0.2s;
+            padding: 0;
+        `;
+        zoomInBtn.onmouseover = () => {
+            zoomInBtn.style.background = 'rgba(6, 182, 212, 0.2)';
+        };
+        zoomInBtn.onmouseout = () => {
+            zoomInBtn.style.background = 'transparent';
+        };
+        zoomInBtn.onclick = (e) => {
+            if (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            map.zoomIn();
+        };
+        zoomCapsule.appendChild(zoomInBtn);
+
+        customControls.appendChild(zoomCapsule);
 
         // Control para Modo Prueba (Simulador GPS)
         const TestModeControl = L.Control.extend({
