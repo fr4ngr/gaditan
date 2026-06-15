@@ -2158,10 +2158,10 @@ body.low-bandwidth .hero-slide-card.active-slide .glass.card {
     border-radius: 9999px;
     cursor: pointer;
     background: #ffffff !important;
-    border: 1px solid rgba(0, 0, 0, 0.06) !important;
+    border: none !important;
     margin-bottom: 0.55rem;
     overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04) !important;
+    box-shadow: none !important;
 }
 
 .pildora-parada strong {
