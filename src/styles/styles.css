@@ -2198,6 +2198,16 @@ body.low-bandwidth .hero-slide-card.active-slide .glass.card {
     animation: sign-wink 0.8s ease-in-out, sign-float 3s ease-in-out infinite 0.8s;
 }
 
+@keyframes marquee-slide {
+    0%, 15% { transform: translateX(0); }
+    45%, 55% { transform: translateX(var(--scroll-amount)); }
+    85%, 100% { transform: translateX(0); }
+}
+
+.marquee-active {
+    animation: marquee-slide 8s ease-in-out infinite;
+}
+
 .pildora-parada span {
     color: rgba(15, 23, 42, 0.6) !important;
     font-weight: 500 !important;

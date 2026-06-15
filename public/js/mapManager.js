@@ -742,7 +742,7 @@ const mapManager = (() => {
         }
         
         overlay.innerHTML = `
-            <div style="display: flex; align-items: center; gap: 0.75rem; width: 100%;">
+            <div style="display: flex; align-items: center; gap: 1.25rem; width: 100%;">
                 <!-- Señal TAXI con palo (Traffic Sign Blue with Pole) -->
                 <div class="animated-sign animated-selected-sign" style="position: relative; width: 40px; height: 60px; display: flex; flex-direction: column; align-items: center; flex-shrink: 0; margin-right: 0.1rem;">
                     <div style="background-color: #0f172a; width: 40px; height: 48px; border-radius: 9px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); box-sizing: border-box; z-index: 2;">
@@ -753,10 +753,10 @@ const mapManager = (() => {
                     <div style="width: 3px; height: 12px; background-color: #475569; margin-top: -1px; z-index: 1; box-shadow: 1px 0 2px rgba(0,0,0,0.15);"></div>
                 </div>
                 <!-- Textos a la derecha -->
-                <div style="display: flex; flex-direction: column; flex: 1; min-width: 0; justify-content: center;">
+                <div class="text-container" style="display: flex; flex-direction: column; flex: 1; min-width: 0; justify-content: center; overflow: hidden; mask-image: linear-gradient(to right, black 95%, transparent 100%); -webkit-mask-image: linear-gradient(to right, black 95%, transparent 100%);">
                     <span style="color: rgba(15, 23, 42, 0.7); font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.1rem;">PARADA DE TAXI</span>
-                    <strong style="color: #0f172a; font-size: 1.2rem; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.1;">${p.name}</strong>
-                    <span style="color: rgba(15, 23, 42, 0.85); font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 0.1rem;">${p.address}, Cádiz</span>
+                    <strong class="auto-scroll-line" style="color: #0f172a; font-size: 1.2rem; font-weight: 800; white-space: nowrap; line-height: 1.1; display: block; width: max-content; padding-right: 1.25rem;">${p.name}</strong>
+                    <span class="auto-scroll-line" style="color: rgba(15, 23, 42, 0.85); font-size: 0.85rem; white-space: nowrap; margin-top: 0.1rem; display: block; width: max-content; padding-right: 1.25rem;">${p.address}, Cádiz</span>
                 </div>
             </div>
             ${bannersHtml}
@@ -768,6 +768,21 @@ const mapManager = (() => {
             overlay.style.padding = '0.75rem 1.25rem';
             overlay.style.maxHeight = '200px';
             overlay.style.opacity = '1';
+
+            setTimeout(() => {
+                const textContainer = overlay.querySelector('.text-container');
+                if (textContainer) {
+                    const containerWidth = textContainer.clientWidth;
+                    const lines = textContainer.querySelectorAll('.auto-scroll-line');
+                    lines.forEach(line => {
+                        const textWidth = line.scrollWidth;
+                        if (textWidth > containerWidth) {
+                            line.classList.add('marquee-active');
+                            line.style.setProperty('--scroll-amount', `-${textWidth - containerWidth}px`);
+                        }
+                    });
+                }
+            }, 450);
         });
     };
 
