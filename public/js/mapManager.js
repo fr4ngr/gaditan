@@ -1640,7 +1640,9 @@ const mapManager = (() => {
     return { init, startNav: startNavigation };
 })();
 
-document.addEventListener('DOMContentLoaded', () => {
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => mapManager.init());
+} else {
     mapManager.init();
-});
+}
 

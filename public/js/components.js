@@ -291,10 +291,16 @@ function buildSelectedDestinoWidget(dest, gridType) {
 
     return content;
 }
-document.addEventListener("DOMContentLoaded", () => {
+const initComponents = function() {
     const aeroGrid = document.getElementById("aeropuertos-grid-dinamico");
     if (aeroGrid) { aeroGrid.innerHTML = dbDestinos.aeropuertos.map(d => renderDestino(d, 'aeropuertos')).join(''); }
     
     const favGrid = document.getElementById("favoritos-grid-dinamico");
     if (favGrid) { favGrid.innerHTML = dbDestinos.favoritos.map(d => renderDestino(d, 'favoritos')).join(''); }
-});
+};
+
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initComponents);
+} else {
+    initComponents();
+}
