@@ -1,10 +1,9 @@
 // Gestor del Mapa Interactivo (Leaflet + OSRM)
 const mapManager = (() => {
     let map = null;
-    let markers = [];
-    let poiMarkers = [];
-    let routePolylineId = 'route-line';
+    let markersLayer = null;
     let userMarker = null;
+    let routePolyline = null;
     let currentMode = 'todas'; // 'todas' | 'cercana' | 'elegir'
     let userLocation = null; // { lat, lon }
     let selectedParada = null;
@@ -159,12 +158,8 @@ const mapManager = (() => {
         return distKm.toFixed(1) + ' km';
     };
 
-    
-    const createCustomIconObj = (options) => {
-        return { options };
-    };
-    
-const init = () => {
+        const createCustomIconObj = (options) => { return { options }; };
+    const init = () => {
         const mapElement = document.getElementById('map');
         if (!mapElement || typeof L === 'undefined') return;
 
@@ -177,7 +172,6 @@ const init = () => {
         });
         map.addControl(new maplibregl.AttributionControl({ compact: true }), 'bottom-right');
         
-        // Add satellite toggle button
         const satBtn = document.createElement('button');
         satBtn.id = 'btn-satellite-toggle';
         satBtn.innerHTML = '<i data-lucide="satellite"></i>';
@@ -208,7 +202,6 @@ const init = () => {
                 tileSize: 256
             });
             
-            // Find the first symbol layer to insert satellite below it, so street labels stay on top
             const layers = map.getStyle().layers;
             let firstSymbolId;
             for (let i = 0; i < layers.length; i++) {
@@ -225,13 +218,198 @@ const init = () => {
                 layout: { visibility: 'none' }
             }, firstSymbolId);
         });
+        
+        markers = [];
+        poiMarkers = [];
+
+        // Contenedor de controles horizontales personalizados
+        const customControls = document.createElement('div');
+        customControls.id = 'map-custom-controls';
+        customControls.style.cssText = `
+            position: absolute;
+            bottom: 1.5rem;
+            right: 1rem;
+            z-index: 1001;
+            display: flex;
+            flex-direction: row;
+            gap: 0.5rem;
+            transition: bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            pointer-events: auto;
+        `;
+        document.getElementById('map').appendChild(customControls);
+        customControls.addEventListener('wheel', e => e.stopPropagation());
+            customControls.addEventListener('mousedown', e => e.stopPropagation());
+            customControls.addEventListener('touchstart', e => e.stopPropagation(), {passive: false});
+
+        // 1. Botón de POIs (Cámara)
+        const poiBtn = document.createElement('button');
+        poiBtn.title = 'Descubrir comercios y turismo cerca';
+        poiBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path><circle cx="12" cy="13" r="3"></circle>
+        </svg>`;
+        poiBtn.style.cssText = `
+            background: rgba(15, 23, 42, 0.85);
+            border: 1px solid rgba(236, 72, 153, 0.4);
+            border-radius: 50%;
+            width: 40px; height: 40px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            color: #ec4899;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: all 0.2s;
+            padding: 0;
+        `;
+        poiBtn.onmouseover = () => {
+            poiBtn.style.background = 'rgba(236, 72, 153, 0.2)';
+            poiBtn.style.borderColor = '#ec4899';
+        };
+        poiBtn.onmouseout = () => {
+            if (!poisVisible) {
+                poiBtn.style.background = 'rgba(15, 23, 42, 0.85)';
+                poiBtn.style.borderColor = 'rgba(236, 72, 153, 0.4)';
+            } else {
+                poiBtn.style.background = 'rgba(236, 72, 153, 0.3)';
+                poiBtn.style.borderColor = '#ec4899';
+            }
+        };
+        poiBtn.onclick = (e) => {
+            if (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            poisVisible = !poisVisible;
+            if (poisVisible) {
+                poiBtn.style.background = 'rgba(236, 72, 153, 0.3)';
+                poiBtn.style.borderColor = '#ec4899';
+                poiBtn.style.boxShadow = '0 0 15px rgba(236, 72, 153, 0.5)';
+                renderPOIs();
+            } else {
+                poiBtn.style.background = 'rgba(15, 23, 42, 0.85)';
+                poiBtn.style.borderColor = 'rgba(236, 72, 153, 0.4)';
+                poiBtn.style.boxShadow = '0 4px 15px rgba(0,0,0,0.3)';
+                poiMarkers.forEach(m => m.remove()); poiMarkers = [];
+            }
+        };
+        customControls.appendChild(poiBtn);
+
+        // 2. Cápsula de Zoom Horizontal (- +)
+        const zoomCapsule = document.createElement('div');
+        zoomCapsule.id = 'custom-zoom-capsule';
+        zoomCapsule.style.cssText = `
+            background: rgba(15, 23, 42, 0.85);
+            border: 1px solid rgba(6, 182, 212, 0.4);
+            border-radius: 20px;
+            display: flex;
+            flex-direction: row;
+            height: 40px;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            pointer-events: auto;
+        `;
+
+        // Botón de Zoom Out (-)
+        const zoomOutBtn = document.createElement('button');
+        zoomOutBtn.title = 'Alejar';
+        zoomOutBtn.innerHTML = `<span style="font-size: 1.5rem; line-height: 1; margin-top: -2px;">−</span>`;
+        zoomOutBtn.style.cssText = `
+            background: transparent;
+            border: none;
+            border-right: 1px solid rgba(6, 182, 212, 0.25);
+            color: #06b6d4;
+            width: 40px; height: 40px;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 600;
+            transition: all 0.2s;
+            padding: 0;
+        `;
+        zoomOutBtn.onmouseover = () => {
+            zoomOutBtn.style.background = 'rgba(6, 182, 212, 0.2)';
+        };
+        zoomOutBtn.onmouseout = () => {
+            zoomOutBtn.style.background = 'transparent';
+        };
+        zoomOutBtn.onclick = (e) => {
+            if (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            map.zoomOut();
+        };
+        zoomCapsule.appendChild(zoomOutBtn);
+
+        // Botón de Zoom In (+)
+        const zoomInBtn = document.createElement('button');
+        zoomInBtn.title = 'Acercar';
+        zoomInBtn.innerHTML = `<span style="font-size: 1.5rem; line-height: 1; margin-top: -2px;">+</span>`;
+        zoomInBtn.style.cssText = `
+            background: transparent;
+            border: none;
+            color: #06b6d4;
+            width: 40px; height: 40px;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 600;
+            transition: all 0.2s;
+            padding: 0;
+        `;
+        zoomInBtn.onmouseover = () => {
+            zoomInBtn.style.background = 'rgba(6, 182, 212, 0.2)';
+        };
+        zoomInBtn.onmouseout = () => {
+            zoomInBtn.style.background = 'transparent';
+        };
+        zoomInBtn.onclick = (e) => {
+            if (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            map.zoomIn();
+        };
+        zoomCapsule.appendChild(zoomInBtn);
+
+        customControls.appendChild(zoomCapsule);
+
+        // Control para Modo Prueba (Simulador GPS)
+        const TestModeControl = L.Control.extend({
+            options: { position: 'topright' },
+            onAdd: function() {
+                const btn = L.DomUtil.create('button', 'map-test-btn');
+                btn.title = 'Activar/Desactivar Simulador GPS';
+                btn.innerHTML = `<span style="font-size:0.7rem; font-weight:800; letter-spacing:0.5px;">MODO PRUEBA</span>`;
+                btn.style.cssText = `
+                    background: rgba(245, 158, 11, 0.9);
+                    border: 2px solid #d97706;
+                    border-radius: 8px;
+                    padding: 0.4rem 0.8rem;
+                    color: white;
+                    cursor: pointer;
+                    backdrop-filter: blur(4px);
+                    box-shadow: 0 4px 10px rgba(245, 158, 11, 0.4);
+                    transition: all 0.2s;
+                    margin-top: 10px;
+                    margin-right: 10px;
+                `;
+                L.DomEvent.on(btn, 'click', L.DomEvent.stopPropagation);
+                L.DomEvent.on(btn, 'click', () => {
+                    testMode = !testMode;
+                    if (testMode) {
+                        btn.style.background = '#ef4444';
+                        btn.style.borderColor = '#b91c1c';
+                        btn.innerHTML = `<span style="font-size:0.7rem; font-weight:800; letter-spacing:0.5px;">PRUEBA ACTIVA</span>`;
                         
-                        const el = document.createElement('div');
-                        el.innerHTML = testIcon.options.html;
-                        el.className = testIcon.options.className;
-                        testMarker = new maplibregl.Marker({ element: el, draggable: true })
-                            .setLngLat([-6.292, 36.529])
-                            .addTo(map);
+                        map.setView([36.529, -6.292], 16);
+                        
+                        const testIcon = createCustomIconObj({
+                            className: 'test-user-icon',
+                            html: `<div style="background:#ef4444; width:20px; height:20px; border-radius:50%; border:3px solid white; box-shadow: 0 0 10px rgba(239, 68, 68, 0.8);"></div><div style="position:absolute; top:-25px; left:-40px; background:#ef4444; color:white; font-size:10px; padding:2px 6px; border-radius:4px; font-weight:bold; white-space:nowrap;">Tú (Simulado)</div>`,
+                            iconSize: [20, 20],
+                            iconAnchor: [10, 10]
+                        });
+                        
+                        const el = document.createElement('div'); el.innerHTML = testIcon.options.html; el.className = testIcon.options.className; testMarker = new maplibregl.Marker({ element: el, draggable: true }).setLngLat([-6.292, 36.529]).addTo(map);
                         
                         testMarker.on('drag', () => {
                             geoService.triggerWatch();
@@ -339,7 +517,7 @@ const init = () => {
             marker.on('click', () => {
                 if (selectedParada === p) {
                     if (routePolyline && !isNavigating) {
-                        // fit bounds to route manually later or use bbox
+                        map.fitBounds(routePolyline.getBounds(), { paddingTopLeft: [20, 200], paddingBottomRight: [20, 20], animate: true });
                     } else {
                         map.fitBounds([[p.lon, p.lat], [p.lon, p.lat]], { maxZoom: 17, padding: { top: 200, left: 0, bottom: 20, right: 20 }, animate: true });
                     }
@@ -586,8 +764,8 @@ const init = () => {
             topControls.style.cssText = "position: absolute; top: 1rem; right: 1rem; z-index: 1000; display: flex; gap: 0.4rem; align-items: center; justify-content: flex-end; max-width: calc(100vw - 2rem);";
             document.getElementById('map').appendChild(topControls);
             topControls.addEventListener('wheel', e => e.stopPropagation());
-            topControls.addEventListener('mousedown', e => e.stopPropagation());
-            topControls.addEventListener('touchstart', e => e.stopPropagation(), {passive: false});
+                topControls.addEventListener('mousedown', e => e.stopPropagation());
+                topControls.addEventListener('touchstart', e => e.stopPropagation(), {passive: false});
         }
         
         topControls.innerHTML = `
@@ -867,10 +1045,7 @@ const init = () => {
     };
 
     const clearRoute = () => {
-        if (map.getSource(routePolylineId)) {
-            map.removeLayer(routePolylineId);
-            map.removeSource(routePolylineId);
-        }
+        if (map.getSource(routePolylineId)) { map.removeLayer(routePolylineId); map.removeSource(routePolylineId); }
         const dirContainer = document.getElementById('directions-container');
         if (dirContainer) dirContainer.innerHTML = '';
     };
@@ -967,10 +1142,8 @@ const init = () => {
 
     const stopNavigation = () => {
         isNavigating = false;
-        notifiedPOIs.clear();
+        currentRouteSteps = [];
         targetDestParada = null;
-        
-        map.easeTo({ pitch: 0, bearing: 0 });
         if (watchPositionId !== null) {
             geoService.clearWatch(watchPositionId);
             watchPositionId = null;
@@ -1048,7 +1221,7 @@ const init = () => {
         let brng = Math.atan2(y, x) * toDeg;
         return (brng + 360) % 360;
     };
-
+    
     const startNavigation = (lat, lon, name) => {
         isNavigating = true;
         notifiedPOIs.clear();
@@ -1095,9 +1268,12 @@ const init = () => {
                         const wrapper = el.querySelector('#user-marker-wrapper');
                         const arrow = el.querySelector('#user-heading-arrow');
                         if (wrapper && arrow) {
-                            // If map rotates, marker doesn't need to rotate to point forward
-                            wrapper.style.transform = `rotate(0deg)`;
-                            arrow.style.opacity = '1';
+                            if (heading !== null && !isNaN(heading)) {
+                                wrapper.style.transform = `rotate(${heading}deg)`;
+                                arrow.style.opacity = '1';
+                            } else {
+                                arrow.style.opacity = '0';
+                            }
                         }
                     }
                 }
@@ -1254,28 +1430,15 @@ const init = () => {
 
             clearRoute();
             
-            const routeGeoJSON = {
-                'type': 'Feature',
-                'properties': {},
-                'geometry': {
-                    'type': 'LineString',
-                    'coordinates': coordinates.map(c => [c[1], c[0]])
-                }
-            };
-            map.addSource(routePolylineId, { 'type': 'geojson', 'data': routeGeoJSON });
-            map.addLayer({
-                'id': routePolylineId,
-                'type': 'line',
-                'source': routePolylineId,
-                'layout': { 'line-join': 'round', 'line-cap': 'round' },
-                'paint': { 'line-color': '#06b6d4', 'line-width': 4 }
-            });
+            routePolyline = L.polyline(coordinates, {
+                color: '#3b82f6',
+                weight: 5,
+                opacity: 0.8,
+                dashArray: '10, 10',
+                lineJoin: 'round'
+            }).addTo(map);
             
-            if (!isNavigating) {
-                const bounds = new maplibregl.LngLatBounds();
-                coordinates.forEach(c => bounds.extend([c[1], c[0]]));
-                map.fitBounds(bounds, { padding: {top: 200, bottom: 20, left: 20, right: 20}, animate: true });
-            }
+            if (!isNavigating) { const bounds = new maplibregl.LngLatBounds(); coordinates.forEach(c => bounds.extend([c[1], c[0]])); map.fitBounds(bounds, { padding: {top: 200, bottom: 20, left: 20, right: 20}, animate: true }); }
             
             const pill = document.getElementById('walk-info-pill');
             if (pill && !isNavigating) {
@@ -1428,9 +1591,10 @@ const init = () => {
                     renderMapOverlay(masCercana);
                     startNavigation(masCercana.lat, masCercana.lon, masCercana.name);
                     
-                    const bounds = new maplibregl.LngLatBounds();
-                    bounds.extend([lon, lat]);
-                    bounds.extend([masCercana.lon, masCercana.lat]);
+                    const bounds = L.latLngBounds([
+                        [lat, lon],
+                        [masCercana.lat, masCercana.lon]
+                    ]);
                     
                     map.fitBounds(bounds, { padding: {top: 180, left: 20, bottom: 20, right: 20}, duration: 1200 });
 
