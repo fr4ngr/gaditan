@@ -1382,11 +1382,6 @@ const mapManager = (() => {
             
             setTimeout(() => { if (map) map.invalidateSize(); }, 400);
             
-            if (!userLocation) {
-                const btnCercanaEl = document.getElementById('btn-cercana');
-                if (btnCercanaEl) btnCercanaEl.innerHTML = `<i data-lucide="loader-2" style="width:16px; height:16px; animation: spin 1s linear infinite;"></i> Obteniendo ubicación...`;
-            }
-
             geoService.getCurrentPosition((position) => {
                 const lat = position.coords.latitude;
                 const lon = position.coords.longitude;
