@@ -71,12 +71,12 @@ const mapManager = (() => {
         className: 'custom-div-icon',
         html: `
             <div style="position: relative; width: 26px; height: 42px; filter: drop-shadow(0 3px 3px rgba(0,0,0,0.35)); display: flex; flex-direction: column; align-items: center;">
-                <div style="background-color: #2563eb; width: 26px; height: 32px; border-radius: 6px; padding: 2.5px; box-sizing: border-box; font-family: 'Inter', sans-serif; display: flex; flex-direction: column; z-index: 2;">
+                <div style="background-color: #0f172a; width: 26px; height: 32px; border-radius: 6px; padding: 2.5px; box-sizing: border-box; font-family: 'Inter', sans-serif; display: flex; flex-direction: column; z-index: 2;">
                     <div style="background-color: white; width: 100%; height: 14px; border-radius: 3.5px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
                         <span style="color: black; font-weight: 900; font-size: 6.8px; letter-spacing: 0.8px; line-height: 1; display: block; -webkit-text-stroke: 0.2px black;">TAXI</span>
                     </div>
                 </div>
-                <div style="width: 2px; height: 10px; background-color: #94a3b8; margin-top: -1px; z-index: 1; box-shadow: 1px 0 2px rgba(0,0,0,0.15);"></div>
+                <div style="width: 2px; height: 10px; background-color: #475569; margin-top: -1px; z-index: 1; box-shadow: 1px 0 2px rgba(0,0,0,0.15);"></div>
             </div>
         `,
         iconSize: [26, 42],
@@ -728,12 +728,12 @@ const mapManager = (() => {
             <div style="display: flex; align-items: center; gap: 0.75rem; width: 100%;">
                 <!-- Señal TAXI con palo (Traffic Sign Blue with Pole) -->
                 <div style="position: relative; width: 40px; height: 60px; display: flex; flex-direction: column; align-items: center; flex-shrink: 0; margin-right: 0.1rem;">
-                    <div style="background-color: #2563eb; width: 40px; height: 48px; border-radius: 9px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); box-sizing: border-box; z-index: 2;">
+                    <div style="background-color: #0f172a; width: 40px; height: 48px; border-radius: 9px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); box-sizing: border-box; z-index: 2;">
                         <div style="background-color: white; width: 32px; height: 22px; border-radius: 5.5px; display: flex; align-items: center; justify-content: center;">
-                            <span style="color: black; font-family: 'Inter', sans-serif; font-weight: 900; font-size: 0.65rem; letter-spacing: 0.6px; line-height: 1;">TAXI</span>
+                            <span style="color: black; font-family: 'Inter', sans-serif; font-weight: 900; font-size: 0.6rem; letter-spacing: 1px; line-height: 1; -webkit-text-stroke: 0.3px black;">TAXI</span>
                         </div>
                     </div>
-                    <div style="width: 3px; height: 12px; background-color: #94a3b8; margin-top: -1px; z-index: 1; box-shadow: 1px 0 2px rgba(0,0,0,0.15);"></div>
+                    <div style="width: 3px; height: 12px; background-color: #475569; margin-top: -1px; z-index: 1; box-shadow: 1px 0 2px rgba(0,0,0,0.15);"></div>
                 </div>
                 <!-- Textos a la derecha -->
                 <div style="display: flex; flex-direction: column; flex: 1; min-width: 0; justify-content: center;">
