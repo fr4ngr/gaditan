@@ -2193,11 +2193,11 @@ body.low-bandwidth .hero-slide-card.active-slide .glass.card {
     background: var(--brand-cyan-light) !important;
     border-color: var(--brand-cyan-light) !important;
     box-shadow: 0 8px 25px rgba(34, 211, 238, 0.4) !important;
-    transform: translateY(-4px) !important;
+    transform: scale(1.02) !important;
 }
 
 .pildora-parada:active {
-    transform: translateY(-2px) !important;
+    transform: scale(0.98) !important;
     box-shadow: 0 4px 15px rgba(34, 211, 238, 0.2) !important;
 }
 
