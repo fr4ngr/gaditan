@@ -575,15 +575,17 @@ const mapManager = (() => {
         let badgHtml = p.nocturna ? `<span style="background: rgba(239, 68, 68, 0.15); color: #fca5a5; font-size: 0.6rem; font-weight: 800; padding: 0.15rem 0.4rem; border-radius: 4px; margin-left: 0.4rem; border: 1px solid rgba(239, 68, 68, 0.3); vertical-align: middle;">NOCTURNA</span>` : '';
 
         item.innerHTML = `
-            <div style="display: flex; align-items: center; gap: 0.6rem; min-width: 0; flex: 1;">
-                <i data-lucide="map-pin" style="width:20px; height:20px; color: var(--brand-cyan); flex-shrink: 0;"></i>
-                <div style="display: flex; flex-direction: column; min-width: 0;">
-                    <strong style="color: #fff; font-size: 0.88rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center;">${p.name}${badgHtml}</strong>
+            <div style="display: flex; align-items: center; gap: 0.8rem; min-width: 0; flex: 1;">
+                <div style="background: var(--brand-cyan); color: #0f172a; width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: inset 0 -2px 4px rgba(0,0,0,0.05);">
+                    <i data-lucide="map-pin" style="width:20px; height:20px;"></i>
+                </div>
+                <div style="display: flex; flex-direction: column; min-width: 0; padding: 0.3rem 0;">
+                    <strong style="color: #0f172a; font-size: 0.88rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center;">${p.name}${badgHtml}</strong>
                     <span style="color: var(--text-muted); font-size: 0.72rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.address}</span>
                     ${distHtml}
                 </div>
             </div>
-            <div class="plus-icon-btn" style="background: rgba(6,182,212,0.12); border: 1px solid rgba(6,182,212,0.35); width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 1.1rem; font-weight: 700; color: var(--brand-cyan); margin-left: 0.5rem; transition: all 0.3s ease;">+</div>
+            <div class="plus-icon-btn" style="background: rgba(15,23,42,0.05); border: 1px solid rgba(15,23,42,0.1); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 1.1rem; font-weight: 700; color: #0f172a; margin-left: 0.5rem; transition: all 0.3s ease;">+</div>
         `;
         item.addEventListener('click', () => {
             selectedParada = p;
