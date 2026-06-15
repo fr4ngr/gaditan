@@ -70,7 +70,7 @@ const mapManager = (() => {
         className: 'custom-div-icon',
         html: `
             <div style="position: relative; width: 24px; height: 26px; filter: drop-shadow(0 3px 3px rgba(0,0,0,0.3));">
-                <div style="background-color: #2563eb; width: 100%; height: 100%; border-radius: 4px; padding: 2px; box-sizing: border-box; font-family: 'Outfit', sans-serif; display: flex; flex-direction: column; justify-content: center;">
+                <div style="background-color: #2563eb; width: 100%; height: 100%; border-radius: 4px; padding: 2px; box-sizing: border-box; font-family: 'Outfit', sans-serif; display: flex; flex-direction: column;">
                     <div style="background-color: white; width: 100%; height: 14px; border-radius: 2px; display: flex; align-items: center; justify-content: center;">
                         <span style="color: black; font-weight: 950; font-size: 7.5px; letter-spacing: -0.4px; line-height: 1;">TAXI</span>
                     </div>
@@ -385,7 +385,7 @@ const mapManager = (() => {
                     className: 'custom-div-icon',
                     html: `
                         <div style="position: relative; width: 36px; height: 40px; filter: drop-shadow(0 0 8px rgba(250,204,21,0.8));">
-                            <div style="background-color: #facc15; width: 100%; height: 100%; border-radius: 6px; padding: 3px; box-sizing: border-box; font-family: 'Outfit', sans-serif; display: flex; flex-direction: column; justify-content: center;">
+                            <div style="background-color: #facc15; width: 100%; height: 100%; border-radius: 6px; padding: 3px; box-sizing: border-box; font-family: 'Outfit', sans-serif; display: flex; flex-direction: column;">
                                 <div style="background-color: white; width: 100%; height: 22px; border-radius: 3px; display: flex; align-items: center; justify-content: center;">
                                     <span style="color: black; font-weight: 900; font-size: 11px; letter-spacing: -0.5px; line-height: 1;">TAXI</span>
                                 </div>
@@ -473,7 +473,7 @@ const mapManager = (() => {
                         className: 'custom-div-icon',
                         html: `
                             <div style="position: relative; width: 36px; height: 40px; filter: drop-shadow(0 0 8px rgba(250,204,21,0.8));">
-                                <div style="background-color: #facc15; width: 100%; height: 100%; border-radius: 6px; padding: 3px; box-sizing: border-box; font-family: 'Outfit', sans-serif; display: flex; flex-direction: column; justify-content: center;">
+                                <div style="background-color: #facc15; width: 100%; height: 100%; border-radius: 6px; padding: 3px; box-sizing: border-box; font-family: 'Outfit', sans-serif; display: flex; flex-direction: column;">
                                     <div style="background-color: white; width: 100%; height: 22px; border-radius: 3px; display: flex; align-items: center; justify-content: center;">
                                         <span style="color: black; font-weight: 900; font-size: 11px; letter-spacing: -0.5px; line-height: 1;">TAXI</span>
                                     </div>
@@ -566,7 +566,7 @@ const mapManager = (() => {
                         className: 'custom-div-icon',
                         html: `
                             <div style="position: relative; width: 36px; height: 40px; filter: drop-shadow(0 0 8px rgba(250,204,21,0.8));">
-                                <div style="background-color: #facc15; width: 100%; height: 100%; border-radius: 6px; padding: 3px; box-sizing: border-box; font-family: 'Outfit', sans-serif; display: flex; flex-direction: column; justify-content: center;">
+                                <div style="background-color: #facc15; width: 100%; height: 100%; border-radius: 6px; padding: 3px; box-sizing: border-box; font-family: 'Outfit', sans-serif; display: flex; flex-direction: column;">
                                     <div style="background-color: white; width: 100%; height: 22px; border-radius: 3px; display: flex; align-items: center; justify-content: center;">
                                         <span style="color: black; font-weight: 900; font-size: 11px; letter-spacing: -0.5px; line-height: 1;">TAXI</span>
                                     </div>
