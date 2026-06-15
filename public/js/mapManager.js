@@ -172,7 +172,7 @@ const mapManager = (() => {
             "sources": {
                 "osm": {
                     "type": "raster",
-                    "tiles": ["https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png"],
+                    "tiles": ["https://basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}.png"],
                     "tileSize": 256,
                     "attribution": "© OpenStreetMap © CartoDB"
                 },
@@ -538,9 +538,9 @@ const mapManager = (() => {
                 if (selectedParada === p) {
                     const bounds = getRouteBounds();
                     if (bounds && !isNavigating) {
-                        map.fitBounds(bounds, { padding: { top: 200, left: 20, bottom: 20, right: 20 }, animate: true });
+                        map.fitBounds(bounds, { padding: { top: 200, left: 20, bottom: 20, right: 20 }, animate: true, pitch: 0, bearing: 0 });
                     } else {
-                        map.fitBounds([[p.lon, p.lat], [p.lon, p.lat]], { maxZoom: 17, padding: { top: 200, left: 0, bottom: 20, right: 20 }, animate: true });
+                        map.fitBounds([[p.lon, p.lat], [p.lon, p.lat]], { maxZoom: 17, padding: { top: 200, left: 0, bottom: 20, right: 20 }, animate: true, pitch: 0, bearing: 0 });
                     }
                     return;
                 }
@@ -561,7 +561,7 @@ const mapManager = (() => {
                 if (userLocation) {
                     tryUpdateDistance();
                 } else {
-                    map.fitBounds([[p.lon, p.lat], [p.lon, p.lat]], { maxZoom: 17, padding: { top: 200, left: 0, bottom: 20, right: 20 }, animate: true });
+                    map.fitBounds([[p.lon, p.lat], [p.lon, p.lat]], { maxZoom: 17, padding: { top: 200, left: 0, bottom: 20, right: 20 }, animate: true, pitch: 0, bearing: 0 });
                     renderMapOverlay(p);
                     geoService.getCurrentPosition((pos) => {
                         userLocation = { lat: pos.coords.latitude, lon: pos.coords.longitude };
@@ -629,7 +629,7 @@ const mapManager = (() => {
             if (userLocation) {
                 tryUpdateDistanceList();
             } else {
-                map.fitBounds([[p.lon, p.lat], [p.lon, p.lat]], { maxZoom: 17, padding: { top: 200, left: 0, bottom: 20, right: 20 }, animate: true });
+                map.fitBounds([[p.lon, p.lat], [p.lon, p.lat]], { maxZoom: 17, padding: { top: 200, left: 0, bottom: 20, right: 20 }, animate: true, pitch: 0, bearing: 0 });
                 renderMapOverlay(p);
                 geoService.getCurrentPosition((pos) => {
                     userLocation = { lat: pos.coords.latitude, lon: pos.coords.longitude };
@@ -706,7 +706,7 @@ const mapManager = (() => {
                 if (p.distance === undefined) p.distance = getDistance(userLocation.lat, userLocation.lon, p.lat, p.lon);
                 fetchRoute(userLocation.lat, userLocation.lon, p.lat, p.lon);
             } else {
-                map.fitBounds([[p.lon, p.lat], [p.lon, p.lat]], { maxZoom: 17, padding: { top: 200, left: 0, bottom: 20, right: 20 }, animate: true });
+                map.fitBounds([[p.lon, p.lat], [p.lon, p.lat]], { maxZoom: 17, padding: { top: 200, left: 0, bottom: 20, right: 20 }, animate: true, pitch: 0, bearing: 0 });
             }
 
             renderMapOverlay(p);
@@ -1193,7 +1193,7 @@ const mapManager = (() => {
         
         if (selectedParada) {
             renderMapOverlay(selectedParada);
-            map.fitBounds([[selectedParada.lon, selectedParada.lat], [selectedParada.lon, selectedParada.lat]], { maxZoom: 17, padding: { top: 200, left: 0, bottom: 20, right: 20 }, animate: true });
+            map.fitBounds([[selectedParada.lon, selectedParada.lat], [selectedParada.lon, selectedParada.lat]], { maxZoom: 17, padding: { top: 200, left: 0, bottom: 20, right: 20 }, animate: true, pitch: 0, bearing: 0 });
         }
     };
 
@@ -1467,7 +1467,7 @@ const mapManager = (() => {
                 map.addLayer({ id: routePolylineId, type: 'line', source: routePolylineId, layout: { 'line-join': 'round', 'line-cap': 'round' }, paint: { 'line-color': '#3b82f6', 'line-width': 6, 'line-opacity': 0.8 } });
             }
             
-            if (!isNavigating) { const bounds = new maplibregl.LngLatBounds(); coordinates.forEach(c => bounds.extend([c[1], c[0]])); map.fitBounds(bounds, { padding: {top: 200, bottom: 20, left: 20, right: 20}, animate: true }); }
+            if (!isNavigating) { const bounds = new maplibregl.LngLatBounds(); coordinates.forEach(c => bounds.extend([c[1], c[0]])); map.fitBounds(bounds, { padding: {top: 200, bottom: 20, left: 20, right: 20}, animate: true, pitch: 0, bearing: 0 }); }
             
             const pill = document.getElementById('walk-info-pill');
             if (pill && !isNavigating) {
@@ -1533,7 +1533,7 @@ const mapManager = (() => {
                     map.resize();                    
                     const bounds = new maplibregl.LngLatBounds();
                     dbParadas.map(p => [p.lat, p.lon]).forEach(c => bounds.extend([c[1], c[0]]));
-                    map.fitBounds(bounds, { padding: 20, duration: 1000 });
+                    map.fitBounds(bounds, { padding: 20, duration: 1000, pitch: 0, bearing: 0 });
                 }
             }, 400);
             
@@ -1624,7 +1624,7 @@ const mapManager = (() => {
                     bounds.extend([lon, lat]);
                     bounds.extend([masCercana.lon, masCercana.lat]);
                     
-                    map.fitBounds(bounds, { padding: {top: 180, left: 20, bottom: 20, right: 20}, duration: 1200 });
+                    map.fitBounds(bounds, { padding: {top: 180, left: 20, bottom: 20, right: 20}, duration: 1200, pitch: 0, bearing: 0 });
 
                     fetchRoute(lat, lon, masCercana.lat, masCercana.lon);
                 });
