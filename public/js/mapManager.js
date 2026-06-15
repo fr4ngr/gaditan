@@ -493,6 +493,9 @@ const mapManager = (() => {
                         tryUpdateDistance();
                     }, () => {}, { timeout: 5000, maximumAge: 60000 });
                 }
+                
+                // Start navigation immediately
+                startNavigation(p.lat, p.lon, p.name);
                 setTimeout(() => { if (map) map.invalidateSize(); }, 400);
 
                 if (currentMode === 'todas') {
@@ -566,6 +569,9 @@ const mapManager = (() => {
                 listContainer.appendChild(buildSelectedStopWidget(p));
             }
             
+            // Start navigation automatically
+            startNavigation(p.lat, p.lon, p.name);
+            
             // Smooth scroll to map
             setTimeout(() => {
                 const paradasSection = document.getElementById('paradas');
@@ -637,6 +643,9 @@ const mapManager = (() => {
                 listContainer.appendChild(buildSelectedStopWidget(p));
             }
             
+            // Start navigation automatically
+            startNavigation(p.lat, p.lon, p.name);
+            
             // Smooth scroll to map
             setTimeout(() => {
                 const paradasSection = document.getElementById('paradas');
@@ -707,29 +716,8 @@ const mapManager = (() => {
         
         topControls.innerHTML = `
             ${walkInfoHtml}
-            <button id="btn-start-nav" style="background-color: #0f172a; color: #0ef5e3; font-size: 0.75rem; font-weight: 800; padding: 0 1rem; height: 34px; border-radius: 9999px; display: flex; align-items: center; justify-content: center; gap: 0.4rem; cursor: pointer; transition: transform 0.1s; outline: none; border: none; white-space: nowrap; flex-shrink: 0;">
-                <i data-lucide="corner-up-right" style="width:14px; height:14px; color: #0ef5e3;"></i> Cómo llegar
-            </button>
         `;
         
-        const btnStartNav = document.getElementById('btn-start-nav');
-        if (typeof L !== 'undefined') {
-            L.DomEvent.on(btnStartNav, 'click', (e) => {
-                if (e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                }
-                startNavigation(p.lat, p.lon, p.name);
-            });
-        } else {
-            btnStartNav.onclick = (e) => {
-                if (e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                }
-                startNavigation(p.lat, p.lon, p.name);
-            };
-        }
         topControls.style.display = 'flex';
         
         let bannersHtml = '';
@@ -1053,12 +1041,8 @@ const mapManager = (() => {
                             <strong style="font-size: 1.1rem; line-height: 1.2;">Has llegado</strong>
                             <span style="font-size: 0.8rem; color: rgba(255,255,255,0.7); margin-top: 0.2rem;">Destino a la vista</span>
                         </div>
-                        <button id="btn-stop-nav" style="background: transparent; color: #94a3b8; border: none; padding: 0.4rem; cursor: pointer; display: flex; align-items: center; justify-content: center; margin-top: -0.2rem; margin-right: -0.5rem; outline: none;">
-                            <i data-lucide="x" style="width: 22px; height: 22px;"></i>
-                        </button>
                     </div>
                 `;
-                document.getElementById('btn-stop-nav').onclick = stopNavigation;
                 if (typeof lucide !== 'undefined') lucide.createIcons();
             }
             adjustControls();
@@ -1080,12 +1064,8 @@ const mapManager = (() => {
                         <strong id="nav-instruction" style="font-size: 1.1rem; line-height: 1.2;">${instruction}</strong>
                         <span id="nav-distance" style="font-size: 0.85rem; font-weight: 800; color: #38bdf8; margin-top: 0.2rem; display: block;">${roundedDist > 0 ? roundedDist + 'm' : ''}</span>
                     </div>
-                    <button id="btn-stop-nav" style="background: transparent; color: #94a3b8; border: none; padding: 0.4rem; cursor: pointer; display: flex; align-items: center; justify-content: center; margin-top: -0.2rem; margin-right: -0.5rem; outline: none;">
-                        <i data-lucide="x" style="width: 22px; height: 22px;"></i>
-                    </button>
                 </div>
             `;
-            document.getElementById('btn-stop-nav').onclick = stopNavigation;
             if (typeof lucide !== 'undefined') lucide.createIcons();
             adjustControls();
             return;
@@ -1184,11 +1164,6 @@ const mapManager = (() => {
         isNavigating = true;
         notifiedPOIs.clear();
         targetDestParada = { lat, lon, name };
-        const banners = document.getElementById('map-overlay-banners');
-        if (banners) banners.style.display = 'none';
-        
-        const topControls = document.getElementById('top-nav-controls');
-        if (topControls) topControls.style.display = 'none';
         
         const navContainer = document.createElement('div');
         navContainer.id = 'nav-container';
@@ -1434,6 +1409,7 @@ const mapManager = (() => {
         if(btnCercana) btnCercana.classList.remove('active');
         
         if (mode === 'todas') {
+            stopNavigation();
             selectedParada = null;
             if(btnTodas) btnTodas.classList.add('active');
             
@@ -1478,7 +1454,6 @@ const mapManager = (() => {
         } else if (mode === 'cercana') {
             if(btnCercana) btnCercana.classList.add('active');
             
-            // Remove the moveend listener for list updating when not in 'todas' mode
             map.off('moveend', updateVisibleParadas);
             
             setTimeout(() => { if (map) map.invalidateSize(); }, 400);
@@ -1524,15 +1499,10 @@ const mapManager = (() => {
                     const masCercana = resultados[0];
                     
                     selectedParada = masCercana;
-                    renderMarkers(paradasConDistancia);
                     
-                    const container = document.getElementById('paradas-list-container');
-                    if (container) {
-                        container.innerHTML = '';
-                        container.appendChild(buildSelectedStopWidget(masCercana));
-                        renderMapOverlay(masCercana);
-                        if (typeof lucide !== 'undefined') lucide.createIcons();
-                    }
+                    renderMarkers(paradasConDistancia);
+                    renderList([masCercana], document.getElementById('paradas-list-container'));
+                    startNavigation(masCercana.lat, masCercana.lon, masCercana.name);
                     
                     const bounds = L.latLngBounds([
                         [lat, lon],
