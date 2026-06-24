@@ -4789,7 +4789,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 	}), i.appendChild(a);
 	let o = (e) => {
 		a.innerHTML = `
-            <div style="background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 16px; padding: 1rem 1.25rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 1rem; width: 100%; box-sizing: border-box;">
+            <div style="background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 9999px; padding: 1rem 1.25rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 1rem; width: 100%; box-sizing: border-box;">
                 <div style="width: 32px; height: 38px; flex-shrink: 0; border-radius: 4px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
                     ${r}
                 </div>
@@ -4802,7 +4802,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
         `, a.style.display = "block", a.offsetWidth, a.style.opacity = "1", a.style.transform = "translate(-50%, 0)", n.setView([e.lat, e.lon], 16);
 	};
 	l.forEach((e) => {
-		let t = c.default.divIcon({
+		let i = c.default.divIcon({
 			className: "custom-taxi-icon",
 			html: `<div class="taxi-marker" style="width: 36px; height: 42px; border: 2px solid white; border-radius: 6px; box-shadow: 0 4px 10px rgba(0,0,0, 0.4); overflow: hidden; background: #1d4ed8;">
                     ${r}
@@ -4811,8 +4811,13 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			iconAnchor: [18, 21],
 			popupAnchor: [0, -21]
 		});
-		c.default.marker([e.lat, e.lon], { icon: t }).addTo(n).on("click", (t) => {
-			c.default.DomEvent.stopPropagation(t), o(e);
+		c.default.marker([e.lat, e.lon], { icon: i }).addTo(n).on("click", (n) => {
+			c.default.DomEvent.stopPropagation(n), o(e);
+			let r = t.getBoundingClientRect();
+			window.scrollTo({
+				top: r.top + window.scrollY - 80,
+				behavior: "smooth"
+			});
 		});
 	});
 	let s = e.querySelector("#paradas-list-container");
@@ -4843,8 +4848,10 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
                         </div>
                     </div>
                 `, n.firstElementChild?.addEventListener("click", () => {
-					o(e), window.scrollTo({
-						top: t.offsetTop - 80,
+					o(e);
+					let n = t.getBoundingClientRect();
+					window.scrollTo({
+						top: n.top + window.scrollY - 80,
 						behavior: "smooth"
 					});
 				}), s.appendChild(n.firstElementChild);
