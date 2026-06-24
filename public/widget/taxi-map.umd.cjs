@@ -13,27 +13,27 @@
                 <h3 style="margin: 0 0 5px 0; font-size: 1rem; color: #0f172a;">${e.name}</h3>
                 <p style="margin: 0; font-size: 0.8rem; color: #64748b;">${e.address}</p>
             </div>
-        `)});let i=e.querySelector(`#paradas-list-container`);i&&(i.innerHTML=``,u.forEach(e=>{let a=document.createElement(`div`);a.innerHTML=`
-                <div class="mini-dest-card pildora-parada-taxi" style="margin-bottom: 0.5rem; cursor: pointer;">
-                    <div class="mini-dest-header" style="align-items: center; position: relative; width: 100%; display: flex; justify-content: space-between;">
-                        <div class="mini-dest-name" style="display: flex; align-items: center; gap: 0.8rem; text-align: left; min-width: 0; flex: 1;">
-                            <div style="width: 40px; height: 40px; flex-shrink: 0;">
-                                ${r}
+        `)});let i=e.querySelector(`#paradas-list-container`);if(i){let e=Math.ceil(u.length/5),a=o=>{i.innerHTML=``;let s=(o-1)*5,c=s+5;if(u.slice(s,c).forEach(e=>{let a=document.createElement(`div`);a.innerHTML=`
+                    <div class="mini-dest-card pildora-parada-taxi" style="margin-bottom: 0.5rem; cursor: pointer;">
+                        <div class="mini-dest-header" style="align-items: center; position: relative; width: 100%; display: flex; justify-content: space-between;">
+                            <div class="mini-dest-name" style="display: flex; align-items: center; gap: 0.8rem; text-align: left; min-width: 0; flex: 1;">
+                                <div style="width: 40px; height: 40px; flex-shrink: 0;">
+                                    ${r}
+                                </div>
+                                <div style="display: flex; flex-direction: column; min-width: 0;">
+                                    <div style="font-size: 0.65rem; color: #3b82f6; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; line-height: 1.2; margin-bottom: 0.15rem;">PARADA DE TAXI</div>
+                                    <div style="font-size: 1rem; color: #fff; font-weight: 600; line-height: 1.2;">${e.name}</div>
+                                    <div style="font-size: 0.8rem; color: var(--text-muted, #94a3b8); line-height: 1.2; margin-top: 0.2rem;">${e.address}</div>
+                                </div>
                             </div>
-                            <div style="display: flex; flex-direction: column; min-width: 0;">
-                                <div style="font-size: 0.65rem; color: #3b82f6; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; line-height: 1.2; margin-bottom: 0.15rem;">PARADA DE TAXI</div>
-                                <div style="font-size: 1rem; color: #fff; font-weight: 600; line-height: 1.2;">${e.name}</div>
-                                <div style="font-size: 0.8rem; color: var(--text-muted, #94a3b8); line-height: 1.2; margin-top: 0.2rem;">${e.address}</div>
+                            <div style="display: flex; align-items: center; margin-left: 1rem;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="m9 18 6-6-6-6"/>
+                                </svg>
                             </div>
-                        </div>
-                        <div style="display: flex; align-items: center; margin-left: 1rem;">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="m9 18 6-6-6-6"/>
-                            </svg>
                         </div>
                     </div>
-                </div>
-            `,a.firstElementChild?.addEventListener(`click`,()=>{n.setView([e.lat,e.lon],16),window.scrollTo({top:t.offsetTop-80,behavior:`smooth`})}),i.appendChild(a.firstElementChild)})),window.cadizTaxiMap=n},f=class extends HTMLElement{constructor(){super()}connectedCallback(){this.innerHTML=`
+                `,a.firstElementChild?.addEventListener(`click`,()=>{n.setView([e.lat,e.lon],16),window.scrollTo({top:t.offsetTop-80,behavior:`smooth`})}),i.appendChild(a.firstElementChild)}),e>1){let t=document.createElement(`div`);t.style.display=`flex`,t.style.justifyContent=`center`,t.style.alignItems=`center`,t.style.gap=`1rem`,t.style.marginTop=`1rem`;let n=document.createElement(`button`);n.innerHTML=`&laquo; Anterior`,n.style.padding=`0.5rem 1rem`,n.style.borderRadius=`999px`,n.style.border=`1px solid rgba(255,255,255,0.1)`,n.style.background=o===1?`transparent`:`rgba(59, 130, 246, 0.15)`,n.style.color=o===1?`#64748b`:`#3b82f6`,n.style.cursor=o===1?`default`:`pointer`,n.style.fontWeight=`600`,n.style.transition=`all 0.2s ease`,n.disabled=o===1,n.onclick=()=>{o>1&&a(o-1)};let r=document.createElement(`span`);r.style.color=`#94a3b8`,r.style.fontSize=`0.9rem`,r.innerText=`Página ${o} de ${e}`;let s=document.createElement(`button`);s.innerHTML=`Siguiente &raquo;`,s.style.padding=`0.5rem 1rem`,s.style.borderRadius=`999px`,s.style.border=`1px solid rgba(255,255,255,0.1)`,s.style.background=o===e?`transparent`:`rgba(59, 130, 246, 0.15)`,s.style.color=o===e?`#64748b`:`#3b82f6`,s.style.cursor=o===e?`default`:`pointer`,s.style.fontWeight=`600`,s.style.transition=`all 0.2s ease`,s.disabled=o===e,s.onclick=()=>{o<e&&a(o+1)},t.appendChild(n),t.appendChild(r),t.appendChild(s),i.appendChild(t)}};a(1)}window.cadizTaxiMap=n},f=class extends HTMLElement{constructor(){super()}connectedCallback(){this.innerHTML=`
       <div class="taxi-map-wrapper">
         <div id="map"></div>
         <div id="paradas-list-container" class="paradas-list"></div>
