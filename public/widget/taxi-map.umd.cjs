@@ -6,9 +6,9 @@
             <path d="M 2.5,12 A 9.5,9.5 0 0,1 21.5,12 Z" fill="white" />
             <text x="12" y="8.5" font-family="Arial, sans-serif" font-size="4.8" font-weight="900" fill="black" text-anchor="middle" dominant-baseline="middle">TAXI</text>
         </svg>
-    `;u.forEach(e=>{let t=l.default.divIcon({className:`custom-taxi-icon`,html:`<div class="taxi-marker" style="width: 36px; height: 36px; border: 2px solid white; border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0, 0.4); overflow: hidden;">
+    `;u.forEach(e=>{let t=l.default.divIcon({className:`custom-taxi-icon`,html:`<div class="taxi-marker" style="width: 48px; height: 48px; border: 2px solid white; border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0, 0.4); overflow: hidden;">
                     ${r}
-                   </div>`,iconSize:[36,36],iconAnchor:[18,18],popupAnchor:[0,-18]});l.default.marker([e.lat,e.lon],{icon:t}).addTo(n).bindPopup(`
+                   </div>`,iconSize:[48,48],iconAnchor:[24,24],popupAnchor:[0,-24]});l.default.marker([e.lat,e.lon],{icon:t}).addTo(n).bindPopup(`
             <div style="font-family: 'Inter', sans-serif; text-align: center; padding: 5px;">
                 <h3 style="margin: 0 0 5px 0; font-size: 1rem; color: #0f172a;">${e.name}</h3>
                 <p style="margin: 0; font-size: 0.8rem; color: #64748b;">${e.address}</p>
@@ -17,7 +17,7 @@
                 <div class="mini-dest-card pildora-hover" style="margin-bottom: 0.5rem; cursor: pointer;">
                     <div class="mini-dest-header" style="align-items: center; position: relative; width: 100%; display: flex; justify-content: space-between;">
                         <div class="mini-dest-name" style="display: flex; align-items: center; gap: 0.8rem; text-align: left; min-width: 0; flex: 1;">
-                            <div style="width: 32px; height: 32px; flex-shrink: 0;">
+                            <div style="width: 40px; height: 40px; flex-shrink: 0;">
                                 ${r}
                             </div>
                             <div style="display: flex; flex-direction: column; min-width: 0;">
