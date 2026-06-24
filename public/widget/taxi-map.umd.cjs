@@ -4,7 +4,7 @@
             <rect x="2" y="2" width="20" height="12" rx="1.5" fill="white" />
             <text x="12" y="8" font-family="'Arial Black', 'Helvetica Neue', Helvetica, sans-serif" font-size="6" font-weight="900" fill="black" text-anchor="middle" dominant-baseline="middle" letter-spacing="0.5">TAXI</text>
         </svg>
-    `,i=n.getContainer(),a=document.createElement(`div`);a.id=`map-overlay-info-paradas`,a.style.position=`absolute`,a.style.top=`70px`,a.style.left=`50%`,a.style.transform=`translate(-50%, -10px)`,a.style.zIndex=`1000`,a.style.width=`90%`,a.style.maxWidth=`350px`,a.style.display=`none`,a.style.opacity=`0`,a.style.transition=`opacity 0.3s ease, transform 0.3s ease`;let o=()=>{a.style.opacity=`0`,a.style.transform=`translate(-50%, -10px)`,setTimeout(()=>{a.style.display=`none`},300)};n.on(`click`,()=>{o()}),i.appendChild(a);let s=e.querySelector(`#paradas-list-container`);new ResizeObserver(()=>{n.invalidateSize()}).observe(t);let c=e=>{e===`compact`?(t.classList.remove(`map-expanded`),t.classList.add(`map-compact`),s&&(s.style.display=`flex`)):(t.classList.remove(`map-compact`),t.classList.add(`map-expanded`),s&&(s.style.display=`none`))},d=e=>{a.innerHTML=`
+    `,i=n.getContainer(),a=document.createElement(`div`);a.id=`map-overlay-info-paradas`,a.style.position=`absolute`,a.style.top=`70px`,a.style.left=`50%`,a.style.transform=`translate(-50%, -10px)`,a.style.zIndex=`1000`,a.style.width=`90%`,a.style.maxWidth=`350px`,a.style.display=`none`,a.style.opacity=`0`,a.style.transition=`opacity 0.3s ease, transform 0.3s ease`;let o=()=>{a.style.opacity=`0`,a.style.transform=`translate(-50%, -10px)`,setTimeout(()=>{a.style.display=`none`},300)};n.on(`click`,()=>{o()}),i.appendChild(a);let s=e=>{a.innerHTML=`
             <div style="background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 9999px; padding: 1rem 1.25rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 1rem; width: 100%; box-sizing: border-box;">
                 <div style="width: 32px; height: 38px; flex-shrink: 0; border-radius: 4px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
                     ${r}
@@ -15,39 +15,26 @@
                     <span style="color: rgba(255,255,255,0.7); font-size: 0.8rem; margin-top: 0.2rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${e.address}</span>
                 </div>
             </div>
-        `,a.style.display=`block`,a.offsetWidth,a.style.opacity=`1`,a.style.transform=`translate(-50%, 0)`,c(`expanded`),n.setView([e.lat,e.lon],16)};if(u.forEach(e=>{let i=l.default.divIcon({className:`custom-taxi-icon`,html:`<div class="taxi-marker" style="width: 36px; height: 42px; border: 2px solid white; border-radius: 6px; box-shadow: 0 4px 10px rgba(0,0,0, 0.4); overflow: hidden; background: #1d4ed8;">
+        `,a.style.display=`block`,a.offsetWidth,a.style.opacity=`1`,a.style.transform=`translate(-50%, 0)`,n.setView([e.lat,e.lon],16)};u.forEach(e=>{let i=l.default.divIcon({className:`custom-taxi-icon`,html:`<div class="taxi-marker" style="width: 36px; height: 42px; border: 2px solid white; border-radius: 6px; box-shadow: 0 4px 10px rgba(0,0,0, 0.4); overflow: hidden; background: #1d4ed8;">
                     ${r}
-                   </div>`,iconSize:[36,42],iconAnchor:[18,21],popupAnchor:[0,-21]});l.default.marker([e.lat,e.lon],{icon:i}).addTo(n).on(`click`,n=>{l.default.DomEvent.stopPropagation(n),d(e);let r=t.getBoundingClientRect();window.scrollTo({top:r.top+window.scrollY-80,behavior:`smooth`})})}),s){let i=[...u],a=(e,n=i)=>{i=n;let o=Math.ceil(i.length/5);s.innerHTML=``;let c=(e-1)*5,l=c+5;if(i.slice(c,l).forEach(e=>{let n=document.createElement(`div`);n.innerHTML=`
-                    <div class="mini-dest-card pildora-parada-taxi" style="margin-bottom: 0.5rem; cursor: pointer;">
-                        <div class="mini-dest-header" style="align-items: center; position: relative; width: 100%; display: flex; justify-content: space-between;">
-                            <div class="mini-dest-name" style="display: flex; align-items: center; gap: 1rem; text-align: left; min-width: 0; flex: 1;">
-                                <div style="width: 32px; height: 38px; flex-shrink: 0; border-radius: 4px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
-                                    ${r}
-                                </div>
-                                <div style="display: flex; flex-direction: column; min-width: 0;">
-                                    <div style="font-size: 0.65rem; color: #3b82f6; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; line-height: 1.2; margin-bottom: 0.15rem;">PARADA DE TAXI</div>
-                                    <div style="font-size: 1rem; color: #fff; font-weight: 600; line-height: 1.2;">${e.name}</div>
-                                    <div style="font-size: 0.8rem; color: var(--text-muted, #94a3b8); line-height: 1.2; margin-top: 0.2rem;">${e.address}</div>
-                                </div>
-                            </div>
-                            <div style="display: flex; align-items: center; margin-left: 1rem;">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="m9 18 6-6-6-6"/>
-                                </svg>
-                            </div>
+                   </div>`,iconSize:[36,42],iconAnchor:[18,21],popupAnchor:[0,-21]});l.default.marker([e.lat,e.lon],{icon:i}).addTo(n).on(`click`,n=>{l.default.DomEvent.stopPropagation(n),s(e);let r=t.getBoundingClientRect();window.scrollTo({top:r.top+window.scrollY-80,behavior:`smooth`})})});let c=e.querySelector(`#paradas-list-container`);if(c){let i=e=>{c.innerHTML=``,e.forEach(e=>{let n=document.createElement(`div`);n.innerHTML=`
+                    <div class="mini-chip-parada">
+                        <div style="width: 20px; height: 24px; flex-shrink: 0; border-radius: 3px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                            ${r}
                         </div>
+                        <span style="color: #fff; font-size: 0.85rem; font-weight: 600;">${e.name}</span>
                     </div>
-                `,n.firstElementChild?.addEventListener(`click`,()=>{d(e);let n=t.getBoundingClientRect();window.scrollTo({top:n.top+window.scrollY-80,behavior:`smooth`})}),s.appendChild(n.firstElementChild)}),o>1){let t=document.createElement(`div`);t.style.display=`flex`,t.style.justifyContent=`center`,t.style.alignItems=`center`,t.style.gap=`1rem`,t.style.marginTop=`1rem`;let n=document.createElement(`button`);n.innerHTML=`&laquo; Anterior`,n.style.padding=`0.5rem 1rem`,n.style.borderRadius=`999px`,n.style.border=`1px solid rgba(255,255,255,0.1)`,n.style.background=e===1?`transparent`:`rgba(59, 130, 246, 0.15)`,n.style.color=e===1?`#64748b`:`#3b82f6`,n.style.cursor=e===1?`default`:`pointer`,n.style.fontWeight=`600`,n.style.transition=`all 0.2s ease`,n.disabled=e===1,n.onclick=()=>{e>1&&a(e-1)};let r=document.createElement(`span`);r.style.color=`#94a3b8`,r.style.fontSize=`0.9rem`,r.innerText=`Página ${e} de ${o}`;let i=document.createElement(`button`);i.innerHTML=`Siguiente &raquo;`,i.style.padding=`0.5rem 1rem`,i.style.borderRadius=`999px`,i.style.border=`1px solid rgba(255,255,255,0.1)`,i.style.background=e===o?`transparent`:`rgba(59, 130, 246, 0.15)`,i.style.color=e===o?`#64748b`:`#3b82f6`,i.style.cursor=e===o?`default`:`pointer`,i.style.fontWeight=`600`,i.style.transition=`all 0.2s ease`,i.disabled=e===o,i.onclick=()=>{e<o&&a(e+1)},t.appendChild(n),t.appendChild(r),t.appendChild(i),s.appendChild(t)}},l=e.querySelectorAll(`.taxi-scope-pill`);l.forEach(t=>{t.addEventListener(`click`,t=>{l.forEach(e=>e.classList.remove(`active`));let r=t.target;r.classList.add(`active`);let i=r.getAttribute(`data-filter`);if(i===`all`)o(),c(`compact`),a(1,[...u]);else if(i===`nearest`)if(navigator.geolocation){let t=r.innerText;r.innerText=`Buscando...`,navigator.geolocation.getCurrentPosition(e=>{r.innerText=t;let i=e.coords.latitude,s=e.coords.longitude,l=[...u].sort((e,t)=>(e.lat-i)**2+(e.lon-s)**2-((t.lat-i)**2+(t.lon-s)**2));o(),c(`expanded`),a(1,l),l.length>0&&n.setView([l[0].lat,l[0].lon],14)},n=>{r.innerText=t,console.error(`Error getting location`,n),alert(`No hemos podido acceder a tu ubicación para mostrarte las paradas más cercanas.`),r.classList.remove(`active`),e.querySelector(`[data-filter="all"]`)?.classList.add(`active`),c(`compact`),a(1,[...u])})}else alert(`Tu navegador no soporta geolocalización.`),r.classList.remove(`active`),e.querySelector(`[data-filter="all"]`)?.classList.add(`active`)})}),c(`compact`),a(1)}window.cadizTaxiMap=n},f=class extends HTMLElement{constructor(){super()}connectedCallback(){this.innerHTML=`
+                `,n.firstElementChild?.addEventListener(`click`,()=>{s(e);let n=t.getBoundingClientRect();window.scrollTo({top:n.top+window.scrollY-80,behavior:`smooth`})}),c.appendChild(n.firstElementChild)})},a=e.querySelectorAll(`.taxi-scope-pill`);a.forEach(t=>{t.addEventListener(`click`,t=>{a.forEach(e=>e.classList.remove(`active`));let r=t.target;r.classList.add(`active`);let s=r.getAttribute(`data-filter`);if(s===`all`)o(),i([...u]);else if(s===`nearest`)if(navigator.geolocation){let t=r.innerText;r.innerText=`Buscando...`,navigator.geolocation.getCurrentPosition(e=>{r.innerText=t;let a=e.coords.latitude,s=e.coords.longitude,l=[...u].sort((e,t)=>(e.lat-a)**2+(e.lon-s)**2-((t.lat-a)**2+(t.lon-s)**2));o(),i(l),c.scrollLeft=0,l.length>0&&n.setView([l[0].lat,l[0].lon],14)},n=>{r.innerText=t,console.error(`Error getting location`,n),alert(`No hemos podido acceder a tu ubicación para mostrarte las paradas más cercanas.`),r.classList.remove(`active`),e.querySelector(`[data-filter="all"]`)?.classList.add(`active`),i([...u])})}else alert(`Tu navegador no soporta geolocalización.`),r.classList.remove(`active`),e.querySelector(`[data-filter="all"]`)?.classList.add(`active`)})}),i([...u])}window.cadizTaxiMap=n},f=class extends HTMLElement{constructor(){super()}connectedCallback(){this.innerHTML=`
       <div class="taxi-map-wrapper">
         <div class="map-container" style="position: relative; width: 100%;">
-            <div id="map" class="map-compact"></div>
+            <div id="map"></div>
             <div class="taxi-toggle-overlay">
                 <div class="taxi-toggle-wrapper">
                     <button class="taxi-scope-pill active" data-filter="all">Todas</button>
                     <button class="taxi-scope-pill" data-filter="nearest">Más cerca</button>
                 </div>
             </div>
+            <div id="paradas-list-container" class="paradas-list-floating"></div>
         </div>
-        <div id="paradas-list-container" class="paradas-list"></div>
       </div>
     `,setTimeout(()=>{d(this)},0)}};customElements.define(`taxi-map`,f),e.TaxiMap=f});
