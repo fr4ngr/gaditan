@@ -4781,15 +4781,15 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 		attribution: "&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors &copy; <a href=\"https://carto.com/attributions\">CARTO</a>",
 		maxZoom: 19
 	}).addTo(n);
-	let r = "\n        <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" height=\"100%\" viewBox=\"0 0 24 24\">\n            <!-- Círculo base azul (hace de fondo y de contorno) -->\n            <circle cx=\"12\" cy=\"12\" r=\"11.5\" fill=\"#1d4ed8\" />\n            <!-- Semi-círculo superior blanco, un poco más pequeño para dejar contorno azul -->\n            <path d=\"M 2.5,12 A 9.5,9.5 0 0,1 21.5,12 Z\" fill=\"white\" />\n            <text x=\"12\" y=\"8.5\" font-family=\"Arial, sans-serif\" font-size=\"4.8\" font-weight=\"900\" fill=\"black\" text-anchor=\"middle\" dominant-baseline=\"middle\">TAXI</text>\n        </svg>\n    ";
+	let r = "\n        <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" height=\"100%\" viewBox=\"0 0 24 32\">\n            <rect x=\"0\" y=\"0\" width=\"24\" height=\"32\" rx=\"4\" fill=\"#1d4ed8\" />\n            <path d=\"M6.5,5 h6 c3,0 5.5,1.5 5.5,5 c0,3.5 -2.5,5 -5.5,5 h-3 v6 h-3 z M9.5,8 v4 h3 c1.5,0 2.5,-0.8 2.5,-2 c0,-1.2 -1,-2 -2.5,-2 z\" fill=\"white\" />\n            <text x=\"12\" y=\"28\" font-family=\"Arial, sans-serif\" font-size=\"6.5\" font-weight=\"900\" fill=\"white\" text-anchor=\"middle\" letter-spacing=\"0.5\">TAXI</text>\n        </svg>\n    ";
 	l.forEach((e) => {
 		let t = c.default.divIcon({
 			className: "custom-taxi-icon",
-			html: `<div class="taxi-marker" style="width: 48px; height: 48px; border: 2px solid white; border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0, 0.4); overflow: hidden;">
+			html: `<div class="taxi-marker" style="width: 36px; height: 48px; border: 2px solid white; border-radius: 6px; box-shadow: 0 4px 10px rgba(0,0,0, 0.4); overflow: hidden; background: #1d4ed8;">
                     ${r}
                    </div>`,
-			iconSize: [48, 48],
-			iconAnchor: [24, 24],
+			iconSize: [36, 48],
+			iconAnchor: [18, 24],
 			popupAnchor: [0, -24]
 		});
 		c.default.marker([e.lat, e.lon], { icon: t }).addTo(n).bindPopup(`
@@ -4809,8 +4809,8 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				a.innerHTML = `
                     <div class="mini-dest-card pildora-parada-taxi" style="margin-bottom: 0.5rem; cursor: pointer;">
                         <div class="mini-dest-header" style="align-items: center; position: relative; width: 100%; display: flex; justify-content: space-between;">
-                            <div class="mini-dest-name" style="display: flex; align-items: center; gap: 0.8rem; text-align: left; min-width: 0; flex: 1;">
-                                <div style="width: 40px; height: 40px; flex-shrink: 0;">
+                            <div class="mini-dest-name" style="display: flex; align-items: center; gap: 1rem; text-align: left; min-width: 0; flex: 1;">
+                                <div style="width: 30px; height: 40px; flex-shrink: 0; border-radius: 4px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
                                     ${r}
                                 </div>
                                 <div style="display: flex; flex-direction: column; min-width: 0;">
