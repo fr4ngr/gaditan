@@ -4776,26 +4776,29 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 		attributionControl: !1,
 		scrollWheelZoom: !1,
 		dragging: !c.default.Browser.mobile
-	}).setView([36.529, -6.292], 13);
-	c.default.control.zoom({ position: "bottomright" }).addTo(n), c.default.control.attribution({ position: "bottomright" }).addTo(n), c.default.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
+	}), r = c.default.latLngBounds(l.map((e) => [e.lat, e.lon]));
+	n.fitBounds(r, {
+		paddingBottomRight: [0, 320],
+		paddingTopLeft: [0, 80]
+	}), c.default.control.zoom({ position: "bottomright" }).addTo(n), c.default.control.attribution({ position: "bottomright" }).addTo(n), c.default.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
 		attribution: "&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors &copy; <a href=\"https://carto.com/attributions\">CARTO</a>",
 		maxZoom: 19
 	}).addTo(n);
-	let r = "\n        <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" height=\"100%\" viewBox=\"0 0 24 28\">\n            <rect x=\"0\" y=\"0\" width=\"24\" height=\"28\" rx=\"3.5\" fill=\"#1d4ed8\" />\n            <rect x=\"2\" y=\"2\" width=\"20\" height=\"12\" rx=\"1.5\" fill=\"white\" />\n            <text x=\"12\" y=\"8\" font-family=\"'Arial Black', 'Helvetica Neue', Helvetica, sans-serif\" font-size=\"6\" font-weight=\"900\" fill=\"black\" text-anchor=\"middle\" dominant-baseline=\"middle\" letter-spacing=\"0.5\">TAXI</text>\n        </svg>\n    ", i = n.getContainer(), a = document.createElement("div");
-	a.id = "map-overlay-info-paradas", a.style.position = "absolute", a.style.top = "70px", a.style.left = "50%", a.style.transform = "translate(-50%, -10px)", a.style.zIndex = "1000", a.style.width = "90%", a.style.maxWidth = "350px", a.style.display = "none", a.style.opacity = "0", a.style.transition = "opacity 0.3s ease, transform 0.3s ease";
-	let o = () => {
-		a.style.opacity = "0", a.style.transform = "translate(-50%, -10px)", setTimeout(() => {
-			a.style.display = "none";
+	let i = "\n        <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" height=\"100%\" viewBox=\"0 0 24 28\">\n            <rect x=\"0\" y=\"0\" width=\"24\" height=\"28\" rx=\"3.5\" fill=\"#1d4ed8\" />\n            <rect x=\"2\" y=\"2\" width=\"20\" height=\"12\" rx=\"1.5\" fill=\"white\" />\n            <text x=\"12\" y=\"8\" font-family=\"'Arial Black', 'Helvetica Neue', Helvetica, sans-serif\" font-size=\"6\" font-weight=\"900\" fill=\"black\" text-anchor=\"middle\" dominant-baseline=\"middle\" letter-spacing=\"0.5\">TAXI</text>\n        </svg>\n    ", a = n.getContainer(), o = document.createElement("div");
+	o.id = "map-overlay-info-paradas", o.style.position = "absolute", o.style.top = "70px", o.style.left = "50%", o.style.transform = "translate(-50%, -10px)", o.style.zIndex = "1000", o.style.width = "90%", o.style.maxWidth = "350px", o.style.display = "none", o.style.opacity = "0", o.style.transition = "opacity 0.3s ease, transform 0.3s ease";
+	let s = () => {
+		o.style.opacity = "0", o.style.transform = "translate(-50%, -10px)", setTimeout(() => {
+			o.style.display = "none";
 		}, 300);
 	};
 	n.on("click", () => {
-		o();
-	}), i.appendChild(a);
-	let s = (e) => {
-		a.innerHTML = `
+		s();
+	}), a.appendChild(o);
+	let u = (e) => {
+		o.innerHTML = `
             <div style="background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 9999px; padding: 1rem 1.25rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 1rem; width: 100%; box-sizing: border-box;">
                 <div style="width: 32px; height: 38px; flex-shrink: 0; border-radius: 4px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
-                    ${r}
+                    ${i}
                 </div>
                 <div style="display: flex; flex-direction: column; flex: 1; min-width: 0; justify-content: center;">
                     <span style="color: #3b82f6; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.15rem;">PARADA DE TAXI</span>
@@ -4803,20 +4806,20 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
                     <span style="color: rgba(255,255,255,0.7); font-size: 0.8rem; margin-top: 0.2rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${e.address}</span>
                 </div>
             </div>
-        `, a.style.display = "block", a.offsetWidth, a.style.opacity = "1", a.style.transform = "translate(-50%, 0)", n.setView([e.lat, e.lon], 16);
+        `, o.style.display = "block", o.offsetWidth, o.style.opacity = "1", o.style.transform = "translate(-50%, 0)", n.setView([e.lat, e.lon], 16);
 	};
 	l.forEach((e) => {
-		let i = c.default.divIcon({
+		let r = c.default.divIcon({
 			className: "custom-taxi-icon",
 			html: `<div class="taxi-marker" style="width: 36px; height: 42px; border: 2px solid white; border-radius: 6px; box-shadow: 0 4px 10px rgba(0,0,0, 0.4); overflow: hidden; background: #1d4ed8;">
-                    ${r}
+                    ${i}
                    </div>`,
 			iconSize: [36, 42],
 			iconAnchor: [18, 21],
 			popupAnchor: [0, -21]
 		});
-		c.default.marker([e.lat, e.lon], { icon: i }).addTo(n).on("click", (n) => {
-			c.default.DomEvent.stopPropagation(n), s(e);
+		c.default.marker([e.lat, e.lon], { icon: r }).addTo(n).on("click", (n) => {
+			c.default.DomEvent.stopPropagation(n), u(e);
 			let r = t.getBoundingClientRect();
 			window.scrollTo({
 				top: r.top + window.scrollY - 80,
@@ -4824,33 +4827,33 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			});
 		});
 	});
-	let u = e.querySelector("#paradas-list-container");
-	if (u) {
-		let i = [...l], a = (e, n = i) => {
-			i = n;
-			let o = Math.ceil(i.length / 5);
-			if (u.innerHTML = "", i.length === 0) {
-				u.innerHTML = "<div style=\"color: rgba(255,255,255,0.7); text-align: center; font-size: 0.9rem; padding: 1rem 0; background: rgba(15, 23, 42, 0.85); border-radius: 999px; backdrop-filter: blur(16px);\">No hay paradas en esta zona.</div>";
+	let d = e.querySelector("#paradas-list-container");
+	if (d) {
+		let r = [...l], a = (e, n = r) => {
+			r = n;
+			let o = Math.ceil(r.length / 5);
+			if (d.innerHTML = "", r.length === 0) {
+				d.innerHTML = "<div style=\"color: rgba(255,255,255,0.7); text-align: center; font-size: 0.9rem; padding: 1rem 0; background: rgba(15, 23, 42, 0.85); border-radius: 999px; backdrop-filter: blur(16px);\">No hay paradas en esta zona.</div>";
 				return;
 			}
-			let c = (e - 1) * 5, l = c + 5;
-			if (i.slice(c, l).forEach((e) => {
+			let s = (e - 1) * 5, c = s + 5;
+			if (r.slice(s, c).forEach((e) => {
 				let n = document.createElement("div");
 				n.innerHTML = `
                     <div class="mini-chip-parada" style="width: 100%; justify-content: flex-start;">
                         <div style="width: 24px; height: 28px; flex-shrink: 0; border-radius: 3px; overflow: hidden; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
-                            ${r}
+                            ${i}
                         </div>
                         <span style="color: #fff; font-size: 0.9rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${e.name}</span>
                     </div>
                 `, n.firstElementChild?.addEventListener("click", () => {
-					s(e);
+					u(e);
 					let n = t.getBoundingClientRect();
 					window.scrollTo({
 						top: n.top + window.scrollY - 80,
 						behavior: "smooth"
 					});
-				}), u.appendChild(n.firstElementChild);
+				}), d.appendChild(n.firstElementChild);
 			}), o > 1) {
 				let t = document.createElement("div");
 				t.style.display = "flex", t.style.justifyContent = "space-between", t.style.alignItems = "center", t.style.marginTop = "0.5rem";
@@ -4863,7 +4866,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				let i = document.createElement("button");
 				i.innerHTML = "&raquo;", i.style.padding = "0.25rem 1rem", i.style.borderRadius = "999px", i.style.border = "1px solid rgba(255,255,255,0.1)", i.style.background = e === o ? "transparent" : "rgba(59, 130, 246, 0.15)", i.style.color = e === o ? "#64748b" : "#3b82f6", i.style.cursor = e === o ? "default" : "pointer", i.style.fontWeight = "600", i.style.transition = "all 0.2s ease", i.disabled = e === o, i.onclick = () => {
 					e < o && a(e + 1);
-				}, t.appendChild(n), t.appendChild(r), t.appendChild(i), u.appendChild(t);
+				}, t.appendChild(n), t.appendChild(r), t.appendChild(i), d.appendChild(t);
 			}
 		};
 		n.on("moveend", () => {
@@ -4874,15 +4877,21 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			}
 			a(1, r);
 		});
-		let d = e.querySelectorAll(".taxi-scope-pill");
-		d.forEach((t) => {
+		let o = e.querySelectorAll(".taxi-scope-pill");
+		o.forEach((t) => {
 			t.addEventListener("click", (t) => {
-				d.forEach((e) => e.classList.remove("active"));
+				o.forEach((e) => e.classList.remove("active"));
 				let r = t.target;
 				r.classList.add("active");
 				let i = r.getAttribute("data-filter");
-				if (i === "all") o(), n.setView([36.529, -6.292], 13);
-				else if (i === "nearest") {
+				if (i === "all") {
+					s();
+					let e = c.default.latLngBounds(l.map((e) => [e.lat, e.lon]));
+					n.fitBounds(e, {
+						paddingBottomRight: [0, 320],
+						paddingTopLeft: [0, 80]
+					});
+				} else if (i === "nearest") {
 					let t = (e, t) => {
 						if (new URLSearchParams(window.location.search).has("test_cadiz")) {
 							console.log("TEST MODE: Spoofing location to Cádiz (Plaza de España)"), setTimeout(() => e({
@@ -4906,7 +4915,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 					r.innerText = "Buscando...", t((e) => {
 						r.innerText = i;
 						let t = e.coords.latitude, a = e.coords.longitude;
-						o(), n.setView([t, a], 15);
+						s(), n.setView([t, a], 15);
 					}, (t) => {
 						r.innerText = i, console.error("Error getting location", t), alert("No hemos podido acceder a tu ubicación o tu navegador no soporta geolocalización."), r.classList.remove("active"), e.querySelector("[data-filter=\"all\"]")?.classList.add("active"), n.setView([36.529, -6.292], 13);
 					});
