@@ -4765,8 +4765,8 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			return window.L = ai, this;
 		}, window.L = e;
 	}));
-})))(), 1), d = window.L || u, f = (e) => {
-	let t = null, n = null, r = null, i = null, a = "todas", o = null, s = null, c = !1, u = [], f = 0, p = null, m = !1, h = null, g = {}, _ = 0, v = {
+})))(), 1), d = (e) => {
+	let t = null, n = null, r = null, i = null, a = "todas", o = null, s = null, c = !1, d = [], f = 0, p = null, m = !1, h = null, g = {}, _ = 0, v = {
 		getCurrentPosition: (e, t, n) => {
 			if (m && h) {
 				let t = h.getLatLng();
@@ -4807,22 +4807,22 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				});
 			}
 		}
-	}, y = null, ee = null, b = null, te = null, ne = !1, re = /* @__PURE__ */ new Set(), x = d.divIcon({
+	}, y = null, ee = null, b = null, te = null, ne = !1, re = /* @__PURE__ */ new Set(), x = u.default.divIcon({
 		className: "custom-div-icon",
 		html: "\n            <div style=\"position: relative; width: 26px; height: 42px; filter: drop-shadow(0 3px 3px rgba(0,0,0,0.35)); display: flex; flex-direction: column; align-items: center;\">\n                <div style=\"background-color: #0f172a; width: 26px; height: 32px; border-radius: 6px; padding: 2.5px; box-sizing: border-box; font-family: 'Inter', sans-serif; display: flex; flex-direction: column; z-index: 2;\">\n                    <div style=\"background-color: white; width: 100%; height: 14px; border-radius: 3.5px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;\">\n                        <div style=\"color: black; font-weight: 900; font-size: 6.8px; letter-spacing: 0.8px; line-height: 1; display: block; -webkit-text-stroke: 0.2px black;\">TAXI</div>\n                    </div>\n                </div>\n                <div style=\"width: 2px; height: 10px; background-color: #475569; margin-top: -1px; z-index: 1; box-shadow: 1px 0 2px rgba(0,0,0,0.15);\"></div>\n            </div>\n        ",
 		iconSize: [26, 42],
 		iconAnchor: [13, 42]
-	}), S = d.divIcon({
+	}), S = u.default.divIcon({
 		className: "custom-div-icon",
 		html: "\n            <div class=\"animated-sign animated-selected-sign\" style=\"position: relative; width: 26px; height: 42px; filter: drop-shadow(0 3px 3px rgba(0,0,0,0.35)); display: flex; flex-direction: column; align-items: center;\">\n                <div style=\"background-color: #0f172a; width: 26px; height: 32px; border-radius: 6px; padding: 2.5px; box-sizing: border-box; font-family: 'Inter', sans-serif; display: flex; flex-direction: column; z-index: 2;\">\n                    <div style=\"background-color: white; width: 100%; height: 14px; border-radius: 3.5px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;\">\n                        <div style=\"color: black; font-weight: 900; font-size: 6.8px; letter-spacing: 0.8px; line-height: 1; display: block; -webkit-text-stroke: 0.2px black;\">TAXI</div>\n                    </div>\n                </div>\n                <div style=\"width: 2px; height: 10px; background-color: #475569; margin-top: -1px; z-index: 1; box-shadow: 1px 0 2px rgba(0,0,0,0.15);\"></div>\n            </div>\n        ",
 		iconSize: [26, 42],
 		iconAnchor: [13, 42]
-	}), ie = d.divIcon({
+	}), ie = u.default.divIcon({
 		className: "user-div-icon",
 		html: "\n            <div id=\"user-marker-wrapper\" style=\"position: relative; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; transition: transform 0.3s ease;\">\n                <div id=\"user-heading-arrow\" style=\"position: absolute; top: -10px; width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-bottom: 12px solid #3b82f6; opacity: 0; transition: opacity 0.3s ease;\"></div>\n                <div style=\"background-color: #3b82f6; width: 16px; height: 16px; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 10px rgba(59, 130, 246, 0.8); position: relative; z-index: 2;\"></div>\n            </div>\n        ",
 		iconSize: [22, 22],
 		iconAnchor: [11, 11]
-	}), C = d.divIcon({
+	}), C = u.default.divIcon({
 		className: "custom-div-icon poi-icon",
 		html: "<div style=\"display: flex; justify-content: center; align-items: center; filter: drop-shadow(0 4px 4px rgba(0,0,0,0.5));\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"28\" height=\"28\" viewBox=\"0 0 24 24\" fill=\"#ec4899\" stroke=\"#111827\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z\"></path><circle cx=\"12\" cy=\"10\" r=\"3\" fill=\"#111827\"></circle></svg><div style=\"position: absolute; top: 6px; color: white;\"><i data-lucide=\"camera\" style=\"width: 10px; height: 10px;\"></i></div></div>",
 		iconSize: [28, 28],
@@ -4854,19 +4854,19 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 		return Math.sqrt(n) * 111320;
 	}, E = (e) => e < 1 ? Math.round(e * 1e3) + " m" : e.toFixed(1) + " km", D = () => {
 		let r = e.querySelector("#map");
-		if (!r || d === void 0) return;
-		t = d.map(r, {
+		if (!r || u.default === void 0) return;
+		t = u.default.map(r, {
 			zoomControl: !1,
 			attributionControl: !1,
 			scrollWheelZoom: !1,
-			dragging: !d.Browser.mobile,
+			dragging: !u.default.Browser.mobile,
 			tap: !1
-		}).setView([36.529, -6.292], 13), d.control.attribution({ position: "bottomright" }).addTo(t), d.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
+		}).setView([36.529, -6.292], 13), u.default.control.attribution({ position: "bottomright" }).addTo(t), u.default.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
 			attribution: "&copy; OpenStreetMap contributors &copy; CARTO",
 			maxZoom: 19
-		}).addTo(t), n = d.layerGroup().addTo(t), te = d.layerGroup().addTo(t);
+		}).addTo(t), n = u.default.layerGroup().addTo(t), te = u.default.layerGroup().addTo(t);
 		let i = document.createElement("div");
-		i.id = "map-custom-controls", i.style.cssText = "\n            position: absolute;\n            bottom: 1.5rem;\n            right: 1rem;\n            z-index: 1001;\n            display: flex;\n            flex-direction: row;\n            gap: 0.5rem;\n            transition: bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);\n            pointer-events: auto;\n        ", e.querySelector("#map").appendChild(i), d !== void 0 && d.DomEvent.disableClickPropagation(i);
+		i.id = "map-custom-controls", i.style.cssText = "\n            position: absolute;\n            bottom: 1.5rem;\n            right: 1rem;\n            z-index: 1001;\n            display: flex;\n            flex-direction: row;\n            gap: 0.5rem;\n            transition: bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);\n            pointer-events: auto;\n        ", e.querySelector("#map").appendChild(i), u.default !== void 0 && u.default.DomEvent.disableClickPropagation(i);
 		let a = document.createElement("button");
 		a.title = "Descubrir comercios y turismo cerca", a.innerHTML = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\">\n            <path d=\"M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z\"></path><circle cx=\"12\" cy=\"13\" r=\"3\"></circle>\n        </svg>", a.style.cssText = "\n            background: rgba(15, 23, 42, 0.85);\n            border: 1px solid rgba(236, 72, 153, 0.4);\n            border-radius: 50%;\n            width: 40px; height: 40px;\n            display: flex; align-items: center; justify-content: center;\n            cursor: pointer;\n            color: #ec4899;\n            backdrop-filter: blur(10px);\n            box-shadow: 0 4px 15px rgba(0,0,0,0.3);\n            transition: all 0.2s;\n            padding: 0;\n        ", a.onmouseover = () => {
 			a.style.background = "rgba(236, 72, 153, 0.2)", a.style.borderColor = "#ec4899";
@@ -4892,20 +4892,20 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			c.style.background = "transparent";
 		}, c.onclick = (e) => {
 			e && (e.preventDefault(), e.stopPropagation()), t.zoomIn();
-		}, o.appendChild(c), i.appendChild(o), new (d.Control.extend({
+		}, o.appendChild(c), i.appendChild(o), new (u.default.Control.extend({
 			options: { position: "topright" },
 			onAdd: function() {
-				let e = d.DomUtil.create("button", "map-test-btn");
-				return e.title = "Activar/Desactivar Simulador GPS", e.innerHTML = "<span style=\"font-size:0.7rem; font-weight:800; letter-spacing:0.5px;\">MODO PRUEBA</span>", e.style.cssText = "\n                    background: rgba(245, 158, 11, 0.9);\n                    border: 2px solid #d97706;\n                    border-radius: 8px;\n                    padding: 0.4rem 0.8rem;\n                    color: white;\n                    cursor: pointer;\n                    backdrop-filter: blur(4px);\n                    box-shadow: 0 4px 10px rgba(245, 158, 11, 0.4);\n                    transition: all 0.2s;\n                    margin-top: 10px;\n                    margin-right: 10px;\n                ", d.DomEvent.on(e, "click", d.DomEvent.stopPropagation), d.DomEvent.on(e, "click", () => {
+				let e = u.default.DomUtil.create("button", "map-test-btn");
+				return e.title = "Activar/Desactivar Simulador GPS", e.innerHTML = "<span style=\"font-size:0.7rem; font-weight:800; letter-spacing:0.5px;\">MODO PRUEBA</span>", e.style.cssText = "\n                    background: rgba(245, 158, 11, 0.9);\n                    border: 2px solid #d97706;\n                    border-radius: 8px;\n                    padding: 0.4rem 0.8rem;\n                    color: white;\n                    cursor: pointer;\n                    backdrop-filter: blur(4px);\n                    box-shadow: 0 4px 10px rgba(245, 158, 11, 0.4);\n                    transition: all 0.2s;\n                    margin-top: 10px;\n                    margin-right: 10px;\n                ", u.default.DomEvent.on(e, "click", u.default.DomEvent.stopPropagation), u.default.DomEvent.on(e, "click", () => {
 					if (m = !m, m) {
 						e.style.background = "#ef4444", e.style.borderColor = "#b91c1c", e.innerHTML = "<span style=\"font-size:0.7rem; font-weight:800; letter-spacing:0.5px;\">PRUEBA ACTIVA</span>", t.setView([36.529, -6.292], 16);
-						let n = d.divIcon({
+						let n = u.default.divIcon({
 							className: "test-user-icon",
 							html: "<div style=\"background:#ef4444; width:20px; height:20px; border-radius:50%; border:3px solid white; box-shadow: 0 0 10px rgba(239, 68, 68, 0.8);\"></div><div style=\"position:absolute; top:-25px; left:-40px; background:#ef4444; color:white; font-size:10px; padding:2px 6px; border-radius:4px; font-weight:bold; white-space:nowrap;\">Tú (Simulado)</div>",
 							iconSize: [20, 20],
 							iconAnchor: [10, 10]
 						});
-						h = d.marker([36.529, -6.292], {
+						h = u.default.marker([36.529, -6.292], {
 							icon: n,
 							draggable: !0,
 							zIndexOffset: 1e3
@@ -4923,7 +4923,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 	}, O = () => {
 		!te || typeof dbPOIs > "u" || (te.clearLayers(), dbPOIs.forEach((e) => {
 			let t = C;
-			e.image && (t = e.image.toLowerCase().endsWith(".png") ? d.divIcon({
+			e.image && (t = e.image.toLowerCase().endsWith(".png") ? u.default.divIcon({
 				className: "custom-poi-img-icon-silhouette",
 				html: `
                             <div style="width: 100%; height: 100%; display: flex; align-items: flex-end; justify-content: center; filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.5));">
@@ -4932,7 +4932,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
                         `,
 				iconSize: [60, 60],
 				iconAnchor: [30, 60]
-			}) : d.divIcon({
+			}) : u.default.divIcon({
 				className: "custom-poi-img-icon",
 				html: `
                             <div style="width: 44px; height: 44px; border-radius: 50%; overflow: hidden; background: white; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.3);">
@@ -4941,7 +4941,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
                         `,
 				iconSize: [44, 44],
 				iconAnchor: [22, 22]
-			})), d.marker([e.lat, e.lon], { icon: t }).addTo(te).bindPopup(`
+			})), u.default.marker([e.lat, e.lon], { icon: t }).addTo(te).bindPopup(`
                 <div style="font-family: 'Outfit', sans-serif; text-align: center; padding: 0.5rem;">
                     <h3 style="margin: 0 0 0.5rem 0; font-weight: 800; color: #0f172a; font-size: 1rem;">${e.name}</h3>
                     <p style="margin: 0; font-size: 0.8rem; color: #475569;">${e.description}</p>
@@ -4953,7 +4953,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 		}));
 	}, k = (r) => {
 		n.clearLayers(), (s === null ? r : [s]).forEach((r) => {
-			let u = s === null ? x : S, f = d.marker([r.lat, r.lon], { icon: u }).addTo(n);
+			let d = s === null ? x : S, f = u.default.marker([r.lat, r.lon], { icon: d }).addTo(n);
 			f.paradaData = r, f.on("click", () => {
 				if (s === r) {
 					i && !c ? t.fitBounds(i.getBounds(), {
@@ -5111,7 +5111,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 		} else i = "\n                <div style=\"background-color: rgba(15, 23, 42, 0.85); backdrop-filter: blur(8px); color: white; font-size: 0.75rem; font-weight: 700; padding: 0 0.75rem; height: 34px; border-radius: 9999px; display: flex; align-items: center; justify-content: center; gap: 0.3rem; white-space: nowrap; flex-shrink: 0;\">\n                    <i data-lucide=\"arrow-left-right\" style=\"width:14px; height:14px; color: #94a3b8;\"></i> <i data-lucide=\"loader-2\" style=\"width:12px; height:12px; animation: spin 1s linear infinite;\"></i>\n                </div>\n                <div style=\"background-color: rgba(15, 23, 42, 0.85); backdrop-filter: blur(8px); color: white; font-size: 0.75rem; font-weight: 700; padding: 0 0.75rem; height: 34px; border-radius: 9999px; display: flex; align-items: center; justify-content: center; gap: 0.3rem; white-space: nowrap; flex-shrink: 0;\">\n                    <i data-lucide=\"footprints\" style=\"width:14px; height:14px; color: #94a3b8;\"></i> <i data-lucide=\"loader-2\" style=\"width:12px; height:12px; animation: spin 1s linear infinite;\"></i>\n                </div>\n            ";
 		t.nocturna && r.push("\n                <div style=\"background-color: #ef4444; color: white; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; padding: 0.5rem 1.5rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; border-top: 1px solid rgba(255,255,255,0.2);\">\n                    <i data-lucide=\"moon\" style=\"width: 14px; height: 14px;\"></i> PARADA NOCTURNA SÓLO DE 22 A 7H\n                </div>\n            ");
 		let a = e.querySelector("#top-nav-controls");
-		a || (a = document.createElement("div"), a.id = "top-nav-controls", a.style.cssText = "position: absolute; top: 1rem; right: 1rem; z-index: 1000; display: flex; gap: 0.4rem; align-items: center; justify-content: flex-end; max-width: calc(100vw - 2rem);", e.querySelector("#map").appendChild(a), d !== void 0 && d.DomEvent.disableClickPropagation(a)), a.innerHTML = `
+		a || (a = document.createElement("div"), a.id = "top-nav-controls", a.style.cssText = "position: absolute; top: 1rem; right: 1rem; z-index: 1000; display: flex; gap: 0.4rem; align-items: center; justify-content: flex-end; max-width: calc(100vw - 2rem);", e.querySelector("#map").appendChild(a), u.default !== void 0 && u.default.DomEvent.disableClickPropagation(a)), a.innerHTML = `
             ${i}
         `, a.style.display = "flex";
 		let o = "";
@@ -5197,11 +5197,11 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				t && n && (t.style.bottom = `calc(2.5rem + ${n.offsetHeight}px)`);
 			});
 		}, r = e.querySelector("#nav-content-inner");
-		if (f >= u.length) {
+		if (f >= d.length) {
 			e.querySelector("#nav-is-arrived") || (t.innerHTML = "\n                    <div id=\"nav-is-arrived\" style=\"display:flex; align-items:flex-start; gap: 1rem; width: 100%;\">\n                        <div style=\"background: #10b981; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;\">\n                            <i data-lucide=\"map-pin\" style=\"color: white; width: 20px; height: 20px;\"></i>\n                        </div>\n                        <div style=\"display:flex; flex-direction:column; flex:1;\">\n                            <strong style=\"font-size: 1.1rem; line-height: 1.2;\">Has llegado</strong>\n                            <span style=\"font-size: 0.8rem; color: rgba(255,255,255,0.7); margin-top: 0.2rem;\">Destino a la vista</span>\n                        </div>\n                    </div>\n                ", typeof lucide < "u" && lucide.createIcons()), n();
 			return;
 		}
-		let i = u[f], a = i.instruction || "Sigue recto", o = pe(i.type), s = Math.round(i.length * 1e3);
+		let i = d[f], a = i.instruction || "Sigue recto", o = pe(i.type), s = Math.round(i.length * 1e3);
 		if (!r || e.querySelector("#nav-is-arrived")) {
 			t.innerHTML = `
                 <div id="nav-content-inner" style="display:flex; align-items:flex-start; gap: 1rem; width: 100%;">
@@ -5218,15 +5218,15 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 		}
 		let l = e.querySelector("#nav-instruction");
 		l && l.innerText !== a && (l.innerText = a);
-		let d = e.querySelector("#nav-distance");
-		if (d) {
+		let u = e.querySelector("#nav-distance");
+		if (u) {
 			let e = s > 0 ? s + "m" : "";
-			d.innerText !== e && (d.innerText = e);
+			u.innerText !== e && (u.innerText = e);
 		}
 		let p = e.querySelector("#nav-icon-wrapper");
 		p && p.getAttribute("data-current-icon") !== o && (p.setAttribute("data-current-icon", o), p.innerHTML = `<i data-lucide="${o}" style="color: white; width: 20px; height: 20px;"></i>`, typeof lucide < "u" && lucide.createIcons({ root: p })), n();
 	}, he = () => {
-		c = !1, u = [], y = null, p !== null && (v.clearWatch(p), p = null);
+		c = !1, d = [], y = null, p !== null && (v.clearWatch(p), p = null);
 		let n = e.querySelector("#nav-container");
 		n && (n.style.transform = "translateY(20px)", n.style.opacity = "0", setTimeout(() => n.remove(), 400));
 		let r = e.querySelector("#map-custom-controls");
@@ -5270,7 +5270,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			o.style.transform = "translateY(0)", o.style.opacity = "1";
 		}), p = v.watchPosition((e) => {
 			let n = e.coords.latitude, i = e.coords.longitude, a = e.coords.heading;
-			if (r ? r.setLatLng([n, i]) : r = d.marker([n, i], { icon: ie }).addTo(t), r) {
+			if (r ? r.setLatLng([n, i]) : r = u.default.marker([n, i], { icon: ie }).addTo(t), r) {
 				let e = r.getElement();
 				if (e) {
 					let t = e.querySelector("#user-marker-wrapper"), n = e.querySelector("#user-heading-arrow");
@@ -5284,30 +5284,30 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			}), typeof dbPOIs < "u" && dbPOIs.forEach((e) => {
 				let t = ae(n, i, e.lat, e.lon) * 1e3;
 				t <= e.radius && !re.has(e.id) && (re.add(e.id), ge(e, t));
-			}), u.length === 0) ye(n, i, y.lat, y.lon);
+			}), d.length === 0) ye(n, i, y.lat, y.lon);
 			else {
 				let e = ae(n, i, y.lat, y.lon) * 1e3;
 				if (e < 20) {
-					f = u.length, me();
+					f = d.length, me();
 					return;
 				}
 				if (ee && se({
 					lat: n,
 					lng: i
 				}, ee) > 30) {
-					u = [], o.innerHTML = "<i data-lucide=\"refresh-cw\" style=\"animation: spin 1s linear infinite; margin-right: 0.5rem;\"></i> Recalculando...", typeof lucide < "u" && lucide.createIcons(), ye(n, i, y.lat, y.lon);
+					d = [], o.innerHTML = "<i data-lucide=\"refresh-cw\" style=\"animation: spin 1s linear infinite; margin-right: 0.5rem;\"></i> Recalculando...", typeof lucide < "u" && lucide.createIcons(), ye(n, i, y.lat, y.lon);
 					return;
 				}
-				if (f < u.length - 1) {
-					let e = u[f + 1];
+				if (f < d.length - 1) {
+					let e = d[f + 1];
 					if (e) {
 						let t = ee[e.begin_shape_index];
 						if (t) {
 							let e = t[0], r = t[1], a = ae(n, i, e, r) * 1e3;
-							a < 15 ? (f++, me()) : (u[f].length = a / 1e3, me());
+							a < 15 ? (f++, me()) : (d[f].length = a / 1e3, me());
 						}
 					}
-				} else u[f].length = e / 1e3, me();
+				} else d[f].length = e / 1e3, me();
 			}
 		}, (e) => {
 			console.error("Error GPS nav:", e);
@@ -5346,7 +5346,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			}))}`, l = await (await fetch(s)).json();
 			if (!l.trip || !l.trip.legs || l.trip.legs.length === 0) return;
 			let p = l.trip.legs[0], m = ve(p.shape, 6);
-			c && (u = p.maneuvers, f = 0, ee = m, me()), fe(), i = d.polyline(m, {
+			c && (d = p.maneuvers, f = 0, ee = m, me()), fe(), i = u.default.polyline(m, {
 				color: "#3b82f6",
 				weight: 5,
 				opacity: .8,
@@ -5377,7 +5377,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 		fe(), b &&= (clearTimeout(b), null), i && i.classList.remove("active"), c && c.classList.remove("active"), n === "todas" ? (he(), s = null, i && i.classList.add("active"), ce(), k(l), P = 1, be(), r &&= (t.removeLayer(r), null), setTimeout(() => {
 			if (t) {
 				t.invalidateSize();
-				let e = d.latLngBounds(l.map((e) => [e.lat, e.lon]));
+				let e = u.default.latLngBounds(l.map((e) => [e.lat, e.lon]));
 				t.flyToBounds(e, {
 					padding: [20, 20],
 					animate: !0,
@@ -5392,7 +5392,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 					o = {
 						lat: n,
 						lon: i
-					}, r && t.removeLayer(r), r = d.marker([n, i], { icon: ie }).addTo(t), r.bindPopup("Tu ubicación actual"), t.flyTo([n, i], 16, {
+					}, r && t.removeLayer(r), r = u.default.marker([n, i], { icon: ie }).addTo(t), r.bindPopup("Tu ubicación actual"), t.flyTo([n, i], 16, {
 						animate: !0,
 						duration: 1.5
 					});
@@ -5410,12 +5410,12 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			o = {
 				lat: i,
 				lon: a
-			}, r && t.removeLayer(r), r = d.marker([i, a], { icon: ie }).addTo(t), r.bindPopup("Tu ubicación actual");
+			}, r && t.removeLayer(r), r = u.default.marker([i, a], { icon: ie }).addTo(t), r.bindPopup("Tu ubicación actual");
 			let c = l.map((e) => ({
 				...e,
 				distance: ae(i, a, e.lat, e.lon)
-			})).sort((e, t) => e.distance - t.distance), u = c.slice(0, 5);
-			Promise.all(u.map(async (e) => {
+			})).sort((e, t) => e.distance - t.distance), d = c.slice(0, 5);
+			Promise.all(d.map(async (e) => {
 				try {
 					let t = {
 						locations: [{
@@ -5445,7 +5445,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				n.sort((e, t) => e.realDistance - t.realDistance);
 				let r = n[0];
 				s = r, k(c), ue([r], e.querySelector("#paradas-list-container")), N(r), _e(r.lat, r.lon, r.name);
-				let o = d.latLngBounds([[i, a], [r.lat, r.lon]]);
+				let o = u.default.latLngBounds([[i, a], [r.lat, r.lon]]);
 				t.flyToBounds(o, {
 					paddingTopLeft: [20, 180],
 					paddingBottomRight: [20, 20],
@@ -5462,16 +5462,16 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 		init: D,
 		startNav: _e
 	};
-}, p = class extends HTMLElement {
+}, f = class extends HTMLElement {
 	constructor() {
 		super();
 	}
 	connectedCallback() {
 		this.innerHTML = "\n      <div class=\"taxi-map-wrapper\">\n        <div class=\"map-controls theme-toggle-wrapper\" style=\"display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 1.5rem; max-width: 580px; margin-left: auto; margin-right: auto; width: 100%; flex-wrap: wrap;\">\n            <button id=\"btn-todas\" class=\"tarifa-pill active\" style=\"flex: 1; justify-content: center; border-radius: 999px; padding: 0.5rem; border: 1px solid #ccc; cursor: pointer;\">Todas</button>\n            <button id=\"btn-cercana\" class=\"tarifa-pill\" style=\"flex: 1; justify-content: center; border-radius: 999px; padding: 0.5rem; border: 1px solid #ccc; cursor: pointer;\">Más cerca</button>\n        </div>\n        <div class=\"map-container\" style=\"position: relative; border-radius: 30px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2); margin-bottom: 2rem;\">\n            <div id=\"map-overlay-info\" style=\"display: none; background-color: #06b6d4; color: #0f172a; padding: 1.25rem 1.5rem; transition: max-height 0.4s ease, opacity 0.4s ease, padding 0.4s ease; max-height: 0; opacity: 0; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); z-index: 10; position: relative;\">\n            </div>\n            <div id=\"map\" style=\"width: 100%; aspect-ratio: 4/5; max-height: 70vh; background-color: #e5e3df;\"></div>\n        </div>\n        <div id=\"paradas-list-container\" style=\"display: flex; flex-direction: column; gap: 0.8rem; margin-bottom: 2rem;\"></div>\n        <div id=\"directions-container\"></div>\n      </div>\n    ", setTimeout(() => {
-			f(this);
+			d(this);
 		}, 0);
 	}
 };
-customElements.define("taxi-map", p);
+customElements.define("taxi-map", f);
 //#endregion
-export { p as TaxiMap };
+export { f as TaxiMap };
