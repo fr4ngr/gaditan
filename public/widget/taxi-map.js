@@ -4828,33 +4828,20 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 	if (u) {
 		let i = [...l], a = (e, n = i) => {
 			i = n;
-			let o = Math.ceil(i.length / 2);
+			let o = Math.ceil(i.length / 5);
 			if (u.innerHTML = "", i.length === 0) {
-				u.innerHTML = "<div style=\"color: rgba(255,255,255,0.7); text-align: center; font-size: 0.9rem; padding: 1rem 0;\">No hay paradas en esta zona del mapa.</div>";
+				u.innerHTML = "<div style=\"color: rgba(255,255,255,0.7); text-align: center; font-size: 0.9rem; padding: 1rem 0; background: rgba(15, 23, 42, 0.85); border-radius: 999px; backdrop-filter: blur(16px);\">No hay paradas en esta zona.</div>";
 				return;
 			}
-			let c = (e - 1) * 2, l = c + 2;
+			let c = (e - 1) * 5, l = c + 5;
 			if (i.slice(c, l).forEach((e) => {
 				let n = document.createElement("div");
 				n.innerHTML = `
-                    <div class="mini-dest-card pildora-parada-taxi" style="cursor: pointer; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 0.75rem; transition: all 0.2s ease;">
-                        <div class="mini-dest-header" style="align-items: center; position: relative; width: 100%; display: flex; justify-content: space-between;">
-                            <div class="mini-dest-name" style="display: flex; align-items: center; gap: 1rem; text-align: left; min-width: 0; flex: 1;">
-                                <div style="width: 32px; height: 38px; flex-shrink: 0; border-radius: 4px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
-                                    ${r}
-                                </div>
-                                <div style="display: flex; flex-direction: column; min-width: 0;">
-                                    <div style="font-size: 0.65rem; color: #3b82f6; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; line-height: 1.2; margin-bottom: 0.15rem;">PARADA DE TAXI</div>
-                                    <div style="font-size: 1rem; color: #fff; font-weight: 600; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${e.name}</div>
-                                    <div style="font-size: 0.8rem; color: rgba(255,255,255,0.6); line-height: 1.2; margin-top: 0.2rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${e.address}</div>
-                                </div>
-                            </div>
-                            <div style="display: flex; align-items: center; margin-left: 1rem;">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="m9 18 6-6-6-6"/>
-                                </svg>
-                            </div>
+                    <div class="mini-chip-parada" style="width: 100%; justify-content: flex-start;">
+                        <div style="width: 24px; height: 28px; flex-shrink: 0; border-radius: 3px; overflow: hidden; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+                            ${r}
                         </div>
+                        <span style="color: #fff; font-size: 0.9rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${e.name}</span>
                     </div>
                 `, n.firstElementChild?.addEventListener("click", () => {
 					s(e);
