@@ -4780,10 +4780,14 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 	c.default.control.attribution({ position: "bottomright" }).addTo(n), c.default.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
 		attribution: "&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors &copy; <a href=\"https://carto.com/attributions\">CARTO</a>",
 		maxZoom: 19
-	}).addTo(n), l.forEach((e) => {
+	}).addTo(n);
+	let r = "\n        <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" height=\"100%\" viewBox=\"0 0 24 24\">\n            <circle cx=\"12\" cy=\"12\" r=\"11\" fill=\"#1d4ed8\" />\n            <path d=\"M 1,12 A 11,11 0 0,1 23,12 Z\" fill=\"white\" />\n            <text x=\"12\" y=\"8.5\" font-family=\"Arial, sans-serif\" font-size=\"5.5\" font-weight=\"900\" fill=\"black\" text-anchor=\"middle\" dominant-baseline=\"middle\">TAXI</text>\n        </svg>\n    ";
+	l.forEach((e) => {
 		let t = c.default.divIcon({
 			className: "custom-taxi-icon",
-			html: "<div class=\"taxi-marker\" style=\"width: 30px; height: 30px;\">\n                    <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\">\n                        <path d=\"M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2\"/>\n                        <circle cx=\"7\" cy=\"17\" r=\"2\"/>\n                        <circle cx=\"17\" cy=\"17\" r=\"2\"/>\n                    </svg>\n                   </div>",
+			html: `<div class="taxi-marker" style="width: 30px; height: 30px; border: 2px solid white; border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0, 0.4); overflow: hidden;">
+                    ${r}
+                   </div>`,
 			iconSize: [30, 30],
 			iconAnchor: [15, 15],
 			popupAnchor: [0, -15]
@@ -4795,17 +4799,16 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
             </div>
         `);
 	});
-	let r = e.querySelector("#paradas-list-container");
-	r && (r.innerHTML = "", l.forEach((e) => {
-		let i = document.createElement("div");
-		i.innerHTML = `
+	let i = e.querySelector("#paradas-list-container");
+	i && (i.innerHTML = "", l.forEach((e) => {
+		let a = document.createElement("div");
+		a.innerHTML = `
                 <div class="mini-dest-card pildora-hover" style="margin-bottom: 0.5rem; cursor: pointer;">
                     <div class="mini-dest-header" style="align-items: center; position: relative; width: 100%; display: flex; justify-content: space-between;">
                         <div class="mini-dest-name" style="display: flex; align-items: center; gap: 0.8rem; text-align: left; min-width: 0; flex: 1;">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--brand-cyan, #06b6d4)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;">
-                                <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/>
-                                <circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/>
-                            </svg>
+                            <div style="width: 24px; height: 24px; flex-shrink: 0;">
+                                ${r}
+                            </div>
                             <div style="display: flex; flex-direction: column; min-width: 0;">
                                 <div style="font-size: 0.65rem; color: var(--brand-cyan, #06b6d4); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; line-height: 1.2; margin-bottom: 0.15rem;">PARADA DE TAXI</div>
                                 <div style="font-size: 1rem; color: #fff; font-weight: 600; line-height: 1.2;">${e.name}</div>
@@ -4819,12 +4822,12 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
                         </div>
                     </div>
                 </div>
-            `, i.firstElementChild?.addEventListener("click", () => {
+            `, a.firstElementChild?.addEventListener("click", () => {
 			n.setView([e.lat, e.lon], 16), window.scrollTo({
 				top: t.offsetTop - 80,
 				behavior: "smooth"
 			});
-		}), r.appendChild(i.firstElementChild);
+		}), i.appendChild(a.firstElementChild);
 	})), window.cadizTaxiMap = n;
 }, d = class extends HTMLElement {
 	constructor() {
