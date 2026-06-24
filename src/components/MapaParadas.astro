@@ -1,29 +1,17 @@
+---
+---
 <section class="info-section" id="paradas">
-            <div class="container">
-                <h2 class="section-title" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; color: #ffffff;">
-                    <span data-translate="map-title">Mapa de Paradas</span>
-                </h2>
-                <p class="section-subtitle" style="text-align: center; color: var(--text-muted); margin-bottom: 2.5rem; font-size: 1.1rem;" data-translate="stops-map-sub">Encuentra la parada de taxi más cercana a tu ubicación en Cádiz.</p>
+    <div class="container">
+        <h2 class="section-title" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; color: #ffffff;">
+            <span data-translate="map-title">Mapa de Paradas</span>
+        </h2>
+        <p class="section-subtitle" style="text-align: center; color: var(--text-muted); margin-bottom: 2.5rem; font-size: 1.1rem;" data-translate="stops-map-sub">Encuentra la parada de taxi más cercana a tu ubicación en Cádiz.</p>
 
-                <!-- MAPA LEAFLET DIRECTO -->
-                <div class="map-controls theme-toggle-wrapper" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 1.5rem; max-width: 580px; margin-left: auto; margin-right: auto; width: 100%; flex-wrap: wrap;">
-                    <button id="btn-todas" class="tarifa-pill active" style="flex: 1; justify-content: center;">Todas</button>
-                    <button id="btn-cercana" class="tarifa-pill" style="flex: 1; justify-content: center;">Más cerca</button>
-                </div>
+        <taxi-map></taxi-map>
+    </div>
+</section>
 
-                <div class="map-container" style="position: relative; border-radius: 30px; overflow: hidden; border: 1px solid var(--glass-border); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2); margin-bottom: 2rem;">
-                    <!-- Overlay dinámico (Contenedor superior turquesa) -->
-                    <div id="map-overlay-info" style="display: none; background-color: var(--brand-cyan); color: #0f172a; padding: 1.25rem 1.5rem; transition: max-height 0.4s ease, opacity 0.4s ease, padding 0.4s ease; max-height: 0; opacity: 0; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); z-index: 10; position: relative;">
-                    </div>
-                    
-                    <!-- Mapa Base -->
-                    <div id="map" style="width: 100%; aspect-ratio: 4/5; max-height: 70vh; background-color: #e5e3df;"></div>
-                </div>
-                
-                <!-- Lista dinámica de paradas -->
-                <div id="paradas-list-container" style="display: flex; flex-direction: column; gap: 0.8rem; margin-bottom: 2rem;"></div>
-                
-                <!-- Contenedor dinámico de rutas paso a paso -->
-                <div id="directions-container"></div>
-            </div>
-        </section>
+<script>
+    import 'taxi-map-widget/dist/taxi-map.css';
+    import 'taxi-map-widget';
+</script>
