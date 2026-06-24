@@ -4929,7 +4929,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 		super();
 	}
 	connectedCallback() {
-		this.innerHTML = "\n      <div class=\"taxi-map-wrapper\">\n        <div class=\"map-container\" style=\"position: relative; width: 100%;\">\n            <div id=\"map\"></div>\n            <div class=\"taxi-toggle-overlay\">\n                <div class=\"taxi-toggle-wrapper\">\n                    <button class=\"taxi-scope-pill active\" data-filter=\"all\">Todas</button>\n                    <button class=\"taxi-scope-pill\" data-filter=\"nearest\">Más cerca</button>\n                </div>\n            </div>\n            <div id=\"paradas-list-container\" class=\"paradas-panel-flotante\"></div>\n        </div>\n      </div>\n    ", setTimeout(() => {
+		this.innerHTML = "\n      <div class=\"taxi-map-wrapper\">\n        <div class=\"map-container\" style=\"position: relative; width: 100%; height: 100%;\">\n            <div id=\"map\"></div>\n            <div class=\"taxi-toggle-overlay\">\n                <div class=\"taxi-toggle-wrapper\">\n                    <button class=\"taxi-scope-pill active\" data-filter=\"all\">Todas</button>\n                    <button class=\"taxi-scope-pill\" data-filter=\"nearest\">Más cerca</button>\n                </div>\n            </div>\n            <div id=\"paradas-list-container\" class=\"paradas-panel-flotante\"></div>\n        </div>\n      </div>\n    ", setTimeout(() => {
 			u(this);
 		}, 0);
 	}
