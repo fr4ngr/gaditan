@@ -4803,20 +4803,20 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 	i && (i.innerHTML = "", l.forEach((e) => {
 		let a = document.createElement("div");
 		a.innerHTML = `
-                <div class="mini-dest-card pildora-hover" style="margin-bottom: 0.5rem; cursor: pointer;">
+                <div class="mini-dest-card pildora-parada-taxi" style="margin-bottom: 0.5rem; cursor: pointer;">
                     <div class="mini-dest-header" style="align-items: center; position: relative; width: 100%; display: flex; justify-content: space-between;">
                         <div class="mini-dest-name" style="display: flex; align-items: center; gap: 0.8rem; text-align: left; min-width: 0; flex: 1;">
                             <div style="width: 40px; height: 40px; flex-shrink: 0;">
                                 ${r}
                             </div>
                             <div style="display: flex; flex-direction: column; min-width: 0;">
-                                <div style="font-size: 0.65rem; color: var(--brand-cyan, #06b6d4); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; line-height: 1.2; margin-bottom: 0.15rem;">PARADA DE TAXI</div>
+                                <div style="font-size: 0.65rem; color: #3b82f6; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; line-height: 1.2; margin-bottom: 0.15rem;">PARADA DE TAXI</div>
                                 <div style="font-size: 1rem; color: #fff; font-weight: 600; line-height: 1.2;">${e.name}</div>
                                 <div style="font-size: 0.8rem; color: var(--text-muted, #94a3b8); line-height: 1.2; margin-top: 0.2rem;">${e.address}</div>
                             </div>
                         </div>
                         <div style="display: flex; align-items: center; margin-left: 1rem;">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--brand-cyan, #06b6d4)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="m9 18 6-6-6-6"/>
                             </svg>
                         </div>
