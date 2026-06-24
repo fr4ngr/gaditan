@@ -4781,7 +4781,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 		attribution: "&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors &copy; <a href=\"https://carto.com/attributions\">CARTO</a>",
 		maxZoom: 19
 	}).addTo(n);
-	let r = "\n        <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" height=\"100%\" viewBox=\"0 0 24 32\">\n            <rect x=\"0\" y=\"0\" width=\"24\" height=\"32\" rx=\"4\" fill=\"#1d4ed8\" />\n            <rect x=\"2\" y=\"2\" width=\"20\" height=\"11\" rx=\"1.5\" fill=\"white\" />\n            <text x=\"12\" y=\"7.5\" font-family=\"'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"5.5\" font-weight=\"900\" fill=\"black\" text-anchor=\"middle\" dominant-baseline=\"middle\" letter-spacing=\"0.5\">TAXI</text>\n        </svg>\n    ", i = n.getContainer(), a = document.createElement("div");
+	let r = "\n        <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" height=\"100%\" viewBox=\"0 0 24 28\">\n            <rect x=\"0\" y=\"0\" width=\"24\" height=\"28\" rx=\"3.5\" fill=\"#1d4ed8\" />\n            <rect x=\"2\" y=\"2\" width=\"20\" height=\"12\" rx=\"1.5\" fill=\"white\" />\n            <text x=\"12\" y=\"8\" font-family=\"'Arial Black', 'Helvetica Neue', Helvetica, sans-serif\" font-size=\"6.8\" font-weight=\"900\" fill=\"black\" text-anchor=\"middle\" dominant-baseline=\"middle\" textLength=\"18\" lengthAdjust=\"spacingAndGlyphs\">TAXI</text>\n        </svg>\n    ", i = n.getContainer(), a = document.createElement("div");
 	a.id = "map-overlay-info-paradas", a.style.position = "absolute", a.style.bottom = "15px", a.style.left = "50%", a.style.transform = "translate(-50%, 10px)", a.style.zIndex = "1000", a.style.width = "90%", a.style.maxWidth = "350px", a.style.display = "none", a.style.opacity = "0", a.style.transition = "opacity 0.3s ease, transform 0.3s ease", n.on("click", () => {
 		a.style.opacity = "0", a.style.transform = "translate(-50%, 10px)", setTimeout(() => {
 			a.style.display = "none";
@@ -4790,7 +4790,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 	let o = (e) => {
 		a.innerHTML = `
             <div style="background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 16px; padding: 1rem 1.25rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 1rem; width: 100%; box-sizing: border-box;">
-                <div style="width: 30px; height: 40px; flex-shrink: 0; border-radius: 4px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+                <div style="width: 32px; height: 38px; flex-shrink: 0; border-radius: 4px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
                     ${r}
                 </div>
                 <div style="display: flex; flex-direction: column; flex: 1; min-width: 0; justify-content: center;">
@@ -4804,12 +4804,12 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 	l.forEach((e) => {
 		let t = c.default.divIcon({
 			className: "custom-taxi-icon",
-			html: `<div class="taxi-marker" style="width: 36px; height: 48px; border: 2px solid white; border-radius: 6px; box-shadow: 0 4px 10px rgba(0,0,0, 0.4); overflow: hidden; background: #1d4ed8;">
+			html: `<div class="taxi-marker" style="width: 36px; height: 42px; border: 2px solid white; border-radius: 6px; box-shadow: 0 4px 10px rgba(0,0,0, 0.4); overflow: hidden; background: #1d4ed8;">
                     ${r}
                    </div>`,
-			iconSize: [36, 48],
-			iconAnchor: [18, 24],
-			popupAnchor: [0, -24]
+			iconSize: [36, 42],
+			iconAnchor: [18, 21],
+			popupAnchor: [0, -21]
 		});
 		c.default.marker([e.lat, e.lon], { icon: t }).addTo(n).on("click", (t) => {
 			c.default.DomEvent.stopPropagation(t), o(e);
@@ -4826,7 +4826,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
                     <div class="mini-dest-card pildora-parada-taxi" style="margin-bottom: 0.5rem; cursor: pointer;">
                         <div class="mini-dest-header" style="align-items: center; position: relative; width: 100%; display: flex; justify-content: space-between;">
                             <div class="mini-dest-name" style="display: flex; align-items: center; gap: 1rem; text-align: left; min-width: 0; flex: 1;">
-                                <div style="width: 30px; height: 40px; flex-shrink: 0; border-radius: 4px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+                                <div style="width: 32px; height: 38px; flex-shrink: 0; border-radius: 4px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
                                     ${r}
                                 </div>
                                 <div style="display: flex; flex-direction: column; min-width: 0;">
