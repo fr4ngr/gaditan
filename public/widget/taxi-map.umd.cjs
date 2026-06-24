@@ -2,7 +2,7 @@
         <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 24 28">
             <rect x="0" y="0" width="24" height="28" rx="3.5" fill="#1d4ed8" />
             <rect x="2" y="2" width="20" height="12" rx="1.5" fill="white" />
-            <text x="12" y="8" font-family="'Arial Black', 'Helvetica Neue', Helvetica, sans-serif" font-size="6.8" font-weight="900" fill="black" text-anchor="middle" dominant-baseline="middle" textLength="18" lengthAdjust="spacingAndGlyphs">TAXI</text>
+            <text x="12" y="8" font-family="'Arial Black', 'Helvetica Neue', Helvetica, sans-serif" font-size="6" font-weight="900" fill="black" text-anchor="middle" dominant-baseline="middle" letter-spacing="0.5">TAXI</text>
         </svg>
     `,i=n.getContainer(),a=document.createElement(`div`);a.id=`map-overlay-info-paradas`,a.style.position=`absolute`,a.style.bottom=`15px`,a.style.left=`50%`,a.style.transform=`translate(-50%, 10px)`,a.style.zIndex=`1000`,a.style.width=`90%`,a.style.maxWidth=`350px`,a.style.display=`none`,a.style.opacity=`0`,a.style.transition=`opacity 0.3s ease, transform 0.3s ease`,n.on(`click`,()=>{a.style.opacity=`0`,a.style.transform=`translate(-50%, 10px)`,setTimeout(()=>{a.style.display=`none`},300)}),i.appendChild(a);let o=e=>{a.innerHTML=`
             <div style="background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 16px; padding: 1rem 1.25rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 1rem; width: 100%; box-sizing: border-box;">
