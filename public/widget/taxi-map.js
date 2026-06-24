@@ -4794,13 +4794,34 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
                 <p style="margin: 0; font-size: 0.8rem; color: #64748b;">${e.address}</p>
             </div>
         `);
-	}), window.cadizTaxiMap = n;
+	});
+	let r = e.querySelector("#paradas-list-container");
+	r && (r.innerHTML = "", l.forEach((e) => {
+		let i = document.createElement("div");
+		i.className = "pildora-parada", i.innerHTML = `
+                <div class="pildora-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/>
+                        <circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/>
+                    </svg>
+                </div>
+                <div class="pildora-info">
+                    <h4>${e.name}</h4>
+                    <p>${e.address}</p>
+                </div>
+            `, i.addEventListener("click", () => {
+			n.setView([e.lat, e.lon], 16), window.scrollTo({
+				top: t.offsetTop - 80,
+				behavior: "smooth"
+			});
+		}), r.appendChild(i);
+	})), window.cadizTaxiMap = n;
 }, d = class extends HTMLElement {
 	constructor() {
 		super();
 	}
 	connectedCallback() {
-		this.innerHTML = "\n      <div class=\"taxi-map-wrapper\">\n        <div id=\"map\"></div>\n      </div>\n    ", setTimeout(() => {
+		this.innerHTML = "\n      <div class=\"taxi-map-wrapper\">\n        <div id=\"map\"></div>\n        <div id=\"paradas-list-container\" class=\"paradas-list\"></div>\n      </div>\n    ", setTimeout(() => {
 			u(this);
 		}, 0);
 	}
