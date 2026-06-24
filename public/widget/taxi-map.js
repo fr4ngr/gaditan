@@ -4779,7 +4779,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 	}), r = c.default.latLngBounds(l.map((e) => [e.lat, e.lon]));
 	n.fitBounds(r, {
 		paddingBottomRight: [0, 320],
-		paddingTopLeft: [0, 80]
+		paddingTopLeft: [0, 180]
 	}), c.default.control.zoom({ position: "bottomright" }).addTo(n), c.default.control.attribution({ position: "bottomright" }).addTo(n), c.default.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
 		attribution: "&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors &copy; <a href=\"https://carto.com/attributions\">CARTO</a>",
 		maxZoom: 19
@@ -4889,7 +4889,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 					let e = c.default.latLngBounds(l.map((e) => [e.lat, e.lon]));
 					n.fitBounds(e, {
 						paddingBottomRight: [0, 320],
-						paddingTopLeft: [0, 80]
+						paddingTopLeft: [0, 180]
 					});
 				} else if (i === "nearest") {
 					let t = (e, t) => {
