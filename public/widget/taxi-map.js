@@ -4822,10 +4822,12 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 	});
 	let s = e.querySelector("#paradas-list-container");
 	if (s) {
-		let e = Math.ceil(l.length / 5), n = (i) => {
+		let n = [...l], i = (e, a = n) => {
+			n = a;
+			let c = Math.ceil(n.length / 5);
 			s.innerHTML = "";
-			let a = (i - 1) * 5, c = a + 5;
-			if (l.slice(a, c).forEach((e) => {
+			let l = (e - 1) * 5, u = l + 5;
+			if (n.slice(l, u).forEach((e) => {
 				let n = document.createElement("div");
 				n.innerHTML = `
                     <div class="mini-dest-card pildora-parada-taxi" style="margin-bottom: 0.5rem; cursor: pointer;">
@@ -4855,22 +4857,40 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 						behavior: "smooth"
 					});
 				}), s.appendChild(n.firstElementChild);
-			}), e > 1) {
+			}), c > 1) {
 				let t = document.createElement("div");
 				t.style.display = "flex", t.style.justifyContent = "center", t.style.alignItems = "center", t.style.gap = "1rem", t.style.marginTop = "1rem";
-				let r = document.createElement("button");
-				r.innerHTML = "&laquo; Anterior", r.style.padding = "0.5rem 1rem", r.style.borderRadius = "999px", r.style.border = "1px solid rgba(255,255,255,0.1)", r.style.background = i === 1 ? "transparent" : "rgba(59, 130, 246, 0.15)", r.style.color = i === 1 ? "#64748b" : "#3b82f6", r.style.cursor = i === 1 ? "default" : "pointer", r.style.fontWeight = "600", r.style.transition = "all 0.2s ease", r.disabled = i === 1, r.onclick = () => {
-					i > 1 && n(i - 1);
+				let n = document.createElement("button");
+				n.innerHTML = "&laquo; Anterior", n.style.padding = "0.5rem 1rem", n.style.borderRadius = "999px", n.style.border = "1px solid rgba(255,255,255,0.1)", n.style.background = e === 1 ? "transparent" : "rgba(59, 130, 246, 0.15)", n.style.color = e === 1 ? "#64748b" : "#3b82f6", n.style.cursor = e === 1 ? "default" : "pointer", n.style.fontWeight = "600", n.style.transition = "all 0.2s ease", n.disabled = e === 1, n.onclick = () => {
+					e > 1 && i(e - 1);
 				};
-				let a = document.createElement("span");
-				a.style.color = "#94a3b8", a.style.fontSize = "0.9rem", a.innerText = `Página ${i} de ${e}`;
-				let o = document.createElement("button");
-				o.innerHTML = "Siguiente &raquo;", o.style.padding = "0.5rem 1rem", o.style.borderRadius = "999px", o.style.border = "1px solid rgba(255,255,255,0.1)", o.style.background = i === e ? "transparent" : "rgba(59, 130, 246, 0.15)", o.style.color = i === e ? "#64748b" : "#3b82f6", o.style.cursor = i === e ? "default" : "pointer", o.style.fontWeight = "600", o.style.transition = "all 0.2s ease", o.disabled = i === e, o.onclick = () => {
-					i < e && n(i + 1);
-				}, t.appendChild(r), t.appendChild(a), t.appendChild(o), s.appendChild(t);
+				let r = document.createElement("span");
+				r.style.color = "#94a3b8", r.style.fontSize = "0.9rem", r.innerText = `Página ${e} de ${c}`;
+				let a = document.createElement("button");
+				a.innerHTML = "Siguiente &raquo;", a.style.padding = "0.5rem 1rem", a.style.borderRadius = "999px", a.style.border = "1px solid rgba(255,255,255,0.1)", a.style.background = e === c ? "transparent" : "rgba(59, 130, 246, 0.15)", a.style.color = e === c ? "#64748b" : "#3b82f6", a.style.cursor = e === c ? "default" : "pointer", a.style.fontWeight = "600", a.style.transition = "all 0.2s ease", a.disabled = e === c, a.onclick = () => {
+					e < c && i(e + 1);
+				}, t.appendChild(n), t.appendChild(r), t.appendChild(a), s.appendChild(t);
 			}
-		};
-		n(1);
+		}, a = e.querySelectorAll(".taxi-scope-pill");
+		a.forEach((t) => {
+			t.addEventListener("click", (t) => {
+				a.forEach((e) => e.classList.remove("active"));
+				let n = t.target;
+				n.classList.add("active");
+				let r = n.getAttribute("data-filter");
+				if (r === "all") i(1, [...l]);
+				else if (r === "nearest") if (navigator.geolocation) {
+					let t = n.innerText;
+					n.innerText = "Buscando...", navigator.geolocation.getCurrentPosition((e) => {
+						n.innerText = t;
+						let r = e.coords.latitude, a = e.coords.longitude;
+						i(1, [...l].sort((e, t) => (e.lat - r) ** 2 + (e.lon - a) ** 2 - ((t.lat - r) ** 2 + (t.lon - a) ** 2)));
+					}, (r) => {
+						n.innerText = t, console.error("Error getting location", r), alert("No hemos podido acceder a tu ubicación para mostrarte las paradas más cercanas."), n.classList.remove("active"), e.querySelector("[data-filter=\"all\"]")?.classList.add("active"), i(1, [...l]);
+					});
+				} else alert("Tu navegador no soporta geolocalización."), n.classList.remove("active"), e.querySelector("[data-filter=\"all\"]")?.classList.add("active");
+			});
+		}), i(1);
 	}
 	window.cadizTaxiMap = n;
 }, d = class extends HTMLElement {
@@ -4878,7 +4898,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 		super();
 	}
 	connectedCallback() {
-		this.innerHTML = "\n      <div class=\"taxi-map-wrapper\">\n        <div id=\"map\"></div>\n        <div id=\"paradas-list-container\" class=\"paradas-list\"></div>\n      </div>\n    ", setTimeout(() => {
+		this.innerHTML = "\n      <div class=\"taxi-map-wrapper\">\n        <div id=\"map\"></div>\n        <div class=\"taxi-toggle-wrapper\">\n            <button class=\"taxi-scope-pill active\" data-filter=\"all\">Todas</button>\n            <button class=\"taxi-scope-pill\" data-filter=\"nearest\">Más cerca</button>\n        </div>\n        <div id=\"paradas-list-container\" class=\"paradas-list\"></div>\n      </div>\n    ", setTimeout(() => {
 			u(this);
 		}, 0);
 	}
