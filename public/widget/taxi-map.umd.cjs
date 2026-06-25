@@ -5,16 +5,33 @@
             <text x="12" y="8" font-family="'Arial Black', 'Helvetica Neue', Helvetica, sans-serif" font-size="6" font-weight="900" fill="black" text-anchor="middle" dominant-baseline="middle" letter-spacing="0.5">TAXI</text>
         </svg>
     `,m=()=>new Promise((e,t)=>{if(a)return e(a);if(n){let t=r?r.lat:36.535,n=r?r.lng:-6.293;i?i.setLatLng([t,n]):i=l.default.circleMarker([t,n],{radius:8,fillColor:`#3b82f6`,color:`#fff`,weight:3,opacity:1,fillOpacity:1}).addTo(c),a={lat:t,lon:n},setTimeout(()=>e(a),100);return}navigator.geolocation?navigator.geolocation.getCurrentPosition(t=>{a={lat:t.coords.latitude,lon:t.coords.longitude},i?i.setLatLng([a.lat,a.lon]):i=l.default.circleMarker([a.lat,a.lon],{radius:8,fillColor:`#3b82f6`,color:`#fff`,weight:3,opacity:1,fillOpacity:1}).addTo(c),e(a)},e=>{console.error(`GPS Error`,e),t(e)},{enableHighAccuracy:!0,timeout:1e4,maximumAge:0}):t(Error(`Geolocation not supported`))}),h=async(e,t,n,r)=>{try{let i=await(await fetch(`https://routing.openstreetmap.de/routed-foot/route/v1/foot/${t},${e};${r},${n}?overview=full&geometries=geojson&continue_straight=false`)).json();if(i.code===`Ok`&&i.routes&&i.routes.length>0){let e=i.routes[0];return{distance:e.distance,duration:e.duration,geometry:e.geometry}}}catch(e){console.error(`Route fetch error`,e)}return null},g=e.querySelector(`#bottom-sheet-card`),_=g?.querySelector(`.bottom-sheet-content`),ee=()=>{g&&(g.classList.remove(`expanded`),g.classList.add(`minimized`),setTimeout(()=>{_&&(_.innerHTML=``)},350)),o&&=(c.removeLayer(o),null),s.forEach(e=>e.marker.setOpacity(1))};c.on(`click`,t=>{if(n){r=t.latlng,a=null;let n=e.querySelector(`[data-filter="nearest"]`);n&&n.click()}});let te=async e=>{if(!g||!_)return;_.innerHTML=`
-            <div style="width: 32px; height: 38px; flex-shrink: 0; border-radius: 4px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                ${p}
+            <div style="display: flex; align-items: center; gap: 1rem; width: 100%;">
+                <div style="width: 32px; height: 38px; flex-shrink: 0; border-radius: 4px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    ${p}
+                </div>
+                <div style="display: flex; flex-direction: column; flex: 1; min-width: 0; justify-content: center;">
+                    <span style="color: #64748b; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.15rem;">PARADA DE TAXI</span>
+                    <strong style="color: #0f172a; font-size: 1.1rem; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.1;">${e.name}</strong>
+                    <span style="color: #475569; font-size: 0.8rem; margin-top: 0.2rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${e.address}</span>
+                </div>
+                <div id="route-info-container" style="display: flex; flex-direction: column; align-items: flex-end; justify-content: center; min-width: 80px; text-align: right;">
+                    <span style="color: #94a3b8; font-size: 0.75rem;">Calculando...</span>
+                </div>
             </div>
-            <div style="display: flex; flex-direction: column; flex: 1; min-width: 0; justify-content: center;">
-                <span style="color: #64748b; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.15rem;">PARADA DE TAXI</span>
-                <strong style="color: #0f172a; font-size: 1.1rem; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.1;">${e.name}</strong>
-                <span style="color: #475569; font-size: 0.8rem; margin-top: 0.2rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${e.address}</span>
-            </div>
-            <div id="route-info-container" style="display: flex; flex-direction: column; align-items: flex-end; justify-content: center; min-width: 80px; text-align: right;">
-                <span style="color: #94a3b8; font-size: 0.75rem;">Calculando...</span>
+            
+            <div style="display: flex; width: 100%; border-top: 1px solid #f1f5f9; margin-top: 0.75rem; padding-top: 0.75rem; gap: 0.5rem; justify-content: space-between;">
+                <button class="sheet-action-btn" onclick="document.getElementById('open-search-btn')?.click()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calculator"><rect width="16" height="20" x="4" y="2" rx="2"/><line x1="8" x2="16" y1="6" y2="6"/><line x1="16" x2="16" y1="14" y2="18"/><path d="M16 10h.01"/><path d="M12 10h.01"/><path d="M8 10h.01"/><path d="M12 14h.01"/><path d="M8 14h.01"/><path d="M12 18h.01"/><path d="M8 18h.01"/></svg>
+                    Calcular
+                </button>
+                <a class="sheet-action-btn" href="https://www.google.com/maps/dir/?api=1&destination=${e.lat},${e.lon}" target="_blank">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L22 12L12 22L2 12Z"/><path d="M9 16v-4a2 2 0 0 1 2-2h4M12 7l3 3-3 3"/></svg>
+                    Ir
+                </a>
+                <a class="sheet-action-btn primary" href="tel:+34956212121">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-phone"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                    Pedir
+                </a>
             </div>
         `,g.classList.remove(`minimized`),g.classList.add(`expanded`),s.forEach(t=>{t.marker.setOpacity(+(t.parada.name===e.name))});let t=c.project([e.lat,e.lon]).subtract([0,50]),n=c.unproject(t);c.setView(n,16);try{let t=await m(),n=l.default.latLngBounds([[t.lat,t.lon],[e.lat,e.lon]]);c.fitBounds(n,{paddingTopLeft:[50,150],paddingBottomRight:[50,150],animate:!0,duration:1});let r=await h(t.lat,t.lon,e.lat,e.lon),i=g.querySelector(`#route-info-container`);if(o&&=(c.removeLayer(o),null),i&&r){let e=r.distance>1e3?(r.distance/1e3).toFixed(1)+` km`:Math.round(r.distance)+` m`,t=Math.max(1,Math.round(r.duration/60));if(r.geometry&&r.geometry.coordinates){let e=r.geometry.coordinates.map(e=>[e[1],e[0]]);o=l.default.polyline(e,{color:`#3b82f6`,weight:5,opacity:.85,dashArray:`10, 10`,className:`animated-taxi-route`}).addTo(c)}i.innerHTML=`
                     <div style="display: flex; align-items: center; justify-content: flex-end; gap: 4px; color: #0f172a; font-weight: 800; font-size: 1.1rem; line-height: 1;">
