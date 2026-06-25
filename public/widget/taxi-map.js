@@ -4880,11 +4880,11 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			if (r && n) {
 				let e = n.distance > 1e3 ? (n.distance / 1e3).toFixed(1) + " km" : Math.round(n.distance) + " m";
 				r.innerHTML = `
-                    <div style="display: flex; align-items: center; justify-content: flex-end; gap: 4px; color: #0f172a; font-weight: 800; font-size: 1.1rem; line-height: 1;">
+                    <div style="display: flex; align-items: center; justify-content: flex-end; gap: 6px; color: #0f172a; font-weight: 800; font-size: 1.1rem; line-height: 1;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: #3b82f6;"><circle cx="14" cy="4" r="2"/><path d="m18 11-5.5-2.5-3.5 9"/><path d="M11.5 8.5 10 14l-4-2"/><path d="m9 14-2.5 8"/><path d="M14 11l4 9"/></svg>
                         ${Math.max(1, Math.round(n.duration / 60))} <span style="font-size:0.8rem; font-weight: 700; color:#64748b;">min</span>
                     </div>
                     <div style="display: flex; align-items: center; justify-content: flex-end; gap: 4px; color: #64748b; font-size: 0.8rem; margin-top: 0.2rem; font-weight: 600;">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: #3b82f6;"><path d="M13 4v16"/><path d="M17 4v16"/><path d="M19 4H5c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2z"/></svg>
                         ${e}
                     </div>
                 `;
