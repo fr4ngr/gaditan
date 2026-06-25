@@ -4853,11 +4853,11 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				let n = document.createElement("div");
 				n.innerHTML = `
                     <div class="mini-chip-parada" style="width: 100%; justify-content: flex-start;">
-                        <div style="width: 24px; height: 28px; flex-shrink: 0; border-radius: 3px; overflow: hidden; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+                        <div style="width: 32px; height: 36px; flex-shrink: 0; border-radius: 6px; border: 2px solid white; overflow: hidden; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.3); background: #1d4ed8;">
                             ${u}
                         </div>
                         <div class="chip-name-container" style="flex: 1; overflow: hidden; display: flex; align-items: center;">
-                            <span class="chip-name" style="color: #fff; font-size: 0.9rem; font-weight: 600; white-space: nowrap; display: inline-block;">${e.name}</span>
+                            <span class="chip-name" style="color: #fff; font-size: 0.95rem; font-weight: 700; white-space: nowrap; display: inline-block;">${e.name}</span>
                         </div>
                     </div>
                 `, n.firstElementChild?.addEventListener("click", () => {
