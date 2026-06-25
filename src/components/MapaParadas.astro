@@ -9,8 +9,8 @@
         <p class="section-subtitle" style="text-align: center; color: var(--text-muted); margin-bottom: 0; font-size: 1.1rem;" data-translate="stops-map-sub">Encuentra la parada de taxi más cercana a tu ubicación en Cádiz.</p>
     </div>
 
-    <!-- Sticky Map Wrapper -->
-    <div style="position: sticky; top: 0; height: 100vh; width: 100%; overflow: hidden;">
+    <!-- Sticky Map Wrapper (dejamos 85px para el zócalo inferior cadizcab) -->
+    <div style="position: sticky; top: 0; height: calc(100dvh - 85px); width: 100%; overflow: hidden;">
         <taxi-map style="width: 100%; height: 100%; display: block;"></taxi-map>
     </div>
 </section>
