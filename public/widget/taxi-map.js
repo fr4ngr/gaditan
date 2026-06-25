@@ -4861,8 +4861,11 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 		if (!g || !_) return;
 		_.innerHTML = `
             <div style="display: flex; align-items: center; gap: 1rem; width: 100%;">
-                <div style="width: 32px; align-self: stretch; flex-shrink: 0; border-radius: 4px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: center; background: #1d4ed8;">
-                    ${p}
+                <div style="width: 32px; align-self: stretch; flex-shrink: 0; display: flex; flex-direction: column; align-items: center;">
+                    <div style="width: 32px; height: 38px; flex-shrink: 0; border-radius: 4px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                        ${p}
+                    </div>
+                    <div style="width: 4px; background: #cbd5e1; flex: 1; border-radius: 2px; margin-top: 1px;"></div>
                 </div>
                 <div style="display: flex; flex-direction: column; flex: 1; min-width: 0; justify-content: center;">
                     <span style="color: #64748b; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.15rem;">PARADA DE TAXI</span>

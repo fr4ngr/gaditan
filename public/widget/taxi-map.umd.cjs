@@ -6,8 +6,11 @@
         </svg>
     `,m=()=>new Promise((e,t)=>{if(a)return e(a);if(n){let t=r?r.lat:36.535,n=r?r.lng:-6.293;i?i.setLatLng([t,n]):i=l.default.circleMarker([t,n],{radius:8,fillColor:`#3b82f6`,color:`#fff`,weight:3,opacity:1,fillOpacity:1}).addTo(c),a={lat:t,lon:n},setTimeout(()=>e(a),100);return}navigator.geolocation?navigator.geolocation.getCurrentPosition(t=>{a={lat:t.coords.latitude,lon:t.coords.longitude},i?i.setLatLng([a.lat,a.lon]):i=l.default.circleMarker([a.lat,a.lon],{radius:8,fillColor:`#3b82f6`,color:`#fff`,weight:3,opacity:1,fillOpacity:1}).addTo(c),e(a)},e=>{console.error(`GPS Error`,e),t(e)},{enableHighAccuracy:!0,timeout:1e4,maximumAge:0}):t(Error(`Geolocation not supported`))}),h=async(e,t,n,r)=>{try{let i=await(await fetch(`https://routing.openstreetmap.de/routed-foot/route/v1/foot/${t},${e};${r},${n}?overview=full&geometries=geojson&continue_straight=false`)).json();if(i.code===`Ok`&&i.routes&&i.routes.length>0){let e=i.routes[0];return{distance:e.distance,duration:e.duration,geometry:e.geometry}}}catch(e){console.error(`Route fetch error`,e)}return null},g=e.querySelector(`#bottom-sheet-card`),_=g?.querySelector(`.bottom-sheet-content`),ee=()=>{g&&(g.classList.remove(`expanded`),g.classList.add(`minimized`),setTimeout(()=>{_&&(_.innerHTML=``)},350)),o&&=(c.removeLayer(o),null),s.forEach(e=>e.marker.setOpacity(1))};c.on(`click`,t=>{if(n){r=t.latlng,a=null;let n=e.querySelector(`[data-filter="nearest"]`);n&&n.click()}});let te=async e=>{if(!g||!_)return;_.innerHTML=`
             <div style="display: flex; align-items: center; gap: 1rem; width: 100%;">
-                <div style="width: 32px; align-self: stretch; flex-shrink: 0; border-radius: 4px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: center; background: #1d4ed8;">
-                    ${p}
+                <div style="width: 32px; align-self: stretch; flex-shrink: 0; display: flex; flex-direction: column; align-items: center;">
+                    <div style="width: 32px; height: 38px; flex-shrink: 0; border-radius: 4px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                        ${p}
+                    </div>
+                    <div style="width: 4px; background: #cbd5e1; flex: 1; border-radius: 2px; margin-top: 1px;"></div>
                 </div>
                 <div style="display: flex; flex-direction: column; flex: 1; min-width: 0; justify-content: center;">
                     <span style="color: #64748b; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.15rem;">PARADA DE TAXI</span>
