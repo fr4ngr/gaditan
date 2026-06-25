@@ -4795,9 +4795,9 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 		maxZoom: 19
 	}).addTo(o);
 	let d = "\n        <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" height=\"100%\" viewBox=\"0 0 24 28\">\n            <rect x=\"0\" y=\"0\" width=\"24\" height=\"28\" rx=\"3.5\" fill=\"#1d4ed8\" />\n            <rect x=\"2\" y=\"2\" width=\"20\" height=\"12\" rx=\"1.5\" fill=\"white\" />\n            <text x=\"12\" y=\"8\" font-family=\"'Arial Black', 'Helvetica Neue', Helvetica, sans-serif\" font-size=\"6\" font-weight=\"900\" fill=\"black\" text-anchor=\"middle\" dominant-baseline=\"middle\" letter-spacing=\"0.5\">TAXI</text>\n        </svg>\n    ", f = o.getContainer(), p = document.createElement("div");
-	p.id = "map-overlay-info-paradas", p.style.position = "absolute", p.style.top = "70px", p.style.left = "50%", p.style.transform = "translate(-50%, -10px)", p.style.zIndex = "1000", p.style.width = "90%", p.style.maxWidth = "350px", p.style.display = "none", p.style.opacity = "0", p.style.transition = "opacity 0.3s ease, transform 0.3s ease";
+	p.id = "map-overlay-info-paradas", p.style.position = "absolute", p.style.bottom = "110px", p.style.left = "50%", p.style.transform = "translate(-50%, 10px)", p.style.zIndex = "1000", p.style.width = "90%", p.style.maxWidth = "350px", p.style.display = "none", p.style.opacity = "0", p.style.transition = "opacity 0.3s ease, transform 0.3s ease";
 	let m = () => {
-		p.style.opacity = "0", p.style.transform = "translate(-50%, -10px)", setTimeout(() => {
+		p.style.opacity = "0", p.style.transform = "translate(-50%, 10px)", setTimeout(() => {
 			p.style.display = "none";
 		}, 300), a.forEach((e) => e.marker.setOpacity(1));
 	};
