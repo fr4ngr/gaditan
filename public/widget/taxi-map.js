@@ -4880,8 +4880,8 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			if (r && n) {
 				let e = n.distance > 1e3 ? (n.distance / 1e3).toFixed(1) + " km" : Math.round(n.distance) + " m";
 				r.innerHTML = `
-                    <div style="display: flex; align-items: center; justify-content: flex-end; gap: 6px; color: #0f172a; font-weight: 800; font-size: 1.1rem; line-height: 1;">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: #3b82f6;"><circle cx="14" cy="4" r="2"/><path d="m18 11-5.5-2.5-3.5 9"/><path d="M11.5 8.5 10 14l-4-2"/><path d="m9 14-2.5 8"/><path d="M14 11l4 9"/></svg>
+                    <div style="display: flex; align-items: center; justify-content: flex-end; gap: 4px; color: #0f172a; font-weight: 800; font-size: 1.1rem; line-height: 1;">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="22" viewBox="0 -960 960 960" width="22" fill="currentColor" style="color: #3b82f6;"><path d="M540-590q-37 0-66.5 16.5T427-529l-37 60q-26 40-66 64.5T230-380v60q64 0 119.5-29t92.5-81l18-28 34 148H320v60h222l-41-180 79-70v300h60v-350l-80-60-32-132q17 19 40 30.5t50 11.5v-60q-26 0-46-10t-32-26l-37-60q-13-22-35-36t-48-14H540v140Zm-50-80q29 0 50-21t21-50q0-29-21-50t-50-21q-29 0-50 21t-21 50q0 29 21 50t50 21Z"/></svg>
                         ${Math.max(1, Math.round(n.duration / 60))} <span style="font-size:0.8rem; font-weight: 700; color:#64748b;">min</span>
                     </div>
                     <div style="display: flex; align-items: center; justify-content: flex-end; gap: 4px; color: #64748b; font-size: 0.8rem; margin-top: 0.2rem; font-weight: 600;">
