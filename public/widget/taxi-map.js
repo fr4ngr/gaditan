@@ -4883,7 +4883,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
                     Calcular
                 </button>
                 <a class="sheet-action-btn" href="https://www.google.com/maps/dir/?api=1&destination=${e.lat},${e.lon}" target="_blank">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 16v-4a2 2 0 0 1 2-2h4M12 7l3 3-3 3"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="7.5 5 9 13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 16v-4a2 2 0 0 1 2-2h4M12 7l3 3-3 3"/></svg>
                     Ir
                 </a>
                 <a class="sheet-action-btn primary" href="tel:+34956212121">
