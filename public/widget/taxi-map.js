@@ -4771,73 +4771,144 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 		console.error("Map element not found inside the widget");
 		return;
 	}
-	let n = new URLSearchParams(window.location.search).has("test_cadiz"), r = null, i = null, a = [], o = c.default.map(t, {
+	let n = new URLSearchParams(window.location.search).has("test_cadiz"), r = null, i = null, a = null, o = [], s = c.default.map(t, {
 		zoomControl: !1,
 		attributionControl: !1,
 		scrollWheelZoom: !1,
 		dragging: !c.default.Browser.mobile
-	}), s = c.default.latLngBounds(l.map((e) => [e.lat, e.lon]));
-	o.fitBounds(s, {
+	}), u = c.default.latLngBounds(l.map((e) => [e.lat, e.lon]));
+	s.fitBounds(u, {
 		paddingBottomRight: [0, 20],
 		paddingTopLeft: [0, 140]
-	}), c.default.control.zoom({ position: "bottomright" }).addTo(o), c.default.control.attribution({ position: "bottomright" }).addTo(o);
-	let u = c.default.Control.extend({
+	}), c.default.control.zoom({ position: "bottomright" }).addTo(s), c.default.control.attribution({ position: "bottomright" }).addTo(s);
+	let d = c.default.Control.extend({
 		options: { position: "topright" },
 		onAdd: function() {
 			let e = c.default.DomUtil.create("button", "test-mode-btn");
 			return e.innerHTML = n ? "GPS Simulado ON" : "Simular GPS", e.style.backgroundColor = n ? "#3b82f6" : "#fff", e.style.color = n ? "#fff" : "#333", e.style.border = "2px solid rgba(0,0,0,0.2)", e.style.borderRadius = "8px", e.style.padding = "6px 12px", e.style.cursor = "pointer", e.style.fontWeight = "bold", e.style.boxShadow = "0 2px 6px rgba(0,0,0,0.3)", e.style.margin = "10px", e.style.pointerEvents = "auto", e.onclick = (t) => {
-				c.default.DomEvent.stopPropagation(t), n = !n, n ? (e.style.backgroundColor = "#3b82f6", e.style.color = "#fff", e.innerHTML = "GPS Simulado ON", alert("Modo simulación activado. Haz clic en cualquier parte del mapa para ubicar tu GPS.")) : (e.style.backgroundColor = "#fff", e.style.color = "#333", e.innerHTML = "Simular GPS", i && (o.removeLayer(i), i = null, r = null));
+				c.default.DomEvent.stopPropagation(t), n = !n, n ? (e.style.backgroundColor = "#3b82f6", e.style.color = "#fff", e.innerHTML = "GPS Simulado ON", alert("Modo simulación activado. Haz clic en cualquier parte del mapa para ubicar tu GPS.")) : (e.style.backgroundColor = "#fff", e.style.color = "#333", e.innerHTML = "Simular GPS", i && (s.removeLayer(i), i = null, r = null, a = null));
 			}, e;
 		}
 	});
-	o.addControl(new u()), c.default.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
+	s.addControl(new d()), c.default.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
 		attribution: "&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors &copy; <a href=\"https://carto.com/attributions\">CARTO</a>",
 		maxZoom: 19
-	}).addTo(o);
-	let d = "\n        <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" height=\"100%\" viewBox=\"0 0 24 28\">\n            <rect x=\"0\" y=\"0\" width=\"24\" height=\"28\" rx=\"3.5\" fill=\"#1d4ed8\" />\n            <rect x=\"2\" y=\"2\" width=\"20\" height=\"12\" rx=\"1.5\" fill=\"white\" />\n            <text x=\"12\" y=\"8\" font-family=\"'Arial Black', 'Helvetica Neue', Helvetica, sans-serif\" font-size=\"6\" font-weight=\"900\" fill=\"black\" text-anchor=\"middle\" dominant-baseline=\"middle\" letter-spacing=\"0.5\">TAXI</text>\n        </svg>\n    ", f = e.querySelector("#bottom-sheet-card"), p = f?.querySelector(".bottom-sheet-content"), m = () => {
-		f && (f.classList.remove("expanded"), f.classList.add("minimized"), setTimeout(() => {
-			p && (p.innerHTML = "");
-		}, 350)), a.forEach((e) => e.marker.setOpacity(1));
-	};
-	o.on("click", (t) => {
+	}).addTo(s);
+	let f = "\n        <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" height=\"100%\" viewBox=\"0 0 24 28\">\n            <rect x=\"0\" y=\"0\" width=\"24\" height=\"28\" rx=\"3.5\" fill=\"#1d4ed8\" />\n            <rect x=\"2\" y=\"2\" width=\"20\" height=\"12\" rx=\"1.5\" fill=\"white\" />\n            <text x=\"12\" y=\"8\" font-family=\"'Arial Black', 'Helvetica Neue', Helvetica, sans-serif\" font-size=\"6\" font-weight=\"900\" fill=\"black\" text-anchor=\"middle\" dominant-baseline=\"middle\" letter-spacing=\"0.5\">TAXI</text>\n        </svg>\n    ", p = () => new Promise((e, t) => {
+		if (a) return e(a);
 		if (n) {
-			r = t.latlng;
+			let t = r ? r.lat : 36.535, n = r ? r.lng : -6.293;
+			i ? i.setLatLng([t, n]) : i = c.default.circleMarker([t, n], {
+				radius: 8,
+				fillColor: "#3b82f6",
+				color: "#fff",
+				weight: 3,
+				opacity: 1,
+				fillOpacity: 1
+			}).addTo(s), a = {
+				lat: t,
+				lon: n
+			}, setTimeout(() => e(a), 100);
+			return;
+		}
+		navigator.geolocation ? navigator.geolocation.getCurrentPosition((t) => {
+			a = {
+				lat: t.coords.latitude,
+				lon: t.coords.longitude
+			}, i ? i.setLatLng([a.lat, a.lon]) : i = c.default.circleMarker([a.lat, a.lon], {
+				radius: 8,
+				fillColor: "#3b82f6",
+				color: "#fff",
+				weight: 3,
+				opacity: 1,
+				fillOpacity: 1
+			}).addTo(s), e(a);
+		}, (e) => {
+			console.error("GPS Error", e), t(e);
+		}, {
+			enableHighAccuracy: !0,
+			timeout: 1e4,
+			maximumAge: 0
+		}) : t(/* @__PURE__ */ Error("Geolocation not supported"));
+	}), m = async (e, t, n, r) => {
+		try {
+			let i = await (await fetch(`https://router.project-osrm.org/route/v1/foot/${t},${e};${r},${n}?overview=false`)).json();
+			if (i.code === "Ok" && i.routes && i.routes.length > 0) {
+				let e = i.routes[0];
+				return {
+					distance: e.distance,
+					duration: e.duration
+				};
+			}
+		} catch (e) {
+			console.error("Route fetch error", e);
+		}
+		return null;
+	}, h = e.querySelector("#bottom-sheet-card"), g = h?.querySelector(".bottom-sheet-content"), _ = () => {
+		h && (h.classList.remove("expanded"), h.classList.add("minimized"), setTimeout(() => {
+			g && (g.innerHTML = "");
+		}, 350)), o.forEach((e) => e.marker.setOpacity(1));
+	};
+	s.on("click", (t) => {
+		if (n) {
+			r = t.latlng, a = null;
 			let n = e.querySelector("[data-filter=\"nearest\"]");
 			n && n.click();
 		}
 	});
-	let h = (e) => {
-		if (!f || !p) return;
-		p.innerHTML = `
+	let ee = async (e) => {
+		if (!h || !g) return;
+		g.innerHTML = `
             <div style="width: 32px; height: 38px; flex-shrink: 0; border-radius: 4px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                ${d}
+                ${f}
             </div>
             <div style="display: flex; flex-direction: column; flex: 1; min-width: 0; justify-content: center;">
                 <span style="color: #64748b; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.15rem;">PARADA DE TAXI</span>
                 <strong style="color: #0f172a; font-size: 1.1rem; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.1;">${e.name}</strong>
                 <span style="color: #475569; font-size: 0.8rem; margin-top: 0.2rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${e.address}</span>
             </div>
-        `, f.classList.remove("minimized"), f.classList.add("expanded"), a.forEach((t) => {
-			t.parada.name === e.name ? t.marker.setOpacity(1) : t.marker.setOpacity(0);
+            <div id="route-info-container" style="display: flex; flex-direction: column; align-items: flex-end; justify-content: center; min-width: 80px; text-align: right;">
+                <span style="color: #94a3b8; font-size: 0.75rem;">Calculando...</span>
+            </div>
+        `, h.classList.remove("minimized"), h.classList.add("expanded"), o.forEach((t) => {
+			t.marker.setOpacity(+(t.parada.name === e.name));
 		});
-		let t = o.project([e.lat, e.lon]).subtract([0, 50]), n = o.unproject(t);
-		o.setView(n, 16);
+		let t = s.project([e.lat, e.lon]).subtract([0, 50]), n = s.unproject(t);
+		s.setView(n, 16);
+		try {
+			let t = await p(), n = await m(t.lat, t.lon, e.lat, e.lon), r = h.querySelector("#route-info-container");
+			if (r && n) {
+				let e = n.distance > 1e3 ? (n.distance / 1e3).toFixed(1) + " km" : Math.round(n.distance) + " m";
+				r.innerHTML = `
+                    <div style="display: flex; align-items: center; justify-content: flex-end; gap: 4px; color: #0f172a; font-weight: 800; font-size: 1.1rem; line-height: 1;">
+                        ${Math.max(1, Math.round(n.duration / 60))} <span style="font-size:0.8rem; font-weight: 700; color:#64748b;">min</span>
+                    </div>
+                    <div style="display: flex; align-items: center; justify-content: flex-end; gap: 4px; color: #64748b; font-size: 0.8rem; margin-top: 0.2rem; font-weight: 600;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: #3b82f6;"><path d="M13 4v16"/><path d="M17 4v16"/><path d="M19 4H5c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2z"/></svg>
+                        ${e}
+                    </div>
+                `;
+			} else r && (r.innerHTML = "<span style=\"color: #ef4444; font-size: 0.75rem;\">Sin ruta</span>");
+		} catch {
+			let e = h.querySelector("#route-info-container");
+			e && (e.innerHTML = "<span style=\"color: #f59e0b; font-size: 0.75rem;\">GPS denegado</span>");
+		}
 	};
 	l.forEach((e) => {
 		let n = c.default.divIcon({
 			className: "custom-taxi-icon",
 			html: `<div class="taxi-marker" style="width: 36px; height: 42px; border: 2px solid white; border-radius: 6px; box-shadow: 0 4px 10px rgba(0,0,0, 0.4); overflow: hidden; background: #1d4ed8;">
-                    ${d}
+                    ${f}
                    </div>`,
 			iconSize: [36, 42],
 			iconAnchor: [18, 21],
 			popupAnchor: [0, -21]
-		}), r = c.default.marker([e.lat, e.lon], { icon: n }).addTo(o);
-		a.push({
+		}), r = c.default.marker([e.lat, e.lon], { icon: n }).addTo(s);
+		o.push({
 			marker: r,
 			parada: e
 		}), r.on("click", (n) => {
-			c.default.DomEvent.stopPropagation(n), h(e);
+			c.default.DomEvent.stopPropagation(n), ee(e);
 			let r = t.getBoundingClientRect();
 			window.scrollTo({
 				top: r.top + window.scrollY - 80,
@@ -4845,59 +4916,30 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			});
 		});
 	});
-	let g = e.querySelectorAll(".taxi-scope-pill");
-	g.forEach((t) => {
+	let te = e.querySelectorAll(".taxi-scope-pill");
+	te.forEach((t) => {
 		t.addEventListener("click", (t) => {
-			g.forEach((e) => e.classList.remove("active"));
-			let a = t.target;
-			a.classList.add("active");
-			let s = a.getAttribute("data-filter");
-			if (s === "all") {
-				m();
+			te.forEach((e) => e.classList.remove("active"));
+			let n = t.target;
+			n.classList.add("active");
+			let r = n.getAttribute("data-filter");
+			if (r === "all") {
+				_();
 				let e = c.default.latLngBounds(l.map((e) => [e.lat, e.lon]));
-				o.fitBounds(e, {
+				s.fitBounds(e, {
 					paddingBottomRight: [0, 320],
 					paddingTopLeft: [0, 180]
 				});
-			} else if (s === "nearest") {
-				let t = (e, t) => {
-					if (n) {
-						let t = r ? r.lat : 36.535, n = r ? r.lng : -6.293;
-						i ? i.setLatLng([t, n]) : i = c.default.circleMarker([t, n], {
-							radius: 8,
-							fillColor: "#3b82f6",
-							color: "#fff",
-							weight: 3,
-							opacity: 1,
-							fillOpacity: 1
-						}).addTo(o), console.log(`TEST MODE: Spoofing location to ${t}, ${n}`), setTimeout(() => e({
-							coords: {
-								latitude: t,
-								longitude: n,
-								accuracy: 10
-							},
-							timestamp: Date.now()
-						}), 100);
-						return;
-					}
-					navigator.geolocation ? navigator.geolocation.getCurrentPosition(e, t) : t({
-						code: 1,
-						message: "No support",
-						PERMISSION_DENIED: 1,
-						POSITION_UNAVAILABLE: 2,
-						TIMEOUT: 3
-					});
-				}, s = a.innerText;
-				a.innerText = "Buscando...", t((e) => {
-					a.innerText = s;
-					let t = e.coords.latitude, n = e.coords.longitude;
-					m(), o.setView([t, n], 15);
-				}, (t) => {
-					a.innerText = s, console.error("Error getting location", t), alert("No hemos podido acceder a tu ubicación o tu navegador no soporta geolocalización."), a.classList.remove("active"), e.querySelector("[data-filter=\"all\"]")?.classList.add("active"), o.setView([36.529, -6.292], 13);
+			} else if (r === "nearest") {
+				let t = n.innerText;
+				n.innerText = "Buscando...", p().then((e) => {
+					n.innerText = t, _(), s.setView([e.lat, e.lon], 15);
+				}).catch((r) => {
+					n.innerText = t, console.error("Error getting location", r), alert("No hemos podido acceder a tu ubicación o tu navegador no soporta geolocalización."), n.classList.remove("active"), e.querySelector("[data-filter=\"all\"]")?.classList.add("active"), s.setView([36.529, -6.292], 13);
 				});
 			}
 		});
-	}), window.cadizTaxiMap = o;
+	}), window.cadizTaxiMap = s;
 }, d = class extends HTMLElement {
 	constructor() {
 		super();
