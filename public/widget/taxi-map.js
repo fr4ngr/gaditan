@@ -71,41 +71,41 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			for (var i in e) r.push(encodeURIComponent(n ? i.toUpperCase() : i) + "=" + encodeURIComponent(e[i]));
 			return (!t || t.indexOf("?") === -1 ? "?" : "&") + r.join("&");
 		}
-		var ee = /\{ *([\w_ -]+) *\}/g;
-		function h(e, t) {
-			return e.replace(ee, function(e, n) {
+		var h = /\{ *([\w_ -]+) *\}/g;
+		function g(e, t) {
+			return e.replace(h, function(e, n) {
 				var r = t[n];
 				if (r === void 0) throw Error("No value provided for variable " + e);
 				return typeof r == "function" && (r = r(t)), r;
 			});
 		}
-		var g = Array.isArray || function(e) {
+		var _ = Array.isArray || function(e) {
 			return Object.prototype.toString.call(e) === "[object Array]";
 		};
-		function te(e, t) {
+		function ee(e, t) {
 			for (var n = 0; n < e.length; n++) if (e[n] === t) return n;
 			return -1;
 		}
-		var ne = "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=";
-		function re(e) {
+		var te = "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=";
+		function ne(e) {
 			return window["webkit" + e] || window["moz" + e] || window["ms" + e];
 		}
-		var ie = 0;
-		function ae(e) {
-			var t = +/* @__PURE__ */ new Date(), n = Math.max(0, 16 - (t - ie));
-			return ie = t + n, window.setTimeout(e, n);
+		var re = 0;
+		function ie(e) {
+			var t = +/* @__PURE__ */ new Date(), n = Math.max(0, 16 - (t - re));
+			return re = t + n, window.setTimeout(e, n);
 		}
-		var oe = window.requestAnimationFrame || re("RequestAnimationFrame") || ae, se = window.cancelAnimationFrame || re("CancelAnimationFrame") || re("CancelRequestAnimationFrame") || function(e) {
+		var ae = window.requestAnimationFrame || ne("RequestAnimationFrame") || ie, oe = window.cancelAnimationFrame || ne("CancelAnimationFrame") || ne("CancelRequestAnimationFrame") || function(e) {
 			window.clearTimeout(e);
 		};
-		function _(e, t, n) {
-			if (n && oe === ae) e.call(t);
-			else return oe.call(window, i(e, t));
+		function v(e, t, n) {
+			if (n && ae === ie) e.call(t);
+			else return ae.call(window, i(e, t));
 		}
-		function v(e) {
-			e && se.call(window, e);
+		function y(e) {
+			e && oe.call(window, e);
 		}
-		var ce = {
+		var se = {
 			__proto__: null,
 			extend: n,
 			create: r,
@@ -122,45 +122,45 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			splitWords: f,
 			setOptions: p,
 			getParamString: m,
-			template: h,
-			isArray: g,
-			indexOf: te,
-			emptyImageUrl: ne,
-			requestFn: oe,
-			cancelFn: se,
-			requestAnimFrame: _,
-			cancelAnimFrame: v
+			template: g,
+			isArray: _,
+			indexOf: ee,
+			emptyImageUrl: te,
+			requestFn: ae,
+			cancelFn: oe,
+			requestAnimFrame: v,
+			cancelAnimFrame: y
 		};
-		function y() {}
-		y.extend = function(e) {
+		function b() {}
+		b.extend = function(e) {
 			var t = function() {
 				p(this), this.initialize && this.initialize.apply(this, arguments), this.callInitHooks();
 			}, i = t.__super__ = this.prototype, a = r(i);
 			for (var o in a.constructor = t, t.prototype = a, this) Object.prototype.hasOwnProperty.call(this, o) && o !== "prototype" && o !== "__super__" && (t[o] = this[o]);
-			return e.statics && n(t, e.statics), e.includes && (le(e.includes), n.apply(null, [a].concat(e.includes))), n(a, e), delete a.statics, delete a.includes, a.options && (a.options = i.options ? r(i.options) : {}, n(a.options, e.options)), a._initHooks = [], a.callInitHooks = function() {
+			return e.statics && n(t, e.statics), e.includes && (ce(e.includes), n.apply(null, [a].concat(e.includes))), n(a, e), delete a.statics, delete a.includes, a.options && (a.options = i.options ? r(i.options) : {}, n(a.options, e.options)), a._initHooks = [], a.callInitHooks = function() {
 				if (!this._initHooksCalled) {
 					i.callInitHooks && i.callInitHooks.call(this), this._initHooksCalled = !0;
 					for (var e = 0, t = a._initHooks.length; e < t; e++) a._initHooks[e].call(this);
 				}
 			}, t;
-		}, y.include = function(e) {
+		}, b.include = function(e) {
 			var t = this.prototype.options;
 			return n(this.prototype, e), e.options && (this.prototype.options = t, this.mergeOptions(e.options)), this;
-		}, y.mergeOptions = function(e) {
+		}, b.mergeOptions = function(e) {
 			return n(this.prototype.options, e), this;
-		}, y.addInitHook = function(e) {
+		}, b.addInitHook = function(e) {
 			var t = Array.prototype.slice.call(arguments, 1), n = typeof e == "function" ? e : function() {
 				this[e].apply(this, t);
 			};
 			return this.prototype._initHooks = this.prototype._initHooks || [], this.prototype._initHooks.push(n), this;
 		};
-		function le(e) {
+		function ce(e) {
 			if (!(typeof L > "u" || !L || !L.Mixin)) {
-				e = g(e) ? e : [e];
+				e = _(e) ? e : [e];
 				for (var t = 0; t < e.length; t++) e[t] === L.Mixin.Events && console.warn("Deprecated include of L.Mixin.Events: this property will be removed in future releases, please inherit from L.Evented instead.", (/* @__PURE__ */ Error()).stack);
 			}
 		}
-		var b = {
+		var x = {
 			on: function(e, t, n) {
 				if (typeof e == "object") for (var r in e) this._on(r, e[r], t);
 				else {
@@ -271,26 +271,26 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				}, e), !0);
 			}
 		};
-		b.addEventListener = b.on, b.removeEventListener = b.clearAllEventListeners = b.off, b.addOneTimeEventListener = b.once, b.fireEvent = b.fire, b.hasEventListeners = b.listens;
-		var ue = y.extend(b);
-		function x(e, t, n) {
+		x.addEventListener = x.on, x.removeEventListener = x.clearAllEventListeners = x.off, x.addOneTimeEventListener = x.once, x.fireEvent = x.fire, x.hasEventListeners = x.listens;
+		var le = b.extend(x);
+		function S(e, t, n) {
 			this.x = n ? Math.round(e) : e, this.y = n ? Math.round(t) : t;
 		}
-		var de = Math.trunc || function(e) {
+		var ue = Math.trunc || function(e) {
 			return e > 0 ? Math.floor(e) : Math.ceil(e);
 		};
-		x.prototype = {
+		S.prototype = {
 			clone: function() {
-				return new x(this.x, this.y);
+				return new S(this.x, this.y);
 			},
 			add: function(e) {
-				return this.clone()._add(S(e));
+				return this.clone()._add(C(e));
 			},
 			_add: function(e) {
 				return this.x += e.x, this.y += e.y, this;
 			},
 			subtract: function(e) {
-				return this.clone()._subtract(S(e));
+				return this.clone()._subtract(C(e));
 			},
 			_subtract: function(e) {
 				return this.x -= e.x, this.y -= e.y, this;
@@ -308,10 +308,10 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				return this.x *= e, this.y *= e, this;
 			},
 			scaleBy: function(e) {
-				return new x(this.x * e.x, this.y * e.y);
+				return new S(this.x * e.x, this.y * e.y);
 			},
 			unscaleBy: function(e) {
-				return new x(this.x / e.x, this.y / e.y);
+				return new S(this.x / e.x, this.y / e.y);
 			},
 			round: function() {
 				return this.clone()._round();
@@ -335,45 +335,45 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				return this.clone()._trunc();
 			},
 			_trunc: function() {
-				return this.x = de(this.x), this.y = de(this.y), this;
+				return this.x = ue(this.x), this.y = ue(this.y), this;
 			},
 			distanceTo: function(e) {
-				e = S(e);
+				e = C(e);
 				var t = e.x - this.x, n = e.y - this.y;
 				return Math.sqrt(t * t + n * n);
 			},
 			equals: function(e) {
-				return e = S(e), e.x === this.x && e.y === this.y;
+				return e = C(e), e.x === this.x && e.y === this.y;
 			},
 			contains: function(e) {
-				return e = S(e), Math.abs(e.x) <= Math.abs(this.x) && Math.abs(e.y) <= Math.abs(this.y);
+				return e = C(e), Math.abs(e.x) <= Math.abs(this.x) && Math.abs(e.y) <= Math.abs(this.y);
 			},
 			toString: function() {
 				return "Point(" + u(this.x) + ", " + u(this.y) + ")";
 			}
 		};
-		function S(e, t, n) {
-			return e instanceof x ? e : g(e) ? new x(e[0], e[1]) : e == null ? e : typeof e == "object" && "x" in e && "y" in e ? new x(e.x, e.y) : new x(e, t, n);
+		function C(e, t, n) {
+			return e instanceof S ? e : _(e) ? new S(e[0], e[1]) : e == null ? e : typeof e == "object" && "x" in e && "y" in e ? new S(e.x, e.y) : new S(e, t, n);
 		}
-		function C(e, t) {
+		function w(e, t) {
 			if (e) for (var n = t ? [e, t] : e, r = 0, i = n.length; r < i; r++) this.extend(n[r]);
 		}
-		C.prototype = {
+		w.prototype = {
 			extend: function(e) {
 				var t, n;
 				if (!e) return this;
-				if (e instanceof x || typeof e[0] == "number" || "x" in e) t = n = S(e);
-				else if (e = w(e), t = e.min, n = e.max, !t || !n) return this;
+				if (e instanceof S || typeof e[0] == "number" || "x" in e) t = n = C(e);
+				else if (e = T(e), t = e.min, n = e.max, !t || !n) return this;
 				return !this.min && !this.max ? (this.min = t.clone(), this.max = n.clone()) : (this.min.x = Math.min(t.x, this.min.x), this.max.x = Math.max(n.x, this.max.x), this.min.y = Math.min(t.y, this.min.y), this.max.y = Math.max(n.y, this.max.y)), this;
 			},
 			getCenter: function(e) {
-				return S((this.min.x + this.max.x) / 2, (this.min.y + this.max.y) / 2, e);
+				return C((this.min.x + this.max.x) / 2, (this.min.y + this.max.y) / 2, e);
 			},
 			getBottomLeft: function() {
-				return S(this.min.x, this.max.y);
+				return C(this.min.x, this.max.y);
 			},
 			getTopRight: function() {
-				return S(this.max.x, this.min.y);
+				return C(this.max.x, this.min.y);
 			},
 			getTopLeft: function() {
 				return this.min;
@@ -386,15 +386,15 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			},
 			contains: function(e) {
 				var t, n;
-				return e = typeof e[0] == "number" || e instanceof x ? S(e) : w(e), e instanceof C ? (t = e.min, n = e.max) : t = n = e, t.x >= this.min.x && n.x <= this.max.x && t.y >= this.min.y && n.y <= this.max.y;
+				return e = typeof e[0] == "number" || e instanceof S ? C(e) : T(e), e instanceof w ? (t = e.min, n = e.max) : t = n = e, t.x >= this.min.x && n.x <= this.max.x && t.y >= this.min.y && n.y <= this.max.y;
 			},
 			intersects: function(e) {
-				e = w(e);
+				e = T(e);
 				var t = this.min, n = this.max, r = e.min, i = e.max, a = i.x >= t.x && r.x <= n.x, o = i.y >= t.y && r.y <= n.y;
 				return a && o;
 			},
 			overlaps: function(e) {
-				e = w(e);
+				e = T(e);
 				var t = this.min, n = this.max, r = e.min, i = e.max, a = i.x > t.x && r.x < n.x, o = i.y > t.y && r.y < n.y;
 				return a && o;
 			},
@@ -403,33 +403,33 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			},
 			pad: function(e) {
 				var t = this.min, n = this.max, r = Math.abs(t.x - n.x) * e, i = Math.abs(t.y - n.y) * e;
-				return w(S(t.x - r, t.y - i), S(n.x + r, n.y + i));
+				return T(C(t.x - r, t.y - i), C(n.x + r, n.y + i));
 			},
 			equals: function(e) {
-				return e ? (e = w(e), this.min.equals(e.getTopLeft()) && this.max.equals(e.getBottomRight())) : !1;
+				return e ? (e = T(e), this.min.equals(e.getTopLeft()) && this.max.equals(e.getBottomRight())) : !1;
 			}
 		};
-		function w(e, t) {
-			return !e || e instanceof C ? e : new C(e, t);
-		}
 		function T(e, t) {
+			return !e || e instanceof w ? e : new w(e, t);
+		}
+		function E(e, t) {
 			if (e) for (var n = t ? [e, t] : e, r = 0, i = n.length; r < i; r++) this.extend(n[r]);
 		}
-		T.prototype = {
+		E.prototype = {
 			extend: function(e) {
 				var t = this._southWest, n = this._northEast, r, i;
-				if (e instanceof D) r = e, i = e;
-				else if (e instanceof T) {
+				if (e instanceof O) r = e, i = e;
+				else if (e instanceof E) {
 					if (r = e._southWest, i = e._northEast, !r || !i) return this;
-				} else return e ? this.extend(O(e) || E(e)) : this;
-				return !t && !n ? (this._southWest = new D(r.lat, r.lng), this._northEast = new D(i.lat, i.lng)) : (t.lat = Math.min(r.lat, t.lat), t.lng = Math.min(r.lng, t.lng), n.lat = Math.max(i.lat, n.lat), n.lng = Math.max(i.lng, n.lng)), this;
+				} else return e ? this.extend(k(e) || D(e)) : this;
+				return !t && !n ? (this._southWest = new O(r.lat, r.lng), this._northEast = new O(i.lat, i.lng)) : (t.lat = Math.min(r.lat, t.lat), t.lng = Math.min(r.lng, t.lng), n.lat = Math.max(i.lat, n.lat), n.lng = Math.max(i.lng, n.lng)), this;
 			},
 			pad: function(e) {
 				var t = this._southWest, n = this._northEast, r = Math.abs(t.lat - n.lat) * e, i = Math.abs(t.lng - n.lng) * e;
-				return new T(new D(t.lat - r, t.lng - i), new D(n.lat + r, n.lng + i));
+				return new E(new O(t.lat - r, t.lng - i), new O(n.lat + r, n.lng + i));
 			},
 			getCenter: function() {
-				return new D((this._southWest.lat + this._northEast.lat) / 2, (this._southWest.lng + this._northEast.lng) / 2);
+				return new O((this._southWest.lat + this._northEast.lat) / 2, (this._southWest.lng + this._northEast.lng) / 2);
 			},
 			getSouthWest: function() {
 				return this._southWest;
@@ -438,10 +438,10 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				return this._northEast;
 			},
 			getNorthWest: function() {
-				return new D(this.getNorth(), this.getWest());
+				return new O(this.getNorth(), this.getWest());
 			},
 			getSouthEast: function() {
-				return new D(this.getSouth(), this.getEast());
+				return new O(this.getSouth(), this.getEast());
 			},
 			getWest: function() {
 				return this._southWest.lng;
@@ -456,17 +456,17 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				return this._northEast.lat;
 			},
 			contains: function(e) {
-				e = typeof e[0] == "number" || e instanceof D || "lat" in e ? O(e) : E(e);
+				e = typeof e[0] == "number" || e instanceof O || "lat" in e ? k(e) : D(e);
 				var t = this._southWest, n = this._northEast, r, i;
-				return e instanceof T ? (r = e.getSouthWest(), i = e.getNorthEast()) : r = i = e, r.lat >= t.lat && i.lat <= n.lat && r.lng >= t.lng && i.lng <= n.lng;
+				return e instanceof E ? (r = e.getSouthWest(), i = e.getNorthEast()) : r = i = e, r.lat >= t.lat && i.lat <= n.lat && r.lng >= t.lng && i.lng <= n.lng;
 			},
 			intersects: function(e) {
-				e = E(e);
+				e = D(e);
 				var t = this._southWest, n = this._northEast, r = e.getSouthWest(), i = e.getNorthEast(), a = i.lat >= t.lat && r.lat <= n.lat, o = i.lng >= t.lng && r.lng <= n.lng;
 				return a && o;
 			},
 			overlaps: function(e) {
-				e = E(e);
+				e = D(e);
 				var t = this._southWest, n = this._northEast, r = e.getSouthWest(), i = e.getNorthEast(), a = i.lat > t.lat && r.lat < n.lat, o = i.lng > t.lng && r.lng < n.lng;
 				return a && o;
 			},
@@ -479,44 +479,44 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				].join(",");
 			},
 			equals: function(e, t) {
-				return e ? (e = E(e), this._southWest.equals(e.getSouthWest(), t) && this._northEast.equals(e.getNorthEast(), t)) : !1;
+				return e ? (e = D(e), this._southWest.equals(e.getSouthWest(), t) && this._northEast.equals(e.getNorthEast(), t)) : !1;
 			},
 			isValid: function() {
 				return !!(this._southWest && this._northEast);
 			}
 		};
-		function E(e, t) {
-			return e instanceof T ? e : new T(e, t);
+		function D(e, t) {
+			return e instanceof E ? e : new E(e, t);
 		}
-		function D(e, t, n) {
+		function O(e, t, n) {
 			if (isNaN(e) || isNaN(t)) throw Error("Invalid LatLng object: (" + e + ", " + t + ")");
 			this.lat = +e, this.lng = +t, n !== void 0 && (this.alt = +n);
 		}
-		D.prototype = {
+		O.prototype = {
 			equals: function(e, t) {
-				return e ? (e = O(e), Math.max(Math.abs(this.lat - e.lat), Math.abs(this.lng - e.lng)) <= (t === void 0 ? 1e-9 : t)) : !1;
+				return e ? (e = k(e), Math.max(Math.abs(this.lat - e.lat), Math.abs(this.lng - e.lng)) <= (t === void 0 ? 1e-9 : t)) : !1;
 			},
 			toString: function(e) {
 				return "LatLng(" + u(this.lat, e) + ", " + u(this.lng, e) + ")";
 			},
 			distanceTo: function(e) {
-				return A.distance(this, O(e));
+				return de.distance(this, k(e));
 			},
 			wrap: function() {
-				return A.wrapLatLng(this);
+				return de.wrapLatLng(this);
 			},
 			toBounds: function(e) {
 				var t = 180 * e / 40075017, n = t / Math.cos(Math.PI / 180 * this.lat);
-				return E([this.lat - t, this.lng - n], [this.lat + t, this.lng + n]);
+				return D([this.lat - t, this.lng - n], [this.lat + t, this.lng + n]);
 			},
 			clone: function() {
-				return new D(this.lat, this.lng, this.alt);
+				return new O(this.lat, this.lng, this.alt);
 			}
 		};
-		function O(e, t, n) {
-			return e instanceof D ? e : g(e) && typeof e[0] != "object" ? e.length === 3 ? new D(e[0], e[1], e[2]) : e.length === 2 ? new D(e[0], e[1]) : null : e == null ? e : typeof e == "object" && "lat" in e ? new D(e.lat, "lng" in e ? e.lng : e.lon, e.alt) : t === void 0 ? null : new D(e, t, n);
+		function k(e, t, n) {
+			return e instanceof O ? e : _(e) && typeof e[0] != "object" ? e.length === 3 ? new O(e[0], e[1], e[2]) : e.length === 2 ? new O(e[0], e[1]) : null : e == null ? e : typeof e == "object" && "lat" in e ? new O(e.lat, "lng" in e ? e.lng : e.lon, e.alt) : t === void 0 ? null : new O(e, t, n);
 		}
-		var k = {
+		var A = {
 			latLngToPoint: function(e, t) {
 				var n = this.projection.project(e), r = this.scale(t);
 				return this.transformation._transform(n, r);
@@ -540,20 +540,20 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			getProjectedBounds: function(e) {
 				if (this.infinite) return null;
 				var t = this.projection.bounds, n = this.scale(e);
-				return new C(this.transformation.transform(t.min, n), this.transformation.transform(t.max, n));
+				return new w(this.transformation.transform(t.min, n), this.transformation.transform(t.max, n));
 			},
 			infinite: !1,
 			wrapLatLng: function(e) {
 				var t = this.wrapLng ? c(e.lng, this.wrapLng, !0) : e.lng, n = this.wrapLat ? c(e.lat, this.wrapLat, !0) : e.lat, r = e.alt;
-				return new D(n, t, r);
+				return new O(n, t, r);
 			},
 			wrapLatLngBounds: function(e) {
 				var t = e.getCenter(), n = this.wrapLatLng(t), r = t.lat - n.lat, i = t.lng - n.lng;
 				if (r === 0 && i === 0) return e;
 				var a = e.getSouthWest(), o = e.getNorthEast();
-				return new T(new D(a.lat - r, a.lng - i), new D(o.lat - r, o.lng - i));
+				return new E(new O(a.lat - r, a.lng - i), new O(o.lat - r, o.lng - i));
 			}
-		}, A = n({}, k, {
+		}, de = n({}, A, {
 			wrapLng: [-180, 180],
 			R: 6371e3,
 			distance: function(e, t) {
@@ -565,19 +565,19 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			MAX_LATITUDE: 85.0511287798,
 			project: function(e) {
 				var t = Math.PI / 180, n = this.MAX_LATITUDE, r = Math.max(Math.min(n, e.lat), -n), i = Math.sin(r * t);
-				return new x(this.R * e.lng * t, this.R * Math.log((1 + i) / (1 - i)) / 2);
+				return new S(this.R * e.lng * t, this.R * Math.log((1 + i) / (1 - i)) / 2);
 			},
 			unproject: function(e) {
 				var t = 180 / Math.PI;
-				return new D((2 * Math.atan(Math.exp(e.y / this.R)) - Math.PI / 2) * t, e.x * t / this.R);
+				return new O((2 * Math.atan(Math.exp(e.y / this.R)) - Math.PI / 2) * t, e.x * t / this.R);
 			},
 			bounds: (function() {
 				var e = fe * Math.PI;
-				return new C([-e, -e], [e, e]);
+				return new w([-e, -e], [e, e]);
 			})()
 		};
 		function me(e, t, n, r) {
-			if (g(e)) {
+			if (_(e)) {
 				this._a = e[0], this._b = e[1], this._c = e[2], this._d = e[3];
 				return;
 			}
@@ -591,13 +591,13 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				return t ||= 1, e.x = t * (this._a * e.x + this._b), e.y = t * (this._c * e.y + this._d), e;
 			},
 			untransform: function(e, t) {
-				return t ||= 1, new x((e.x / t - this._b) / this._a, (e.y / t - this._d) / this._c);
+				return t ||= 1, new S((e.x / t - this._b) / this._a, (e.y / t - this._d) / this._c);
 			}
 		};
 		function he(e, t, n, r) {
 			return new me(e, t, n, r);
 		}
-		var ge = n({}, A, {
+		var ge = n({}, de, {
 			code: "EPSG:3857",
 			projection: pe,
 			transformation: function() {
@@ -836,14 +836,14 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			return !1;
 		}
 		function It(e, t, n) {
-			var r = t || new x(0, 0);
+			var r = t || new S(0, 0);
 			e.style[Ct] = (M.ie3d ? "translate(" + r.x + "px," + r.y + "px)" : "translate3d(" + r.x + "px," + r.y + "px,0)") + (n ? " scale(" + n + ")" : "");
 		}
 		function z(e, t) {
 			e._leaflet_pos = t, M.any3d ? It(e, t) : (e.style.left = t.x + "px", e.style.top = t.y + "px");
 		}
 		function Lt(e) {
-			return e._leaflet_pos || new x(0, 0);
+			return e._leaflet_pos || new S(0, 0);
 		}
 		var Rt, zt, Bt;
 		if ("onselectstart" in document) Rt = function() {
@@ -944,7 +944,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			if (arguments.length === 1) Zt(e), delete e[V];
 			else if (t && typeof t == "object") for (var i in t) en(e, i, t[i], n);
 			else if (t = f(t), arguments.length === 2) Zt(e, function(e) {
-				return te(t, e) !== -1;
+				return ee(t, e) !== -1;
 			});
 			else for (var a = 0, o = t.length; a < o; a++) en(e, t[a], n, r);
 			return this;
@@ -997,9 +997,9 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			return t;
 		}
 		function sn(e, t) {
-			if (!t) return new x(e.clientX, e.clientY);
+			if (!t) return new S(e.clientX, e.clientY);
 			var n = Yt(t), r = n.boundingClientRect;
-			return new x((e.clientX - r.left) / n.x - t.clientLeft, (e.clientY - r.top) / n.y - t.clientTop);
+			return new S((e.clientX - r.left) / n.x - t.clientLeft, (e.clientY - r.top) / n.y - t.clientTop);
 		}
 		var cn = M.linux && M.chrome ? window.devicePixelRatio : M.mac ? window.devicePixelRatio * 3 : window.devicePixelRatio > 0 ? 2 * window.devicePixelRatio : 1;
 		function ln(e) {
@@ -1030,7 +1030,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			isExternalTarget: un,
 			addListener: B,
 			removeListener: H
-		}, fn = ue.extend({
+		}, fn = le.extend({
 			run: function(e, t, n, r) {
 				this.stop(), this._el = e, this._inProgress = !0, this._duration = n || .25, this._easeOutPower = 1 / Math.max(r || .5, .2), this._startPos = Lt(e), this._offset = t.subtract(this._startPos), this._startTime = +/* @__PURE__ */ new Date(), this.fire("start"), this._animate();
 			},
@@ -1038,7 +1038,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				this._inProgress && (this._step(!0), this._complete());
 			},
 			_animate: function() {
-				this._animId = _(this._animate, this), this._step();
+				this._animId = v(this._animate, this), this._step();
 			},
 			_step: function(e) {
 				var t = +/* @__PURE__ */ new Date() - this._startTime, n = this._duration * 1e3;
@@ -1049,12 +1049,12 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				t && n._round(), z(this._el, n), this.fire("step");
 			},
 			_complete: function() {
-				v(this._animId), this._inProgress = !1, this.fire("end");
+				y(this._animId), this._inProgress = !1, this.fire("end");
 			},
 			_easeOut: function(e) {
 				return 1 - (1 - e) ** this._easeOutPower;
 			}
-		}), W = ue.extend({
+		}), W = le.extend({
 			options: {
 				crs: ge,
 				center: void 0,
@@ -1074,10 +1074,10 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				trackResize: !0
 			},
 			initialize: function(e, t) {
-				t = p(this, t), this._handlers = [], this._layers = {}, this._zoomBoundLayers = {}, this._sizeChanged = !0, this._initContainer(e), this._initLayout(), this._onResize = i(this._onResize, this), this._initEvents(), t.maxBounds && this.setMaxBounds(t.maxBounds), t.zoom !== void 0 && (this._zoom = this._limitZoom(t.zoom)), t.center && t.zoom !== void 0 && this.setView(O(t.center), t.zoom, { reset: !0 }), this.callInitHooks(), this._zoomAnimated = wt && M.any3d && !M.mobileOpera && this.options.zoomAnimation, this._zoomAnimated && (this._createAnimProxy(), B(this._proxy, Tt, this._catchTransitionEnd, this)), this._addLayers(this.options.layers);
+				t = p(this, t), this._handlers = [], this._layers = {}, this._zoomBoundLayers = {}, this._sizeChanged = !0, this._initContainer(e), this._initLayout(), this._onResize = i(this._onResize, this), this._initEvents(), t.maxBounds && this.setMaxBounds(t.maxBounds), t.zoom !== void 0 && (this._zoom = this._limitZoom(t.zoom)), t.center && t.zoom !== void 0 && this.setView(k(t.center), t.zoom, { reset: !0 }), this.callInitHooks(), this._zoomAnimated = wt && M.any3d && !M.mobileOpera && this.options.zoomAnimation, this._zoomAnimated && (this._createAnimProxy(), B(this._proxy, Tt, this._catchTransitionEnd, this)), this._addLayers(this.options.layers);
 			},
 			setView: function(e, t, r) {
-				return t = t === void 0 ? this._zoom : this._limitZoom(t), e = this._limitCenter(O(e), t, this.options.maxBounds), r ||= {}, this._stop(), this._loaded && !r.reset && r !== !0 && (r.animate !== void 0 && (r.zoom = n({ animate: r.animate }, r.zoom), r.pan = n({
+				return t = t === void 0 ? this._zoom : this._limitZoom(t), e = this._limitCenter(k(e), t, this.options.maxBounds), r ||= {}, this._stop(), this._loaded && !r.reset && r !== !0 && (r.animate !== void 0 && (r.zoom = n({ animate: r.animate }, r.zoom), r.pan = n({
 					animate: r.animate,
 					duration: r.duration
 				}, r.pan)), this._zoom === t ? this._tryAnimatedPan(e, r.pan) : this._tryAnimatedZoom && this._tryAnimatedZoom(e, t, r.zoom)) ? (clearTimeout(this._sizeTimer), this) : (this._resetView(e, t, r.pan && r.pan.noMoveStart), this);
@@ -1092,12 +1092,12 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				return e ||= M.any3d ? this.options.zoomDelta : 1, this.setZoom(this._zoom - e, t);
 			},
 			setZoomAround: function(e, t, n) {
-				var r = this.getZoomScale(t), i = this.getSize().divideBy(2), a = (e instanceof x ? e : this.latLngToContainerPoint(e)).subtract(i).multiplyBy(1 - 1 / r), o = this.containerPointToLatLng(i.add(a));
+				var r = this.getZoomScale(t), i = this.getSize().divideBy(2), a = (e instanceof S ? e : this.latLngToContainerPoint(e)).subtract(i).multiplyBy(1 - 1 / r), o = this.containerPointToLatLng(i.add(a));
 				return this.setView(o, t, { zoom: n });
 			},
 			_getBoundsCenterZoom: function(e, t) {
-				t ||= {}, e = e.getBounds ? e.getBounds() : E(e);
-				var n = S(t.paddingTopLeft || t.padding || [0, 0]), r = S(t.paddingBottomRight || t.padding || [0, 0]), i = this.getBoundsZoom(e, !1, n.add(r));
+				t ||= {}, e = e.getBounds ? e.getBounds() : D(e);
+				var n = C(t.paddingTopLeft || t.padding || [0, 0]), r = C(t.paddingBottomRight || t.padding || [0, 0]), i = this.getBoundsZoom(e, !1, n.add(r));
 				if (i = typeof t.maxZoom == "number" ? Math.min(t.maxZoom, i) : i, i === Infinity) return {
 					center: e.getCenter(),
 					zoom: i
@@ -1109,7 +1109,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				};
 			},
 			fitBounds: function(e, t) {
-				if (e = E(e), !e.isValid()) throw Error("Bounds are not valid.");
+				if (e = D(e), !e.isValid()) throw Error("Bounds are not valid.");
 				var n = this._getBoundsCenterZoom(e, t);
 				return this.setView(n.center, n.zoom, t);
 			},
@@ -1120,7 +1120,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				return this.setView(e, this._zoom, { pan: t });
 			},
 			panBy: function(e, t) {
-				if (e = S(e).round(), t ||= {}, !e.x && !e.y) return this.fire("moveend");
+				if (e = C(e).round(), t ||= {}, !e.x && !e.y) return this.fire("moveend");
 				if (t.animate !== !0 && !this.getSize().contains(e)) return this._resetView(this.unproject(this.project(this.getCenter()).add(e)), this.getZoom()), this;
 				if (this._panAnim || (this._panAnim = new fn(), this._panAnim.on({
 					step: this._onPanTransitionStep,
@@ -1136,7 +1136,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				if (n ||= {}, n.animate === !1 || !M.any3d) return this.setView(e, t, n);
 				this._stop();
 				var r = this.project(this.getCenter()), i = this.project(e), a = this.getSize(), o = this._zoom;
-				e = O(e), t = t === void 0 ? o : t;
+				e = k(e), t = t === void 0 ? o : t;
 				var s = Math.max(a.x, a.y), c = s * this.getZoomScale(o, t), l = i.distanceTo(r) || 1, u = 1.42, d = u * u;
 				function f(e) {
 					var t = e ? -1 : 1, n = e ? c : s, r = (c * c - s * s + t * d * d * l * l) / (2 * n * d * l), i = Math.sqrt(r * r + 1) - r;
@@ -1148,32 +1148,32 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				function m(e) {
 					return (Math.exp(e) + Math.exp(-e)) / 2;
 				}
-				function ee(e) {
+				function h(e) {
 					return p(e) / m(e);
 				}
-				var h = f(0);
-				function g(e) {
-					return s * (m(h) / m(h + u * e));
+				var g = f(0);
+				function _(e) {
+					return s * (m(g) / m(g + u * e));
+				}
+				function ee(e) {
+					return s * (m(g) * h(g + u * e) - p(g)) / d;
 				}
 				function te(e) {
-					return s * (m(h) * ee(h + u * e) - p(h)) / d;
-				}
-				function ne(e) {
 					return 1 - (1 - e) ** 1.5;
 				}
-				var re = Date.now(), ie = (f(1) - h) / u, ae = n.duration ? 1e3 * n.duration : 1e3 * ie * .8;
-				function oe() {
-					var n = (Date.now() - re) / ae, a = ne(n) * ie;
-					n <= 1 ? (this._flyToFrame = _(oe, this), this._move(this.unproject(r.add(i.subtract(r).multiplyBy(te(a) / l)), o), this.getScaleZoom(s / g(a), o), { flyTo: !0 })) : this._move(e, t)._moveEnd(!0);
+				var ne = Date.now(), re = (f(1) - g) / u, ie = n.duration ? 1e3 * n.duration : 1e3 * re * .8;
+				function ae() {
+					var n = (Date.now() - ne) / ie, a = te(n) * re;
+					n <= 1 ? (this._flyToFrame = v(ae, this), this._move(this.unproject(r.add(i.subtract(r).multiplyBy(ee(a) / l)), o), this.getScaleZoom(s / _(a), o), { flyTo: !0 })) : this._move(e, t)._moveEnd(!0);
 				}
-				return this._moveStart(!0, n.noMoveStart), oe.call(this), this;
+				return this._moveStart(!0, n.noMoveStart), ae.call(this), this;
 			},
 			flyToBounds: function(e, t) {
 				var n = this._getBoundsCenterZoom(e, t);
 				return this.flyTo(n.center, n.zoom, t);
 			},
 			setMaxBounds: function(e) {
-				return e = E(e), this.listens("moveend", this._panInsideMaxBounds) && this.off("moveend", this._panInsideMaxBounds), e.isValid() ? (this.options.maxBounds = e, this._loaded && this._panInsideMaxBounds(), this.on("moveend", this._panInsideMaxBounds)) : (this.options.maxBounds = null, this);
+				return e = D(e), this.listens("moveend", this._panInsideMaxBounds) && this.off("moveend", this._panInsideMaxBounds), e.isValid() ? (this.options.maxBounds = e, this._loaded && this._panInsideMaxBounds(), this.on("moveend", this._panInsideMaxBounds)) : (this.options.maxBounds = null, this);
 			},
 			setMinZoom: function(e) {
 				var t = this.options.minZoom;
@@ -1185,12 +1185,12 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			},
 			panInsideBounds: function(e, t) {
 				this._enforcingBounds = !0;
-				var n = this.getCenter(), r = this._limitCenter(n, this._zoom, E(e));
+				var n = this.getCenter(), r = this._limitCenter(n, this._zoom, D(e));
 				return n.equals(r) || this.panTo(r, t), this._enforcingBounds = !1, this;
 			},
 			panInside: function(e, t) {
 				t ||= {};
-				var n = S(t.paddingTopLeft || t.padding || [0, 0]), r = S(t.paddingBottomRight || t.padding || [0, 0]), i = this.project(this.getCenter()), a = this.project(e), o = this.getPixelBounds(), s = w([o.min.add(n), o.max.subtract(r)]), c = s.getSize();
+				var n = C(t.paddingTopLeft || t.padding || [0, 0]), r = C(t.paddingBottomRight || t.padding || [0, 0]), i = this.project(this.getCenter()), a = this.project(e), o = this.getPixelBounds(), s = T([o.min.add(n), o.max.subtract(r)]), c = s.getSize();
 				if (!s.contains(a)) {
 					this._enforcingBounds = !0;
 					var l = a.subtract(s.getCenter()), u = s.extend(a).getSize().subtract(c);
@@ -1240,7 +1240,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			},
 			_handleGeolocationResponse: function(e) {
 				if (this._container._leaflet_id) {
-					var t = e.coords.latitude, n = e.coords.longitude, r = new D(t, n), i = r.toBounds(e.coords.accuracy * 2), a = this._locateOptions;
+					var t = e.coords.latitude, n = e.coords.longitude, r = new O(t, n), i = r.toBounds(e.coords.accuracy * 2), a = this._locateOptions;
 					if (a.setView) {
 						var o = this.getBoundsZoom(i);
 						this.setView(r, a.maxZoom ? Math.min(o, a.maxZoom) : o);
@@ -1266,7 +1266,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				} catch {
 					this._container._leaflet_id = void 0, this._containerId = void 0;
 				}
-				for (var e in this._locationWatchId !== void 0 && this.stopLocate(), this._stop(), P(this._mapPane), this._clearControlPos && this._clearControlPos(), this._resizeRequest &&= (v(this._resizeRequest), null), this._clearHandlers(), this._loaded && this.fire("unload"), this._layers) this._layers[e].remove();
+				for (var e in this._locationWatchId !== void 0 && this.stopLocate(), this._stop(), P(this._mapPane), this._clearControlPos && this._clearControlPos(), this._resizeRequest &&= (y(this._resizeRequest), null), this._clearHandlers(), this._loaded && this.fire("unload"), this._layers) this._layers[e].remove();
 				for (e in this._panes) P(this._panes[e]);
 				return this._layers = [], this._panes = [], delete this._mapPane, delete this._renderer, this;
 			},
@@ -1282,7 +1282,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			},
 			getBounds: function() {
 				var e = this.getPixelBounds();
-				return new T(this.unproject(e.getBottomLeft()), this.unproject(e.getTopRight()));
+				return new E(this.unproject(e.getBottomLeft()), this.unproject(e.getTopRight()));
 			},
 			getMinZoom: function() {
 				return this.options.minZoom === void 0 ? this._layersMinZoom || 0 : this.options.minZoom;
@@ -1291,16 +1291,16 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				return this.options.maxZoom === void 0 ? this._layersMaxZoom === void 0 ? Infinity : this._layersMaxZoom : this.options.maxZoom;
 			},
 			getBoundsZoom: function(e, t, n) {
-				e = E(e), n = S(n || [0, 0]);
-				var r = this.getZoom() || 0, i = this.getMinZoom(), a = this.getMaxZoom(), o = e.getNorthWest(), s = e.getSouthEast(), c = this.getSize().subtract(n), l = w(this.project(s, r), this.project(o, r)).getSize(), u = M.any3d ? this.options.zoomSnap : 1, d = c.x / l.x, f = c.y / l.y, p = t ? Math.max(d, f) : Math.min(d, f);
+				e = D(e), n = C(n || [0, 0]);
+				var r = this.getZoom() || 0, i = this.getMinZoom(), a = this.getMaxZoom(), o = e.getNorthWest(), s = e.getSouthEast(), c = this.getSize().subtract(n), l = T(this.project(s, r), this.project(o, r)).getSize(), u = M.any3d ? this.options.zoomSnap : 1, d = c.x / l.x, f = c.y / l.y, p = t ? Math.max(d, f) : Math.min(d, f);
 				return r = this.getScaleZoom(p, r), u && (r = Math.round(r / (u / 100)) * (u / 100), r = t ? Math.ceil(r / u) * u : Math.floor(r / u) * u), Math.max(i, Math.min(a, r));
 			},
 			getSize: function() {
-				return (!this._size || this._sizeChanged) && (this._size = new x(this._container.clientWidth || 0, this._container.clientHeight || 0), this._sizeChanged = !1), this._size.clone();
+				return (!this._size || this._sizeChanged) && (this._size = new S(this._container.clientWidth || 0, this._container.clientHeight || 0), this._sizeChanged = !1), this._size.clone();
 			},
 			getPixelBounds: function(e, t) {
 				var n = this._getTopLeftPoint(e, t);
-				return new C(n, n.add(this.getSize()));
+				return new w(n, n.add(this.getSize()));
 			},
 			getPixelOrigin: function() {
 				return this._checkIfLoaded(), this._pixelOrigin;
@@ -1328,39 +1328,39 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				return isNaN(r) ? Infinity : r;
 			},
 			project: function(e, t) {
-				return t = t === void 0 ? this._zoom : t, this.options.crs.latLngToPoint(O(e), t);
+				return t = t === void 0 ? this._zoom : t, this.options.crs.latLngToPoint(k(e), t);
 			},
 			unproject: function(e, t) {
-				return t = t === void 0 ? this._zoom : t, this.options.crs.pointToLatLng(S(e), t);
+				return t = t === void 0 ? this._zoom : t, this.options.crs.pointToLatLng(C(e), t);
 			},
 			layerPointToLatLng: function(e) {
-				var t = S(e).add(this.getPixelOrigin());
+				var t = C(e).add(this.getPixelOrigin());
 				return this.unproject(t);
 			},
 			latLngToLayerPoint: function(e) {
-				return this.project(O(e))._round()._subtract(this.getPixelOrigin());
+				return this.project(k(e))._round()._subtract(this.getPixelOrigin());
 			},
 			wrapLatLng: function(e) {
-				return this.options.crs.wrapLatLng(O(e));
+				return this.options.crs.wrapLatLng(k(e));
 			},
 			wrapLatLngBounds: function(e) {
-				return this.options.crs.wrapLatLngBounds(E(e));
+				return this.options.crs.wrapLatLngBounds(D(e));
 			},
 			distance: function(e, t) {
-				return this.options.crs.distance(O(e), O(t));
+				return this.options.crs.distance(k(e), k(t));
 			},
 			containerPointToLayerPoint: function(e) {
-				return S(e).subtract(this._getMapPanePos());
+				return C(e).subtract(this._getMapPanePos());
 			},
 			layerPointToContainerPoint: function(e) {
-				return S(e).add(this._getMapPanePos());
+				return C(e).add(this._getMapPanePos());
 			},
 			containerPointToLatLng: function(e) {
-				var t = this.containerPointToLayerPoint(S(e));
+				var t = this.containerPointToLayerPoint(C(e));
 				return this.layerPointToLatLng(t);
 			},
 			latLngToContainerPoint: function(e) {
-				return this.layerPointToContainerPoint(this.latLngToLayerPoint(O(e)));
+				return this.layerPointToContainerPoint(this.latLngToLayerPoint(k(e)));
 			},
 			mouseEventToContainerPoint: function(e) {
 				return sn(e, this._container);
@@ -1385,10 +1385,10 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			},
 			_initPanes: function() {
 				var e = this._panes = {};
-				this._paneRenderers = {}, this._mapPane = this.createPane("mapPane", this._container), z(this._mapPane, new x(0, 0)), this.createPane("tilePane"), this.createPane("overlayPane"), this.createPane("shadowPane"), this.createPane("markerPane"), this.createPane("tooltipPane"), this.createPane("popupPane"), this.options.markerZoomAnimation || (F(e.markerPane, "leaflet-zoom-hide"), F(e.shadowPane, "leaflet-zoom-hide"));
+				this._paneRenderers = {}, this._mapPane = this.createPane("mapPane", this._container), z(this._mapPane, new S(0, 0)), this.createPane("tilePane"), this.createPane("overlayPane"), this.createPane("shadowPane"), this.createPane("markerPane"), this.createPane("tooltipPane"), this.createPane("popupPane"), this.options.markerZoomAnimation || (F(e.markerPane, "leaflet-zoom-hide"), F(e.shadowPane, "leaflet-zoom-hide"));
 			},
 			_resetView: function(e, t, n) {
-				z(this._mapPane, new x(0, 0));
+				z(this._mapPane, new S(0, 0));
 				var r = !this._loaded;
 				this._loaded = !0, t = this._limitZoom(t), this.fire("viewprereset");
 				var i = this._zoom !== t;
@@ -1406,7 +1406,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				return e && this.fire("zoomend"), this.fire("moveend");
 			},
 			_stop: function() {
-				return v(this._flyToFrame), this._panAnim && this._panAnim.stop(), this;
+				return y(this._flyToFrame), this._panAnim && this._panAnim.stop(), this;
 			},
 			_rawPanBy: function(e) {
 				z(this._mapPane, this._getMapPanePos().subtract(e));
@@ -1426,7 +1426,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				t(this._container, "click dblclick mousedown mouseup mouseover mouseout mousemove contextmenu keypress keydown keyup", this._handleDOMEvent, this), this.options.trackResize && t(window, "resize", this._onResize, this), M.any3d && this.options.transform3DLimit && (e ? this.off : this.on).call(this, "moveend", this._onMoveEnd);
 			},
 			_onResize: function() {
-				v(this._resizeRequest), this._resizeRequest = _(function() {
+				y(this._resizeRequest), this._resizeRequest = v(function() {
 					this.invalidateSize({ debounceMoveend: !0 });
 				}, this);
 			},
@@ -1485,7 +1485,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 						var u = c.getLatLng && (!c._radius || c._radius <= 10);
 						l.containerPoint = u ? this.latLngToContainerPoint(c.getLatLng()) : this.mouseEventToContainerPoint(e), l.layerPoint = this.containerPointToLayerPoint(l.containerPoint), l.latlng = u ? c.getLatLng() : this.layerPointToLatLng(l.layerPoint);
 					}
-					for (s = 0; s < a.length; s++) if (a[s].fire(t, l, !0), l.originalEvent._stopped || a[s].options.bubblingMouseEvents === !1 && te(this._mouseEvents, t) !== -1) return;
+					for (s = 0; s < a.length; s++) if (a[s].fire(t, l, !0), l.originalEvent._stopped || a[s].options.bubblingMouseEvents === !1 && ee(this._mouseEvents, t) !== -1) return;
 				}
 			},
 			_draggableMoved: function(e) {
@@ -1498,7 +1498,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				return this._loaded ? e.call(t || this, { target: this }) : this.on("load", e, t), this;
 			},
 			_getMapPanePos: function() {
-				return Lt(this._mapPane) || new x(0, 0);
+				return Lt(this._mapPane) || new S(0, 0);
 			},
 			_moved: function() {
 				var e = this._getMapPanePos();
@@ -1517,7 +1517,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			},
 			_latLngBoundsToNewLayerBounds: function(e, t, n) {
 				var r = this._getNewPixelOrigin(n, t);
-				return w([
+				return T([
 					this.project(e.getSouthWest(), t)._subtract(r),
 					this.project(e.getNorthWest(), t)._subtract(r),
 					this.project(e.getSouthEast(), t)._subtract(r),
@@ -1532,17 +1532,17 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			},
 			_limitCenter: function(e, t, n) {
 				if (!n) return e;
-				var r = this.project(e, t), i = this.getSize().divideBy(2), a = new C(r.subtract(i), r.add(i)), o = this._getBoundsOffset(a, n, t);
+				var r = this.project(e, t), i = this.getSize().divideBy(2), a = new w(r.subtract(i), r.add(i)), o = this._getBoundsOffset(a, n, t);
 				return Math.abs(o.x) <= 1 && Math.abs(o.y) <= 1 ? e : this.unproject(r.add(o), t);
 			},
 			_limitOffset: function(e, t) {
 				if (!t) return e;
-				var n = this.getPixelBounds(), r = new C(n.min.add(e), n.max.add(e));
+				var n = this.getPixelBounds(), r = new w(n.min.add(e), n.max.add(e));
 				return e.add(this._getBoundsOffset(r, t));
 			},
 			_getBoundsOffset: function(e, t, n) {
-				var r = w(this.project(t.getNorthEast(), n), this.project(t.getSouthWest(), n)), i = r.min.subtract(e.min), a = r.max.subtract(e.max);
-				return new x(this._rebound(i.x, -a.x), this._rebound(i.y, -a.y));
+				var r = T(this.project(t.getNorthEast(), n), this.project(t.getSouthWest(), n)), i = r.min.subtract(e.min), a = r.max.subtract(e.max);
+				return new S(this._rebound(i.x, -a.x), this._rebound(i.y, -a.y));
 			},
 			_rebound: function(e, t) {
 				return e + t > 0 ? Math.round(e - t) / 2 : Math.max(0, Math.ceil(e)) - Math.max(0, Math.floor(t));
@@ -1585,7 +1585,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				if (this._animatingZoom) return !0;
 				if (n ||= {}, !this._zoomAnimated || n.animate === !1 || this._nothingToAnimate() || Math.abs(t - this._zoom) > this.options.zoomAnimationThreshold) return !1;
 				var r = this.getZoomScale(t), i = this._getCenterOffset(e)._divideBy(1 - 1 / r);
-				return n.animate !== !0 && !this.getSize().contains(i) ? !1 : (_(function() {
+				return n.animate !== !0 && !this.getSize().contains(i) ? !1 : (v(function() {
 					this._moveStart(!0, n.noMoveStart || !1)._animateZoom(e, t, !0);
 				}, this), !0);
 			},
@@ -1603,7 +1603,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 		function pn(e, t) {
 			return new W(e, t);
 		}
-		var G = y.extend({
+		var G = b.extend({
 			options: { position: "topright" },
 			initialize: function(e) {
 				p(this, e);
@@ -1903,7 +1903,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 		}), G.Layers = hn, G.Zoom = _n, G.Scale = yn, G.Attribution = xn, mn.layers = gn, mn.zoom = vn, mn.scale = bn, mn.attribution = function(e) {
 			return new xn(e);
 		};
-		var K = y.extend({
+		var K = b.extend({
 			initialize: function(e) {
 				this._map = e;
 			},
@@ -1920,7 +1920,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 		K.addTo = function(e, t) {
 			return e.addHandler(t, this), this;
 		};
-		var Sn = { Events: b }, Cn = M.touch ? "touchstart mousedown" : "mousedown", wn = ue.extend({
+		var Sn = { Events: x }, Cn = M.touch ? "touchstart mousedown" : "mousedown", wn = le.extend({
 			options: { clickTolerance: 3 },
 			initialize: function(e, t, n, r) {
 				p(this, r), this._element = e, this._dragStartTarget = t || e, this._preventOutline = n;
@@ -1940,7 +1940,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 					if (!(wn._dragging || e.shiftKey || e.which !== 1 && e.button !== 1 && !e.touches) && (wn._dragging = this, this._preventOutline && Kt(this._element), Ht(), Rt(), !this._moving)) {
 						this.fire("down");
 						var t = e.touches ? e.touches[0] : e, n = Jt(this._element);
-						this._startPoint = new x(t.clientX, t.clientY), this._startPos = Lt(this._element), this._parentScale = Yt(n);
+						this._startPoint = new S(t.clientX, t.clientY), this._startPos = Lt(this._element), this._parentScale = Yt(n);
 						var r = e.type === "mousedown";
 						B(document, r ? "mousemove" : "touchmove", this._onMove, this), B(document, r ? "mouseup" : "touchend touchcancel", this._onUp, this);
 					}
@@ -1952,7 +1952,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 						this._moved = !0;
 						return;
 					}
-					var t = e.touches && e.touches.length === 1 ? e.touches[0] : e, n = new x(t.clientX, t.clientY)._subtract(this._startPoint);
+					var t = e.touches && e.touches.length === 1 ? e.touches[0] : e, n = new S(t.clientX, t.clientY)._subtract(this._startPoint);
 					!n.x && !n.y || Math.abs(n.x) + Math.abs(n.y) < this.options.clickTolerance || (n.x /= this._parentScale.x, n.y /= this._parentScale.y, U(e), this._moved || (this.fire("dragstart"), this._moved = !0, F(document.body, "leaflet-dragging"), this._lastTarget = e.target || e.srcElement, window.SVGElementInstance && this._lastTarget instanceof window.SVGElementInstance && (this._lastTarget = this._lastTarget.correspondingUseElement), F(this._lastTarget, "leaflet-drag-target")), this._newPos = this._startPos.add(n), this._moving = !0, this._lastEvent = e, this._updatePosition());
 				}
 			},
@@ -1990,24 +1990,24 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			var n, r, i, a, o, s, c, l, u;
 			if (!e || e.length === 0) throw Error("latlngs not passed");
 			q(e) || (console.warn("latlngs are not flat! Only the first ring will be used"), e = e[0]);
-			var d = O([0, 0]), f = E(e);
+			var d = k([0, 0]), f = D(e);
 			f.getNorthWest().distanceTo(f.getSouthWest()) * f.getNorthEast().distanceTo(f.getNorthWest()) < 1700 && (d = Dn(e));
 			var p = e.length, m = [];
 			for (n = 0; n < p; n++) {
-				var ee = O(e[n]);
-				m.push(t.project(O([ee.lat - d.lat, ee.lng - d.lng])));
+				var h = k(e[n]);
+				m.push(t.project(k([h.lat - d.lat, h.lng - d.lng])));
 			}
 			for (s = c = l = 0, n = 0, r = p - 1; n < p; r = n++) i = m[n], a = m[r], o = i.y * a.x - a.y * i.x, c += (i.x + a.x) * o, l += (i.y + a.y) * o, s += o * 3;
 			u = s === 0 ? m[0] : [c / s, l / s];
-			var h = t.unproject(S(u));
-			return O([h.lat + d.lat, h.lng + d.lng]);
+			var g = t.unproject(C(u));
+			return k([g.lat + d.lat, g.lng + d.lng]);
 		}
 		function Dn(e) {
 			for (var t = 0, n = 0, r = 0, i = 0; i < e.length; i++) {
-				var a = O(e[i]);
+				var a = k(e[i]);
 				t += a.lat, n += a.lng, r++;
 			}
-			return O([t / r, n / r]);
+			return k([t / r, n / r]);
 		}
 		var On = {
 			__proto__: null,
@@ -2053,7 +2053,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 		}
 		function Ln(e, t, n, r, i) {
 			var a = t.x - e.x, o = t.y - e.y, s = r.min, c = r.max, l, u;
-			return n & 8 ? (l = e.x + a * (c.y - e.y) / o, u = c.y) : n & 4 ? (l = e.x + a * (s.y - e.y) / o, u = s.y) : n & 2 ? (l = c.x, u = e.y + o * (c.x - e.x) / a) : n & 1 && (l = s.x, u = e.y + o * (s.x - e.x) / a), new x(l, u, i);
+			return n & 8 ? (l = e.x + a * (c.y - e.y) / o, u = c.y) : n & 4 ? (l = e.x + a * (s.y - e.y) / o, u = s.y) : n & 2 ? (l = c.x, u = e.y + o * (c.x - e.x) / a) : n & 1 && (l = s.x, u = e.y + o * (s.x - e.x) / a), new S(l, u, i);
 		}
 		function Rn(e, t) {
 			var n = 0;
@@ -2065,10 +2065,10 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 		}
 		function Bn(e, t, n, r) {
 			var i = t.x, a = t.y, o = n.x - i, s = n.y - a, c = o * o + s * s, l;
-			return c > 0 && (l = ((e.x - i) * o + (e.y - a) * s) / c, l > 1 ? (i = n.x, a = n.y) : l > 0 && (i += o * l, a += s * l)), o = e.x - i, s = e.y - a, r ? o * o + s * s : new x(i, a);
+			return c > 0 && (l = ((e.x - i) * o + (e.y - a) * s) / c, l > 1 ? (i = n.x, a = n.y) : l > 0 && (i += o * l, a += s * l)), o = e.x - i, s = e.y - a, r ? o * o + s * s : new S(i, a);
 		}
 		function q(e) {
-			return !g(e[0]) || typeof e[0][0] != "object" && e[0][0] !== void 0;
+			return !_(e[0]) || typeof e[0][0] != "object" && e[0][0] !== void 0;
 		}
 		function Vn(e) {
 			return console.warn("Deprecated use of _flat, please use L.LineUtil.isFlat instead."), q(e);
@@ -2077,12 +2077,12 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			var n, r, i, a, o, s, c, l;
 			if (!e || e.length === 0) throw Error("latlngs not passed");
 			q(e) || (console.warn("latlngs are not flat! Only the first ring will be used"), e = e[0]);
-			var u = O([0, 0]), d = E(e);
+			var u = k([0, 0]), d = D(e);
 			d.getNorthWest().distanceTo(d.getSouthWest()) * d.getNorthEast().distanceTo(d.getNorthWest()) < 1700 && (u = Dn(e));
 			var f = e.length, p = [];
 			for (n = 0; n < f; n++) {
-				var m = O(e[n]);
-				p.push(t.project(O([m.lat - u.lat, m.lng - u.lng])));
+				var m = k(e[n]);
+				p.push(t.project(k([m.lat - u.lat, m.lng - u.lng])));
 			}
 			for (n = 0, r = 0; n < f - 1; n++) r += p[n].distanceTo(p[n + 1]) / 2;
 			if (r === 0) l = p[0];
@@ -2090,8 +2090,8 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				c = (a - r) / i, l = [s.x - c * (s.x - o.x), s.y - c * (s.y - o.y)];
 				break;
 			}
-			var ee = t.unproject(S(l));
-			return O([ee.lat + u.lat, ee.lng + u.lng]);
+			var h = t.unproject(C(l));
+			return k([h.lat + u.lat, h.lng + u.lng]);
 		}
 		var Un = {
 			__proto__: null,
@@ -2107,41 +2107,41 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			polylineCenter: Hn
 		}, Wn = {
 			project: function(e) {
-				return new x(e.lng, e.lat);
+				return new S(e.lng, e.lat);
 			},
 			unproject: function(e) {
-				return new D(e.y, e.x);
+				return new O(e.y, e.x);
 			},
-			bounds: new C([-180, -90], [180, 90])
+			bounds: new w([-180, -90], [180, 90])
 		}, Gn = {
 			R: 6378137,
 			R_MINOR: 6356752.314245179,
-			bounds: new C([-20037508.34279, -15496570.73972], [20037508.34279, 18764656.23138]),
+			bounds: new w([-20037508.34279, -15496570.73972], [20037508.34279, 18764656.23138]),
 			project: function(e) {
 				var t = Math.PI / 180, n = this.R, r = e.lat * t, i = this.R_MINOR / n, a = Math.sqrt(1 - i * i), o = a * Math.sin(r), s = Math.tan(Math.PI / 4 - r / 2) / ((1 - o) / (1 + o)) ** (a / 2);
-				return r = -n * Math.log(Math.max(s, 1e-10)), new x(e.lng * t * n, r);
+				return r = -n * Math.log(Math.max(s, 1e-10)), new S(e.lng * t * n, r);
 			},
 			unproject: function(e) {
 				for (var t = 180 / Math.PI, n = this.R, r = this.R_MINOR / n, i = Math.sqrt(1 - r * r), a = Math.exp(-e.y / n), o = Math.PI / 2 - 2 * Math.atan(a), s = 0, c = .1, l; s < 15 && Math.abs(c) > 1e-7; s++) l = i * Math.sin(o), l = ((1 - l) / (1 + l)) ** (i / 2), c = Math.PI / 2 - 2 * Math.atan(a * l) - o, o += c;
-				return new D(o * t, e.x * t / n);
+				return new O(o * t, e.x * t / n);
 			}
 		}, Kn = {
 			__proto__: null,
 			LonLat: Wn,
 			Mercator: Gn,
 			SphericalMercator: pe
-		}, qn = n({}, A, {
+		}, qn = n({}, de, {
 			code: "EPSG:3395",
 			projection: Gn,
 			transformation: function() {
 				var e = .5 / (Math.PI * Gn.R);
 				return he(e, .5, -e, .5);
 			}()
-		}), Jn = n({}, A, {
+		}), Jn = n({}, de, {
 			code: "EPSG:4326",
 			projection: Wn,
 			transformation: he(1 / 180, 1, -1 / 180, .5)
-		}), Yn = n({}, k, {
+		}), Yn = n({}, A, {
 			projection: Wn,
 			transformation: he(1, 0, -1, 0),
 			scale: function(e) {
@@ -2156,8 +2156,8 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			},
 			infinite: !0
 		});
-		k.Earth = A, k.EPSG3395 = qn, k.EPSG3857 = ge, k.EPSG900913 = _e, k.EPSG4326 = Jn, k.Simple = Yn;
-		var J = ue.extend({
+		A.Earth = de, A.EPSG3395 = qn, A.EPSG3857 = ge, A.EPSG900913 = _e, A.EPSG4326 = Jn, A.Simple = Yn;
+		var J = le.extend({
 			options: {
 				pane: "overlayPane",
 				attribution: null,
@@ -2215,7 +2215,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				return this;
 			},
 			_addLayers: function(e) {
-				e = e ? g(e) ? e : [e] : [];
+				e = e ? _(e) ? e : [e] : [];
 				for (var t = 0, n = e.length; t < n; t++) this.addLayer(e[t]);
 			},
 			_addZoomLimit: function(e) {
@@ -2301,7 +2301,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				return this.invoke("bringToBack");
 			},
 			getBounds: function() {
-				var e = new T();
+				var e = new E();
 				for (var t in this._layers) {
 					var n = this._layers[t];
 					e.extend(n.getBounds ? n.getBounds() : n.getLatLng());
@@ -2310,7 +2310,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			}
 		}), Qn = function(e, t) {
 			return new Y(e, t);
-		}, $n = y.extend({
+		}, $n = b.extend({
 			options: {
 				popupAnchor: [0, 0],
 				tooltipAnchor: [0, 0],
@@ -2337,7 +2337,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			_setIconStyles: function(e, t) {
 				var n = this.options, r = n[t + "Size"];
 				typeof r == "number" && (r = [r, r]);
-				var i = S(r), a = S(t === "shadow" && n.shadowAnchor || n.iconAnchor || i && i.divideBy(2, !0));
+				var i = C(r), a = C(t === "shadow" && n.shadowAnchor || n.iconAnchor || i && i.divideBy(2, !0));
 				e.className = "leaflet-marker-" + t + " " + (n.className || ""), a && (e.style.marginLeft = -a.x + "px", e.style.marginTop = -a.y + "px"), i && (e.style.width = i.x + "px", e.style.height = i.y + "px");
 			},
 			_createImg: function(e, t) {
@@ -2402,24 +2402,24 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				return this._draggable && this._draggable._moved;
 			},
 			_adjustPan: function(e) {
-				var t = this._marker, n = t._map, r = this._marker.options.autoPanSpeed, i = this._marker.options.autoPanPadding, a = Lt(t._icon), o = n.getPixelBounds(), s = n.getPixelOrigin(), c = w(o.min._subtract(s).add(i), o.max._subtract(s).subtract(i));
+				var t = this._marker, n = t._map, r = this._marker.options.autoPanSpeed, i = this._marker.options.autoPanPadding, a = Lt(t._icon), o = n.getPixelBounds(), s = n.getPixelOrigin(), c = T(o.min._subtract(s).add(i), o.max._subtract(s).subtract(i));
 				if (!c.contains(a)) {
-					var l = S((Math.max(c.max.x, a.x) - c.max.x) / (o.max.x - c.max.x) - (Math.min(c.min.x, a.x) - c.min.x) / (o.min.x - c.min.x), (Math.max(c.max.y, a.y) - c.max.y) / (o.max.y - c.max.y) - (Math.min(c.min.y, a.y) - c.min.y) / (o.min.y - c.min.y)).multiplyBy(r);
-					n.panBy(l, { animate: !1 }), this._draggable._newPos._add(l), this._draggable._startPos._add(l), z(t._icon, this._draggable._newPos), this._onDrag(e), this._panRequest = _(this._adjustPan.bind(this, e));
+					var l = C((Math.max(c.max.x, a.x) - c.max.x) / (o.max.x - c.max.x) - (Math.min(c.min.x, a.x) - c.min.x) / (o.min.x - c.min.x), (Math.max(c.max.y, a.y) - c.max.y) / (o.max.y - c.max.y) - (Math.min(c.min.y, a.y) - c.min.y) / (o.min.y - c.min.y)).multiplyBy(r);
+					n.panBy(l, { animate: !1 }), this._draggable._newPos._add(l), this._draggable._startPos._add(l), z(t._icon, this._draggable._newPos), this._onDrag(e), this._panRequest = v(this._adjustPan.bind(this, e));
 				}
 			},
 			_onDragStart: function() {
 				this._oldLatLng = this._marker.getLatLng(), this._marker.closePopup && this._marker.closePopup(), this._marker.fire("movestart").fire("dragstart");
 			},
 			_onPreDrag: function(e) {
-				this._marker.options.autoPan && (v(this._panRequest), this._panRequest = _(this._adjustPan.bind(this, e)));
+				this._marker.options.autoPan && (y(this._panRequest), this._panRequest = v(this._adjustPan.bind(this, e)));
 			},
 			_onDrag: function(e) {
 				var t = this._marker, n = t._shadow, r = Lt(t._icon), i = t._map.layerPointToLatLng(r);
 				n && z(n, r), t._latlng = i, e.latlng = i, e.oldLatLng = this._oldLatLng, t.fire("move", e).fire("drag", e);
 			},
 			_onDragEnd: function(e) {
-				v(this._panRequest), delete this._oldLatLng, this._marker.fire("moveend").fire("dragend", e);
+				y(this._panRequest), delete this._oldLatLng, this._marker.fire("moveend").fire("dragend", e);
 			}
 		}), rr = J.extend({
 			options: {
@@ -2442,7 +2442,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				autoPanSpeed: 10
 			},
 			initialize: function(e, t) {
-				p(this, t), this._latlng = O(e);
+				p(this, t), this._latlng = k(e);
 			},
 			onAdd: function(e) {
 				this._zoomAnimated = this._zoomAnimated && e.options.markerZoomAnimation, this._zoomAnimated && e.on("zoomanim", this._animateZoom, this), this._initIcon(), this.update();
@@ -2461,7 +2461,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			},
 			setLatLng: function(e) {
 				var t = this._latlng;
-				return this._latlng = O(e), this.update(), this.fire("move", {
+				return this._latlng = k(e), this.update(), this.fire("move", {
 					oldLatLng: t,
 					latlng: this._latlng
 				});
@@ -2535,7 +2535,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			_panOnFocus: function() {
 				var e = this._map;
 				if (e) {
-					var t = this.options.icon.options, n = t.iconSize ? S(t.iconSize) : S(0, 0), r = t.iconAnchor ? S(t.iconAnchor) : S(0, 0);
+					var t = this.options.icon.options, n = t.iconSize ? C(t.iconSize) : C(0, 0), r = t.iconAnchor ? C(t.iconAnchor) : C(0, 0);
 					e.panInside(this._latlng, {
 						paddingTopLeft: r,
 						paddingBottomRight: n.subtract(r)
@@ -2605,11 +2605,11 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				radius: 10
 			},
 			initialize: function(e, t) {
-				p(this, t), this._latlng = O(e), this._radius = this.options.radius;
+				p(this, t), this._latlng = k(e), this._radius = this.options.radius;
 			},
 			setLatLng: function(e) {
 				var t = this._latlng;
-				return this._latlng = O(e), this.redraw(), this.fire("move", {
+				return this._latlng = k(e), this.redraw(), this.fire("move", {
 					oldLatLng: t,
 					latlng: this._latlng
 				});
@@ -2632,7 +2632,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			},
 			_updateBounds: function() {
 				var e = this._radius, t = this._radiusY || e, n = this._clickTolerance(), r = [e + n, t + n];
-				this._pxBounds = new C(this._point.subtract(r), this._point.add(r));
+				this._pxBounds = new w(this._point.subtract(r), this._point.add(r));
 			},
 			_update: function() {
 				this._map && this._updatePath();
@@ -2652,7 +2652,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 		}
 		var cr = or.extend({
 			initialize: function(e, t, r) {
-				if (typeof t == "number" && (t = n({}, r, { radius: t })), p(this, t), this._latlng = O(e), isNaN(this.options.radius)) throw Error("Circle radius cannot be NaN");
+				if (typeof t == "number" && (t = n({}, r, { radius: t })), p(this, t), this._latlng = k(e), isNaN(this.options.radius)) throw Error("Circle radius cannot be NaN");
 				this._mRadius = this.options.radius;
 			},
 			setRadius: function(e) {
@@ -2663,13 +2663,13 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			},
 			getBounds: function() {
 				var e = [this._radius, this._radiusY || this._radius];
-				return new T(this._map.layerPointToLatLng(this._point.subtract(e)), this._map.layerPointToLatLng(this._point.add(e)));
+				return new E(this._map.layerPointToLatLng(this._point.subtract(e)), this._map.layerPointToLatLng(this._point.add(e)));
 			},
 			setStyle: ar.prototype.setStyle,
 			_project: function() {
 				var e = this._latlng.lng, t = this._latlng.lat, n = this._map, r = n.options.crs;
-				if (r.distance === A.distance) {
-					var i = Math.PI / 180, a = this._mRadius / A.R / i, o = n.project([t + a, e]), s = n.project([t - a, e]), c = o.add(s).divideBy(2), l = n.unproject(c).lat, u = Math.acos((Math.cos(a * i) - Math.sin(t * i) * Math.sin(l * i)) / (Math.cos(t * i) * Math.cos(l * i))) / i;
+				if (r.distance === de.distance) {
+					var i = Math.PI / 180, a = this._mRadius / de.R / i, o = n.project([t + a, e]), s = n.project([t - a, e]), c = o.add(s).divideBy(2), l = n.unproject(c).lat, u = Math.acos((Math.cos(a * i) - Math.sin(t * i) * Math.sin(l * i)) / (Math.cos(t * i) * Math.cos(l * i))) / i;
 					(isNaN(u) || u === 0) && (u = a / Math.cos(Math.PI / 180 * t)), this._point = c.subtract(n.getPixelOrigin()), this._radius = isNaN(u) ? 0 : c.x - n.project([l, e - u]).x, this._radiusY = c.y - o.y;
 				} else {
 					var d = r.unproject(r.project(this._latlng).subtract([this._mRadius, 0]));
@@ -2714,28 +2714,28 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				return this._bounds;
 			},
 			addLatLng: function(e, t) {
-				return t ||= this._defaultShape(), e = O(e), t.push(e), this._bounds.extend(e), this.redraw();
+				return t ||= this._defaultShape(), e = k(e), t.push(e), this._bounds.extend(e), this.redraw();
 			},
 			_setLatLngs: function(e) {
-				this._bounds = new T(), this._latlngs = this._convertLatLngs(e);
+				this._bounds = new E(), this._latlngs = this._convertLatLngs(e);
 			},
 			_defaultShape: function() {
 				return q(this._latlngs) ? this._latlngs : this._latlngs[0];
 			},
 			_convertLatLngs: function(e) {
-				for (var t = [], n = q(e), r = 0, i = e.length; r < i; r++) n ? (t[r] = O(e[r]), this._bounds.extend(t[r])) : t[r] = this._convertLatLngs(e[r]);
+				for (var t = [], n = q(e), r = 0, i = e.length; r < i; r++) n ? (t[r] = k(e[r]), this._bounds.extend(t[r])) : t[r] = this._convertLatLngs(e[r]);
 				return t;
 			},
 			_project: function() {
-				var e = new C();
+				var e = new w();
 				this._rings = [], this._projectLatlngs(this._latlngs, this._rings, e), this._bounds.isValid() && e.isValid() && (this._rawPxBounds = e, this._updateBounds());
 			},
 			_updateBounds: function() {
-				var e = this._clickTolerance(), t = new x(e, e);
-				this._rawPxBounds && (this._pxBounds = new C([this._rawPxBounds.min.subtract(t), this._rawPxBounds.max.add(t)]));
+				var e = this._clickTolerance(), t = new S(e, e);
+				this._rawPxBounds && (this._pxBounds = new w([this._rawPxBounds.min.subtract(t), this._rawPxBounds.max.add(t)]));
 			},
 			_projectLatlngs: function(e, t, n) {
-				var r = e[0] instanceof D, i = e.length, a, o;
+				var r = e[0] instanceof O, i = e.length, a, o;
 				if (r) {
 					for (o = [], a = 0; a < i; a++) o[a] = this._map.latLngToLayerPoint(e[a]), n.extend(o[a]);
 					t.push(o);
@@ -2783,7 +2783,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			},
 			_convertLatLngs: function(e) {
 				var t = X.prototype._convertLatLngs.call(this, e), n = t.length;
-				return n >= 2 && t[0] instanceof D && t[0].equals(t[n - 1]) && t.pop(), t;
+				return n >= 2 && t[0] instanceof O && t[0].equals(t[n - 1]) && t.pop(), t;
 			},
 			_setLatLngs: function(e) {
 				X.prototype._setLatLngs.call(this, e), q(this._latlngs) && (this._latlngs = [this._latlngs]);
@@ -2792,8 +2792,8 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				return q(this._latlngs[0]) ? this._latlngs[0] : this._latlngs[0][0];
 			},
 			_clipPoints: function() {
-				var e = this._renderer._bounds, t = this.options.weight, n = new x(t, t);
-				if (e = new C(e.min.subtract(n), e.max.add(n)), this._parts = [], !(!this._pxBounds || !this._pxBounds.intersects(e))) {
+				var e = this._renderer._bounds, t = this.options.weight, n = new S(t, t);
+				if (e = new w(e.min.subtract(n), e.max.add(n)), this._parts = [], !(!this._pxBounds || !this._pxBounds.intersects(e))) {
 					if (this.options.noClip) {
 						this._parts = this._rings;
 						return;
@@ -2819,7 +2819,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				p(this, t), this._layers = {}, e && this.addData(e);
 			},
 			addData: function(e) {
-				var t = g(e) ? e : e.features, n, r, i;
+				var t = _(e) ? e : e.features, n, r, i;
 				if (t) {
 					for (n = 0, r = t.length; n < r; n++) i = t[n], (i.geometries || i.geometry || i.features || i.coordinates) && this.addData(i);
 					return this;
@@ -2876,14 +2876,14 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			return e ? e(t, n) : new rr(n, r && r.markersInheritOptions && r);
 		}
 		function hr(e) {
-			return new D(e[1], e[0], e[2]);
+			return new O(e[1], e[0], e[2]);
 		}
 		function gr(e, t, n) {
 			for (var r = [], i = 0, a = e.length, o; i < a; i++) o = t ? gr(e[i], t - 1, n) : (n || hr)(e[i]), r.push(o);
 			return r;
 		}
 		function _r(e, t) {
-			return e = O(e), e.alt === void 0 ? [u(e.lng, t), u(e.lat, t)] : [
+			return e = k(e), e.alt === void 0 ? [u(e.lng, t), u(e.lat, t)] : [
 				u(e.lng, t),
 				u(e.lat, t),
 				u(e.alt, t)
@@ -2967,7 +2967,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				className: ""
 			},
 			initialize: function(e, t, n) {
-				this._url = e, this._bounds = E(t), p(this, n);
+				this._url = e, this._bounds = D(t), p(this, n);
 			},
 			onAdd: function() {
 				this._image || (this._initImage(), this.options.opacity < 1 && this._updateOpacity()), this.options.interactive && (F(this._image, "leaflet-interactive"), this.addInteractiveTarget(this._image)), this.getPane().appendChild(this._image), this._reset();
@@ -2991,7 +2991,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				return this._url = e, this._image && (this._image.src = e), this;
 			},
 			setBounds: function(e) {
-				return this._bounds = E(e), this._map && this._reset(), this;
+				return this._bounds = D(e), this._map && this._reset(), this;
 			},
 			getEvents: function() {
 				var e = {
@@ -3022,7 +3022,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				It(this._image, n, t);
 			},
 			_reset: function() {
-				var e = this._image, t = new C(this._map.latLngToLayerPoint(this._bounds.getNorthWest()), this._map.latLngToLayerPoint(this._bounds.getSouthEast())), n = t.getSize();
+				var e = this._image, t = new w(this._map.latLngToLayerPoint(this._bounds.getNorthWest()), this._map.latLngToLayerPoint(this._bounds.getSouthEast())), n = t.getSize();
 				z(e, t.min), e.style.width = n.x + "px", e.style.height = n.y + "px";
 			},
 			_updateOpacity: function() {
@@ -3056,7 +3056,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 					this._url = n.length > 0 ? r : [t.src];
 					return;
 				}
-				g(this._url) || (this._url = [this._url]), !this.options.keepAspectRatio && Object.prototype.hasOwnProperty.call(t.style, "objectFit") && (t.style.objectFit = "fill"), t.autoplay = !!this.options.autoplay, t.loop = !!this.options.loop, t.muted = !!this.options.muted, t.playsInline = !!this.options.playsInline;
+				_(this._url) || (this._url = [this._url]), !this.options.keepAspectRatio && Object.prototype.hasOwnProperty.call(t.style, "objectFit") && (t.style.objectFit = "fill"), t.autoplay = !!this.options.autoplay, t.loop = !!this.options.loop, t.muted = !!this.options.muted, t.playsInline = !!this.options.playsInline;
 				for (var o = 0; o < this._url.length; o++) {
 					var s = N("source");
 					s.src = this._url[o], t.appendChild(s);
@@ -3082,7 +3082,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				content: ""
 			},
 			initialize: function(e, t) {
-				e && (e instanceof D || g(e)) ? (this._latlng = O(e), p(this, t)) : (p(this, e), this._source = t), this.options.content && (this._content = this.options.content);
+				e && (e instanceof O || _(e)) ? (this._latlng = k(e), p(this, t)) : (p(this, e), this._source = t), this.options.content && (this._content = this.options.content);
 			},
 			openOn: function(e) {
 				return e = arguments.length ? e : this._source._map, e.hasLayer(this) || e.addLayer(this), this;
@@ -3103,7 +3103,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				return this._latlng;
 			},
 			setLatLng: function(e) {
-				return this._latlng = O(e), this._map && (this._updatePosition(), this._adjustPan()), this;
+				return this._latlng = k(e), this._map && (this._updatePosition(), this._adjustPan()), this;
 			},
 			getContent: function() {
 				return this._content;
@@ -3165,7 +3165,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			},
 			_updatePosition: function() {
 				if (this._map) {
-					var e = this._map.latLngToLayerPoint(this._latlng), t = S(this.options.offset), n = this._getAnchor();
+					var e = this._map.latLngToLayerPoint(this._latlng), t = C(this.options.offset), n = this._getAnchor();
 					this._zoomAnimated ? z(this._container, e.add(n)) : t = t.add(e).add(n);
 					var r = this._containerBottom = -t.y, i = this._containerLeft = -Math.round(this._containerWidth / 2) + t.x;
 					this._container.style.bottom = r + "px", this._container.style.left = i + "px";
@@ -3239,14 +3239,14 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 						this._autopanning = !1;
 						return;
 					}
-					var e = this._map, t = parseInt(Dt(this._container, "marginBottom"), 10) || 0, n = this._container.offsetHeight + t, r = this._containerWidth, i = new x(this._containerLeft, -n - this._containerBottom);
+					var e = this._map, t = parseInt(Dt(this._container, "marginBottom"), 10) || 0, n = this._container.offsetHeight + t, r = this._containerWidth, i = new S(this._containerLeft, -n - this._containerBottom);
 					i._add(Lt(this._container));
-					var a = e.layerPointToContainerPoint(i), o = S(this.options.autoPanPadding), s = S(this.options.autoPanPaddingTopLeft || o), c = S(this.options.autoPanPaddingBottomRight || o), l = e.getSize(), u = 0, d = 0;
+					var a = e.layerPointToContainerPoint(i), o = C(this.options.autoPanPadding), s = C(this.options.autoPanPaddingTopLeft || o), c = C(this.options.autoPanPaddingBottomRight || o), l = e.getSize(), u = 0, d = 0;
 					a.x + r + c.x > l.x && (u = a.x + r - l.x + c.x), a.x - u - s.x < 0 && (u = a.x - s.x), a.y + n + c.y > l.y && (d = a.y + n - l.y + c.y), a.y - d - s.y < 0 && (d = a.y - s.y), (u || d) && (this.options.keepInView && (this._autopanning = !0), e.fire("autopanstart").panBy([u, d]));
 				}
 			},
 			_getAnchor: function() {
-				return S(this._source && this._source._getPopupAnchor ? this._source._getPopupAnchor() : [0, 0]);
+				return C(this._source && this._source._getPopupAnchor ? this._source._getPopupAnchor() : [0, 0]);
 			}
 		}), jr = function(e, t) {
 			return new Ar(e, t);
@@ -3337,8 +3337,8 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			_updateLayout: function() {},
 			_adjustPan: function() {},
 			_setPosition: function(e) {
-				var t, n, r = this._map, i = this._container, a = r.latLngToContainerPoint(r.getCenter()), o = r.layerPointToContainerPoint(e), s = this.options.direction, c = i.offsetWidth, l = i.offsetHeight, u = S(this.options.offset), d = this._getAnchor();
-				s === "top" ? (t = c / 2, n = l) : s === "bottom" ? (t = c / 2, n = 0) : s === "center" ? (t = c / 2, n = l / 2) : s === "right" ? (t = 0, n = l / 2) : s === "left" ? (t = c, n = l / 2) : o.x < a.x ? (s = "right", t = 0, n = l / 2) : (s = "left", t = c + (u.x + d.x) * 2, n = l / 2), e = e.subtract(S(t, n, !0)).add(u).add(d), I(i, "leaflet-tooltip-right"), I(i, "leaflet-tooltip-left"), I(i, "leaflet-tooltip-top"), I(i, "leaflet-tooltip-bottom"), F(i, "leaflet-tooltip-" + s), z(i, e);
+				var t, n, r = this._map, i = this._container, a = r.latLngToContainerPoint(r.getCenter()), o = r.layerPointToContainerPoint(e), s = this.options.direction, c = i.offsetWidth, l = i.offsetHeight, u = C(this.options.offset), d = this._getAnchor();
+				s === "top" ? (t = c / 2, n = l) : s === "bottom" ? (t = c / 2, n = 0) : s === "center" ? (t = c / 2, n = l / 2) : s === "right" ? (t = 0, n = l / 2) : s === "left" ? (t = c, n = l / 2) : o.x < a.x ? (s = "right", t = 0, n = l / 2) : (s = "left", t = c + (u.x + d.x) * 2, n = l / 2), e = e.subtract(C(t, n, !0)).add(u).add(d), I(i, "leaflet-tooltip-right"), I(i, "leaflet-tooltip-left"), I(i, "leaflet-tooltip-top"), I(i, "leaflet-tooltip-bottom"), F(i, "leaflet-tooltip-" + s), z(i, e);
 			},
 			_updatePosition: function() {
 				var e = this._map.latLngToLayerPoint(this._latlng);
@@ -3352,7 +3352,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				this._setPosition(t);
 			},
 			_getAnchor: function() {
-				return S(this._source && this._source._getTooltipAnchor && !this.options.sticky ? this._source._getTooltipAnchor() : [0, 0]);
+				return C(this._source && this._source._getTooltipAnchor && !this.options.sticky ? this._source._getTooltipAnchor() : [0, 0]);
 			}
 		}), Nr = function(e, t) {
 			return new Mr(e, t);
@@ -3439,7 +3439,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			createIcon: function(e) {
 				var t = e && e.tagName === "DIV" ? e : document.createElement("div"), n = this.options;
 				if (n.html instanceof Element ? (Ot(t), t.appendChild(n.html)) : t.innerHTML = n.html === !1 ? "" : n.html, n.bgPos) {
-					var r = S(n.bgPos);
+					var r = C(n.bgPos);
 					t.style.backgroundPosition = -r.x + "px " + -r.y + "px";
 				}
 				return this._setIconStyles(t, "icon"), t;
@@ -3522,7 +3522,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			},
 			getTileSize: function() {
 				var e = this.options.tileSize;
-				return e instanceof x ? e : new x(e, e);
+				return e instanceof S ? e : new S(e, e);
 			},
 			_updateZIndex: function() {
 				this._container && this.options.zIndex !== void 0 && this.options.zIndex !== null && (this._container.style.zIndex = this.options.zIndex);
@@ -3542,7 +3542,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 							R(i.el, a), a < 1 ? t = !0 : (i.active ? n = !0 : this._onOpaqueTile(i), i.active = !0);
 						}
 					}
-					n && !this._noPrune && this._pruneTiles(), t && (v(this._fadeFrame), this._fadeFrame = _(this._updateOpacity, this));
+					n && !this._noPrune && this._pruneTiles(), t && (y(this._fadeFrame), this._fadeFrame = v(this._updateOpacity, this));
 				}
 			},
 			_onOpaqueTile: l,
@@ -3586,14 +3586,14 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				this._removeAllTiles(), this._tileZoom = void 0;
 			},
 			_retainParent: function(e, t, n, r) {
-				var i = Math.floor(e / 2), a = Math.floor(t / 2), o = n - 1, s = new x(+i, +a);
+				var i = Math.floor(e / 2), a = Math.floor(t / 2), o = n - 1, s = new S(+i, +a);
 				s.z = +o;
 				var c = this._tileCoordsToKey(s), l = this._tiles[c];
 				return l && l.active ? (l.retain = !0, !0) : (l && l.loaded && (l.retain = !0), o > r ? this._retainParent(i, a, o, r) : !1);
 			},
 			_retainChildren: function(e, t, n, r) {
 				for (var i = 2 * e; i < 2 * e + 2; i++) for (var a = 2 * t; a < 2 * t + 2; a++) {
-					var o = new x(i, a);
+					var o = new S(i, a);
 					o.z = n + 1;
 					var s = this._tileCoordsToKey(o), c = this._tiles[s];
 					if (c && c.active) {
@@ -3636,25 +3636,25 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			},
 			_getTiledPixelBounds: function(e) {
 				var t = this._map, n = t._animatingZoom ? Math.max(t._animateToZoom, t.getZoom()) : t.getZoom(), r = t.getZoomScale(n, this._tileZoom), i = t.project(e, this._tileZoom).floor(), a = t.getSize().divideBy(r * 2);
-				return new C(i.subtract(a), i.add(a));
+				return new w(i.subtract(a), i.add(a));
 			},
 			_update: function(e) {
 				var t = this._map;
 				if (t) {
 					var n = this._clampZoom(t.getZoom());
 					if (e === void 0 && (e = t.getCenter()), this._tileZoom !== void 0) {
-						var r = this._getTiledPixelBounds(e), i = this._pxBoundsToTileRange(r), a = i.getCenter(), o = [], s = this.options.keepBuffer, c = new C(i.getBottomLeft().subtract([s, -s]), i.getTopRight().add([s, -s]));
+						var r = this._getTiledPixelBounds(e), i = this._pxBoundsToTileRange(r), a = i.getCenter(), o = [], s = this.options.keepBuffer, c = new w(i.getBottomLeft().subtract([s, -s]), i.getTopRight().add([s, -s]));
 						if (!(isFinite(i.min.x) && isFinite(i.min.y) && isFinite(i.max.x) && isFinite(i.max.y))) throw Error("Attempted to load an infinite number of tiles");
 						for (var l in this._tiles) {
 							var u = this._tiles[l].coords;
-							(u.z !== this._tileZoom || !c.contains(new x(u.x, u.y))) && (this._tiles[l].current = !1);
+							(u.z !== this._tileZoom || !c.contains(new S(u.x, u.y))) && (this._tiles[l].current = !1);
 						}
 						if (Math.abs(n - this._tileZoom) > 1) {
 							this._setView(e, n);
 							return;
 						}
 						for (var d = i.min.y; d <= i.max.y; d++) for (var f = i.min.x; f <= i.max.x; f++) {
-							var p = new x(f, d);
+							var p = new S(f, d);
 							if (p.z = this._tileZoom, this._isValidTile(p)) {
 								var m = this._tiles[this._tileCoordsToKey(p)];
 								m ? m.current = !0 : o.push(p);
@@ -3664,9 +3664,9 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 							return e.distanceTo(a) - t.distanceTo(a);
 						}), o.length !== 0) {
 							this._loading || (this._loading = !0, this.fire("loading"));
-							var ee = document.createDocumentFragment();
-							for (f = 0; f < o.length; f++) this._addTile(o[f], ee);
-							this._level.el.appendChild(ee);
+							var h = document.createDocumentFragment();
+							for (f = 0; f < o.length; f++) this._addTile(o[f], h);
+							this._level.el.appendChild(h);
 						}
 					}
 				}
@@ -3679,7 +3679,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				}
 				if (!this.options.bounds) return !0;
 				var r = this._tileCoordsToBounds(e);
-				return E(this.options.bounds).overlaps(r);
+				return D(this.options.bounds).overlaps(r);
 			},
 			_keyToBounds: function(e) {
 				return this._tileCoordsToBounds(this._keyToTileCoords(e));
@@ -3689,14 +3689,14 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				return [t.unproject(r, e.z), t.unproject(i, e.z)];
 			},
 			_tileCoordsToBounds: function(e) {
-				var t = this._tileCoordsToNwSe(e), n = new T(t[0], t[1]);
+				var t = this._tileCoordsToNwSe(e), n = new E(t[0], t[1]);
 				return this.options.noWrap || (n = this._map.wrapLatLngBounds(n)), n;
 			},
 			_tileCoordsToKey: function(e) {
 				return e.x + ":" + e.y + ":" + e.z;
 			},
 			_keyToTileCoords: function(e) {
-				var t = e.split(":"), n = new x(+t[0], +t[1]);
+				var t = e.split(":"), n = new S(+t[0], +t[1]);
 				return n.z = +t[2], n;
 			},
 			_removeTile: function(e) {
@@ -3713,7 +3713,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			},
 			_addTile: function(e, t) {
 				var n = this._getTilePos(e), r = this._tileCoordsToKey(e), a = this.createTile(this._wrapCoords(e), i(this._tileReady, this, e));
-				this._initTile(a), this.createTile.length < 2 && _(i(this._tileReady, this, e, null, a)), z(a, n), this._tiles[r] = {
+				this._initTile(a), this.createTile.length < 2 && v(i(this._tileReady, this, e, null, a)), z(a, n), this._tiles[r] = {
 					el: a,
 					coords: e,
 					current: !0
@@ -3729,21 +3729,21 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 					coords: e
 				});
 				var r = this._tileCoordsToKey(e);
-				n = this._tiles[r], n && (n.loaded = +/* @__PURE__ */ new Date(), this._map._fadeAnimated ? (R(n.el, 0), v(this._fadeFrame), this._fadeFrame = _(this._updateOpacity, this)) : (n.active = !0, this._pruneTiles()), t || (F(n.el, "leaflet-tile-loaded"), this.fire("tileload", {
+				n = this._tiles[r], n && (n.loaded = +/* @__PURE__ */ new Date(), this._map._fadeAnimated ? (R(n.el, 0), y(this._fadeFrame), this._fadeFrame = v(this._updateOpacity, this)) : (n.active = !0, this._pruneTiles()), t || (F(n.el, "leaflet-tile-loaded"), this.fire("tileload", {
 					tile: n.el,
 					coords: e
-				})), this._noTilesToLoad() && (this._loading = !1, this.fire("load"), M.ielt9 || !this._map._fadeAnimated ? _(this._pruneTiles, this) : setTimeout(i(this._pruneTiles, this), 250)));
+				})), this._noTilesToLoad() && (this._loading = !1, this.fire("load"), M.ielt9 || !this._map._fadeAnimated ? v(this._pruneTiles, this) : setTimeout(i(this._pruneTiles, this), 250)));
 			},
 			_getTilePos: function(e) {
 				return e.scaleBy(this.getTileSize()).subtract(this._level.origin);
 			},
 			_wrapCoords: function(e) {
-				var t = new x(this._wrapX ? c(e.x, this._wrapX) : e.x, this._wrapY ? c(e.y, this._wrapY) : e.y);
+				var t = new S(this._wrapX ? c(e.x, this._wrapX) : e.x, this._wrapY ? c(e.y, this._wrapY) : e.y);
 				return t.z = e.z, t;
 			},
 			_pxBoundsToTileRange: function(e) {
 				var t = this.getTileSize();
-				return new C(e.min.unscaleBy(t).floor(), e.max.unscaleBy(t).ceil().subtract([1, 1]));
+				return new w(e.min.unscaleBy(t).floor(), e.max.unscaleBy(t).ceil().subtract([1, 1]));
 			},
 			_noTilesToLoad: function() {
 				for (var e in this._tiles) if (!this._tiles[e].loaded) return !1;
@@ -3788,7 +3788,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 					var r = this._globalTileRange.max.y - e.y;
 					this.options.tms && (t.y = r), t["-y"] = r;
 				}
-				return h(this._url, n(t, this.options));
+				return g(this._url, n(t, this.options));
 			},
 			_tileOnLoad: function(e, t) {
 				M.ielt9 ? setTimeout(i(e, this, null, t), 0) : e(null, t);
@@ -3811,7 +3811,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			_abortLoading: function() {
 				var e, t;
 				for (e in this._tiles) if (this._tiles[e].coords.z !== this._tileZoom && (t = this._tiles[e].el, t.onload = l, t.onerror = l, !t.complete)) {
-					t.src = ne;
+					t.src = te;
 					var n = this._tiles[e].coords;
 					P(t), delete this._tiles[e], this.fire("tileabort", {
 						tile: t,
@@ -3821,10 +3821,10 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			},
 			_removeTile: function(e) {
 				var t = this._tiles[e];
-				if (t) return t.el.setAttribute("src", ne), Ir.prototype._removeTile.call(this, e);
+				if (t) return t.el.setAttribute("src", te), Ir.prototype._removeTile.call(this, e);
 			},
 			_tileReady: function(e, t, n) {
-				if (!(!this._map || n && n.getAttribute("src") === ne)) return Ir.prototype._tileReady.call(this, e, t, n);
+				if (!(!this._map || n && n.getAttribute("src") === te)) return Ir.prototype._tileReady.call(this, e, t, n);
 			}
 		});
 		function zr(e, t) {
@@ -3858,7 +3858,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				this.wmsParams[t] = this._crs.code, Rr.prototype.onAdd.call(this, e);
 			},
 			getTileUrl: function(e) {
-				var t = this._tileCoordsToNwSe(e), n = this._crs, r = w(n.project(t[0]), n.project(t[1])), i = r.min, a = r.max, o = (this._wmsVersion >= 1.3 && this._crs === Jn ? [
+				var t = this._tileCoordsToNwSe(e), n = this._crs, r = T(n.project(t[0]), n.project(t[1])), i = r.min, a = r.max, o = (this._wmsVersion >= 1.3 && this._crs === Jn ? [
 					i.y,
 					i.x,
 					a.y,
@@ -3920,7 +3920,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			},
 			_update: function() {
 				var e = this.options.padding, t = this._map.getSize(), n = this._map.containerPointToLayerPoint(t.multiplyBy(-e)).round();
-				this._bounds = new C(n, n.add(t.multiplyBy(1 + e * 2)).round()), this._center = this._map.getCenter(), this._zoom = this._map.getZoom();
+				this._bounds = new w(n, n.add(t.multiplyBy(1 + e * 2)).round()), this._center = this._map.getCenter(), this._zoom = this._map.getZoom();
 			}
 		}), Hr = $.extend({
 			options: { tolerance: 0 },
@@ -3939,7 +3939,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				B(e, "mousemove", this._onMouseMove, this), B(e, "click dblclick mousedown mouseup contextmenu", this._onClick, this), B(e, "mouseout", this._handleMouseOut, this), e._leaflet_disable_events = !0, this._ctx = e.getContext("2d");
 			},
 			_destroyContainer: function() {
-				v(this._redrawRequest), delete this._ctx, P(this._container), H(this._container), delete this._container;
+				y(this._redrawRequest), delete this._ctx, P(this._container), H(this._container), delete this._container;
 			},
 			_updatePaths: function() {
 				if (!this._postponeUpdatePaths) {
@@ -3991,12 +3991,12 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				} else e.options._dashArray = e.options.dashArray;
 			},
 			_requestRedraw: function(e) {
-				this._map && (this._extendRedrawBounds(e), this._redrawRequest = this._redrawRequest || _(this._redraw, this));
+				this._map && (this._extendRedrawBounds(e), this._redrawRequest = this._redrawRequest || v(this._redraw, this));
 			},
 			_extendRedrawBounds: function(e) {
 				if (e._pxBounds) {
 					var t = (e.options.weight || 0) + 1;
-					this._redrawBounds = this._redrawBounds || new C(), this._redrawBounds.extend(e._pxBounds.min.subtract([t, t])), this._redrawBounds.extend(e._pxBounds.max.add([t, t]));
+					this._redrawBounds = this._redrawBounds || new w(), this._redrawBounds.extend(e._pxBounds.min.subtract([t, t])), this._redrawBounds.extend(e._pxBounds.max.add([t, t]));
 				}
 			},
 			_redraw: function() {
@@ -4118,7 +4118,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			},
 			_updateStyle: function(e) {
 				var t = e._stroke, n = e._fill, r = e.options, i = e._container;
-				i.stroked = !!r.stroke, i.filled = !!r.fill, r.stroke ? (t ||= e._stroke = Wr("stroke"), i.appendChild(t), t.weight = r.weight + "px", t.color = r.color, t.opacity = r.opacity, r.dashArray ? t.dashStyle = g(r.dashArray) ? r.dashArray.join(" ") : r.dashArray.replace(/( *, *)/g, " ") : t.dashStyle = "", t.endcap = r.lineCap.replace("butt", "flat"), t.joinstyle = r.lineJoin) : t && (i.removeChild(t), e._stroke = null), r.fill ? (n ||= e._fill = Wr("fill"), i.appendChild(n), n.color = r.fillColor || r.color, n.opacity = r.fillOpacity) : n && (i.removeChild(n), e._fill = null);
+				i.stroked = !!r.stroke, i.filled = !!r.fill, r.stroke ? (t ||= e._stroke = Wr("stroke"), i.appendChild(t), t.weight = r.weight + "px", t.color = r.color, t.opacity = r.opacity, r.dashArray ? t.dashStyle = _(r.dashArray) ? r.dashArray.join(" ") : r.dashArray.replace(/( *, *)/g, " ") : t.dashStyle = "", t.endcap = r.lineCap.replace("butt", "flat"), t.joinstyle = r.lineJoin) : t && (i.removeChild(t), e._stroke = null), r.fill ? (n ||= e._fill = Wr("fill"), i.appendChild(n), n.color = r.fillColor || r.color, n.opacity = r.fillOpacity) : n && (i.removeChild(n), e._fill = null);
 			},
 			_updateCircle: function(e) {
 				var t = e._point.round(), n = Math.round(e._radius), r = Math.round(e._radiusY || n);
@@ -4212,7 +4212,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				return this.setLatLngs(this._boundsToLatLngs(e));
 			},
 			_boundsToLatLngs: function(e) {
-				return e = E(e), [
+				return e = D(e), [
 					e.getSouthWest(),
 					e.getNorthWest(),
 					e.getNorthEast(),
@@ -4257,7 +4257,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			},
 			_onMouseMove: function(e) {
 				this._moved || (this._moved = !0, this._box = N("div", "leaflet-zoom-box", this._container), F(this._container, "leaflet-crosshair"), this._map.fire("boxzoomstart")), this._point = this._map.mouseEventToContainerPoint(e);
-				var t = new C(this._point, this._startPoint), n = t.getSize();
+				var t = new w(this._point, this._startPoint), n = t.getSize();
 				z(this._box, t.min), this._box.style.width = n.x + "px", this._box.style.height = n.y + "px";
 			},
 			_finish: function() {
@@ -4271,7 +4271,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			_onMouseUp: function(e) {
 				if (!(e.which !== 1 && e.button !== 1) && (this._finish(), this._moved)) {
 					this._clearDeferredResetState(), this._resetStateTimeout = setTimeout(i(this._resetState, this), 0);
-					var t = new T(this._map.containerPointToLatLng(this._startPoint), this._map.containerPointToLatLng(this._point));
+					var t = new E(this._map.containerPointToLatLng(this._startPoint), this._map.containerPointToLatLng(this._point));
 					this._map.fitBounds(t).fire("boxzoomend", { boxZoomBounds: t });
 				}
 			},
@@ -4325,8 +4325,8 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			_onDragStart: function() {
 				var e = this._map;
 				if (e._stop(), this._map.options.maxBounds && this._map.options.maxBoundsViscosity) {
-					var t = E(this._map.options.maxBounds);
-					this._offsetLimit = w(this._map.latLngToContainerPoint(t.getNorthWest()).multiplyBy(-1), this._map.latLngToContainerPoint(t.getSouthEast()).multiplyBy(-1).add(this._map.getSize())), this._viscosity = Math.min(1, Math.max(0, this._map.options.maxBoundsViscosity));
+					var t = D(this._map.options.maxBounds);
+					this._offsetLimit = T(this._map.latLngToContainerPoint(t.getNorthWest()).multiplyBy(-1), this._map.latLngToContainerPoint(t.getSouthEast()).multiplyBy(-1).add(this._map.getSize())), this._viscosity = Math.min(1, Math.max(0, this._map.options.maxBoundsViscosity));
 				} else this._offsetLimit = null;
 				e.fire("movestart").fire("dragstart"), e.options.inertia && (this._positions = [], this._times = []);
 			},
@@ -4363,7 +4363,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				else {
 					this._prunePositions(+/* @__PURE__ */ new Date());
 					var i = this._lastPos.subtract(this._positions[0]), a = (this._lastTime - this._times[0]) / 1e3, o = n.easeLinearity, s = i.multiplyBy(o / a), c = s.distanceTo([0, 0]), l = Math.min(n.inertiaMaxSpeed, c), u = s.multiplyBy(l / c), d = l / (n.inertiaDeceleration * o), f = u.multiplyBy(-d / 2).round();
-					!f.x && !f.y ? t.fire("moveend") : (f = t._limitOffset(f, t.options.maxBounds), _(function() {
+					!f.x && !f.y ? t.fire("moveend") : (f = t._limitOffset(f, t.options.maxBounds), v(function() {
 						t.panBy(f, {
 							duration: d,
 							easeLinearity: o,
@@ -4455,7 +4455,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				if (!(e.altKey || e.ctrlKey || e.metaKey)) {
 					var t = e.keyCode, n = this._map, r;
 					if (t in this._panKeys) {
-						if (!n._panAnim || !n._panAnim._inProgress) if (r = this._panKeys[t], e.shiftKey && (r = S(r).multiplyBy(3)), n.options.maxBounds && (r = n._limitOffset(S(r), n.options.maxBounds)), n.options.worldCopyJump) {
+						if (!n._panAnim || !n._panAnim._inProgress) if (r = this._panKeys[t], e.shiftKey && (r = C(r).multiplyBy(3)), n.options.maxBounds && (r = n._limitOffset(C(r), n.options.maxBounds)), n.options.worldCopyJump) {
 							var i = n.wrapLatLng(n.unproject(n.project(n.getCenter()).add(r)));
 							n.panTo(i);
 						} else n.panBy(r);
@@ -4507,7 +4507,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			_onDown: function(e) {
 				if (clearTimeout(this._holdTimeout), e.touches.length === 1) {
 					var t = e.touches[0];
-					this._startPos = this._newPos = new x(t.clientX, t.clientY), this._holdTimeout = setTimeout(i(function() {
+					this._startPos = this._newPos = new S(t.clientX, t.clientY), this._holdTimeout = setTimeout(i(function() {
 						this._cancel(), this._isTapValid() && (B(document, "touchend", U), B(document, "touchend touchcancel", this._cancelClickPrevent), this._simulateEvent("contextmenu", t));
 					}, this), ni), B(document, "touchend touchcancel contextmenu", this._cancel, this), B(document, "touchmove", this._onMove, this);
 				}
@@ -4520,7 +4520,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			},
 			_onMove: function(e) {
 				var t = e.touches[0];
-				this._newPos = new x(t.clientX, t.clientY);
+				this._newPos = new S(t.clientX, t.clientY);
 			},
 			_isTapValid: function() {
 				return this._newPos.distanceTo(this._startPos) <= this._map.options.tapTolerance;
@@ -4566,12 +4566,12 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 						if (a === 1 && o.x === 0 && o.y === 0) return;
 						this._center = t.unproject(t.project(this._pinchStartLatLng, this._zoom).subtract(o), this._zoom);
 					}
-					this._moved ||= (t._moveStart(!0, !1), !0), v(this._animRequest);
+					this._moved ||= (t._moveStart(!0, !1), !0), y(this._animRequest);
 					var s = i(t._move, t, this._center, this._zoom, {
 						pinch: !0,
 						round: !1
 					}, void 0);
-					this._animRequest = _(s, this, !0), U(e);
+					this._animRequest = v(s, this, !0), U(e);
 				}
 			},
 			_onTouchEnd: function() {
@@ -4579,10 +4579,10 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 					this._zooming = !1;
 					return;
 				}
-				this._zooming = !1, v(this._animRequest), H(document, "touchmove", this._onTouchMove, this), H(document, "touchend touchcancel", this._onTouchEnd, this), this._map.options.zoomAnimation ? this._map._animateZoom(this._center, this._map._limitZoom(this._zoom), !0, this._map.options.zoomSnap) : this._map._resetView(this._center, this._map._limitZoom(this._zoom));
+				this._zooming = !1, y(this._animRequest), H(document, "touchmove", this._onTouchMove, this), H(document, "touchend touchcancel", this._onTouchEnd, this), this._map.options.zoomAnimation ? this._map._animateZoom(this._center, this._map._limitZoom(this._zoom), !0, this._map.options.zoomSnap) : this._map._resetView(this._center, this._map._limitZoom(this._zoom));
 			}
 		});
-		W.addInitHook("addHandler", "touchZoom", ii), W.BoxZoom = Zr, W.DoubleClickZoom = Qr, W.Drag = $r, W.Keyboard = ei, W.ScrollWheelZoom = ti, W.TapHold = ri, W.TouchZoom = ii, e.Bounds = C, e.Browser = M, e.CRS = k, e.Canvas = Hr, e.Circle = cr, e.CircleMarker = or, e.Class = y, e.Control = G, e.DivIcon = Pr, e.DivOverlay = Q, e.DomEvent = dn, e.DomUtil = Xt, e.Draggable = wn, e.Evented = ue, e.FeatureGroup = Y, e.GeoJSON = Z, e.GridLayer = Ir, e.Handler = K, e.Icon = $n, e.ImageOverlay = wr, e.LatLng = D, e.LatLngBounds = T, e.Layer = J, e.LayerGroup = Xn, e.LineUtil = Un, e.Map = W, e.Marker = rr, e.Mixin = Sn, e.Path = ar, e.Point = x, e.PolyUtil = On, e.Polygon = dr, e.Polyline = X, e.Popup = Ar, e.PosAnimation = fn, e.Projection = Kn, e.Rectangle = Yr, e.Renderer = $, e.SVG = qr, e.SVGOverlay = Or, e.TileLayer = Rr, e.Tooltip = Mr, e.Transformation = me, e.Util = ce, e.VideoOverlay = Er, e.bind = i, e.bounds = w, e.canvas = Ur, e.circle = lr, e.circleMarker = sr, e.control = mn, e.divIcon = Fr, e.extend = n, e.featureGroup = Qn, e.geoJSON = Sr, e.geoJson = Cr, e.gridLayer = Lr, e.icon = er, e.imageOverlay = Tr, e.latLng = O, e.latLngBounds = E, e.layerGroup = Zn, e.map = pn, e.marker = ir, e.point = S, e.polygon = fr, e.polyline = ur, e.popup = jr, e.rectangle = Xr, e.setOptions = p, e.stamp = o, e.svg = Jr, e.svgOverlay = kr, e.tileLayer = zr, e.tooltip = Nr, e.transformation = he, e.version = t, e.videoOverlay = Dr;
+		W.addInitHook("addHandler", "touchZoom", ii), W.BoxZoom = Zr, W.DoubleClickZoom = Qr, W.Drag = $r, W.Keyboard = ei, W.ScrollWheelZoom = ti, W.TapHold = ri, W.TouchZoom = ii, e.Bounds = w, e.Browser = M, e.CRS = A, e.Canvas = Hr, e.Circle = cr, e.CircleMarker = or, e.Class = b, e.Control = G, e.DivIcon = Pr, e.DivOverlay = Q, e.DomEvent = dn, e.DomUtil = Xt, e.Draggable = wn, e.Evented = le, e.FeatureGroup = Y, e.GeoJSON = Z, e.GridLayer = Ir, e.Handler = K, e.Icon = $n, e.ImageOverlay = wr, e.LatLng = O, e.LatLngBounds = E, e.Layer = J, e.LayerGroup = Xn, e.LineUtil = Un, e.Map = W, e.Marker = rr, e.Mixin = Sn, e.Path = ar, e.Point = S, e.PolyUtil = On, e.Polygon = dr, e.Polyline = X, e.Popup = Ar, e.PosAnimation = fn, e.Projection = Kn, e.Rectangle = Yr, e.Renderer = $, e.SVG = qr, e.SVGOverlay = Or, e.TileLayer = Rr, e.Tooltip = Mr, e.Transformation = me, e.Util = se, e.VideoOverlay = Er, e.bind = i, e.bounds = T, e.canvas = Ur, e.circle = lr, e.circleMarker = sr, e.control = mn, e.divIcon = Fr, e.extend = n, e.featureGroup = Qn, e.geoJSON = Sr, e.geoJson = Cr, e.gridLayer = Lr, e.icon = er, e.imageOverlay = Tr, e.latLng = k, e.latLngBounds = D, e.layerGroup = Zn, e.map = pn, e.marker = ir, e.point = C, e.polygon = fr, e.polyline = ur, e.popup = jr, e.rectangle = Xr, e.setOptions = p, e.stamp = o, e.svg = Jr, e.svgOverlay = kr, e.tileLayer = zr, e.tooltip = Nr, e.transformation = he, e.version = t, e.videoOverlay = Dr;
 		var ai = window.L;
 		e.noConflict = function() {
 			return window.L = ai, this;
@@ -4780,29 +4780,39 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 	a.fitBounds(o, {
 		paddingBottomRight: [0, 320],
 		paddingTopLeft: [0, 180]
-	}), c.default.control.zoom({ position: "bottomright" }).addTo(a), c.default.control.attribution({ position: "bottomright" }).addTo(a), c.default.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
+	}), c.default.control.zoom({ position: "bottomright" }).addTo(a), c.default.control.attribution({ position: "bottomright" }).addTo(a);
+	let s = c.default.Control.extend({
+		options: { position: "topright" },
+		onAdd: function() {
+			let e = c.default.DomUtil.create("button", "test-mode-btn");
+			return e.innerHTML = n ? "GPS Simulado ON" : "Simular GPS", e.style.backgroundColor = n ? "#3b82f6" : "#fff", e.style.color = n ? "#fff" : "#333", e.style.border = "2px solid rgba(0,0,0,0.2)", e.style.borderRadius = "8px", e.style.padding = "6px 12px", e.style.cursor = "pointer", e.style.fontWeight = "bold", e.style.boxShadow = "0 2px 6px rgba(0,0,0,0.3)", e.style.margin = "10px", e.style.pointerEvents = "auto", e.onclick = (t) => {
+				c.default.DomEvent.stopPropagation(t), n = !n, n ? (e.style.backgroundColor = "#3b82f6", e.style.color = "#fff", e.innerHTML = "GPS Simulado ON", alert("Modo simulación activado. Haz clic en cualquier parte del mapa para ubicar tu GPS.")) : (e.style.backgroundColor = "#fff", e.style.color = "#333", e.innerHTML = "Simular GPS", i && (a.removeLayer(i), i = null, r = null));
+			}, e;
+		}
+	});
+	a.addControl(new s()), c.default.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
 		attribution: "&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors &copy; <a href=\"https://carto.com/attributions\">CARTO</a>",
 		maxZoom: 19
 	}).addTo(a);
-	let s = "\n        <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" height=\"100%\" viewBox=\"0 0 24 28\">\n            <rect x=\"0\" y=\"0\" width=\"24\" height=\"28\" rx=\"3.5\" fill=\"#1d4ed8\" />\n            <rect x=\"2\" y=\"2\" width=\"20\" height=\"12\" rx=\"1.5\" fill=\"white\" />\n            <text x=\"12\" y=\"8\" font-family=\"'Arial Black', 'Helvetica Neue', Helvetica, sans-serif\" font-size=\"6\" font-weight=\"900\" fill=\"black\" text-anchor=\"middle\" dominant-baseline=\"middle\" letter-spacing=\"0.5\">TAXI</text>\n        </svg>\n    ", u = a.getContainer(), d = document.createElement("div");
-	d.id = "map-overlay-info-paradas", d.style.position = "absolute", d.style.top = "70px", d.style.left = "50%", d.style.transform = "translate(-50%, -10px)", d.style.zIndex = "1000", d.style.width = "90%", d.style.maxWidth = "350px", d.style.display = "none", d.style.opacity = "0", d.style.transition = "opacity 0.3s ease, transform 0.3s ease";
-	let f = e.querySelector("#paradas-list-container"), p = () => {
-		d.style.opacity = "0", d.style.transform = "translate(-50%, -10px)", setTimeout(() => {
-			d.style.display = "none";
-		}, 300), f && (f.style.opacity = "1", f.style.pointerEvents = "auto");
+	let u = "\n        <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" height=\"100%\" viewBox=\"0 0 24 28\">\n            <rect x=\"0\" y=\"0\" width=\"24\" height=\"28\" rx=\"3.5\" fill=\"#1d4ed8\" />\n            <rect x=\"2\" y=\"2\" width=\"20\" height=\"12\" rx=\"1.5\" fill=\"white\" />\n            <text x=\"12\" y=\"8\" font-family=\"'Arial Black', 'Helvetica Neue', Helvetica, sans-serif\" font-size=\"6\" font-weight=\"900\" fill=\"black\" text-anchor=\"middle\" dominant-baseline=\"middle\" letter-spacing=\"0.5\">TAXI</text>\n        </svg>\n    ", d = a.getContainer(), f = document.createElement("div");
+	f.id = "map-overlay-info-paradas", f.style.position = "absolute", f.style.top = "70px", f.style.left = "50%", f.style.transform = "translate(-50%, -10px)", f.style.zIndex = "1000", f.style.width = "90%", f.style.maxWidth = "350px", f.style.display = "none", f.style.opacity = "0", f.style.transition = "opacity 0.3s ease, transform 0.3s ease";
+	let p = e.querySelector("#paradas-list-container"), m = () => {
+		f.style.opacity = "0", f.style.transform = "translate(-50%, -10px)", setTimeout(() => {
+			f.style.display = "none";
+		}, 300), p && (p.style.opacity = "1", p.style.pointerEvents = "auto");
 	};
 	a.on("click", (t) => {
-		if (p(), n) {
+		if (m(), n) {
 			r = t.latlng;
 			let n = e.querySelector("[data-filter=\"nearest\"]");
 			n && n.click();
 		}
-	}), u.appendChild(d);
-	let m = (e) => {
-		f && (f.style.opacity = "0", f.style.pointerEvents = "none"), d.innerHTML = `
+	}), d.appendChild(f);
+	let h = (e) => {
+		p && (p.style.opacity = "0", p.style.pointerEvents = "none"), f.innerHTML = `
             <div style="background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 9999px; padding: 1rem 1.25rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 1rem; width: 100%; box-sizing: border-box;">
                 <div style="width: 32px; height: 38px; flex-shrink: 0; border-radius: 4px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
-                    ${s}
+                    ${u}
                 </div>
                 <div style="display: flex; flex-direction: column; flex: 1; min-width: 0; justify-content: center;">
                     <span style="color: #3b82f6; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.15rem;">PARADA DE TAXI</span>
@@ -4810,48 +4820,48 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
                     <span style="color: rgba(255,255,255,0.7); font-size: 0.8rem; margin-top: 0.2rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${e.address}</span>
                 </div>
             </div>
-        `, d.style.display = "block", d.offsetWidth, d.style.opacity = "1", d.style.transform = "translate(-50%, 0)", a.setView([e.lat, e.lon], 16);
+        `, f.style.display = "block", f.offsetWidth, f.style.opacity = "1", f.style.transform = "translate(-50%, 0)", a.setView([e.lat, e.lon], 16);
 	};
 	if (l.forEach((e) => {
 		let n = c.default.divIcon({
 			className: "custom-taxi-icon",
 			html: `<div class="taxi-marker" style="width: 36px; height: 42px; border: 2px solid white; border-radius: 6px; box-shadow: 0 4px 10px rgba(0,0,0, 0.4); overflow: hidden; background: #1d4ed8;">
-                    ${s}
+                    ${u}
                    </div>`,
 			iconSize: [36, 42],
 			iconAnchor: [18, 21],
 			popupAnchor: [0, -21]
 		});
 		c.default.marker([e.lat, e.lon], { icon: n }).addTo(a).on("click", (n) => {
-			c.default.DomEvent.stopPropagation(n), m(e);
+			c.default.DomEvent.stopPropagation(n), h(e);
 			let r = t.getBoundingClientRect();
 			window.scrollTo({
 				top: r.top + window.scrollY - 80,
 				behavior: "smooth"
 			});
 		});
-	}), f) {
-		let o = [...l], u = (e, n = o) => {
+	}), p) {
+		let o = [...l], s = (e, n = o) => {
 			o = n;
 			let r = Math.ceil(o.length / 6);
-			if (f.innerHTML = "", o.length === 0) {
-				f.innerHTML = "<div style=\"color: rgba(255,255,255,0.7); text-align: center; font-size: 0.9rem; padding: 1rem 0; background: rgba(15, 23, 42, 0.85); border-radius: 999px; backdrop-filter: blur(16px);\">No hay paradas en esta zona.</div>";
+			if (p.innerHTML = "", o.length === 0) {
+				p.innerHTML = "<div style=\"color: rgba(255,255,255,0.7); text-align: center; font-size: 0.9rem; padding: 1rem 0; background: rgba(15, 23, 42, 0.85); border-radius: 999px; backdrop-filter: blur(16px);\">No hay paradas en esta zona.</div>";
 				return;
 			}
 			let i = (e - 1) * 6, a = i + 6, c = o.slice(i, a), l = document.createElement("div");
-			if (l.className = "paradas-list", f.appendChild(l), c.forEach((e) => {
+			if (l.className = "paradas-list", p.appendChild(l), c.forEach((e) => {
 				let n = document.createElement("div");
 				n.innerHTML = `
                     <div class="mini-chip-parada" style="width: 100%; justify-content: flex-start;">
                         <div style="width: 24px; height: 28px; flex-shrink: 0; border-radius: 3px; overflow: hidden; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
-                            ${s}
+                            ${u}
                         </div>
                         <div class="chip-name-container" style="flex: 1; overflow: hidden; display: flex; align-items: center;">
                             <span class="chip-name" style="color: #fff; font-size: 0.9rem; font-weight: 600; white-space: nowrap; display: inline-block;">${e.name}</span>
                         </div>
                     </div>
                 `, n.firstElementChild?.addEventListener("click", () => {
-					m(e);
+					h(e);
 					let n = t.getBoundingClientRect();
 					window.scrollTo({
 						top: n.top + window.scrollY - 80,
@@ -4887,14 +4897,14 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				t.style.display = "flex", t.style.justifyContent = "space-between", t.style.alignItems = "center", t.style.marginTop = "0.5rem";
 				let n = document.createElement("button");
 				n.innerHTML = "&laquo;", n.style.padding = "0.25rem 1rem", n.style.borderRadius = "999px", n.style.border = "1px solid rgba(255,255,255,0.1)", n.style.background = e === 1 ? "transparent" : "rgba(59, 130, 246, 0.15)", n.style.color = e === 1 ? "#64748b" : "#3b82f6", n.style.cursor = e === 1 ? "default" : "pointer", n.style.fontWeight = "600", n.style.transition = "all 0.2s ease", n.disabled = e === 1, n.onclick = () => {
-					e > 1 && u(e - 1);
+					e > 1 && s(e - 1);
 				};
 				let i = document.createElement("span");
 				i.style.color = "rgba(255,255,255,0.5)", i.style.fontSize = "0.8rem", i.innerText = `${e} / ${r}`;
 				let a = document.createElement("button");
 				a.innerHTML = "&raquo;", a.style.padding = "0.25rem 1rem", a.style.borderRadius = "999px", a.style.border = "1px solid rgba(255,255,255,0.1)", a.style.background = e === r ? "transparent" : "rgba(59, 130, 246, 0.15)", a.style.color = e === r ? "#64748b" : "#3b82f6", a.style.cursor = e === r ? "default" : "pointer", a.style.fontWeight = "600", a.style.transition = "all 0.2s ease", a.disabled = e === r, a.onclick = () => {
-					e < r && u(e + 1);
-				}, t.appendChild(n), t.appendChild(i), t.appendChild(a), f.appendChild(t);
+					e < r && s(e + 1);
+				}, t.appendChild(n), t.appendChild(i), t.appendChild(a), p.appendChild(t);
 			}
 		};
 		a.on("moveend", () => {
@@ -4903,7 +4913,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				let e = a.getCenter();
 				n.sort((t, n) => (t.lat - e.lat) ** 2 + (t.lon - e.lng) ** 2 - ((n.lat - e.lat) ** 2 + (n.lon - e.lng) ** 2));
 			}
-			u(1, n);
+			s(1, n);
 		});
 		let d = e.querySelectorAll(".taxi-scope-pill");
 		d.forEach((t) => {
@@ -4913,7 +4923,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				o.classList.add("active");
 				let s = o.getAttribute("data-filter");
 				if (s === "all") {
-					p();
+					m();
 					let e = c.default.latLngBounds(l.map((e) => [e.lat, e.lon]));
 					a.fitBounds(e, {
 						paddingBottomRight: [0, 320],
@@ -4951,13 +4961,13 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 					o.innerText = "Buscando...", t((e) => {
 						o.innerText = s;
 						let t = e.coords.latitude, n = e.coords.longitude;
-						p(), a.setView([t, n], 15);
+						m(), a.setView([t, n], 15);
 					}, (t) => {
 						o.innerText = s, console.error("Error getting location", t), alert("No hemos podido acceder a tu ubicación o tu navegador no soporta geolocalización."), o.classList.remove("active"), e.querySelector("[data-filter=\"all\"]")?.classList.add("active"), a.setView([36.529, -6.292], 13);
 					});
 				}
 			});
-		}), u(1, [...l]);
+		}), s(1, [...l]);
 	}
 	window.cadizTaxiMap = a;
 }, d = class extends HTMLElement {
