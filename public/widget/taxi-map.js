@@ -4807,7 +4807,9 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			let n = e.querySelector("[data-filter=\"nearest\"]");
 			n && n.click();
 		}
-	}), f.appendChild(p);
+	}), f.appendChild(p), p.addEventListener("click", () => {
+		h();
+	});
 	let g = (e) => {
 		m && (m.style.opacity = "0", m.style.pointerEvents = "none"), p.innerHTML = `
             <div style="background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 9999px; padding: 1rem 1.25rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 1rem; width: 100%; box-sizing: border-box;">
