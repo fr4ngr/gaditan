@@ -4831,20 +4831,22 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 	if (d) {
 		let r = [...l], a = (e, n = r) => {
 			r = n;
-			let o = Math.ceil(r.length / 5);
+			let o = Math.ceil(r.length / 6);
 			if (d.innerHTML = "", r.length === 0) {
 				d.innerHTML = "<div style=\"color: rgba(255,255,255,0.7); text-align: center; font-size: 0.9rem; padding: 1rem 0; background: rgba(15, 23, 42, 0.85); border-radius: 999px; backdrop-filter: blur(16px);\">No hay paradas en esta zona.</div>";
 				return;
 			}
-			let s = (e - 1) * 5, c = s + 5;
-			if (r.slice(s, c).forEach((e) => {
+			let s = (e - 1) * 6, c = s + 6, l = r.slice(s, c), f = document.createElement("div");
+			if (f.className = "paradas-list", d.appendChild(f), l.forEach((e) => {
 				let n = document.createElement("div");
 				n.innerHTML = `
                     <div class="mini-chip-parada" style="width: 100%; justify-content: flex-start;">
                         <div style="width: 24px; height: 28px; flex-shrink: 0; border-radius: 3px; overflow: hidden; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
                             ${i}
                         </div>
-                        <span style="color: #fff; font-size: 0.9rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${e.name}</span>
+                        <div class="chip-name-container" style="flex: 1; overflow: hidden; display: flex; align-items: center;">
+                            <span class="chip-name" style="color: #fff; font-size: 0.9rem; font-weight: 600; white-space: nowrap; display: inline-block;">${e.name}</span>
+                        </div>
                     </div>
                 `, n.firstElementChild?.addEventListener("click", () => {
 					u(e);
@@ -4853,8 +4855,32 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 						top: n.top + window.scrollY - 80,
 						behavior: "smooth"
 					});
-				}), d.appendChild(n.firstElementChild);
-			}), o > 1) {
+				}), f.appendChild(n.firstElementChild);
+			}), setTimeout(() => {
+				f.querySelectorAll(".chip-name-container").forEach((e) => {
+					let t = e.querySelector(".chip-name");
+					if (t && t.scrollWidth > e.clientWidth) {
+						let n = t.scrollWidth - e.clientWidth;
+						n > 0 && t.animate([
+							{ transform: "translateX(0)" },
+							{
+								transform: "translateX(0)",
+								offset: .15
+							},
+							{
+								transform: `translateX(-${n}px)`,
+								offset: .85
+							},
+							{ transform: `translateX(-${n}px)` }
+						], {
+							duration: Math.max(3e3, n * 30),
+							iterations: Infinity,
+							direction: "alternate",
+							easing: "ease-in-out"
+						});
+					}
+				});
+			}, 100), o > 1) {
 				let t = document.createElement("div");
 				t.style.display = "flex", t.style.justifyContent = "space-between", t.style.alignItems = "center", t.style.marginTop = "0.5rem";
 				let n = document.createElement("button");
