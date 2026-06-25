@@ -4899,17 +4899,12 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				});
 			}, 100), r > 1) {
 				let t = document.createElement("div");
-				t.style.display = "flex", t.style.justifyContent = "space-between", t.style.alignItems = "center", t.style.marginTop = "0.5rem";
-				let n = document.createElement("button");
-				n.innerHTML = "&laquo;", n.style.padding = "0.25rem 1rem", n.style.borderRadius = "999px", n.style.border = "1px solid rgba(255,255,255,0.1)", n.style.background = e === 1 ? "transparent" : "rgba(59, 130, 246, 0.15)", n.style.color = e === 1 ? "#64748b" : "#3b82f6", n.style.cursor = e === 1 ? "default" : "pointer", n.style.fontWeight = "600", n.style.transition = "all 0.2s ease", n.disabled = e === 1, n.onclick = () => {
-					e > 1 && s(e - 1);
-				};
-				let i = document.createElement("span");
-				i.style.color = "rgba(255,255,255,0.5)", i.style.fontSize = "0.8rem", i.innerText = `${e} / ${r}`;
-				let a = document.createElement("button");
-				a.innerHTML = "&raquo;", a.style.padding = "0.25rem 1rem", a.style.borderRadius = "999px", a.style.border = "1px solid rgba(255,255,255,0.1)", a.style.background = e === r ? "transparent" : "rgba(59, 130, 246, 0.15)", a.style.color = e === r ? "#64748b" : "#3b82f6", a.style.cursor = e === r ? "default" : "pointer", a.style.fontWeight = "600", a.style.transition = "all 0.2s ease", a.disabled = e === r, a.onclick = () => {
-					e < r && s(e + 1);
-				}, t.appendChild(n), t.appendChild(i), t.appendChild(a), m.appendChild(t);
+				t.style.display = "flex", t.style.justifyContent = "center", t.style.alignItems = "center", t.style.gap = "8px", t.style.marginTop = "0.75rem", t.style.paddingBottom = "0.25rem";
+				for (let n = 1; n <= r; n++) {
+					let r = document.createElement("div");
+					r.style.height = "8px", r.style.borderRadius = "999px", r.style.cursor = "pointer", r.style.transition = "all 0.3s ease", n === e ? (r.style.width = "24px", r.style.background = "#3b82f6", r.style.boxShadow = "0 0 8px rgba(59, 130, 246, 0.5)") : (r.style.width = "8px", r.style.background = "rgba(255, 255, 255, 0.3)"), r.onclick = () => s(n), t.appendChild(r);
+				}
+				m.appendChild(t);
 			}
 		};
 		o.on("moveend", () => {
