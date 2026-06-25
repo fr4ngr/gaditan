@@ -4832,7 +4832,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 		}) : t(/* @__PURE__ */ Error("Geolocation not supported"));
 	}), h = async (e, t, n, r) => {
 		try {
-			let i = await (await fetch(`https://router.project-osrm.org/route/v1/foot/${t},${e};${r},${n}?overview=full&geometries=geojson`)).json();
+			let i = await (await fetch(`https://routing.openstreetmap.de/routed-foot/route/v1/foot/${t},${e};${r},${n}?overview=full&geometries=geojson&continue_straight=false`)).json();
 			if (i.code === "Ok" && i.routes && i.routes.length > 0) {
 				let e = i.routes[0];
 				return {
