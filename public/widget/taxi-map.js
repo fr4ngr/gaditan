@@ -4794,12 +4794,10 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 		attribution: "&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors &copy; <a href=\"https://carto.com/attributions\">CARTO</a>",
 		maxZoom: 19
 	}).addTo(o);
-	let d = "\n        <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" height=\"100%\" viewBox=\"0 0 24 28\">\n            <rect x=\"0\" y=\"0\" width=\"24\" height=\"28\" rx=\"3.5\" fill=\"#1d4ed8\" />\n            <rect x=\"2\" y=\"2\" width=\"20\" height=\"12\" rx=\"1.5\" fill=\"white\" />\n            <text x=\"12\" y=\"8\" font-family=\"'Arial Black', 'Helvetica Neue', Helvetica, sans-serif\" font-size=\"6\" font-weight=\"900\" fill=\"black\" text-anchor=\"middle\" dominant-baseline=\"middle\" letter-spacing=\"0.5\">TAXI</text>\n        </svg>\n    ", f = o.getContainer(), p = document.createElement("div");
-	p.id = "map-overlay-info-paradas", p.style.position = "absolute", p.style.bottom = "25px", p.style.left = "50%", p.style.transform = "translate(-50%, 10px)", p.style.zIndex = "1000", p.style.width = "90%", p.style.maxWidth = "350px", p.style.display = "none", p.style.opacity = "0", p.style.transition = "opacity 0.3s ease, transform 0.3s ease";
-	let m = () => {
-		p.style.opacity = "0", p.style.transform = "translate(-50%, 10px)", setTimeout(() => {
-			p.style.display = "none";
-		}, 300), a.forEach((e) => e.marker.setOpacity(1));
+	let d = "\n        <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" height=\"100%\" viewBox=\"0 0 24 28\">\n            <rect x=\"0\" y=\"0\" width=\"24\" height=\"28\" rx=\"3.5\" fill=\"#1d4ed8\" />\n            <rect x=\"2\" y=\"2\" width=\"20\" height=\"12\" rx=\"1.5\" fill=\"white\" />\n            <text x=\"12\" y=\"8\" font-family=\"'Arial Black', 'Helvetica Neue', Helvetica, sans-serif\" font-size=\"6\" font-weight=\"900\" fill=\"black\" text-anchor=\"middle\" dominant-baseline=\"middle\" letter-spacing=\"0.5\">TAXI</text>\n        </svg>\n    ", f = e.querySelector("#bottom-sheet-card"), p = f?.querySelector(".bottom-sheet-content"), m = () => {
+		f && (f.classList.remove("expanded"), f.classList.add("minimized"), setTimeout(() => {
+			p && (p.innerHTML = "");
+		}, 350)), a.forEach((e) => e.marker.setOpacity(1));
 	};
 	o.on("click", (t) => {
 		if (n) {
@@ -4807,22 +4805,23 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			let n = e.querySelector("[data-filter=\"nearest\"]");
 			n && n.click();
 		}
-	}), f.appendChild(p);
+	});
 	let h = (e) => {
+		if (!f || !p) return;
 		p.innerHTML = `
-            <div style="background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 9999px; padding: 1rem 1.25rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 1rem; width: 100%; box-sizing: border-box;">
-                <div style="width: 32px; height: 38px; flex-shrink: 0; border-radius: 4px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
-                    ${d}
-                </div>
-                <div style="display: flex; flex-direction: column; flex: 1; min-width: 0; justify-content: center;">
-                    <span style="color: #3b82f6; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.15rem;">PARADA DE TAXI</span>
-                    <strong style="color: #fff; font-size: 1.1rem; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.1;">${e.name}</strong>
-                    <span style="color: rgba(255,255,255,0.7); font-size: 0.8rem; margin-top: 0.2rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${e.address}</span>
-                </div>
+            <div style="width: 32px; height: 38px; flex-shrink: 0; border-radius: 4px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                ${d}
             </div>
-        `, p.style.display = "block", p.offsetWidth, p.style.opacity = "1", p.style.transform = "translate(-50%, 0)", a.forEach((t) => {
+            <div style="display: flex; flex-direction: column; flex: 1; min-width: 0; justify-content: center;">
+                <span style="color: #64748b; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.15rem;">PARADA DE TAXI</span>
+                <strong style="color: #0f172a; font-size: 1.1rem; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.1;">${e.name}</strong>
+                <span style="color: #475569; font-size: 0.8rem; margin-top: 0.2rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${e.address}</span>
+            </div>
+        `, f.classList.remove("minimized"), f.classList.add("expanded"), a.forEach((t) => {
 			t.parada.name === e.name ? t.marker.setOpacity(1) : t.marker.setOpacity(0);
-		}), o.setView([e.lat, e.lon], 16);
+		});
+		let t = o.project([e.lat, e.lon]).subtract([0, 50]), n = o.unproject(t);
+		o.setView(n, 16);
 	};
 	l.forEach((e) => {
 		let n = c.default.divIcon({
@@ -4904,7 +4903,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 		super();
 	}
 	connectedCallback() {
-		this.innerHTML = "\n      <div class=\"taxi-map-wrapper\">\n        <div class=\"map-container\" style=\"position: relative; width: 100%; height: 100%;\">\n            <div id=\"map\"></div>\n            <div class=\"taxi-toggle-overlay\">\n                <div class=\"taxi-toggle-wrapper\">\n                    <button class=\"taxi-scope-pill active\" data-filter=\"all\">Todas</button>\n                    <button class=\"taxi-scope-pill\" data-filter=\"nearest\">Más cerca</button>\n                </div>\n            </div>\n        </div>\n      </div>\n    ", setTimeout(() => {
+		this.innerHTML = "\n      <div class=\"taxi-map-wrapper\">\n        <div class=\"map-container\" style=\"position: relative; width: 100%; height: 100%;\">\n            <div id=\"map\"></div>\n            <div class=\"taxi-toggle-overlay\">\n                <div class=\"taxi-toggle-wrapper\">\n                    <button class=\"taxi-scope-pill active\" data-filter=\"all\">Todas</button>\n                    <button class=\"taxi-scope-pill\" data-filter=\"nearest\">Más cerca</button>\n                </div>\n            </div>\n            \n            <!-- Bottom Sheet Card -->\n            <div id=\"bottom-sheet-card\" class=\"minimized\">\n                <div class=\"bottom-sheet-handle\"></div>\n                <div class=\"bottom-sheet-content\">\n                    <!-- Info de parada se inyectará aquí -->\n                </div>\n            </div>\n        </div>\n      </div>\n    ", setTimeout(() => {
 			u(this);
 		}, 0);
 	}
