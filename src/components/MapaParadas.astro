@@ -21,40 +21,31 @@
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         const section = document.getElementById('paradas');
-        let hasSnapped = false;
-        let lastScrollY = window.scrollY;
+        const stickyWrapper = section ? section.querySelector('div[style*="position: sticky"]') : null;
+        let scrollTimeout;
 
-        // Auto-scroll (snap) to map when it becomes at least 50% visible
+        if (!stickyWrapper) return;
+
         window.addEventListener('scroll', () => {
-            const currentScrollY = window.scrollY;
-            const scrollingDown = currentScrollY > lastScrollY;
-            lastScrollY = currentScrollY;
+            // Clear the timeout while the user is still actively scrolling
+            clearTimeout(scrollTimeout);
 
-            if (!section) return;
-            
-            const rect = section.getBoundingClientRect();
-            const threshold = window.innerHeight * 0.5;
-            
-            // If scrolling down, and the section top enters the upper 50% of the screen
-            if (scrollingDown && rect.top > 0 && rect.top < threshold && !hasSnapped) {
-                hasSnapped = true;
+            // Wait 150ms after the user stops scrolling
+            scrollTimeout = setTimeout(() => {
+                const rect = stickyWrapper.getBoundingClientRect();
                 
-                // Smooth scroll so the section aligns perfectly to the top of the screen (100% visible)
-                window.scrollTo({
-                    top: currentScrollY + rect.top,
-                    behavior: 'smooth'
-                });
-                
-                // Reset snap flag after a delay to allow the user to scroll away freely
-                setTimeout(() => {
-                    hasSnapped = false;
-                }, 1500);
-            }
-            
-            // Also reset flag if we scrolled back above the section completely
-            if (rect.top > window.innerHeight) {
-                hasSnapped = false;
-            }
+                // If the sticky wrapper is visible by at least 50% (its top is in the upper half of the screen)
+                // but it's not perfectly at the top yet (rect.top > 5)
+                if (rect.top > 5 && rect.top < window.innerHeight * 0.5) {
+                    const targetY = window.scrollY + rect.top;
+                    
+                    // Smoothly snap to make the map 100% full screen
+                    window.scrollTo({
+                        top: targetY,
+                        behavior: 'smooth'
+                    });
+                }
+            }, 150);
         }, { passive: true });
     });
 </script>
