@@ -4771,30 +4771,30 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 		console.error("Map element not found inside the widget");
 		return;
 	}
-	let n = new URLSearchParams(window.location.search).has("test_cadiz"), r = null, i = null, a = null, o = [], s = c.default.map(t, {
+	let n = new URLSearchParams(window.location.search).has("test_cadiz"), r = null, i = null, a = null, o = null, s = [], u = c.default.map(t, {
 		zoomControl: !1,
 		attributionControl: !1,
 		scrollWheelZoom: !1,
 		dragging: !c.default.Browser.mobile
-	}), u = c.default.latLngBounds(l.map((e) => [e.lat, e.lon]));
-	s.fitBounds(u, {
+	}), d = c.default.latLngBounds(l.map((e) => [e.lat, e.lon]));
+	u.fitBounds(d, {
 		paddingBottomRight: [0, 20],
 		paddingTopLeft: [0, 140]
-	}), c.default.control.zoom({ position: "bottomright" }).addTo(s), c.default.control.attribution({ position: "bottomright" }).addTo(s);
-	let d = c.default.Control.extend({
+	}), c.default.control.zoom({ position: "bottomright" }).addTo(u), c.default.control.attribution({ position: "bottomright" }).addTo(u);
+	let f = c.default.Control.extend({
 		options: { position: "topright" },
 		onAdd: function() {
 			let e = c.default.DomUtil.create("button", "test-mode-btn");
 			return e.innerHTML = n ? "GPS Simulado ON" : "Simular GPS", e.style.backgroundColor = n ? "#3b82f6" : "#fff", e.style.color = n ? "#fff" : "#333", e.style.border = "2px solid rgba(0,0,0,0.2)", e.style.borderRadius = "8px", e.style.padding = "6px 12px", e.style.cursor = "pointer", e.style.fontWeight = "bold", e.style.boxShadow = "0 2px 6px rgba(0,0,0,0.3)", e.style.margin = "10px", e.style.pointerEvents = "auto", e.onclick = (t) => {
-				c.default.DomEvent.stopPropagation(t), n = !n, n ? (e.style.backgroundColor = "#3b82f6", e.style.color = "#fff", e.innerHTML = "GPS Simulado ON", alert("Modo simulación activado. Haz clic en cualquier parte del mapa para ubicar tu GPS.")) : (e.style.backgroundColor = "#fff", e.style.color = "#333", e.innerHTML = "Simular GPS", i && (s.removeLayer(i), i = null, r = null, a = null));
+				c.default.DomEvent.stopPropagation(t), n = !n, n ? (e.style.backgroundColor = "#3b82f6", e.style.color = "#fff", e.innerHTML = "GPS Simulado ON", alert("Modo simulación activado. Haz clic en cualquier parte del mapa para ubicar tu GPS.")) : (e.style.backgroundColor = "#fff", e.style.color = "#333", e.innerHTML = "Simular GPS", i && (u.removeLayer(i), i = null, r = null, a = null));
 			}, e;
 		}
 	});
-	s.addControl(new d()), c.default.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
+	u.addControl(new f()), c.default.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
 		attribution: "&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors &copy; <a href=\"https://carto.com/attributions\">CARTO</a>",
 		maxZoom: 19
-	}).addTo(s);
-	let f = "\n        <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" height=\"100%\" viewBox=\"0 0 24 28\">\n            <rect x=\"0\" y=\"0\" width=\"24\" height=\"28\" rx=\"3.5\" fill=\"#1d4ed8\" />\n            <rect x=\"2\" y=\"2\" width=\"20\" height=\"12\" rx=\"1.5\" fill=\"white\" />\n            <text x=\"12\" y=\"8\" font-family=\"'Arial Black', 'Helvetica Neue', Helvetica, sans-serif\" font-size=\"6\" font-weight=\"900\" fill=\"black\" text-anchor=\"middle\" dominant-baseline=\"middle\" letter-spacing=\"0.5\">TAXI</text>\n        </svg>\n    ", p = () => new Promise((e, t) => {
+	}).addTo(u);
+	let p = "\n        <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" height=\"100%\" viewBox=\"0 0 24 28\">\n            <rect x=\"0\" y=\"0\" width=\"24\" height=\"28\" rx=\"3.5\" fill=\"#1d4ed8\" />\n            <rect x=\"2\" y=\"2\" width=\"20\" height=\"12\" rx=\"1.5\" fill=\"white\" />\n            <text x=\"12\" y=\"8\" font-family=\"'Arial Black', 'Helvetica Neue', Helvetica, sans-serif\" font-size=\"6\" font-weight=\"900\" fill=\"black\" text-anchor=\"middle\" dominant-baseline=\"middle\" letter-spacing=\"0.5\">TAXI</text>\n        </svg>\n    ", m = () => new Promise((e, t) => {
 		if (a) return e(a);
 		if (n) {
 			let t = r ? r.lat : 36.535, n = r ? r.lng : -6.293;
@@ -4805,7 +4805,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				weight: 3,
 				opacity: 1,
 				fillOpacity: 1
-			}).addTo(s), a = {
+			}).addTo(u), a = {
 				lat: t,
 				lon: n
 			}, setTimeout(() => e(a), 100);
@@ -4822,7 +4822,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				weight: 3,
 				opacity: 1,
 				fillOpacity: 1
-			}).addTo(s), e(a);
+			}).addTo(u), e(a);
 		}, (e) => {
 			console.error("GPS Error", e), t(e);
 		}, {
@@ -4830,37 +4830,38 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			timeout: 1e4,
 			maximumAge: 0
 		}) : t(/* @__PURE__ */ Error("Geolocation not supported"));
-	}), m = async (e, t, n, r) => {
+	}), h = async (e, t, n, r) => {
 		try {
-			let i = await (await fetch(`https://router.project-osrm.org/route/v1/foot/${t},${e};${r},${n}?overview=false`)).json();
+			let i = await (await fetch(`https://router.project-osrm.org/route/v1/foot/${t},${e};${r},${n}?overview=full&geometries=geojson`)).json();
 			if (i.code === "Ok" && i.routes && i.routes.length > 0) {
 				let e = i.routes[0];
 				return {
 					distance: e.distance,
-					duration: e.duration
+					duration: e.duration,
+					geometry: e.geometry
 				};
 			}
 		} catch (e) {
 			console.error("Route fetch error", e);
 		}
 		return null;
-	}, h = e.querySelector("#bottom-sheet-card"), g = h?.querySelector(".bottom-sheet-content"), _ = () => {
-		h && (h.classList.remove("expanded"), h.classList.add("minimized"), setTimeout(() => {
-			g && (g.innerHTML = "");
-		}, 350)), o.forEach((e) => e.marker.setOpacity(1));
+	}, g = e.querySelector("#bottom-sheet-card"), _ = g?.querySelector(".bottom-sheet-content"), ee = () => {
+		g && (g.classList.remove("expanded"), g.classList.add("minimized"), setTimeout(() => {
+			_ && (_.innerHTML = "");
+		}, 350)), o &&= (u.removeLayer(o), null), s.forEach((e) => e.marker.setOpacity(1));
 	};
-	s.on("click", (t) => {
+	u.on("click", (t) => {
 		if (n) {
 			r = t.latlng, a = null;
 			let n = e.querySelector("[data-filter=\"nearest\"]");
 			n && n.click();
 		}
 	});
-	let ee = async (e) => {
-		if (!h || !g) return;
-		g.innerHTML = `
+	let te = async (e) => {
+		if (!g || !_) return;
+		_.innerHTML = `
             <div style="width: 32px; height: 38px; flex-shrink: 0; border-radius: 4px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                ${f}
+                ${p}
             </div>
             <div style="display: flex; flex-direction: column; flex: 1; min-width: 0; justify-content: center;">
                 <span style="color: #64748b; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.15rem;">PARADA DE TAXI</span>
@@ -4870,45 +4871,64 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
             <div id="route-info-container" style="display: flex; flex-direction: column; align-items: flex-end; justify-content: center; min-width: 80px; text-align: right;">
                 <span style="color: #94a3b8; font-size: 0.75rem;">Calculando...</span>
             </div>
-        `, h.classList.remove("minimized"), h.classList.add("expanded"), o.forEach((t) => {
+        `, g.classList.remove("minimized"), g.classList.add("expanded"), s.forEach((t) => {
 			t.marker.setOpacity(+(t.parada.name === e.name));
 		});
-		let t = s.project([e.lat, e.lon]).subtract([0, 50]), n = s.unproject(t);
-		s.setView(n, 16);
+		let t = u.project([e.lat, e.lon]).subtract([0, 50]), n = u.unproject(t);
+		u.setView(n, 16);
 		try {
-			let t = await p(), n = await m(t.lat, t.lon, e.lat, e.lon), r = h.querySelector("#route-info-container");
-			if (r && n) {
-				let e = n.distance > 1e3 ? (n.distance / 1e3).toFixed(1) + " km" : Math.round(n.distance) + " m";
-				r.innerHTML = `
+			let t = await m(), n = c.default.latLngBounds([[t.lat, t.lon], [e.lat, e.lon]]);
+			u.fitBounds(n, {
+				paddingTopLeft: [50, 150],
+				paddingBottomRight: [50, 150],
+				animate: !0,
+				duration: 1
+			});
+			let r = await h(t.lat, t.lon, e.lat, e.lon), i = g.querySelector("#route-info-container");
+			if (o &&= (u.removeLayer(o), null), i && r) {
+				let e = r.distance > 1e3 ? (r.distance / 1e3).toFixed(1) + " km" : Math.round(r.distance) + " m", t = Math.max(1, Math.round(r.duration / 60));
+				if (r.geometry && r.geometry.coordinates) {
+					let e = r.geometry.coordinates.map((e) => [e[1], e[0]]);
+					o = c.default.polyline(e, {
+						color: "#3b82f6",
+						weight: 5,
+						opacity: .85,
+						dashArray: "10, 10",
+						className: "animated-taxi-route"
+					}).addTo(u);
+				}
+				i.innerHTML = `
                     <div style="display: flex; align-items: center; justify-content: flex-end; gap: 4px; color: #0f172a; font-weight: 800; font-size: 1.1rem; line-height: 1;">
-                        ${Math.max(1, Math.round(n.duration / 60))} <span style="font-size:0.8rem; font-weight: 700; color:#64748b; margin-right: 2px;">min</span>
+                        ${t} <span style="font-size:0.8rem; font-weight: 700; color:#64748b; margin-right: 2px;">min</span>
                         <svg xmlns="http://www.w3.org/2000/svg" height="22" viewBox="0 0 320 512" width="22" fill="currentColor" style="color: #3b82f6;"><path d="M160 48a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zM126.5 199.3c-1 .4-1.9 .8-2.9 1.2l-8 3.5c-16.4 7.3-29 21.2-34.7 38.2l-2.6 7.8c-5.6 16.8-23.7 25.8-40.5 20.2s-25.8-23.7-20.2-40.5l2.6-7.8c11.4-34.1 36.6-61.9 69.4-76.5l8-3.5c20.8-9.2 43.3-14 66.1-14c44.6 0 84.8 26.8 101.9 67.9L281 232.7l21.4 10.7c15.8 7.9 22.2 27.1 14.3 42.9s-27.1 22.2-42.9 14.3L247 287.3c-10.3-5.2-18.4-13.8-22.8-24.5l-9.6-23-19.3 65.5 49.5 54c5.4 5.9 9.2 13 11.2 20.8l23 92.1c4.3 17.1-6.1 34.5-23.3 38.8s-34.5-6.1-38.8-23.3l-22-88.1-70.7-77.1c-14.8-16.1-20.3-38.6-14.7-59.7l16.9-63.5zM68.7 398l25-62.4c2.1 3 4.5 5.8 7 8.6l40.7 44.4-14.5 36.2c-2.4 6-6 11.5-10.6 16.1L54.6 502.6c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L68.7 398z"/></svg>
                     </div>
                     <div style="display: flex; align-items: center; justify-content: flex-end; gap: 4px; color: #64748b; font-size: 0.8rem; margin-top: 0.2rem; font-weight: 600;">
                         ${e}
                     </div>
                 `;
-			} else r && (r.innerHTML = "<span style=\"color: #ef4444; font-size: 0.75rem;\">Sin ruta</span>");
+			} else i && (i.innerHTML = "<span style=\"color: #ef4444; font-size: 0.75rem;\">Sin ruta</span>");
 		} catch {
-			let e = h.querySelector("#route-info-container");
-			e && (e.innerHTML = "<span style=\"color: #f59e0b; font-size: 0.75rem;\">GPS denegado</span>");
+			let t = u.project([e.lat, e.lon]).subtract([0, 50]), n = u.unproject(t);
+			u.setView(n, 16);
+			let r = g.querySelector("#route-info-container");
+			r && (r.innerHTML = "<span style=\"color: #f59e0b; font-size: 0.75rem;\">GPS denegado</span>");
 		}
 	};
 	l.forEach((e) => {
 		let n = c.default.divIcon({
 			className: "custom-taxi-icon",
 			html: `<div class="taxi-marker" style="width: 36px; height: 42px; border: 2px solid white; border-radius: 6px; box-shadow: 0 4px 10px rgba(0,0,0, 0.4); overflow: hidden; background: #1d4ed8;">
-                    ${f}
+                    ${p}
                    </div>`,
 			iconSize: [36, 42],
 			iconAnchor: [18, 21],
 			popupAnchor: [0, -21]
-		}), r = c.default.marker([e.lat, e.lon], { icon: n }).addTo(s);
-		o.push({
+		}), r = c.default.marker([e.lat, e.lon], { icon: n }).addTo(u);
+		s.push({
 			marker: r,
 			parada: e
 		}), r.on("click", (n) => {
-			c.default.DomEvent.stopPropagation(n), ee(e);
+			c.default.DomEvent.stopPropagation(n), te(e);
 			let r = t.getBoundingClientRect();
 			window.scrollTo({
 				top: r.top + window.scrollY - 80,
@@ -4916,30 +4936,30 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			});
 		});
 	});
-	let te = e.querySelectorAll(".taxi-scope-pill");
-	te.forEach((t) => {
+	let ne = e.querySelectorAll(".taxi-scope-pill");
+	ne.forEach((t) => {
 		t.addEventListener("click", (t) => {
-			te.forEach((e) => e.classList.remove("active"));
+			ne.forEach((e) => e.classList.remove("active"));
 			let n = t.target;
 			n.classList.add("active");
 			let r = n.getAttribute("data-filter");
 			if (r === "all") {
-				_();
+				ee();
 				let e = c.default.latLngBounds(l.map((e) => [e.lat, e.lon]));
-				s.fitBounds(e, {
+				u.fitBounds(e, {
 					paddingBottomRight: [0, 320],
 					paddingTopLeft: [0, 180]
 				});
 			} else if (r === "nearest") {
 				let t = n.innerText;
-				n.innerText = "Buscando...", p().then((e) => {
-					n.innerText = t, _(), s.setView([e.lat, e.lon], 15);
+				n.innerText = "Buscando...", m().then((e) => {
+					n.innerText = t, ee(), u.setView([e.lat, e.lon], 15);
 				}).catch((r) => {
-					n.innerText = t, console.error("Error getting location", r), alert("No hemos podido acceder a tu ubicación o tu navegador no soporta geolocalización."), n.classList.remove("active"), e.querySelector("[data-filter=\"all\"]")?.classList.add("active"), s.setView([36.529, -6.292], 13);
+					n.innerText = t, console.error("Error getting location", r), alert("No hemos podido acceder a tu ubicación o tu navegador no soporta geolocalización."), n.classList.remove("active"), e.querySelector("[data-filter=\"all\"]")?.classList.add("active"), u.setView([36.529, -6.292], 13);
 				});
 			}
 		});
-	}), window.cadizTaxiMap = s;
+	}), window.cadizTaxiMap = u;
 }, d = class extends HTMLElement {
 	constructor() {
 		super();
