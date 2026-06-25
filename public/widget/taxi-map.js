@@ -4771,48 +4771,48 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 		console.error("Map element not found inside the widget");
 		return;
 	}
-	let n = new URLSearchParams(window.location.search).has("test_cadiz"), r = null, i = null, a = c.default.map(t, {
+	let n = new URLSearchParams(window.location.search).has("test_cadiz"), r = null, i = null, a = [], o = c.default.map(t, {
 		zoomControl: !1,
 		attributionControl: !1,
 		scrollWheelZoom: !1,
 		dragging: !c.default.Browser.mobile
-	}), o = c.default.latLngBounds(l.map((e) => [e.lat, e.lon]));
-	a.fitBounds(o, {
+	}), s = c.default.latLngBounds(l.map((e) => [e.lat, e.lon]));
+	o.fitBounds(s, {
 		paddingBottomRight: [0, 320],
 		paddingTopLeft: [0, 180]
-	}), c.default.control.zoom({ position: "bottomright" }).addTo(a), c.default.control.attribution({ position: "bottomright" }).addTo(a);
-	let s = c.default.Control.extend({
+	}), c.default.control.zoom({ position: "bottomright" }).addTo(o), c.default.control.attribution({ position: "bottomright" }).addTo(o);
+	let u = c.default.Control.extend({
 		options: { position: "topright" },
 		onAdd: function() {
 			let e = c.default.DomUtil.create("button", "test-mode-btn");
 			return e.innerHTML = n ? "GPS Simulado ON" : "Simular GPS", e.style.backgroundColor = n ? "#3b82f6" : "#fff", e.style.color = n ? "#fff" : "#333", e.style.border = "2px solid rgba(0,0,0,0.2)", e.style.borderRadius = "8px", e.style.padding = "6px 12px", e.style.cursor = "pointer", e.style.fontWeight = "bold", e.style.boxShadow = "0 2px 6px rgba(0,0,0,0.3)", e.style.margin = "10px", e.style.pointerEvents = "auto", e.onclick = (t) => {
-				c.default.DomEvent.stopPropagation(t), n = !n, n ? (e.style.backgroundColor = "#3b82f6", e.style.color = "#fff", e.innerHTML = "GPS Simulado ON", alert("Modo simulación activado. Haz clic en cualquier parte del mapa para ubicar tu GPS.")) : (e.style.backgroundColor = "#fff", e.style.color = "#333", e.innerHTML = "Simular GPS", i && (a.removeLayer(i), i = null, r = null));
+				c.default.DomEvent.stopPropagation(t), n = !n, n ? (e.style.backgroundColor = "#3b82f6", e.style.color = "#fff", e.innerHTML = "GPS Simulado ON", alert("Modo simulación activado. Haz clic en cualquier parte del mapa para ubicar tu GPS.")) : (e.style.backgroundColor = "#fff", e.style.color = "#333", e.innerHTML = "Simular GPS", i && (o.removeLayer(i), i = null, r = null));
 			}, e;
 		}
 	});
-	a.addControl(new s()), c.default.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
+	o.addControl(new u()), c.default.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
 		attribution: "&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors &copy; <a href=\"https://carto.com/attributions\">CARTO</a>",
 		maxZoom: 19
-	}).addTo(a);
-	let u = "\n        <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" height=\"100%\" viewBox=\"0 0 24 28\">\n            <rect x=\"0\" y=\"0\" width=\"24\" height=\"28\" rx=\"3.5\" fill=\"#1d4ed8\" />\n            <rect x=\"2\" y=\"2\" width=\"20\" height=\"12\" rx=\"1.5\" fill=\"white\" />\n            <text x=\"12\" y=\"8\" font-family=\"'Arial Black', 'Helvetica Neue', Helvetica, sans-serif\" font-size=\"6\" font-weight=\"900\" fill=\"black\" text-anchor=\"middle\" dominant-baseline=\"middle\" letter-spacing=\"0.5\">TAXI</text>\n        </svg>\n    ", d = a.getContainer(), f = document.createElement("div");
-	f.id = "map-overlay-info-paradas", f.style.position = "absolute", f.style.top = "70px", f.style.left = "50%", f.style.transform = "translate(-50%, -10px)", f.style.zIndex = "1000", f.style.width = "90%", f.style.maxWidth = "350px", f.style.display = "none", f.style.opacity = "0", f.style.transition = "opacity 0.3s ease, transform 0.3s ease";
-	let p = e.querySelector("#paradas-list-container"), m = () => {
-		f.style.opacity = "0", f.style.transform = "translate(-50%, -10px)", setTimeout(() => {
-			f.style.display = "none";
-		}, 300), p && (p.style.opacity = "1", p.style.pointerEvents = "auto");
+	}).addTo(o);
+	let d = "\n        <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" height=\"100%\" viewBox=\"0 0 24 28\">\n            <rect x=\"0\" y=\"0\" width=\"24\" height=\"28\" rx=\"3.5\" fill=\"#1d4ed8\" />\n            <rect x=\"2\" y=\"2\" width=\"20\" height=\"12\" rx=\"1.5\" fill=\"white\" />\n            <text x=\"12\" y=\"8\" font-family=\"'Arial Black', 'Helvetica Neue', Helvetica, sans-serif\" font-size=\"6\" font-weight=\"900\" fill=\"black\" text-anchor=\"middle\" dominant-baseline=\"middle\" letter-spacing=\"0.5\">TAXI</text>\n        </svg>\n    ", f = o.getContainer(), p = document.createElement("div");
+	p.id = "map-overlay-info-paradas", p.style.position = "absolute", p.style.top = "70px", p.style.left = "50%", p.style.transform = "translate(-50%, -10px)", p.style.zIndex = "1000", p.style.width = "90%", p.style.maxWidth = "350px", p.style.display = "none", p.style.opacity = "0", p.style.transition = "opacity 0.3s ease, transform 0.3s ease";
+	let m = e.querySelector("#paradas-list-container"), h = () => {
+		p.style.opacity = "0", p.style.transform = "translate(-50%, -10px)", setTimeout(() => {
+			p.style.display = "none";
+		}, 300), m && (m.style.opacity = "1", m.style.pointerEvents = "auto"), a.forEach((e) => e.marker.setOpacity(1));
 	};
-	a.on("click", (t) => {
-		if (m(), n) {
+	o.on("click", (t) => {
+		if (h(), n) {
 			r = t.latlng;
 			let n = e.querySelector("[data-filter=\"nearest\"]");
 			n && n.click();
 		}
-	}), d.appendChild(f);
-	let h = (e) => {
-		p && (p.style.opacity = "0", p.style.pointerEvents = "none"), f.innerHTML = `
+	}), f.appendChild(p);
+	let g = (e) => {
+		m && (m.style.opacity = "0", m.style.pointerEvents = "none"), p.innerHTML = `
             <div style="background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 9999px; padding: 1rem 1.25rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 1rem; width: 100%; box-sizing: border-box;">
                 <div style="width: 32px; height: 38px; flex-shrink: 0; border-radius: 4px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
-                    ${u}
+                    ${d}
                 </div>
                 <div style="display: flex; flex-direction: column; flex: 1; min-width: 0; justify-content: center;">
                     <span style="color: #3b82f6; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.15rem;">PARADA DE TAXI</span>
@@ -4820,48 +4820,53 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
                     <span style="color: rgba(255,255,255,0.7); font-size: 0.8rem; margin-top: 0.2rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${e.address}</span>
                 </div>
             </div>
-        `, f.style.display = "block", f.offsetWidth, f.style.opacity = "1", f.style.transform = "translate(-50%, 0)", a.setView([e.lat, e.lon], 16);
+        `, p.style.display = "block", p.offsetWidth, p.style.opacity = "1", p.style.transform = "translate(-50%, 0)", a.forEach((t) => {
+			t.parada.name === e.name ? t.marker.setOpacity(1) : t.marker.setOpacity(0);
+		}), o.setView([e.lat, e.lon], 16);
 	};
 	if (l.forEach((e) => {
 		let n = c.default.divIcon({
 			className: "custom-taxi-icon",
 			html: `<div class="taxi-marker" style="width: 36px; height: 42px; border: 2px solid white; border-radius: 6px; box-shadow: 0 4px 10px rgba(0,0,0, 0.4); overflow: hidden; background: #1d4ed8;">
-                    ${u}
+                    ${d}
                    </div>`,
 			iconSize: [36, 42],
 			iconAnchor: [18, 21],
 			popupAnchor: [0, -21]
-		});
-		c.default.marker([e.lat, e.lon], { icon: n }).addTo(a).on("click", (n) => {
-			c.default.DomEvent.stopPropagation(n), h(e);
+		}), r = c.default.marker([e.lat, e.lon], { icon: n }).addTo(o);
+		a.push({
+			marker: r,
+			parada: e
+		}), r.on("click", (n) => {
+			c.default.DomEvent.stopPropagation(n), g(e);
 			let r = t.getBoundingClientRect();
 			window.scrollTo({
 				top: r.top + window.scrollY - 80,
 				behavior: "smooth"
 			});
 		});
-	}), p) {
-		let o = [...l], s = (e, n = o) => {
-			o = n;
-			let r = Math.ceil(o.length / 6);
-			if (p.innerHTML = "", o.length === 0) {
-				p.innerHTML = "<div style=\"color: rgba(255,255,255,0.7); text-align: center; font-size: 0.9rem; padding: 1rem 0; background: rgba(15, 23, 42, 0.85); border-radius: 999px; backdrop-filter: blur(16px);\">No hay paradas en esta zona.</div>";
+	}), m) {
+		let a = [...l], s = (e, n = a) => {
+			a = n;
+			let r = Math.ceil(a.length / 6);
+			if (m.innerHTML = "", a.length === 0) {
+				m.innerHTML = "<div style=\"color: rgba(255,255,255,0.7); text-align: center; font-size: 0.9rem; padding: 1rem 0; background: rgba(15, 23, 42, 0.85); border-radius: 999px; backdrop-filter: blur(16px);\">No hay paradas en esta zona.</div>";
 				return;
 			}
-			let i = (e - 1) * 6, a = i + 6, c = o.slice(i, a), l = document.createElement("div");
-			if (l.className = "paradas-list", p.appendChild(l), c.forEach((e) => {
+			let i = (e - 1) * 6, o = i + 6, c = a.slice(i, o), l = document.createElement("div");
+			if (l.className = "paradas-list", m.appendChild(l), c.forEach((e) => {
 				let n = document.createElement("div");
 				n.innerHTML = `
                     <div class="mini-chip-parada" style="width: 100%; justify-content: flex-start;">
                         <div style="width: 32px; height: 36px; flex-shrink: 0; border-radius: 6px; border: 2px solid white; overflow: hidden; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.3); background: #1d4ed8;">
-                            ${u}
+                            ${d}
                         </div>
                         <div class="chip-name-container" style="flex: 1; overflow: hidden; display: flex; align-items: center;">
                             <span class="chip-name" style="color: #fff; font-size: 0.95rem; font-weight: 700; white-space: nowrap; display: inline-block;">${e.name}</span>
                         </div>
                     </div>
                 `, n.firstElementChild?.addEventListener("click", () => {
-					h(e);
+					g(e);
 					let n = t.getBoundingClientRect();
 					window.scrollTo({
 						top: n.top + window.scrollY - 80,
@@ -4904,28 +4909,28 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				let a = document.createElement("button");
 				a.innerHTML = "&raquo;", a.style.padding = "0.25rem 1rem", a.style.borderRadius = "999px", a.style.border = "1px solid rgba(255,255,255,0.1)", a.style.background = e === r ? "transparent" : "rgba(59, 130, 246, 0.15)", a.style.color = e === r ? "#64748b" : "#3b82f6", a.style.cursor = e === r ? "default" : "pointer", a.style.fontWeight = "600", a.style.transition = "all 0.2s ease", a.disabled = e === r, a.onclick = () => {
 					e < r && s(e + 1);
-				}, t.appendChild(n), t.appendChild(i), t.appendChild(a), p.appendChild(t);
+				}, t.appendChild(n), t.appendChild(i), t.appendChild(a), m.appendChild(t);
 			}
 		};
-		a.on("moveend", () => {
-			let t = a.getBounds(), n = l.filter((e) => t.contains(c.default.latLng(e.lat, e.lon)));
+		o.on("moveend", () => {
+			let t = o.getBounds(), n = l.filter((e) => t.contains(c.default.latLng(e.lat, e.lon)));
 			if (e.querySelector(".taxi-scope-pill.active")?.getAttribute("data-filter") === "nearest") {
-				let e = a.getCenter();
+				let e = o.getCenter();
 				n.sort((t, n) => (t.lat - e.lat) ** 2 + (t.lon - e.lng) ** 2 - ((n.lat - e.lat) ** 2 + (n.lon - e.lng) ** 2));
 			}
 			s(1, n);
 		});
-		let d = e.querySelectorAll(".taxi-scope-pill");
-		d.forEach((t) => {
+		let u = e.querySelectorAll(".taxi-scope-pill");
+		u.forEach((t) => {
 			t.addEventListener("click", (t) => {
-				d.forEach((e) => e.classList.remove("active"));
-				let o = t.target;
-				o.classList.add("active");
-				let s = o.getAttribute("data-filter");
+				u.forEach((e) => e.classList.remove("active"));
+				let a = t.target;
+				a.classList.add("active");
+				let s = a.getAttribute("data-filter");
 				if (s === "all") {
-					m();
+					h();
 					let e = c.default.latLngBounds(l.map((e) => [e.lat, e.lon]));
-					a.fitBounds(e, {
+					o.fitBounds(e, {
 						paddingBottomRight: [0, 320],
 						paddingTopLeft: [0, 180]
 					});
@@ -4940,7 +4945,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 								weight: 3,
 								opacity: 1,
 								fillOpacity: 1
-							}).addTo(a), console.log(`TEST MODE: Spoofing location to ${t}, ${n}`), setTimeout(() => e({
+							}).addTo(o), console.log(`TEST MODE: Spoofing location to ${t}, ${n}`), setTimeout(() => e({
 								coords: {
 									latitude: t,
 									longitude: n,
@@ -4957,19 +4962,19 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 							POSITION_UNAVAILABLE: 2,
 							TIMEOUT: 3
 						});
-					}, s = o.innerText;
-					o.innerText = "Buscando...", t((e) => {
-						o.innerText = s;
+					}, s = a.innerText;
+					a.innerText = "Buscando...", t((e) => {
+						a.innerText = s;
 						let t = e.coords.latitude, n = e.coords.longitude;
-						m(), a.setView([t, n], 15);
+						h(), o.setView([t, n], 15);
 					}, (t) => {
-						o.innerText = s, console.error("Error getting location", t), alert("No hemos podido acceder a tu ubicación o tu navegador no soporta geolocalización."), o.classList.remove("active"), e.querySelector("[data-filter=\"all\"]")?.classList.add("active"), a.setView([36.529, -6.292], 13);
+						a.innerText = s, console.error("Error getting location", t), alert("No hemos podido acceder a tu ubicación o tu navegador no soporta geolocalización."), a.classList.remove("active"), e.querySelector("[data-filter=\"all\"]")?.classList.add("active"), o.setView([36.529, -6.292], 13);
 					});
 				}
 			});
 		}), s(1, [...l]);
 	}
-	window.cadizTaxiMap = a;
+	window.cadizTaxiMap = o;
 }, d = class extends HTMLElement {
 	constructor() {
 		super();
