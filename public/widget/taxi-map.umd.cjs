@@ -23,17 +23,17 @@
             </div>
             
             <div style="display: flex; width: 100%; border-top: 1px solid #f1f5f9; margin-top: 0.75rem; padding-top: 0.75rem; gap: 0.5rem; justify-content: space-between;">
-                <button class="sheet-action-btn" onclick="document.getElementById('open-search-btn')?.click()">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calculator"><rect width="16" height="20" x="4" y="2" rx="2"/><line x1="8" x2="16" y1="6" y2="6"/><line x1="16" x2="16" y1="14" y2="18"/><path d="M16 10h.01"/><path d="M12 10h.01"/><path d="M8 10h.01"/><path d="M12 14h.01"/><path d="M8 14h.01"/><path d="M12 18h.01"/><path d="M8 18h.01"/></svg>
-                    Calcular
-                </button>
                 <a class="sheet-action-btn" href="https://www.google.com/maps/dir/?api=1&destination=${e.lat},${e.lon}" target="_blank">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="7.5 5 9 13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 16v-4a2 2 0 0 1 2-2h4M12 7l3 3-3 3"/></svg>
                     Ir
                 </a>
+                <button class="sheet-action-btn" onclick="document.getElementById('open-search-btn')?.click()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calculator"><rect width="16" height="20" x="4" y="2" rx="2"/><line x1="8" x2="16" y1="6" y2="6"/><line x1="16" x2="16" y1="14" y2="18"/><path d="M16 10h.01"/><path d="M12 10h.01"/><path d="M8 10h.01"/><path d="M12 14h.01"/><path d="M8 14h.01"/><path d="M12 18h.01"/><path d="M8 18h.01"/></svg>
+                    Calcular
+                </button>
                 <a class="sheet-action-btn primary" href="tel:+34956212121">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-phone"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-                    Pedir
+                    Llamar
                 </a>
             </div>
         `,g.classList.remove(`minimized`),g.classList.add(`expanded`),s.forEach(t=>{t.marker.setOpacity(+(t.parada.name===e.name))});let t=c.project([e.lat,e.lon]).subtract([0,50]),n=c.unproject(t);c.setView(n,16);try{let t=await m(),n=l.default.latLngBounds([[t.lat,t.lon],[e.lat,e.lon]]);c.fitBounds(n,{paddingTopLeft:[50,150],paddingBottomRight:[50,150],animate:!0,duration:1});let r=await h(t.lat,t.lon,e.lat,e.lon),i=g.querySelector(`#route-info-container`);if(o&&=(c.removeLayer(o),null),i&&r){let e=r.distance>1e3?(r.distance/1e3).toFixed(1)+` km`:Math.round(r.distance)+` m`,t=Math.max(1,Math.round(r.duration/60));if(r.geometry&&r.geometry.coordinates){let e=r.geometry.coordinates.map(e=>[e[1],e[0]]);o=l.default.polyline(e,{color:`#3b82f6`,weight:5,opacity:.85,dashArray:`10, 10`,className:`animated-taxi-route`}).addTo(c)}i.innerHTML=`
