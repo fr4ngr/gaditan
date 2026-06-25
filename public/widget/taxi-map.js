@@ -4778,8 +4778,8 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 		dragging: !c.default.Browser.mobile
 	}), s = c.default.latLngBounds(l.map((e) => [e.lat, e.lon]));
 	o.fitBounds(s, {
-		paddingBottomRight: [0, 320],
-		paddingTopLeft: [0, 180]
+		paddingBottomRight: [0, 90],
+		paddingTopLeft: [0, 140]
 	}), c.default.control.zoom({ position: "bottomright" }).addTo(o), c.default.control.attribution({ position: "bottomright" }).addTo(o);
 	let u = c.default.Control.extend({
 		options: { position: "topright" },
