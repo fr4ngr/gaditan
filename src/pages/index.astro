@@ -204,12 +204,14 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%; max-width: 85%; align-self: flex-start;">
                 <span class="bubble">${data.content}</span>
                 ${data.lat && data.lon ? `
-                <div style="border-radius: 18px; overflow: hidden; height: 250px; width: 100%; position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-                    <button id="dev-mock-btn-${msgId}" style="position:absolute; top:10px; right:10px; z-index:1000; padding:5px 10px; background:#d32f2f; color:white; font-size:12px; font-weight:bold; border:none; border-radius:4px; cursor:pointer;">DEV: Fake GPS</button>
-                    <div id="leaflet-map-${msgId}" style="width: 100%; height: 100%;"></div>
-                </div>
-                <div id="route-instructions-${msgId}" style="display: none; flex-direction: column; gap: 0.35rem; margin-top: 0.25rem;">
-                    <!-- Instrucciones de ruta aquí -->
+                <div style="border-radius: 18px; overflow: hidden; width: 100%; box-shadow: 0 2px 5px rgba(0,0,0,0.1); background: white; padding: 10px; display: flex; flex-direction: column; gap: 10px;">
+                    <div style="font-weight: 600; text-align: center; color: var(--text-primary);">📍 Destino: ${data.stopName || 'Parada Seleccionada'}</div>
+                    <button class="call-btn" style="background: var(--primary-color); margin: 0; display: flex; align-items: center; justify-content: center; gap: 8px;" onclick="window.startLiveNavigation('${data.lat}', '${data.lon}', '${data.stopName || 'Destino'}')">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2L4.5 20.29L5.21 21L12 18L18.79 21L19.5 20.29L12 2Z" fill="currentColor"/>
+                        </svg>
+                        Iniciar Navegación
+                    </button>
                 </div>
                 ` : ''}
             </div>`;
@@ -255,12 +257,15 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             const cardHtml = renderCard(data, msgId);
             addMessage('bot', cardHtml);
 
-            // 5. Instanciar el mapa en línea
-            if ((data.cardType === 'MapCard' || data.cardType === 'NavigationCard') && data.lat && data.lon) {
-                const isRouting = data.cardType === 'NavigationCard';
+            // 5. Instanciar el mapa en línea o activar navegación
+            if (data.cardType === 'MapCard' && data.lat && data.lon) {
                 setTimeout(() => {
-                    window.initInlineMap(data.lat, data.lon, msgId, isRouting);
+                    window.initInlineMap(data.lat, data.lon, msgId);
                 }, 100);
+            } else if (data.cardType === 'NavigationCard' && data.lat && data.lon) {
+                setTimeout(() => {
+                    window.startLiveNavigation(data.lat, data.lon, data.stopName || 'Destino');
+                }, 800); // Dar un poco de tiempo para leer el mensaje antes de abrir a pantalla completa
             }
 
         } catch (error) {
@@ -269,13 +274,12 @@ import ChatLayout from '../layouts/ChatLayout.astro';
         }
     }
 
-    // --- LÓGICA DE LEAFLET INLINE ---
-    window.initInlineMap = function(lat: string, lon: string, msgId: string, routing = false) {
+    // --- LÓGICA DE LEAFLET INLINE PARA MAPCARD ---
+    window.initInlineMap = function(lat: string, lon: string, msgId: string) {
         const mapElement = document.getElementById(`leaflet-map-${msgId}`);
         if (!mapElement) return;
         
         const mapL = (window as any).L;
-        // Impedir propagación de scroll para que no moleste en el feed
         const map = mapL.map(`leaflet-map-${msgId}`, {
             scrollWheelZoom: false
         }).setView([lat, lon], 16);
@@ -287,96 +291,179 @@ import ChatLayout from '../layouts/ChatLayout.astro';
         }).addTo(map);
         
         mapL.marker([lat, lon]).addTo(map).bindPopup('Destino').openPopup();
+        setTimeout(() => scrollToBottom(), 500);
+    };
 
-        if (routing) {
-            let routingControl: any = null;
-            const startRouting = (userLat: number, userLon: number, isFake = false) => {
-                if (routingControl) {
-                    map.removeControl(routingControl);
-                }
-                routingControl = mapL.Routing.control({
-                    waypoints: [
-                        mapL.latLng(userLat, userLon),
-                        mapL.latLng(lat, lon)
-                    ],
-                    routeWhileDragging: false,
-                    language: 'es',
-                    showAlternatives: false,
-                    show: false, // Ocultar el cuadro blanco por defecto de Leaflet Routing Machine
-                    addWaypoints: false,
-                    createMarker: function() { return null; }
-                }).addTo(map);
+    // --- LÓGICA DE NAVEGACIÓN EN VIVO (FULLSCREEN) ---
+    let liveMap: any = null;
+    let liveRoutingControl: any = null;
+    let watchId: number | null = null;
+    let userMarker: any = null;
 
-                // Capturar las instrucciones de la ruta
-                routingControl.on('routesfound', function(e: any) {
-                    const instructionsContainer = document.getElementById(`route-instructions-${msgId}`);
-                    if (instructionsContainer) {
-                        const instructions = e.routes[0].instructions;
-                        let html = '';
-                        
-                        instructions.forEach((inst: any) => {
-                            if (inst.distance > 0 || inst.type === 'DestinationReached') {
-                                let icon = '⬆️';
-                                if (inst.type.toLowerCase().includes('left')) icon = '⬅️';
-                                if (inst.type.toLowerCase().includes('right')) icon = '➡️';
-                                if (inst.type === 'DestinationReached') icon = '📍';
-                                if (inst.type === 'Roundabout') icon = '🔄';
-                                if (inst.type === 'TurnAround') icon = '↩️';
-                                
-                                html += `
-                                <div style="background: white; border: 1px solid var(--header-border); padding: 8px 12px; border-radius: 12px; font-size: 0.85rem; display: flex; align-items: center; gap: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
-                                    <span style="font-size: 1.2rem;">${icon}</span>
-                                    <div style="flex-grow: 1;">
-                                        <div style="font-weight: 600; color: var(--text-primary); line-height: 1.2;">${inst.text}</div>
-                                        ${inst.distance ? `<div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 2px;">Continuar ${Math.round(inst.distance)} m</div>` : ''}
-                                    </div>
-                                </div>`;
-                            }
-                        });
-                        
-                        instructionsContainer.innerHTML = html;
-                        instructionsContainer.style.display = 'flex';
-                        setTimeout(() => scrollToBottom(), 100);
-                    }
-                });
+    window.startLiveNavigation = function(destLatStr: string, destLonStr: string, destName: string) {
+        const layer = document.getElementById('fullscreen-nav-layer');
+        if (!layer) return;
+        
+        const destLat = parseFloat(destLatStr);
+        const destLon = parseFloat(destLonStr);
+
+        // Mostrar capa
+        layer.classList.remove('closed');
+
+        setTimeout(() => {
+            const mapL = (window as any).L;
+            if (!liveMap) {
+                liveMap = mapL.map('nav-map', { zoomControl: false }).setView([destLat, destLon], 16);
+                mapL.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+                    attribution: '© OSM, CartoDB', subdomains: 'abcd', maxZoom: 20
+                }).addTo(liveMap);
                 
-                const label = isFake ? 'Ubicación simulada' : 'Tu ubicación';
-                mapL.circleMarker([userLat, userLon], { radius: 8, color: isFake ? '#d32f2f' : '#3b82f6', fillOpacity: 0.8 }).addTo(map).bindPopup(label).openPopup();
-            };
+                // Botones de Zoom personalizados
+                mapL.control.zoom({ position: 'bottomright' }).addTo(liveMap);
+            }
 
-            const devBtn = document.getElementById(`dev-mock-btn-${msgId}`);
+            // Limpiar routing anterior si existe
+            if (liveRoutingControl) {
+                liveMap.removeControl(liveRoutingControl);
+                liveRoutingControl = null;
+            }
+            if (userMarker) {
+                liveMap.removeLayer(userMarker);
+                userMarker = null;
+            }
+
+            // Añadir marcador de destino
+            mapL.marker([destLat, destLon]).addTo(liveMap).bindPopup(destName).openPopup();
+
+            // Configurar botón DEV para simular movimiento
+            const devBtn = document.getElementById('nav-dev-btn');
             if (devBtn) {
+                devBtn.style.display = 'block';
                 let isDevModeActive = false;
-                devBtn.addEventListener('click', () => {
+                devBtn.onclick = () => {
                     isDevModeActive = true;
+                    devBtn.innerText = 'CLIC EN EL MAPA';
                     devBtn.style.background = '#388e3c';
-                    devBtn.innerText = 'CLIC EN MAPA';
-                });
-
-                map.on('click', (e: any) => {
+                };
+                liveMap.on('click', (e: any) => {
                     if (isDevModeActive) {
-                        startRouting(e.latlng.lat, e.latlng.lng, true);
+                        updateUserLocation(e.latlng.lat, e.latlng.lng, destLat, destLon, true);
                         isDevModeActive = false;
-                        devBtn.style.background = '#d32f2f';
-                        devBtn.innerText = 'DEV: Fake GPS';
+                        devBtn.innerText = 'DEV: FAKE GPS';
+                        devBtn.style.background = 'rgba(211, 47, 47, 0.9)';
                     }
                 });
             }
 
+            // Iniciar rastreo GPS real
             if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
+                watchId = navigator.geolocation.watchPosition(
                     (position) => {
-                        if (!routingControl) {
-                            startRouting(position.coords.latitude, position.coords.longitude);
-                        }
+                        updateUserLocation(position.coords.latitude, position.coords.longitude, destLat, destLon, false);
                     },
                     (error) => {
-                        console.error("Error obteniendo ubicación:", error);
-                    }
+                        console.error("GPS Error:", error);
+                        document.getElementById('nav-instruction-text')!.innerText = "Esperando señal GPS...";
+                    },
+                    { enableHighAccuracy: true, maximumAge: 10000, timeout: 5000 }
                 );
+            } else {
+                document.getElementById('nav-instruction-text')!.innerText = "GPS no disponible.";
             }
+
+        }, 400); // Dar tiempo a la animación CSS
+    };
+
+    function updateUserLocation(userLat: number, userLon: number, destLat: number, destLon: number, isFake: boolean) {
+        const mapL = (window as any).L;
+        
+        // Actualizar marcador de usuario
+        if (!userMarker) {
+            userMarker = mapL.circleMarker([userLat, userLon], { radius: 8, color: isFake ? '#d32f2f' : '#3b82f6', fillOpacity: 1, weight: 2, fillColor: '#fff' }).addTo(liveMap);
+        } else {
+            userMarker.setLatLng([userLat, userLon]);
+            userMarker.setStyle({ color: isFake ? '#d32f2f' : '#3b82f6' });
         }
-        setTimeout(() => scrollToBottom(), 500);
+
+        // Crear ruta si no existe o actualizar waypoints
+        if (!liveRoutingControl) {
+            liveRoutingControl = mapL.Routing.control({
+                waypoints: [ mapL.latLng(userLat, userLon), mapL.latLng(destLat, destLon) ],
+                routeWhileDragging: false,
+                language: 'es',
+                showAlternatives: false,
+                show: false,
+                addWaypoints: false,
+                createMarker: function() { return null; },
+                lineOptions: {
+                    styles: [{ color: '#3b82f6', opacity: 0.8, weight: 6 }] // COLOR SISTEMA (AZUL)
+                }
+            }).addTo(liveMap);
+
+            // Escuchar instrucciones
+            liveRoutingControl.on('routesfound', function(e: any) {
+                const route = e.routes[0];
+                const summary = route.summary;
+                const instructions = route.instructions;
+
+                // Actualizar Top Panel (ETA y Distancia)
+                const etaMin = Math.ceil(summary.totalTime / 60);
+                const distKm = (summary.totalDistance / 1000).toFixed(1);
+                document.getElementById('nav-eta')!.innerText = `${etaMin} min`;
+                document.getElementById('nav-distance')!.innerText = `${distKm} km`;
+
+                // Actualizar Bottom Panel (Píldora de Instrucción Actual)
+                let currentInstruction = instructions[0];
+                // A veces la instrucción 0 es solo "Head north", pasamos a la siguiente si la distancia es muy corta o irrelevante
+                if (currentInstruction.type === 'Head' && instructions.length > 1 && currentInstruction.distance < 10) {
+                    currentInstruction = instructions[1];
+                }
+
+                if (currentInstruction) {
+                    let icon = '⬆️';
+                    const t = currentInstruction.type.toLowerCase();
+                    if (t.includes('left')) icon = '⬅️';
+                    if (t.includes('right')) icon = '➡️';
+                    if (t.includes('arrive') || t.includes('destinationreached')) icon = '📍';
+                    if (t.includes('roundabout')) icon = '🔄';
+                    if (t.includes('turnaround')) icon = '↩️';
+                    
+                    document.getElementById('nav-instruction-icon')!.innerText = icon;
+                    document.getElementById('nav-instruction-text')!.innerText = currentInstruction.text;
+                    
+                    if (currentInstruction.distance > 0) {
+                        document.getElementById('nav-instruction-dist')!.innerText = `en ${Math.round(currentInstruction.distance)} m`;
+                    } else {
+                        document.getElementById('nav-instruction-dist')!.innerText = '';
+                    }
+                }
+            });
+        } else {
+            // Ya existe el control, solo actualizamos los waypoints
+            liveRoutingControl.setWaypoints([
+                mapL.latLng(userLat, userLon),
+                mapL.latLng(destLat, destLon)
+            ]);
+        }
+    }
+
+    window.exitLiveNavigation = function() {
+        const layer = document.getElementById('fullscreen-nav-layer');
+        if (layer) layer.classList.add('closed');
+        
+        if (watchId !== null) {
+            navigator.geolocation.clearWatch(watchId);
+            watchId = null;
+        }
+        
+        if (liveRoutingControl) {
+            liveMap.removeControl(liveRoutingControl);
+            liveRoutingControl = null;
+        }
+        if (userMarker) {
+            liveMap.removeLayer(userMarker);
+            userMarker = null;
+        }
     };
 
     // Exponer función global para botones internos de las tarjetas
@@ -410,8 +497,9 @@ import ChatLayout from '../layouts/ChatLayout.astro';
     declare global {
         interface Window {
             sendToAI: (text: string) => void;
-            openMapPanel: (lat: string, lon: string, msgId: string, routing?: boolean) => void;
-            closeMapPanel: (lat: string, lon: string, msgId: string, routing?: boolean) => void;
+            initInlineMap: (lat: string, lon: string, msgId: string) => void;
+            startLiveNavigation: (lat: string, lon: string, name: string) => void;
+            exitLiveNavigation: () => void;
             L: any;
         }
     }
