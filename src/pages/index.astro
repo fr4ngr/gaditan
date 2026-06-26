@@ -289,6 +289,7 @@ import ChatLayout from '../layouts/ChatLayout.astro';
         // Preparar panel superior
         topPanel.innerHTML = `
             <button class="close-panel-btn" onclick="window.closeMapPanel('${lat}', '${lon}', '${msgId}', ${routing})">✕</button>
+            ${routing ? `<button id="dev-mock-btn" style="position:absolute; top:10px; left:50px; z-index:1000; padding:5px 10px; background:#d32f2f; color:white; font-size:12px; font-weight:bold; border:none; border-radius:4px; cursor:pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">BOTÓN DESARROLLO: Fake GPS</button>` : ''}
             <div id="leaflet-map-large" style="width:100%; height:100%;"></div>
         `;
         topPanel.classList.remove('closed');
@@ -307,35 +308,59 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                 .bindPopup('Destino')
                 .openPopup();
 
-            if (routing && navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        const userLat = position.coords.latitude;
-                        const userLon = position.coords.longitude;
-                        
-                        // Añadir Routing Machine
-                        routingControl = mapL.Routing.control({
-                            waypoints: [
-                                mapL.latLng(userLat, userLon),
-                                mapL.latLng(lat, lon)
-                            ],
-                            routeWhileDragging: false,
-                            language: 'es',
-                            showAlternatives: false,
-                            createMarker: function() { return null; } // Ocultar los marcadores por defecto de la ruta
-                        }).addTo(currentMap);
-                        
-                        // Añadir marcador de usuario
-                        mapL.circleMarker([userLat, userLon], { radius: 8, color: '#3b82f6', fillOpacity: 0.8 }).addTo(currentMap).bindPopup('Tu ubicación');
-                        
-                        // El Routing control ajusta los bounds automáticamente, si no lo hace:
-                        // currentMap.fitBounds(mapL.latLngBounds([userLat, userLon], [lat, lon]));
-                    },
-                    (error) => {
-                        console.error("Error obteniendo ubicación:", error);
-                        alert("No se pudo obtener tu ubicación para calcular la ruta.");
+            if (routing) {
+                const startRouting = (userLat: number, userLon: number, isFake = false) => {
+                    if (routingControl) {
+                        currentMap.removeControl(routingControl);
                     }
-                );
+                    routingControl = mapL.Routing.control({
+                        waypoints: [
+                            mapL.latLng(userLat, userLon),
+                            mapL.latLng(lat, lon)
+                        ],
+                        routeWhileDragging: false,
+                        language: 'es',
+                        showAlternatives: false,
+                        createMarker: function() { return null; }
+                    }).addTo(currentMap);
+                    
+                    const label = isFake ? 'Ubicación simulada' : 'Tu ubicación';
+                    mapL.circleMarker([userLat, userLon], { radius: 8, color: isFake ? '#d32f2f' : '#3b82f6', fillOpacity: 0.8 }).addTo(currentMap).bindPopup(label).openPopup();
+                };
+
+                // Lógica Botón de Desarrollo
+                const devBtn = document.getElementById('dev-mock-btn');
+                if (devBtn) {
+                    let isDevModeActive = false;
+                    devBtn.addEventListener('click', () => {
+                        isDevModeActive = true;
+                        devBtn.style.background = '#388e3c';
+                        devBtn.innerText = 'HAZ CLIC EN EL MAPA';
+                    });
+
+                    currentMap.on('click', (e: any) => {
+                        if (isDevModeActive) {
+                            startRouting(e.latlng.lat, e.latlng.lng, true);
+                            isDevModeActive = false;
+                            devBtn.style.background = '#d32f2f';
+                            devBtn.innerText = 'BOTÓN DESARROLLO: Fake GPS';
+                        }
+                    });
+                }
+
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        (position) => {
+                            // Solo iniciar ruta real si no hay un control ya (por si el dev se adelantó)
+                            if (!routingControl) {
+                                startRouting(position.coords.latitude, position.coords.longitude);
+                            }
+                        },
+                        (error) => {
+                            console.error("Error obteniendo ubicación:", error);
+                        }
+                    );
+                }
             }
 
             scrollToBottom();
