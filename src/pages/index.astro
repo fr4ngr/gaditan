@@ -244,7 +244,11 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             removeTypingIndicator(typingId);
 
             if (data.error) {
-                addMessage('bot', `<span class="bubble" style="background:#ffebee; color:#c62828;">Error del servidor: ${data.error}</span>`);
+                let errorMsg = data.error;
+                if (typeof errorMsg === 'string' && (errorMsg.includes('503') || errorMsg.includes('high demand'))) {
+                    errorMsg = "Servidores de Inteligencia Artificial saturados temporalmente. Por favor, inténtalo de nuevo en unos segundos.";
+                }
+                addMessage('bot', `<span class="bubble" style="background:#ffebee; color:#c62828;">⚠️ ${errorMsg}</span>`);
                 chatHistory.pop(); // Remove failed user message from history
                 return;
             }
