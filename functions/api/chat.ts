@@ -82,7 +82,14 @@ DEBES devolver SIEMPRE una estructura JSON válida que defina qué tarjeta visua
         });
 
     } catch (error) {
-        return new Response(JSON.stringify({ error: error.message }), { 
+        let errorMessage = "Ha ocurrido un error inesperado.";
+        if (error.message && error.message.includes('429')) {
+            errorMessage = "¡Uf! Estoy hablando con demasiada gente a la vez y me he quedado sin aliento (Límite de la capa gratuita). Espera 1 minuto e inténtalo de nuevo.";
+        } else {
+            errorMessage = error.message;
+        }
+
+        return new Response(JSON.stringify({ error: errorMessage }), { 
             status: 500,
             headers: { 'Content-Type': 'application/json' }
         });
