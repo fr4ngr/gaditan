@@ -81,7 +81,34 @@ Bajo el amparo de la legislación de accesibilidad y la Ordenanza de Cádiz, **e
 
 ## 7. Casos Especiales y Normas Adicionales (Cajón de Sastre)
 *   **Objetos Perdidos:** El conductor debe revisar el coche al finalizar cada trayecto. Si encuentra pertenencias olvidadas y no puede devolverlas en el acto, está obligado a depositarlas en las oficinas de la Policía Local de Cádiz en un plazo de 24 horas hábiles. Si el cliente solicita la entrega de un objeto a domicilio, deberá pagar al taxista el trayecto con el taxímetro encendido, previo aviso de su coste aproximado.
-*   **Ubicación de Paradas de Taxi Oficiales:** Se recoge en el inventario local un listado de paradas oficiales en puntos neurálgicos, destacando entre ellas: Parador, Falla, Mora, San Antonio, Palillero, Plaza Tortugas, La Punta (solo de 22 a 7h), Comes, Catedral, San Juan de Dios y Estación (Entrada Oeste de Adif).
+*   **Ubicación de Paradas de Taxi Oficiales (Inventario 2026):**
+| Nombre | Descripción / Ubicación | Observaciones |
+| :--- | :--- | :--- |
+| Parador | Parador de Cádiz | |
+| Falla | Plaza de Falla | |
+| Mora | Glorieta Carlos Con | |
+| San Antonio | Plaza de San Antonio | |
+| Palillero | Plaza del Palillero | |
+| Plaza Tortugas | Plaza de las Tortugas | |
+| La Punta | Paseo Almirante Pascual Pery | Solo noches de 22 a 7h |
+| Comes | Plaza de la Hispanidad | |
+| Catedral | Plaza de la Catedral | |
+| San Juan de Dios | Plaza de San Juan de Dios | |
+| Estación | Entrada Oeste de la Estación de Adif | |
+| Caja Nacional | Junto al INSS | |
+| Monte Puerta Tierra | Avenida Andalucía, 34 | |
+| Pabellón | Calle Brunete | |
+| Corte Inglés | Avenida de las Cortes de Cádiz | |
+| Bar Parada | Avenida Guadalquivir, 23 | |
+| Hotel Barceló | Avenida Andalucía, 89 | |
+| Camelia | Avenida Ana de Viya, 7 | |
+| Barriada | Avenida Guadalete | |
+| Residencia | Avenida Cayetano del Toro, 1 (Hospital Puerta del Mar) | |
+| Mercadona | Avenida de la Ilustración, 1 | |
+| Canary | Glorieta Zona Franca | |
+| Helios | Plaza Helios (Estadio) | |
+| Piscina | Complejo Deportivo Ciudad de Cádiz | |
+| Zona Franca | Glorieta de la Zona Franca | |
 *   **Higiene y Limpieza del Vehículo:** Los vehículos deben cumplir con estrictas condiciones de limpieza interior y exterior. Queda prohibido de manera expresa el uso de alfombras y felpudos; el piso debe ser de material fácilmente lavable. El tapizado no debe presentar roturas ni desperfectos.
 *   **Vestimenta Obligatoria (Uniforme):** Se prohíbe el uso de pantalones cortos, camisetas, chanclas o sandalias que no tengan sujeción posterior. Los conductores deben vestir con pantalón largo oscuro, camisa clara (de preferencia blanca) o polo de manga corta en verano, y jersey oscuro.
 *   **Libranzas y Excepciones de Descanso:** No se permite estacionar en las paradas de taxi en los días de descanso obligatorio del vehículo. No obstante, el taxi puede prestar servicio en su día de descanso exclusivamente para cubrir servicios precontratados con antelación, debiendo llevar a bordo la acreditación documental física o digital.
