@@ -7,6 +7,13 @@ export async function onRequestPost(context) {
         const body = await request.json();
         const userMessage = body.message;
         
+        if (!env.GEMINI_API_KEY) {
+            return new Response(JSON.stringify({ error: "Missing key. Available env keys: " + Object.keys(env).join(", ") }), { 
+                status: 500,
+                headers: { 'Content-Type': 'application/json' }
+            });
+        }
+
         // Inicializar Gemini usando la clave secreta del entorno (Cloudflare)
         const ai = new GoogleGenAI({ apiKey: env.GEMINI_API_KEY });
 
