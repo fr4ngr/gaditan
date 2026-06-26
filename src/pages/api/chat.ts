@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { GoogleGenAI, Type, Schema } from '@google/genai';
+import { GoogleGenAI, Type } from '@google/genai';
 import knowledgeBase from '../../data/taxi-knowledge.md?raw';
 
 export const POST: APIRoute = async ({ request }) => {
@@ -23,7 +23,7 @@ DEBES devolver SIEMPRE una estructura JSON válida que defina qué tarjeta visua
 - Si el usuario pide llamar un taxi, usa "ContactCard" con el teléfono oficial de RadioTaxi Cádiz.
 `;
 
-        const schema: Schema = {
+        const schema = {
             type: Type.OBJECT,
             properties: {
                 cardType: {
