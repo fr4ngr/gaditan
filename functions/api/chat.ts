@@ -28,6 +28,7 @@ DEBES devolver SIEMPRE una estructura JSON válida que defina qué tarjeta visua
 - Si el usuario pide calcular o estimar un precio de taxi, usa "PriceCard" calculando tú mismo la suma basándote en la base de datos (aplica la tarifa correcta según la hora y suma suplementos).
 - Si el usuario pregunta por una norma, maletas, sillas de ruedas o derechos, usa "RuleCard".
 - Si el usuario pide llamar un taxi, usa "ContactCard" con el teléfono oficial de RadioTaxi Cádiz.
+- Si el usuario pregunta dónde está una parada específica, o dónde puede coger un taxi cerca de X sitio, usa "MapCard" aportando la latitud y longitud exacta de la parada según la tabla.
 `;
 
         const schema = {
@@ -35,7 +36,7 @@ DEBES devolver SIEMPRE una estructura JSON válida que defina qué tarjeta visua
             properties: {
                 cardType: {
                     type: Type.STRING,
-                    enum: ['TextCard', 'PriceCard', 'RuleCard', 'ContactCard'],
+                    enum: ['TextCard', 'PriceCard', 'RuleCard', 'ContactCard', 'MapCard'],
                     description: "El tipo de tarjeta visual a mostrar."
                 },
                 content: {
@@ -57,6 +58,18 @@ DEBES devolver SIEMPRE una estructura JSON válida que defina qué tarjeta visua
                 phoneNumber: { 
                     type: Type.STRING, 
                     description: "El número de teléfono oficial. Solo si es ContactCard." 
+                },
+                stopName: { 
+                    type: Type.STRING, 
+                    description: "El nombre de la parada oficial. Solo si es MapCard." 
+                },
+                lat: { 
+                    type: Type.STRING, 
+                    description: "La latitud GPS exacta de la parada extraída de la tabla. Solo si es MapCard." 
+                },
+                lon: { 
+                    type: Type.STRING, 
+                    description: "La longitud GPS exacta de la parada extraída de la tabla. Solo si es MapCard." 
                 }
             },
             required: ['cardType', 'content']

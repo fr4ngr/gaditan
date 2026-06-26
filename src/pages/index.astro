@@ -32,6 +32,7 @@ import ChatLayout from '../layouts/ChatLayout.astro';
     .price-card .card-header { background: #e3f2fd; color: #1565c0; }
     .rule-card .card-header { background: #fff3e0; color: #e65100; }
     .contact-card .card-header { background: #e8f5e9; color: #2e7d32; }
+    .map-card .card-header { background: #f3e5f5; color: #6a1b9a; }
     
     .card-body {
         padding: 16px;
@@ -85,6 +86,19 @@ import ChatLayout from '../layouts/ChatLayout.astro';
     .ai-card .call-btn:hover { background: #0056b3; }
     .contact-card .call-btn { background: #2e7d32; }
     .contact-card .call-btn:hover { background: #1b5e20; }
+    
+    .map-container {
+        width: 100%;
+        height: 250px;
+        border-radius: 0 0 16px 16px;
+        overflow: hidden;
+        margin-top: 10px;
+    }
+    .map-container iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+    }
     
     @keyframes slideIn {
         from { opacity: 0; transform: translateY(10px); }
@@ -171,6 +185,20 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                     <div class="phone-number">${phone}</div>
                 </div>
                 <a href="tel:${cleanPhone}" class="call-btn">Llamar Ahora</a>
+            </div>`;
+        }
+        if (data.cardType === 'MapCard') {
+            return `
+            <div class="ai-card map-card">
+                <div class="card-header">📍 Ubicación de la Parada</div>
+                <div class="card-body">
+                    <p><strong>${data.stopName || 'Parada oficial'}</strong></p>
+                    <p>${data.content}</p>
+                </div>
+                ${data.lat && data.lon ? `
+                <div class="map-container">
+                    <iframe src="https://maps.google.com/maps?q=${data.lat},${data.lon}&z=16&output=embed"></iframe>
+                </div>` : ''}
             </div>`;
         }
         // Fallback para TextCard o desconocidos

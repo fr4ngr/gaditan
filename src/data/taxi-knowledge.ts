@@ -82,33 +82,33 @@ Bajo el amparo de la legislación de accesibilidad y la Ordenanza de Cádiz, **e
 ## 7. Casos Especiales y Normas Adicionales (Cajón de Sastre)
 *   **Objetos Perdidos:** El conductor debe revisar el coche al finalizar cada trayecto. Si encuentra pertenencias olvidadas y no puede devolverlas en el acto, está obligado a depositarlas en las oficinas de la Policía Local de Cádiz en un plazo de 24 horas hábiles. Si el cliente solicita la entrega de un objeto a domicilio, deberá pagar al taxista el trayecto con el taxímetro encendido, previo aviso de su coste aproximado.
 *   **Ubicación de Paradas de Taxi Oficiales (Inventario 2026):**
-| Nombre | Descripción / Ubicación | Observaciones |
-| :--- | :--- | :--- |
-| Parador | Parador de Cádiz | |
-| Falla | Plaza de Falla | |
-| Mora | Glorieta Carlos Con | |
-| San Antonio | Plaza de San Antonio | |
-| Palillero | Plaza del Palillero | |
-| Plaza Tortugas | Plaza de las Tortugas | |
-| La Punta | Paseo Almirante Pascual Pery | Solo noches de 22 a 7h |
-| Comes | Plaza de la Hispanidad | |
-| Catedral | Plaza de la Catedral | |
-| San Juan de Dios | Plaza de San Juan de Dios | |
-| Estación | Entrada Oeste de la Estación de Adif | |
-| Caja Nacional | Junto al INSS | |
-| Monte Puerta Tierra | Avenida Andalucía, 34 | |
-| Pabellón | Calle Brunete | |
-| Corte Inglés | Avenida de las Cortes de Cádiz | |
-| Bar Parada | Avenida Guadalquivir, 23 | |
-| Hotel Barceló | Avenida Andalucía, 89 | |
-| Camelia | Avenida Ana de Viya, 7 | |
-| Barriada | Avenida Guadalete | |
-| Residencia | Avenida Cayetano del Toro, 1 (Hospital Puerta del Mar) | |
-| Mercadona | Avenida de la Ilustración, 1 | |
-| Canary | Glorieta Zona Franca | |
-| Helios | Plaza Helios (Estadio) | |
-| Piscina | Complejo Deportivo Ciudad de Cádiz | |
-| Zona Franca | Glorieta de la Zona Franca | |
+| Nombre | Descripción / Ubicación | Latitud | Longitud | Observaciones |
+| :--- | :--- | :--- | :--- | :--- |
+| Parador | Parador de Cádiz | 36.5342075 | -6.3050849 | |
+| Falla | Plaza de Falla | 36.5334696 | -6.3021514 | |
+| Mora | Glorieta Carlos Con | 36.531308 | -6.305134 | |
+| San Antonio | Plaza de San Antonio | 36.5342418 | -6.3050868 | |
+| Palillero | Plaza del Palillero | 36.5318437 | -6.2964062 | |
+| Plaza Tortugas | Plaza de las Tortugas | 36.533451 | -6.293564 | |
+| La Punta | Paseo Almirante Pascual Pery | 36.537434 | -6.290726 | Solo noches de 22 a 7h |
+| Comes | Plaza de la Hispanidad | 36.535364 | -6.291775 | |
+| Catedral | Plaza de la Catedral | 36.529217 | -6.295707 | |
+| San Juan de Dios | Plaza de San Juan de Dios | 36.530537 | -6.291444 | |
+| Estación | Entrada Oeste de la Estación de Adif | 36.528159 | -6.287746 | |
+| Caja Nacional | Junto al INSS | 36.526253 | -6.289851 | |
+| Monte Puerta Tierra | Avenida Andalucía, 34 | 36.520385 | -6.285054 | |
+| Pabellón | Calle Brunete | 36.520156 | -6.282787 | |
+| Corte Inglés | Avenida de las Cortes de Cádiz | 36.521661 | -6.276634 | |
+| Bar Parada | Avenida Guadalquivir, 23 | 36.519283 | -6.277154 | |
+| Hotel Barceló | Avenida Andalucía, 89 | 36.514442 | -6.281504 | |
+| Camelia | Avenida Ana de Viya, 7 | 36.511658 | -6.279901 | |
+| Barriada | Avenida Guadalete | 36.511384 | -6.271984 | |
+| Residencia | Avenida Cayetano del Toro, 1 (Hospital Puerta del Mar) | 36.507906 | -6.277750 | |
+| Mercadona | Avenida de la Ilustración, 1 | 36.507279 | -6.268245 | |
+| Canary | Glorieta Zona Franca | 36.505821 | -6.276564 | |
+| Helios | Plaza Helios (Estadio) | 36.501347 | -6.274249 | |
+| Piscina | Complejo Deportivo Ciudad de Cádiz | 36.497418 | -6.271457 | |
+| Zona Franca | Glorieta de la Zona Franca | 36.500538 | -6.268548 | |
 *   **Higiene y Limpieza del Vehículo:** Los vehículos deben cumplir con estrictas condiciones de limpieza interior y exterior. Queda prohibido de manera expresa el uso de alfombras y felpudos; el piso debe ser de material fácilmente lavable. El tapizado no debe presentar roturas ni desperfectos.
 *   **Vestimenta Obligatoria (Uniforme):** Se prohíbe el uso de pantalones cortos, camisetas, chanclas o sandalias que no tengan sujeción posterior. Los conductores deben vestir con pantalón largo oscuro, camisa clara (de preferencia blanca) o polo de manga corta en verano, y jersey oscuro.
 *   **Libranzas y Excepciones de Descanso:** No se permite estacionar en las paradas de taxi en los días de descanso obligatorio del vehículo. No obstante, el taxi puede prestar servicio en su día de descanso exclusivamente para cubrir servicios precontratados con antelación, debiendo llevar a bordo la acreditación documental física o digital.
