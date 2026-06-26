@@ -190,29 +190,31 @@ import ChatLayout from '../layouts/ChatLayout.astro';
         }
         if (data.cardType === 'MapCard') {
             return `
-            <div class="ai-card map-card" id="map-card-${msgId}">
-                <div class="card-header">📍 Ubicación de la Parada</div>
-                <div class="card-body">
-                    <p><strong>${data.stopName || 'Parada oficial'}</strong></p>
-                    <p>${data.content}</p>
-                    ${data.lat && data.lon ? `
-                    <button class="call-btn expand-map-btn" style="display: none; background: #6a1b9a;" onclick="window.openMapPanel('${data.lat}', '${data.lon}', '${msgId}')">🗺️ Ver en Pantalla Grande</button>
-                    <div class="map-container" id="map-container-${msgId}" style="display: none;"></div>
-                    ` : ''}
+            <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%;">
+                <span class="bubble">${data.content}</span>
+                <div class="ai-card map-card" id="map-card-${msgId}">
+                    <div class="card-header">📍 ${data.stopName || 'Parada de Taxi'}</div>
+                    <div class="card-body" style="padding: 0;">
+                        ${data.lat && data.lon ? `
+                        <button class="call-btn expand-map-btn" style="display: none; background: #6a1b9a; margin: 10px; width: calc(100% - 20px);" onclick="window.openMapPanel('${data.lat}', '${data.lon}', '${msgId}')">🗺️ Ver en Pantalla Grande</button>
+                        <div class="map-container" id="map-container-${msgId}" style="display: none; border-radius: 0 0 12px 12px; overflow: hidden; height: 180px;"></div>
+                        ` : ''}
+                    </div>
                 </div>
             </div>`;
         }
         if (data.cardType === 'NavigationCard') {
             return `
-            <div class="ai-card map-card" id="map-card-${msgId}">
-                <div class="card-header">🗺️ Ruta en Vivo</div>
-                <div class="card-body">
-                    <p><strong>Ruta hacia: ${data.stopName || 'Destino'}</strong></p>
-                    <p>${data.content}</p>
-                    ${data.lat && data.lon ? `
-                    <button class="call-btn expand-map-btn" style="display: none; background: #1565c0;" onclick="window.openMapPanel('${data.lat}', '${data.lon}', '${msgId}', true)">🛣️ Ver Ruta Completa</button>
-                    <div class="map-container" id="map-container-${msgId}" style="display: none;"></div>
-                    ` : ''}
+            <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%;">
+                <span class="bubble">${data.content}</span>
+                <div class="ai-card map-card" id="map-card-${msgId}">
+                    <div class="card-header">🗺️ Ruta hacia ${data.stopName || 'Destino'}</div>
+                    <div class="card-body" style="padding: 0;">
+                        ${data.lat && data.lon ? `
+                        <button class="call-btn expand-map-btn" style="display: none; background: #1565c0; margin: 10px; width: calc(100% - 20px);" onclick="window.openMapPanel('${data.lat}', '${data.lon}', '${msgId}', true)">🛣️ Ver Ruta Completa</button>
+                        <div class="map-container" id="map-container-${msgId}" style="display: none; border-radius: 0 0 12px 12px; overflow: hidden; height: 180px;"></div>
+                        ` : ''}
+                    </div>
                 </div>
             </div>`;
         }
