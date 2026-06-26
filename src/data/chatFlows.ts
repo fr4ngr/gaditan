@@ -10,6 +10,33 @@ export interface ChatNode {
     options?: ChatOption[];
 }
 
+export const taxiKnowledge = {
+    tarifasUrbanas: {
+        T1: { bajada: 1.39, km: 0.70, minima: 3.56, espera: 18.95, horario: 'Lunes a viernes de 07:00 a 21:00' },
+        T2: { bajada: 1.73, km: 0.90, minima: 4.43, espera: 23.66, horario: 'Noches (21:00-07:00), Fines de semana y Festivos' },
+        T3: { incremento: '20%', horario: 'Madrugadas de fin de semana, Carnavales, Semana Santa y Navidad' }
+    },
+    suplementos: [
+        { nombre: 'Maleta o Bulto', precio: 0.51 },
+        { nombre: 'Estación Tren/Bus', precio: 0.82 },
+        { nombre: 'Entrada Astilleros/Puertos', precio: 1.06 },
+        { nombre: 'Plaza extra (6º o 7º pasajero)', precio: 0.91 }
+    ],
+    gratis: [
+        'Sillas de ruedas',
+        'Perros guía o de asistencia médica',
+        'Carritos de bebé',
+        'Sillas infantiles',
+        'Vehículos de movilidad personal plegados'
+    ],
+    derechos: [
+        'Garantía de Precio Cerrado si se contrata por App/Web (no subirá por atascos).',
+        'El taxista debe tener cambio de hasta 20€.',
+        'Derecho a bajar gratis si el aire acondicionado no funciona y no se avisó (solo aplicable al inicio o tramo urbano).',
+        'Derecho a pedir recibo oficial impreso.'
+    ]
+};
+
 export const chatNodes: Record<string, ChatNode> = {
     HOME: {
         id: 'HOME',
