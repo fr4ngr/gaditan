@@ -4,28 +4,211 @@ import ChatLayout from '../layouts/ChatLayout.astro';
 
 <ChatLayout title="Cádiz Plus | Asistente de Movilidad">
     
-    <div class="message bot">
-        <span class="bubble">¡Hola! 👋 Soy tu asistente de movilidad y turismo en Cádiz. ¿En qué puedo ayudarte hoy?</span>
-        <span class="message-time">10:00</span>
-    </div>
-
-    <div class="message user">
-        <span class="bubble">Necesito ir a la estación de tren rápido</span>
-        <span class="message-time">10:02</span>
-    </div>
-
-    <div class="message bot">
-        <span class="bubble">La forma más rápida es en taxi. Estás a unos 5 minutos. ¿Quieres que te facilite el número de RadioTaxi?</span>
-        <span class="message-time">10:02</span>
-    </div>
-
-    <!-- Ejemplo de cómo podríamos inyectar HTML complejo como botones en el futuro -->
-    <div class="message bot">
-        <div class="bubble" style="display: flex; flex-direction: column; gap: 0.5rem;">
-            <span>También puedes consultar los horarios de trenes directamente:</span>
-            <button style="background: var(--bg-color); border: 1px solid var(--primary-color); color: var(--primary-color); padding: 0.5rem; border-radius: 0.5rem; cursor: pointer; font-weight: 500;">Ver Horarios Renfe</button>
-        </div>
-        <span class="message-time">10:03</span>
+    <!-- El contenedor de mensajes está vacío inicialmente, se llena con JS -->
+    <div id="chat-messages-container" style="display: contents;">
+        <!-- Los mensajes se inyectarán aquí -->
     </div>
 
 </ChatLayout>
+
+<script>
+    // --- ESTADO DEL CHAT ---
+    const messagesContainer = document.getElementById('messages-container');
+    const inputField = document.querySelector('.chat-input') as HTMLInputElement;
+    const sendButton = document.querySelector('.send-button');
+
+    // Máquina de estados para el flujo de la Calculadora
+    let chatState = 'IDLE'; 
+    let calcData = { origen: '', destino: '', maletas: '' };
+
+    // --- RENDERIZADO DE COMPONENTES ---
+
+    function scrollToBottom() {
+        if (messagesContainer) {
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+    }
+
+    function addMessage(sender: 'user' | 'bot', text: string, htmlContent: string = '') {
+        const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${sender}`;
+        
+        // Si hay htmlContent, lo pintamos directamente. Si no, usamos la burbuja estándar de texto.
+        let contentHtml = '';
+        if (htmlContent) {
+            contentHtml = htmlContent;
+        } else {
+            contentHtml = `<span class="bubble">${text}</span>`;
+        }
+
+        messageDiv.innerHTML = `
+            ${contentHtml}
+            <span class="message-time">${time}</span>
+        `;
+        
+        messagesContainer?.appendChild(messageDiv);
+        scrollToBottom();
+    }
+
+    // --- WIDGETS Y TARJETAS HTML ---
+
+    function getWelcomeChipsHtml() {
+        return `
+        <span class="bubble">¡Hola! 👋 Soy tu asistente oficial de movilidad en Cádiz. ¿Qué necesitas hacer hoy?</span>
+        <div class="action-chips">
+            <button class="chip" onclick="window.handleAction('PEDIR_TAXI')">🚕 Llamar a un Taxi</button>
+            <button class="chip" onclick="window.handleAction('CALCULAR_PRECIO')">🧮 Calcular Precio</button>
+            <button class="chip" onclick="window.handleAction('INFO_MALETAS')">🎒 Info Maletas/Mascotas</button>
+        </div>
+        `;
+    }
+
+    function getContactCardHtml() {
+        return `
+        <span class="bubble">Aquí tienes el contacto oficial de RadioTaxi Cádiz. Están disponibles las 24 horas.</span>
+        <div class="contact-card">
+            <div class="contact-card-title">🚕 RadioTaxi Cádiz</div>
+            <div class="contact-card-phone">956 21 21 21</div>
+            <a href="tel:+34956212121" class="call-btn">Llamar Ahora</a>
+        </div>
+        `;
+    }
+
+    function showTypingIndicator() {
+        const id = 'typing-' + Date.now();
+        const div = document.createElement('div');
+        div.className = 'message bot';
+        div.id = id;
+        div.innerHTML = `
+            <div class="bubble typing-indicator">
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+            </div>
+        `;
+        messagesContainer?.appendChild(div);
+        scrollToBottom();
+        return id;
+    }
+
+    function removeTypingIndicator(id: string) {
+        const el = document.getElementById(id);
+        if (el) el.remove();
+    }
+
+    // --- LÓGICA DEL ÁRBOL DE DECISIÓN ---
+
+    // Exponemos la función al scope global para que los botones <button onclick="..."> la vean
+    window.handleAction = function(actionType: string) {
+        if (actionType === 'PEDIR_TAXI') {
+            addMessage('user', 'Quiero llamar a un taxi');
+            const typingId = showTypingIndicator();
+            setTimeout(() => {
+                removeTypingIndicator(typingId);
+                addMessage('bot', '', getContactCardHtml());
+            }, 800);
+        } 
+        else if (actionType === 'CALCULAR_PRECIO') {
+            addMessage('user', 'Quiero calcular un precio');
+            const typingId = showTypingIndicator();
+            setTimeout(() => {
+                removeTypingIndicator(typingId);
+                chatState = 'CALC_ORIGEN';
+                addMessage('bot', '¡Claro! Vamos paso a paso. ¿Desde qué calle o punto de Cádiz sales?');
+                inputField.focus();
+                inputField.placeholder = "Ej: Plaza de las Flores";
+                // Modificamos el teclado para texto normal (por defecto lo es)
+            }, 800);
+        }
+        else if (actionType === 'INFO_MALETAS') {
+            addMessage('user', 'Info sobre maletas');
+            const typingId = showTypingIndicator();
+            setTimeout(() => {
+                removeTypingIndicator(typingId);
+                addMessage('bot', 'El suplemento por maleta es de 0,51€. Sin embargo, las sillas de bebé, sillas de ruedas y carritos de la compra están **exentos** y viajan gratis.');
+            }, 800);
+        }
+    };
+
+    function handleUserInput(text: string) {
+        if (!text.trim()) return;
+        
+        addMessage('user', text);
+        inputField.value = '';
+
+        // Procesamiento del Estado (Máquina de Estados Simple)
+        const typingId = showTypingIndicator();
+        
+        setTimeout(() => {
+            removeTypingIndicator(typingId);
+
+            if (chatState === 'CALC_ORIGEN') {
+                calcData.origen = text;
+                chatState = 'CALC_DESTINO';
+                addMessage('bot', 'Perfecto. ¿A dónde te diriges?');
+                inputField.placeholder = "Ej: Hospital Puerta del Mar";
+            } 
+            else if (chatState === 'CALC_DESTINO') {
+                calcData.destino = text;
+                chatState = 'CALC_MALETAS';
+                addMessage('bot', '¿Llevas alguna maleta de equipaje en el maletero? (Responde con el número, ej: 0, 1, 2)');
+                // Cambiamos el teclado para que sea numérico en móviles
+                inputField.type = 'number';
+                inputField.placeholder = "Número de maletas";
+            }
+            else if (chatState === 'CALC_MALETAS') {
+                calcData.maletas = text;
+                chatState = 'IDLE';
+                inputField.type = 'text'; // Restaurar teclado normal
+                inputField.placeholder = "Pregunta por un taxi, bus, ruta...";
+                
+                // Aquí iría la lógica matemática real llamando a la API o función. 
+                // Por ahora, simulamos el resultado.
+                addMessage('bot', `Resumen: De **${calcData.origen}** a **${calcData.destino}** con ${calcData.maletas} maletas. \n\nEl precio estimado en Tarifa Diurna (T1) sería de **unos 6,50€**. \n*(Nota: Este es un cálculo simulado de prueba)*`);
+                
+                // Ofrecer botón para pedirlo directamente
+                setTimeout(() => {
+                    const html = `
+                        <div class="action-chips">
+                            <button class="chip" onclick="window.handleAction('PEDIR_TAXI')">🚕 ¡Lo quiero! Llamar al taxi</button>
+                        </div>
+                    `;
+                    addMessage('bot', '', html);
+                }, 500);
+            }
+            else {
+                // Estado IDLE (Modo bot tonto)
+                addMessage('bot', 'Aún estoy aprendiendo a conversar de forma libre. Por favor, recarga la página para usar los botones rápidos.');
+            }
+        }, 1000);
+    }
+
+    // --- EVENT LISTENERS ---
+
+    sendButton?.addEventListener('click', () => {
+        handleUserInput(inputField.value);
+    });
+
+    inputField?.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            handleUserInput(inputField.value);
+        }
+    });
+
+    // --- INICIALIZACIÓN ---
+    
+    // Mensaje inicial al cargar
+    setTimeout(() => {
+        addMessage('bot', '', getWelcomeChipsHtml());
+    }, 500);
+
+    // Tipado global para window
+    declare global {
+        interface Window {
+            handleAction: (action: string) => void;
+        }
+    }
+
+</script>
