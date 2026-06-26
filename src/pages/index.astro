@@ -344,8 +344,15 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                 userMarker = null;
             }
 
-            // Añadir marcador de destino
-            mapL.marker([destLat, destLon]).addTo(liveMap).bindPopup(destName).openPopup();
+            // Añadir marcador de destino personalizado
+            const destIcon = mapL.divIcon({
+                className: '', // Usar solo nuestro HTML/CSS
+                html: '<div class="destination-marker">📍</div>',
+                iconSize: [32, 38],
+                iconAnchor: [16, 38],
+                popupAnchor: [0, -38]
+            });
+            mapL.marker([destLat, destLon], { icon: destIcon }).addTo(liveMap).bindPopup(destName).openPopup();
 
             // Configurar botón DEV para simular movimiento
             const devBtn = document.getElementById('nav-dev-btn');
@@ -389,12 +396,19 @@ import ChatLayout from '../layouts/ChatLayout.astro';
     function updateUserLocation(userLat: number, userLon: number, destLat: number, destLon: number, isFake: boolean) {
         const mapL = (window as any).L;
         
-        // Actualizar marcador de usuario
+        // Actualizar marcador de usuario personalizado
+        const userIcon = mapL.divIcon({
+            className: '', // Usar solo nuestro HTML/CSS
+            html: '<div class="user-gps-marker"></div>',
+            iconSize: [20, 20],
+            iconAnchor: [10, 10]
+        });
+
         if (!userMarker) {
-            userMarker = mapL.circleMarker([userLat, userLon], { radius: 8, color: isFake ? '#d32f2f' : '#3b82f6', fillOpacity: 1, weight: 2, fillColor: '#fff' }).addTo(liveMap);
+            userMarker = mapL.marker([userLat, userLon], { icon: userIcon }).addTo(liveMap);
         } else {
             userMarker.setLatLng([userLat, userLon]);
-            userMarker.setStyle({ color: isFake ? '#d32f2f' : '#3b82f6' });
+            userMarker.setIcon(userIcon);
         }
 
         // Crear ruta si no existe o actualizar waypoints
