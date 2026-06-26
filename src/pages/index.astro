@@ -12,17 +12,18 @@ import ChatLayout from '../layouts/ChatLayout.astro';
 </ChatLayout>
 
 <script>
+    import { chatNodes, taxiKnowledge } from '../data/chatFlows.ts';
+    
     // --- ESTADO DEL CHAT ---
     const messagesContainer = document.getElementById('messages-container');
     const inputField = document.querySelector('.chat-input') as HTMLInputElement;
     const sendButton = document.querySelector('.send-button');
 
-    // Máquina de estados para el flujo de la Calculadora
+    // Máquina de estados para flujos de texto (Calculadora)
     let chatState = 'IDLE'; 
     let calcData = { origen: '', destino: '', maletas: '' };
 
-    // --- RENDERIZADO DE COMPONENTES ---
-
+    // --- RENDERIZADO BÁSICO ---
     function scrollToBottom() {
         if (messagesContainer) {
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
@@ -31,18 +32,10 @@ import ChatLayout from '../layouts/ChatLayout.astro';
 
     function addMessage(sender: 'user' | 'bot', text: string, htmlContent: string = '') {
         const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        
         const messageDiv = document.createElement('div');
         messageDiv.className = `message ${sender}`;
         
-        // Si hay htmlContent, lo pintamos directamente. Si no, usamos la burbuja estándar de texto.
-        let contentHtml = '';
-        if (htmlContent) {
-            contentHtml = htmlContent;
-        } else {
-            contentHtml = `<span class="bubble">${text}</span>`;
-        }
-
+        let contentHtml = htmlContent ? htmlContent : `<span class="bubble">${text}</span>`;
         messageDiv.innerHTML = `
             ${contentHtml}
             <span class="message-time">${time}</span>
@@ -50,30 +43,6 @@ import ChatLayout from '../layouts/ChatLayout.astro';
         
         messagesContainer?.appendChild(messageDiv);
         scrollToBottom();
-    }
-
-    // --- WIDGETS Y TARJETAS HTML ---
-
-    function getWelcomeChipsHtml() {
-        return `
-        <span class="bubble">¡Hola! 👋 Soy tu asistente oficial de movilidad en Cádiz. ¿Qué necesitas hacer hoy?</span>
-        <div class="action-chips">
-            <button class="chip" onclick="window.handleAction('PEDIR_TAXI')">🚕 Llamar a un Taxi</button>
-            <button class="chip" onclick="window.handleAction('CALCULAR_PRECIO')">🧮 Calcular Precio</button>
-            <button class="chip" onclick="window.handleAction('INFO_MALETAS')">🎒 Info Maletas/Mascotas</button>
-        </div>
-        `;
-    }
-
-    function getContactCardHtml() {
-        return `
-        <span class="bubble">Aquí tienes el contacto oficial de RadioTaxi Cádiz. Están disponibles las 24 horas.</span>
-        <div class="contact-card">
-            <div class="contact-card-title">🚕 RadioTaxi Cádiz</div>
-            <div class="contact-card-phone">956 21 21 21</div>
-            <a href="tel:+34956212121" class="call-btn">Llamar Ahora</a>
-        </div>
-        `;
     }
 
     function showTypingIndicator() {
@@ -98,47 +67,66 @@ import ChatLayout from '../layouts/ChatLayout.astro';
         if (el) el.remove();
     }
 
-    // --- LÓGICA DEL ÁRBOL DE DECISIÓN ---
-
-    // Exponemos la función al scope global para que los botones <button onclick="..."> la vean
-    window.handleAction = function(actionType: string) {
-        if (actionType === 'PEDIR_TAXI') {
-            addMessage('user', 'Quiero llamar a un taxi');
-            const typingId = showTypingIndicator();
-            setTimeout(() => {
-                removeTypingIndicator(typingId);
-                addMessage('bot', '', getContactCardHtml());
-            }, 800);
-        } 
-        else if (actionType === 'CALCULAR_PRECIO') {
-            addMessage('user', 'Quiero calcular un precio');
+    // --- MOTOR DE ÁRBOL DE DECISIÓN (NODOS) ---
+    
+    window.handleAction = function(nodeId: string) {
+        // 1. Excepción: Iniciar Calculadora
+        if (nodeId === 'CALCULADORA_START') {
             const typingId = showTypingIndicator();
             setTimeout(() => {
                 removeTypingIndicator(typingId);
                 chatState = 'CALC_ORIGEN';
-                addMessage('bot', '¡Claro! Vamos paso a paso. ¿Desde qué calle o punto de Cádiz sales?');
+                addMessage('bot', chatNodes['CALCULADORA_START'].text);
                 inputField.focus();
                 inputField.placeholder = "Ej: Plaza de las Flores";
-                // Modificamos el teclado para texto normal (por defecto lo es)
-            }, 800);
+            }, 600);
+            return;
         }
-        else if (actionType === 'INFO_MALETAS') {
-            addMessage('user', 'Info sobre maletas');
-            const typingId = showTypingIndicator();
-            setTimeout(() => {
-                removeTypingIndicator(typingId);
-                addMessage('bot', 'El suplemento por maleta es de 0,51€. Sin embargo, las sillas de bebé, sillas de ruedas y carritos de la compra están **exentos** y viajan gratis.');
-            }, 800);
+
+        // 2. Procesamiento Genérico de Nodos
+        const node = chatNodes[nodeId];
+        if (!node) return;
+
+        // Opcional: Mostrar la elección del usuario (si no es el inicio)
+        if (nodeId !== 'HOME') {
+            // Buscamos la etiqueta del botón que pulsó para pintarlo como mensaje del usuario
+            // Nota: Podríamos pasarlo como parámetro, pero para mantenerlo limpio lo omitimos o simulamos
         }
+
+        const typingId = showTypingIndicator();
+        setTimeout(() => {
+            removeTypingIndicator(typingId);
+            
+            // Renderizamos texto e HTML del bot
+            if (node.text && node.htmlContent) {
+                addMessage('bot', node.text, `<span class="bubble">${node.text}</span>` + node.htmlContent);
+            } else if (node.text) {
+                addMessage('bot', node.text);
+            } else if (node.htmlContent) {
+                addMessage('bot', '', node.htmlContent);
+            }
+
+            // Renderizamos los botones (Opciones) correspondientes a este nodo
+            if (node.options && node.options.length > 0) {
+                let chipsHtml = '<div class="action-chips">';
+                node.options.forEach(opt => {
+                    chipsHtml += `<button class="chip" onclick="window.handleAction('${opt.nextNodeId}')">${opt.label}</button>`;
+                });
+                chipsHtml += '</div>';
+                
+                // Un pequeño delay extra para mostrar los botones
+                setTimeout(() => addMessage('bot', '', chipsHtml), 300);
+            }
+        }, 600);
     };
 
+    // --- LÓGICA DE TEXTO LIBRE (CALCULADORA) ---
     function handleUserInput(text: string) {
         if (!text.trim()) return;
         
         addMessage('user', text);
         inputField.value = '';
 
-        // Procesamiento del Estado (Máquina de Estados Simple)
         const typingId = showTypingIndicator();
         
         setTimeout(() => {
@@ -154,39 +142,38 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                 calcData.destino = text;
                 chatState = 'CALC_MALETAS';
                 addMessage('bot', '¿Llevas alguna maleta de equipaje en el maletero? (Responde con el número, ej: 0, 1, 2)');
-                // Cambiamos el teclado para que sea numérico en móviles
                 inputField.type = 'number';
                 inputField.placeholder = "Número de maletas";
             }
             else if (chatState === 'CALC_MALETAS') {
                 calcData.maletas = text;
                 chatState = 'IDLE';
-                inputField.type = 'text'; // Restaurar teclado normal
+                inputField.type = 'text';
                 inputField.placeholder = "Pregunta por un taxi, bus, ruta...";
                 
-                // Aquí iría la lógica matemática real llamando a la API o función. 
-                // Por ahora, simulamos el resultado.
-                addMessage('bot', `Resumen: De **${calcData.origen}** a **${calcData.destino}** con ${calcData.maletas} maletas. \n\nEl precio estimado en Tarifa Diurna (T1) sería de **unos 6,50€**. \n*(Nota: Este es un cálculo simulado de prueba)*`);
+                const numMaletas = parseInt(calcData.maletas) || 0;
+                const costeMaletas = numMaletas * taxiKnowledge.suplementos[0].precio;
+                const costeViaje = taxiKnowledge.tarifasUrbanas.T1.bajada + (4 * taxiKnowledge.tarifasUrbanas.T1.km) + costeMaletas;
+                const precioFinal = Math.max(costeViaje, taxiKnowledge.tarifasUrbanas.T1.minima).toFixed(2);
                 
-                // Ofrecer botón para pedirlo directamente
+                addMessage('bot', `Resumen: De **${calcData.origen}** a **${calcData.destino}** con ${numMaletas} maletas. \n\nEl precio estimado en Tarifa Diurna (T1) sería de **${precioFinal}€**. \n*(Cálculo oficial de la Junta: Bajada 1,39€ + 0,70€/km + 0,51€/maleta)*`);
+                
                 setTimeout(() => {
                     const html = `
                         <div class="action-chips">
-                            <button class="chip" onclick="window.handleAction('PEDIR_TAXI')">🚕 ¡Lo quiero! Llamar al taxi</button>
+                            <button class="chip" onclick="window.handleAction('HOME')">⬅️ Volver al Inicio</button>
                         </div>
                     `;
                     addMessage('bot', '', html);
                 }, 500);
             }
             else {
-                // Estado IDLE (Modo bot tonto)
-                addMessage('bot', 'Aún estoy aprendiendo a conversar de forma libre. Por favor, recarga la página para usar los botones rápidos.');
+                addMessage('bot', 'Por ahora estoy en fase de aprendizaje guiado. Usa el menú de botones para moverte 👆');
             }
         }, 1000);
     }
 
     // --- EVENT LISTENERS ---
-
     sendButton?.addEventListener('click', () => {
         handleUserInput(inputField.value);
     });
@@ -197,18 +184,15 @@ import ChatLayout from '../layouts/ChatLayout.astro';
         }
     });
 
-    // --- INICIALIZACIÓN ---
-    
-    // Mensaje inicial al cargar
+    // --- INICIALIZACIÓN (MOMENTO 0) ---
     setTimeout(() => {
-        addMessage('bot', '', getWelcomeChipsHtml());
-    }, 500);
+        window.handleAction('HOME');
+    }, 400);
 
     // Tipado global para window
     declare global {
         interface Window {
-            handleAction: (action: string) => void;
+            handleAction: (nodeId: string) => void;
         }
     }
-
 </script>
