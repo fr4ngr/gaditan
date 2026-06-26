@@ -56,26 +56,26 @@ const { title } = Astro.props;
                     </button>
                 </div>
             </div>
-        </div>
 
-        <!-- Capa de Navegación en Vivo a Pantalla Completa -->
-        <div id="fullscreen-nav-layer" class="fullscreen-nav closed">
-            <button class="nav-close-btn" onclick="window.exitLiveNavigation()" aria-label="Cerrar Navegación">✕</button>
-            <button id="nav-dev-btn" class="nav-dev-btn" style="display:none;">DEV: FAKE GPS</button>
-            
-            <div class="nav-top-panel">
-                <div class="nav-eta" id="nav-eta">-- min</div>
-                <div class="nav-distance" id="nav-distance">-- km</div>
-            </div>
-            
-            <div id="nav-map" class="nav-map-container"></div>
-            
-            <div class="nav-bottom-panel">
-                <div class="nav-instruction-pill" id="nav-instruction">
-                    <span class="nav-icon" id="nav-instruction-icon">🧭</span>
-                    <div class="nav-text-container">
-                        <div class="nav-main-text" id="nav-instruction-text">Buscando ruta...</div>
-                        <div class="nav-sub-text" id="nav-instruction-dist"></div>
+            <!-- Capa de Navegación en Vivo a Pantalla Completa (ahora debajo del header) -->
+            <div id="fullscreen-nav-layer" class="fullscreen-nav closed">
+                <button class="nav-close-btn" onclick="window.exitLiveNavigation()" aria-label="Cerrar Navegación">✕</button>
+                <button id="nav-dev-btn" class="nav-dev-btn" style="display:none;">DEV: FAKE GPS</button>
+                
+                <div class="nav-top-panel">
+                    <div class="nav-eta" id="nav-eta">-- min</div>
+                    <div class="nav-distance" id="nav-distance">-- km</div>
+                </div>
+                
+                <div id="nav-map" class="nav-map-container"></div>
+                
+                <div class="nav-bottom-panel">
+                    <div class="nav-instruction-pill" id="nav-instruction">
+                        <span class="nav-icon" id="nav-instruction-icon">🧭</span>
+                        <div class="nav-text-container">
+                            <div class="nav-main-text" id="nav-instruction-text">Buscando ruta...</div>
+                            <div class="nav-sub-text" id="nav-instruction-dist"></div>
+                        </div>
                     </div>
                 </div>
             </div>

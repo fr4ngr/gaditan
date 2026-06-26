@@ -319,9 +319,12 @@ body {
 
 /* --- Navegación a Pantalla Completa --- */
 .fullscreen-nav {
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
+  position: absolute;
+  top: 60px; /* Debajo del header */
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1000;
   background: white;
   display: flex;
   flex-direction: column;
