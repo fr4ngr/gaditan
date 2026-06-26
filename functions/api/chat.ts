@@ -29,6 +29,7 @@ DEBES devolver SIEMPRE una estructura JSON válida que defina qué tarjeta visua
 - Si el usuario pregunta por una norma, maletas, sillas de ruedas o derechos, usa "RuleCard".
 - Si el usuario pide llamar un taxi, usa "ContactCard" con el teléfono oficial de RadioTaxi Cádiz.
 - Si el usuario pregunta dónde está una parada específica, o dónde puede coger un taxi cerca de X sitio, usa "MapCard" aportando la latitud y longitud exacta de la parada según la tabla.
+- Si el usuario pregunta "cómo llego", "llévame allí" o pide indicaciones para una parada, usa "NavigationCard" aportando la latitud y longitud exacta de la parada destino. Es CRÍTICO que uses esta tarjeta para activar la navegación GPS en vivo.
 `;
 
         const schema = {
@@ -36,7 +37,7 @@ DEBES devolver SIEMPRE una estructura JSON válida que defina qué tarjeta visua
             properties: {
                 cardType: {
                     type: Type.STRING,
-                    enum: ['TextCard', 'PriceCard', 'RuleCard', 'ContactCard', 'MapCard'],
+                    enum: ['TextCard', 'PriceCard', 'RuleCard', 'ContactCard', 'MapCard', 'NavigationCard'],
                     description: "El tipo de tarjeta visual a mostrar."
                 },
                 content: {
@@ -61,23 +62,25 @@ DEBES devolver SIEMPRE una estructura JSON válida que defina qué tarjeta visua
                 },
                 stopName: { 
                     type: Type.STRING, 
-                    description: "El nombre de la parada oficial. Solo si es MapCard." 
+                    description: "El nombre de la parada oficial. Solo si es MapCard o NavigationCard." 
                 },
                 lat: { 
                     type: Type.STRING, 
-                    description: "La latitud GPS exacta de la parada extraída de la tabla. Solo si es MapCard." 
+                    description: "La latitud GPS exacta de la parada extraída de la tabla. Solo si es MapCard o NavigationCard." 
                 },
                 lon: { 
                     type: Type.STRING, 
-                    description: "La longitud GPS exacta de la parada extraída de la tabla. Solo si es MapCard." 
+                    description: "La longitud GPS exacta de la parada extraída de la tabla. Solo si es MapCard o NavigationCard." 
                 }
             },
             required: ['cardType', 'content']
         };
 
+        const historyContents = body.history && body.history.length > 0 ? body.history : userMessage;
+
         const response = await ai.models.generateContent({
             model: 'gemini-2.5-flash',
-            contents: userMessage,
+            contents: historyContents,
             config: {
                 systemInstruction: systemInstruction,
                 responseMimeType: "application/json",

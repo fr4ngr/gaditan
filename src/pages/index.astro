@@ -111,6 +111,7 @@ import ChatLayout from '../layouts/ChatLayout.astro';
     const messagesContainer = document.getElementById('messages-container');
     const inputField = document.querySelector('.chat-input') as HTMLInputElement;
     const sendButton = document.querySelector('.send-button');
+    let chatHistory: any[] = [];
 
     // --- RENDERIZADO BÁSICO ---
     function scrollToBottom() {
@@ -201,6 +202,20 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                 </div>
             </div>`;
         }
+        if (data.cardType === 'NavigationCard') {
+            return `
+            <div class="ai-card map-card" id="map-card-${msgId}">
+                <div class="card-header">🗺️ Ruta en Vivo</div>
+                <div class="card-body">
+                    <p><strong>Ruta hacia: ${data.stopName || 'Destino'}</strong></p>
+                    <p>${data.content}</p>
+                    ${data.lat && data.lon ? `
+                    <button class="call-btn expand-map-btn" style="display: none; background: #1565c0;" onclick="window.openMapPanel('${data.lat}', '${data.lon}', '${msgId}', true)">🛣️ Ver Ruta Completa</button>
+                    <div class="map-container" id="map-container-${msgId}" style="display: none;"></div>
+                    ` : ''}
+                </div>
+            </div>`;
+        }
         // Fallback para TextCard o desconocidos
         return `<span class="bubble">${data.content}</span>`;
     }
@@ -209,8 +224,9 @@ import ChatLayout from '../layouts/ChatLayout.astro';
     async function sendMessageToAI(text: string) {
         if (!text.trim()) return;
         
-        // 1. Pintar mensaje del usuario
+        // 1. Pintar mensaje del usuario y guardarlo en historial
         addMessage('user', `<span class="bubble">${text}</span>`);
+        chatHistory.push({ role: 'user', parts: [{ text }] });
         inputField.value = '';
 
         // 2. Mostrar "Pensando..."
@@ -221,7 +237,7 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             const response = await fetch('/api/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: text })
+                body: JSON.stringify({ message: text, history: chatHistory })
             });
 
             const data = await response.json();
@@ -229,8 +245,12 @@ import ChatLayout from '../layouts/ChatLayout.astro';
 
             if (data.error) {
                 addMessage('bot', `<span class="bubble" style="background:#ffebee; color:#c62828;">Error del servidor: ${data.error}</span>`);
+                chatHistory.pop(); // Remove failed user message from history
                 return;
             }
+
+            // Guardar respuesta del bot en el historial (como JSON string para que el modelo lo lea)
+            chatHistory.push({ role: 'model', parts: [{ text: JSON.stringify(data) }] });
 
             // 4. Renderizar la Tarjeta generada por la IA
             const msgId = Date.now().toString();
@@ -238,8 +258,9 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             addMessage('bot', cardHtml);
 
             // 5. Manejar Split-Screen automáticamente
-            if (data.cardType === 'MapCard' && data.lat && data.lon) {
-                window.openMapPanel(data.lat, data.lon, msgId);
+            if ((data.cardType === 'MapCard' || data.cardType === 'NavigationCard') && data.lat && data.lon) {
+                const isRouting = data.cardType === 'NavigationCard';
+                window.openMapPanel(data.lat, data.lon, msgId, isRouting);
             }
 
         } catch (error) {
@@ -248,43 +269,110 @@ import ChatLayout from '../layouts/ChatLayout.astro';
         }
     }
 
-    // --- LÓGICA DE PANTALLA DIVIDIDA ---
-    window.openMapPanel = function(lat: string, lon: string, msgId: string) {
+    // --- LÓGICA DE PANTALLA DIVIDIDA Y LEAFLET ---
+    let currentMap: any = null;
+    let routingControl: any = null;
+
+    window.openMapPanel = function(lat: string, lon: string, msgId: string, routing = false) {
         const topPanel = document.getElementById('top-panel');
         if (!topPanel) return;
         
-        // Limpiar el contenedor de la burbuja por si tenía el iframe
+        // Limpiar el contenedor de la burbuja por si tenía el iframe/mapa
         const container = document.getElementById(`map-container-${msgId}`);
         if (container) {
             container.style.display = 'none';
             container.innerHTML = '';
         }
-        // Ocultar el botón de expandir en la burbuja
         const expandBtn = document.querySelector(`#map-card-${msgId} .expand-map-btn`) as HTMLElement;
         if (expandBtn) expandBtn.style.display = 'none';
 
-        // Inyectar en el panel superior
+        // Preparar panel superior
         topPanel.innerHTML = `
-            <button class="close-panel-btn" onclick="window.closeMapPanel('${lat}', '${lon}', '${msgId}')">✕</button>
-            <iframe src="https://maps.google.com/maps?q=${lat},${lon}&z=16&output=embed"></iframe>
+            <button class="close-panel-btn" onclick="window.closeMapPanel('${lat}', '${lon}', '${msgId}', ${routing})">✕</button>
+            <div id="leaflet-map-large" style="width:100%; height:100%;"></div>
         `;
         topPanel.classList.remove('closed');
-        setTimeout(() => scrollToBottom(), 300);
+        
+        setTimeout(() => {
+            if (currentMap) currentMap.remove();
+            
+            // Inicializar Leaflet (usar L)
+            const mapL = (window as any).L;
+            currentMap = mapL.map('leaflet-map-large').setView([lat, lon], 16);
+            mapL.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap'
+            }).addTo(currentMap);
+            
+            const destMarker = mapL.marker([lat, lon]).addTo(currentMap)
+                .bindPopup('Destino')
+                .openPopup();
+
+            if (routing && navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const userLat = position.coords.latitude;
+                        const userLon = position.coords.longitude;
+                        
+                        // Añadir Routing Machine
+                        routingControl = mapL.Routing.control({
+                            waypoints: [
+                                mapL.latLng(userLat, userLon),
+                                mapL.latLng(lat, lon)
+                            ],
+                            routeWhileDragging: false,
+                            language: 'es',
+                            showAlternatives: false,
+                            createMarker: function() { return null; } // Ocultar los marcadores por defecto de la ruta
+                        }).addTo(currentMap);
+                        
+                        // Añadir marcador de usuario
+                        mapL.circleMarker([userLat, userLon], { radius: 8, color: '#3b82f6', fillOpacity: 0.8 }).addTo(currentMap).bindPopup('Tu ubicación');
+                        
+                        // El Routing control ajusta los bounds automáticamente, si no lo hace:
+                        // currentMap.fitBounds(mapL.latLngBounds([userLat, userLon], [lat, lon]));
+                    },
+                    (error) => {
+                        console.error("Error obteniendo ubicación:", error);
+                        alert("No se pudo obtener tu ubicación para calcular la ruta.");
+                    }
+                );
+            }
+
+            scrollToBottom();
+        }, 300);
     };
 
-    window.closeMapPanel = function(lat: string, lon: string, msgId: string) {
+    window.closeMapPanel = function(lat: string, lon: string, msgId: string, routing = false) {
         const topPanel = document.getElementById('top-panel');
         if (!topPanel) return;
 
         topPanel.classList.add('closed');
         setTimeout(() => {
+            if (currentMap) {
+                currentMap.remove();
+                currentMap = null;
+            }
+            if (routingControl) {
+                routingControl = null;
+            }
             topPanel.innerHTML = '';
             
             // Transportar el mapa a la burbuja del chat
             const container = document.getElementById(`map-container-${msgId}`);
             if (container) {
                 container.style.display = 'block';
-                container.innerHTML = `<iframe src="https://maps.google.com/maps?q=${lat},${lon}&z=16&output=embed"></iframe>`;
+                container.innerHTML = `<div id="leaflet-map-small-${msgId}" style="width:100%; height:100%;"></div>`;
+                
+                // Reinicializar un mini-mapa estático en la burbuja
+                const mapL = (window as any).L;
+                const miniMap = mapL.map(`leaflet-map-small-${msgId}`, {
+                    zoomControl: false,
+                    dragging: false,
+                    scrollWheelZoom: false
+                }).setView([lat, lon], 15);
+                
+                mapL.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(miniMap);
+                mapL.marker([lat, lon]).addTo(miniMap);
             }
             
             // Mostrar botón para volver a expandir
@@ -326,8 +414,9 @@ import ChatLayout from '../layouts/ChatLayout.astro';
     declare global {
         interface Window {
             sendToAI: (text: string) => void;
-            openMapPanel: (lat: string, lon: string, msgId: string) => void;
-            closeMapPanel: (lat: string, lon: string, msgId: string) => void;
+            openMapPanel: (lat: string, lon: string, msgId: string, routing?: boolean) => void;
+            closeMapPanel: (lat: string, lon: string, msgId: string, routing?: boolean) => void;
+            L: any;
         }
     }
 </script>
