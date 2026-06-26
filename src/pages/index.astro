@@ -300,8 +300,10 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             // Inicializar Leaflet (usar L)
             const mapL = (window as any).L;
             currentMap = mapL.map('leaflet-map-large').setView([lat, lon], 16);
-            mapL.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '© OpenStreetMap'
+            mapL.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+                attribution: '© OpenStreetMap, © CartoDB',
+                subdomains: 'abcd',
+                maxZoom: 20
             }).addTo(currentMap);
             
             const destMarker = mapL.marker([lat, lon]).addTo(currentMap)
@@ -396,7 +398,7 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                     scrollWheelZoom: false
                 }).setView([lat, lon], 15);
                 
-                mapL.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(miniMap);
+                mapL.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(miniMap);
                 mapL.marker([lat, lon]).addTo(miniMap);
             }
             
