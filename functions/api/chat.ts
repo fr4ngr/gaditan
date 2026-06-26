@@ -1,14 +1,14 @@
-import type { APIRoute } from 'astro';
 import { GoogleGenAI, Type } from '@google/genai';
-import knowledgeBase from '../../data/taxi-knowledge.md?raw';
+import { knowledgeBase } from '../../src/data/taxi-knowledge';
 
-export const POST: APIRoute = async ({ request }) => {
+export async function onRequestPost(context) {
     try {
+        const { request, env } = context;
         const body = await request.json();
         const userMessage = body.message;
         
-        // Inicializar Gemini usando la clave secreta de .env
-        const ai = new GoogleGenAI({ apiKey: import.meta.env.GEMINI_API_KEY });
+        // Inicializar Gemini usando la clave secreta del entorno (Cloudflare)
+        const ai = new GoogleGenAI({ apiKey: env.GEMINI_API_KEY });
 
         const systemInstruction = `
 Eres Cádiz Plus, el asistente oficial de movilidad en Cádiz. 
@@ -74,10 +74,10 @@ DEBES devolver SIEMPRE una estructura JSON válida que defina qué tarjeta visua
             headers: { 'Content-Type': 'application/json' }
         });
 
-    } catch (error: any) {
+    } catch (error) {
         return new Response(JSON.stringify({ error: error.message }), { 
             status: 500,
             headers: { 'Content-Type': 'application/json' }
         });
     }
-};
+}

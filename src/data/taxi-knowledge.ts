@@ -1,0 +1,90 @@
+export const knowledgeBase = `
+# BASE DE CONOCIMIENTO: CONFIGURACIÓN INTEGRAL DEL TAXI EN CÁDIZ (2026)
+
+## 1. Tarifas Urbanas (Cádiz Capital)
+Las tarifas aplicables en el ámbito del término municipal de Cádiz están reguladas y autorizadas de manera oficial.
+
+### Tabla de Tarifas Urbanas (Cádiz Capital - IVA Excluido)
+| Concepto | Tarifa 1 (Ordinaria Diurna) | Tarifa 2 (Nocturna/Festiva) | Tarifa 3 (Servicios Especiales) |
+| :--- | :---: | :---: | :---: |
+| **Bajada de Bandera** | 1,39 € | 1,73 € | +20% sobre T1 o T2 |
+| **Precio por Kilómetro** | 0,70 € | 0,90 € | Base + 20% |
+| **Carrera Mínima** | 3,56 € | 4,43 € | Base + 20% |
+| **Hora de Espera** | 18,95 € | 23,66 € | Base + 20% |
+
+### Horarios y Calendarios de Aplicación (Ámbito Urbano)
+*   **Tarifa 1:** Aplica de **lunes a viernes laborables de 07:00 a 21:00 horas**.
+*   **Tarifa 2:** Aplica de **lunes a viernes laborables de 21:00 a 07:00 horas**, así como las **24 horas de sábados, domingos y días festivos** oficiales.
+*   **Tarifa 3 (Incremento del 20% sobre T1 o T2):** Se activa exclusivamente en los siguientes periodos y horarios específicos:
+    *   **Sábados:** De 03:00 a 06:00 horas.
+    *   **Domingos y Festivos:** De 03:00 a 07:00 horas.
+    *   **Carnavales de Cádiz:** Las 24 horas durante los dos sábados, los dos domingos de carnaval y el lunes de resaca; para el resto de días de carnaval, aplica únicamente de 23:00 a 06:00 horas.
+    *   **Semana Santa:** Desde las 15:00 horas del Jueves Santo hasta las 07:00 horas del Sábado Santo.
+    *   **Navidad y Año Nuevo:** Desde las 21:00 horas del 24 de diciembre hasta las 23:59 horas del 25 de diciembre; y desde las 21:00 horas del 31 de diciembre hasta las 23:59 horas del 1 de enero.
+
+---
+
+## 2. Tarifas Interurbanas (Andalucía - Impuestos Incluidos)
+Cuando el servicio excede del término municipal de Cádiz, se aplica de forma automática la tarifa interurbana desde el kilómetro cero:
+
+| Concepto / Servicio | Tarifa 7 (Ordinaria Interurbana) | Tarifa 8 (Especial Interurbana) |
+| :--- | :---: | :---: |
+| **Bajada de Bandera** *(Solo para trayectos < 12 km)* | 3,66 € | 3,60 € |
+| **Precio por Kilómetro** o fracción | 0,71 € | 0,82 € |
+| **Mínimo de Percepción** *(No acumulable a la bajada de bandera)* | 3,83 € | 4,51 € |
+| **Hora de Espera** | 17,57 € | 20,71 € |
+| **Fracción cada 15 minutos de espera** | 4,38 € | 5,18 € |
+
+### Horarios Interurbanos
+*   **Tarifa 7 (Ordinaria):** De **lunes a viernes laborables de 06:00 a 22:00 horas**.
+*   **Tarifa 8 (Especial):** Las **24 horas de sábados, domingos y días festivos** (nacionales, autonómicos y locales), y de **lunes a viernes laborables de 22:00 a 06:00 horas**.
+*   **Regla de la Bajada de Bandera:** La bajada de bandera (T7 y T8) **únicamente opera en servicios con una distancia total inferior a 12 kilómetros**. Para distancias de 12 km o más, la bajada de bandera se anula (0,00 €).
+
+---
+
+## 3. Suplementos Urbanos Exhaustivos
+Estos recargos fijos son de aplicación **únicamente en servicios urbanos** dentro de Cádiz capital:
+*   **Maleta o Bulto:** **0,51 €** por bulto.
+*   **Recogida en Estación (Tren o Autobús):** **0,82 €**.
+*   **Entrada en Astilleros, Espigones o Puertos:** **1,06 €**.
+*   **Destino Cortadura-Torregorda:** **4,46 €**.
+*   **Uso de 6.ª y 7.ª plaza:** **0,91 € por plaza** adicional ocupada en vehículos Eurotaxi de gran capacidad.
+
+*Nota sobre Mascotas:* No existe suplemento económico por transporte de animales domésticos en las tarifas de Cádiz. Los perros de asistencia viajan siempre gratis de forma obligatoria.
+
+---
+
+## 4. Casos Exentos de Cobro (Gratuitos)
+Bajo el amparo de la legislación de accesibilidad y la Ordenanza de Cádiz, **está estrictamente prohibido cobrar cualquier suplemento o recargo** por los siguientes conceptos:
+*   **Elementos de Movilidad Exentos:** Están totalmente exentos de cobro los carritos de bebé, sillas infantiles, carros de la compra, vehículos de movilidad personal (VMP) plegados, bicicletas plegables, andadores, sillas de ruedas o cualquier otro elemento de apoyo para la movilidad.
+*   **Uso de plazas extra para personas con discapacidad:** En vehículos de gran capacidad, el suplemento de 0,91 € por plaza no se puede aplicar a ninguna de las plazas extras si el servicio es requerido por una persona con discapacidad o movilidad reducida.
+*   **Animales de Asistencia:** Acceso 100% gratuito para perros guía o de asistencia acreditados que acompañen a personas con discapacidad visual o con otra discapacidad.
+*   **Perros de Apoyo Médico:** Se extiende la exención de coste y el derecho de acceso gratuito a los perros de apoyo de personas con trastornos diabéticos o epilépticos.
+
+---
+
+## 5. Derechos y Obligaciones Clave del Pasajero
+*   **Puesta en marcha del taxímetro:** El taxímetro se enciende cuando el viajero y su equipaje están instalados y se comunica el destino. Para servicios contratados de forma telemática (app, teléfono, etc.), el taxímetro corre desde el punto de partida del coche pero con un límite máximo de cobro equivalente a la carrera mínima urbana aplicable (3,56 € o 4,43 €).
+*   **Garantía de Precio Cerrado:** Si el servicio se precontrata por vía telemática, la tarifa calculada actúa como un precio cerrado máximo garantizado para el trayecto pactado. Si el usuario modifica el destino o pide desvíos durante el viaje, esta garantía se anula y cobrará el importe total que marque el taxímetro. Aunque el tráfico real incremente la marca del taxímetro, el usuario solo pagará el precio presupuestado originalmente. Si el taxímetro marca menos de lo presupuestado, se cobra la cifra inferior del taxímetro.
+*   **Emisión de Recibo Obligatoria:** El conductor debe expedir obligatoriamente un recibo del servicio mediante impresora conectada directamente al taxímetro, detallando NIF, número de licencia, matrícula, recorrido, fecha, tarifa, hora de inicio/fin, distancia y desglose de suplementos. Se admite recibo digital previo consentimiento del cliente.
+*   **Cambio de Moneda:** El conductor debe disponer de cambio en metálico suficiente para facilitar la devolución del pago hasta el importe de 20 euros. Si el taxista carece de cambio y debe bajarse del coche para conseguirlo, el taxímetro debe detenerse de inmediato.
+*   **Vías de Peaje:** Si el itinerario elegido por el usuario incluye una vía de peaje, el taxista debe advertirlo de forma previa. El coste de dicho peaje corre íntegramente a cargo de la persona usuaria.
+
+---
+
+## 6. Contactos y Reclamaciones
+*   **Teléfonos y Datos Oficiales de RadioTaxi:** Los textos oficiales reguladores no registran números de teléfono específicos, direcciones de correo electrónico ni aplicaciones comerciales para Cádiz capital. Se establece legalmente que cualquier radioemisora o plataforma de intermediación requiere de autorización municipal previa.
+*   **Hojas de Quejas y Reclamaciones:** Todos los taxis que presten servicio en la ciudad deben llevar a bordo de manera obligatoria Hojas de Quejas y Reclamaciones ajustadas a la normativa de consumo de Andalucía. La entrega de la hoja de reclamaciones debe ser inmediata, gratuita y obligatoria al ser solicitada por el usuario.
+*   **Resolución de Conflictos (Arbitraje):** El usuario tiene derecho a someter las controversias derivadas de la prestación del servicio a un arbitraje ante la Junta Arbitral de Transporte de la Junta de Andalucía.
+
+---
+
+## 7. Casos Especiales y Normas Adicionales (Cajón de Sastre)
+*   **Objetos Perdidos:** El conductor debe revisar el coche al finalizar cada trayecto. Si encuentra pertenencias olvidadas y no puede devolverlas en el acto, está obligado a depositarlas en las oficinas de la Policía Local de Cádiz en un plazo de 24 horas hábiles. Si el cliente solicita la entrega de un objeto a domicilio, deberá pagar al taxista el trayecto con el taxímetro encendido, previo aviso de su coste aproximado.
+*   **Ubicación de Paradas de Taxi Oficiales:** Se recoge en el inventario local un listado de paradas oficiales en puntos neurálgicos, destacando entre ellas: Parador, Falla, Mora, San Antonio, Palillero, Plaza Tortugas, La Punta (solo de 22 a 7h), Comes, Catedral, San Juan de Dios y Estación (Entrada Oeste de Adif).
+*   **Higiene y Limpieza del Vehículo:** Los vehículos deben cumplir con estrictas condiciones de limpieza interior y exterior. Queda prohibido de manera expresa el uso de alfombras y felpudos; el piso debe ser de material fácilmente lavable. El tapizado no debe presentar roturas ni desperfectos.
+*   **Vestimenta Obligatoria (Uniforme):** Se prohíbe el uso de pantalones cortos, camisetas, chanclas o sandalias que no tengan sujeción posterior. Los conductores deben vestir con pantalón largo oscuro, camisa clara (de preferencia blanca) o polo de manga corta en verano, y jersey oscuro.
+*   **Libranzas y Excepciones de Descanso:** No se permite estacionar en las paradas de taxi en los días de descanso obligatorio del vehículo. No obstante, el taxi puede prestar servicio en su día de descanso exclusivamente para cubrir servicios precontratados con antelación, debiendo llevar a bordo la acreditación documental física o digital.
+*   **Mamparas de Protección:** Los taxis pueden llevar mamparas de seguridad autorizadas. En estos casos, el conductor puede negarse discrecionalmente a admitir pasajeros en el asiento delantero.
+*   **Climatización a bordo:** El pasajero decide el uso del aire acondicionado, calefacción y radio. Si el aire no funciona en días calurosos y el cliente no fue advertido antes de subir, tiene derecho a abandonar el vehículo sin coste alguno (limitado exclusivamente al inicio del trayecto o tramo urbano; no aplica si se abandona a mitad de un viaje interurbano donde deberá abonar lo recorrido).
+`;
