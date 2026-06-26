@@ -244,8 +244,8 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             removeTypingIndicator(typingId);
 
             if (data.error) {
-                let errorMsg = data.error;
-                if (typeof errorMsg === 'string' && (errorMsg.includes('503') || errorMsg.includes('high demand'))) {
+                let errorMsg = typeof data.error === 'string' ? data.error : JSON.stringify(data.error);
+                if (errorMsg.includes('503') || errorMsg.includes('high demand')) {
                     errorMsg = "Servidores de Inteligencia Artificial saturados temporalmente. Por favor, inténtalo de nuevo en unos segundos.";
                 }
                 addMessage('bot', `<span class="bubble" style="background:#ffebee; color:#c62828;">⚠️ ${errorMsg}</span>`);
