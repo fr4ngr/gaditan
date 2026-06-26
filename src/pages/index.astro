@@ -390,7 +390,7 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             liveRoutingControl = mapL.Routing.control({
                 waypoints: [ mapL.latLng(userLat, userLon), mapL.latLng(destLat, destLon) ],
                 router: mapL.Routing.osrmv1({
-                    serviceUrl: 'https://router.project-osrm.org/route/v1',
+                    serviceUrl: 'https://routing.openstreetmap.de/routed-foot/route/v1',
                     profile: 'foot'
                 }),
                 routeWhileDragging: false,
