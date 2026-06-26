@@ -245,10 +245,18 @@ import ChatLayout from '../layouts/ChatLayout.astro';
 
             if (data.error) {
                 let errorMsg = typeof data.error === 'string' ? data.error : JSON.stringify(data.error);
-                if (errorMsg.includes('503') || errorMsg.includes('high demand')) {
+                if (errorMsg.includes('503') || errorMsg.includes('high demand') || errorMsg.includes('demasiada gente')) {
                     errorMsg = "Servidores de Inteligencia Artificial saturados temporalmente. Por favor, inténtalo de nuevo en unos segundos.";
                 }
-                addMessage('bot', `<span class="bubble" style="background:#ffebee; color:#c62828;">⚠️ ${errorMsg}</span>`);
+                
+                const safeText = text.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                addMessage('bot', `
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <span class="bubble" style="background:#ffebee; color:#c62828;">⚠️ ${errorMsg}</span>
+                        <button class="call-btn" style="background: #c62828; margin: 0; align-self: flex-start; padding: 6px 12px; font-size: 0.85rem;" onclick="window.sendToAI('${safeText}')">🔄 Reintentar</button>
+                    </div>
+                `);
+                
                 chatHistory.pop(); // Remove failed user message from history
                 return;
             }
