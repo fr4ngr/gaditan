@@ -11,17 +11,92 @@ import ChatLayout from '../layouts/ChatLayout.astro';
 
 </ChatLayout>
 
-<script>
-    import { chatNodes, taxiKnowledge } from '../data/chatFlows.ts';
+<style is:global>
+    /* Estilos para las Tarjetas Generativas (Generative UI) */
+    .ai-card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        border: 1px solid #e0e0e0;
+        overflow: hidden;
+        margin-top: 5px;
+        max-width: 100%;
+        animation: slideIn 0.3s ease-out;
+    }
+    .card-header {
+        padding: 12px 16px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        border-bottom: 1px solid #eee;
+    }
+    .price-card .card-header { background: #e3f2fd; color: #1565c0; }
+    .rule-card .card-header { background: #fff3e0; color: #e65100; }
+    .contact-card .card-header { background: #e8f5e9; color: #2e7d32; }
     
+    .card-body {
+        padding: 16px;
+        font-size: 0.95rem;
+        line-height: 1.5;
+        color: #333;
+    }
+    .price-estimate {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #1565c0;
+        text-align: center;
+        margin: 10px 0;
+    }
+    .route-details {
+        font-size: 0.85rem;
+        color: #666;
+        text-align: center;
+        background: #f5f5f5;
+        padding: 8px;
+        border-radius: 8px;
+    }
+    .law-source {
+        margin-top: 12px;
+        font-size: 0.8rem;
+        color: #666;
+        font-style: italic;
+        border-left: 3px solid #ffb74d;
+        padding-left: 8px;
+    }
+    .phone-number {
+        font-size: 1.5rem;
+        font-weight: 700;
+        text-align: center;
+        letter-spacing: 1px;
+        margin: 10px 0;
+    }
+    .ai-card .call-btn {
+        display: block;
+        width: 100%;
+        padding: 14px;
+        text-align: center;
+        background: #007bff;
+        color: white;
+        text-decoration: none;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+    .ai-card .call-btn:hover { background: #0056b3; }
+    .contact-card .call-btn { background: #2e7d32; }
+    .contact-card .call-btn:hover { background: #1b5e20; }
+    
+    @keyframes slideIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+
+<script>
     // --- ESTADO DEL CHAT ---
     const messagesContainer = document.getElementById('messages-container');
     const inputField = document.querySelector('.chat-input') as HTMLInputElement;
     const sendButton = document.querySelector('.send-button');
-
-    // Máquina de estados para flujos de texto (Calculadora)
-    let chatState = 'IDLE'; 
-    let calcData = { origen: '', destino: '', maletas: '' };
 
     // --- RENDERIZADO BÁSICO ---
     function scrollToBottom() {
@@ -30,17 +105,11 @@ import ChatLayout from '../layouts/ChatLayout.astro';
         }
     }
 
-    function addMessage(sender: 'user' | 'bot', text: string, htmlContent: string = '') {
+    function addMessage(sender: 'user' | 'bot', htmlContent: string) {
         const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         const messageDiv = document.createElement('div');
         messageDiv.className = `message ${sender}`;
-        
-        let contentHtml = htmlContent ? htmlContent : `<span class="bubble">${text}</span>`;
-        messageDiv.innerHTML = `
-            ${contentHtml}
-            <span class="message-time">${time}</span>
-        `;
-        
+        messageDiv.innerHTML = `${htmlContent}<span class="message-time">${time}</span>`;
         messagesContainer?.appendChild(messageDiv);
         scrollToBottom();
     }
@@ -67,132 +136,115 @@ import ChatLayout from '../layouts/ChatLayout.astro';
         if (el) el.remove();
     }
 
-    // --- MOTOR DE ÁRBOL DE DECISIÓN (NODOS) ---
-    
-    window.handleAction = function(nodeId: string) {
-        // 1. Excepción: Iniciar Calculadora
-        if (nodeId === 'CALCULADORA_START') {
-            const typingId = showTypingIndicator();
-            setTimeout(() => {
-                removeTypingIndicator(typingId);
-                chatState = 'CALC_ORIGEN';
-                addMessage('bot', chatNodes['CALCULADORA_START'].text);
-                inputField.focus();
-                inputField.placeholder = "Ej: Plaza de las Flores";
-            }, 600);
-            return;
+    // --- GENERATIVE UI ENGINE (TARJETAS) ---
+    function renderCard(data: any): string {
+        if (data.cardType === 'PriceCard') {
+            return `
+            <div class="ai-card price-card">
+                <div class="card-header">🧮 Estimación de Precio</div>
+                <div class="card-body">
+                    <p>${data.content}</p>
+                    ${data.priceEstimate ? `<div class="price-estimate">${data.priceEstimate}</div>` : ''}
+                    ${data.routeDetails ? `<div class="route-details">${data.routeDetails}</div>` : ''}
+                </div>
+                <button class="call-btn" onclick="window.sendToAI('Quiero pedir un taxi ahora')">🚕 Llamar Taxi Ahora</button>
+            </div>`;
         }
-
-        // 2. Procesamiento Genérico de Nodos
-        const node = chatNodes[nodeId];
-        if (!node) return;
-
-        // Opcional: Mostrar la elección del usuario (si no es el inicio)
-        if (nodeId !== 'HOME') {
-            // Buscamos la etiqueta del botón que pulsó para pintarlo como mensaje del usuario
-            // Nota: Podríamos pasarlo como parámetro, pero para mantenerlo limpio lo omitimos o simulamos
+        if (data.cardType === 'RuleCard') {
+            return `
+            <div class="ai-card rule-card">
+                <div class="card-header">⚖️ Normativa Oficial</div>
+                <div class="card-body">
+                    <p>${data.content}</p>
+                    ${data.lawSource ? `<div class="law-source">📚 Fuente: ${data.lawSource}</div>` : ''}
+                </div>
+            </div>`;
         }
+        if (data.cardType === 'ContactCard') {
+            const phone = data.phoneNumber || '956 21 21 21';
+            const cleanPhone = phone.replace(/[^0-9+]/g, '');
+            return `
+            <div class="ai-card contact-card">
+                <div class="card-header">📞 Contacto Directo</div>
+                <div class="card-body">
+                    <p>${data.content}</p>
+                    <div class="phone-number">${phone}</div>
+                </div>
+                <a href="tel:${cleanPhone}" class="call-btn">Llamar Ahora</a>
+            </div>`;
+        }
+        // Fallback para TextCard o desconocidos
+        return `<span class="bubble">${data.content}</span>`;
+    }
 
-        const typingId = showTypingIndicator();
-        setTimeout(() => {
-            removeTypingIndicator(typingId);
-            
-            // Renderizamos texto e HTML del bot
-            if (node.text && node.htmlContent) {
-                addMessage('bot', node.text, `<span class="bubble">${node.text}</span>` + node.htmlContent);
-            } else if (node.text) {
-                addMessage('bot', node.text);
-            } else if (node.htmlContent) {
-                addMessage('bot', '', node.htmlContent);
-            }
-
-            // Renderizamos los botones (Opciones) correspondientes a este nodo
-            if (node.options && node.options.length > 0) {
-                let chipsHtml = '<div class="action-chips">';
-                node.options.forEach(opt => {
-                    chipsHtml += `<button class="chip" onclick="window.handleAction('${opt.nextNodeId}')">${opt.label}</button>`;
-                });
-                chipsHtml += '</div>';
-                
-                // Un pequeño delay extra para mostrar los botones
-                setTimeout(() => addMessage('bot', '', chipsHtml), 300);
-            }
-        }, 600);
-    };
-
-    // --- LÓGICA DE TEXTO LIBRE (CALCULADORA) ---
-    function handleUserInput(text: string) {
+    // --- CONEXIÓN CON EL CEREBRO DE IA ---
+    async function sendMessageToAI(text: string) {
         if (!text.trim()) return;
         
-        addMessage('user', text);
+        // 1. Pintar mensaje del usuario
+        addMessage('user', `<span class="bubble">${text}</span>`);
         inputField.value = '';
 
+        // 2. Mostrar "Pensando..."
         const typingId = showTypingIndicator();
-        
-        setTimeout(() => {
+
+        try {
+            // 3. Llamar al API Endpoint de Astro (SSR)
+            const response = await fetch('/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: text })
+            });
+
+            const data = await response.json();
             removeTypingIndicator(typingId);
 
-            if (chatState === 'CALC_ORIGEN') {
-                calcData.origen = text;
-                chatState = 'CALC_DESTINO';
-                addMessage('bot', 'Perfecto. ¿A dónde te diriges?');
-                inputField.placeholder = "Ej: Hospital Puerta del Mar";
-            } 
-            else if (chatState === 'CALC_DESTINO') {
-                calcData.destino = text;
-                chatState = 'CALC_MALETAS';
-                addMessage('bot', '¿Llevas alguna maleta de equipaje en el maletero? (Responde con el número, ej: 0, 1, 2)');
-                inputField.type = 'number';
-                inputField.placeholder = "Número de maletas";
+            if (data.error) {
+                addMessage('bot', `<span class="bubble" style="background:#ffebee; color:#c62828;">Error del servidor: ${data.error}</span>`);
+                return;
             }
-            else if (chatState === 'CALC_MALETAS') {
-                calcData.maletas = text;
-                chatState = 'IDLE';
-                inputField.type = 'text';
-                inputField.placeholder = "Pregunta por un taxi, bus, ruta...";
-                
-                const numMaletas = parseInt(calcData.maletas) || 0;
-                const costeMaletas = numMaletas * taxiKnowledge.suplementos[0].precio;
-                const costeViaje = taxiKnowledge.tarifasUrbanas.T1.bajada + (4 * taxiKnowledge.tarifasUrbanas.T1.km) + costeMaletas;
-                const precioFinal = Math.max(costeViaje, taxiKnowledge.tarifasUrbanas.T1.minima).toFixed(2);
-                
-                addMessage('bot', `Resumen: De **${calcData.origen}** a **${calcData.destino}** con ${numMaletas} maletas. \n\nEl precio estimado en Tarifa Diurna (T1) sería de **${precioFinal}€**. \n*(Cálculo oficial de la Junta: Bajada 1,39€ + 0,70€/km + 0,51€/maleta)*`);
-                
-                setTimeout(() => {
-                    const html = `
-                        <div class="action-chips">
-                            <button class="chip" onclick="window.handleAction('HOME')">⬅️ Volver al Inicio</button>
-                        </div>
-                    `;
-                    addMessage('bot', '', html);
-                }, 500);
-            }
-            else {
-                addMessage('bot', 'Por ahora estoy en fase de aprendizaje guiado. Usa el menú de botones para moverte 👆');
-            }
-        }, 1000);
+
+            // 4. Renderizar la Tarjeta generada por la IA
+            const cardHtml = renderCard(data);
+            addMessage('bot', cardHtml);
+
+        } catch (error) {
+            removeTypingIndicator(typingId);
+            addMessage('bot', `<span class="bubble" style="background:#ffebee; color:#c62828;">Error de conexión. Inténtalo de nuevo.</span>`);
+        }
     }
+
+    // Exponer función global para botones internos de las tarjetas
+    window.sendToAI = sendMessageToAI;
 
     // --- EVENT LISTENERS ---
     sendButton?.addEventListener('click', () => {
-        handleUserInput(inputField.value);
+        sendMessageToAI(inputField.value);
     });
 
     inputField?.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
-            handleUserInput(inputField.value);
+            sendMessageToAI(inputField.value);
         }
     });
 
     // --- INICIALIZACIÓN (MOMENTO 0) ---
     setTimeout(() => {
-        window.handleAction('HOME');
-    }, 400);
+        const welcomeHtml = `
+            <span class="bubble">¡Hola! 👋 Soy Cádiz Plus, tu asistente dotado de Inteligencia Artificial. Conozco toda la normativa de taxis de Cádiz al dedillo. ¿En qué puedo ayudarte?</span>
+            <div class="action-chips">
+                <button class="chip" onclick="window.sendToAI('Quiero calcular un viaje')">🧮 Calcular Viaje</button>
+                <button class="chip" onclick="window.sendToAI('¿Cuánto cobran por maleta?')">🎒 Info Equipaje</button>
+                <button class="chip" onclick="window.sendToAI('Voy en silla de ruedas')">♿ Movilidad</button>
+            </div>
+        `;
+        addMessage('bot', welcomeHtml);
+    }, 500);
 
-    // Tipado global para window
+    // Tipado global
     declare global {
         interface Window {
-            handleAction: (nodeId: string) => void;
+            sendToAI: (text: string) => void;
         }
     }
 </script>
