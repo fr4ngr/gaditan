@@ -1,5 +1,5 @@
 {
-  "name": "astro-temp",
+  "name": "cadiz.chat",
   "type": "module",
   "version": "0.0.1",
   "engines": {
@@ -12,7 +12,6 @@
     "astro": "astro"
   },
   "dependencies": {
-    "astro": "^6.4.4",
-    "lucide": "^1.17.0"
+    "astro": "^7.0.3"
   }
 }

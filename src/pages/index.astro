@@ -1,30 +1,31 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import Header from '../components/Header.astro';
-import Hero from '../components/Hero.astro';
-import Ventajas from '../components/Ventajas.astro';
-import Tarifas from '../components/Tarifas.astro';
-import Destinos from '../components/Destinos.astro';
-import MapaParadas from '../components/MapaParadas.astro';
-import Calculadora from '../components/Calculadora.astro';
-import Reserva from '../components/Reserva.astro';
-import FAQ from '../components/FAQ.astro';
-import Footer from '../components/Footer.astro';
-import SearchModal from '../components/SearchModal.astro';
+import ChatLayout from '../layouts/ChatLayout.astro';
 ---
 
-<Layout>
-    <Header />
-    <main>
-        <Hero />
-        <Ventajas />
-        <Tarifas />
-        <MapaParadas />
-        <Destinos />
-        <Calculadora />
-        <Reserva />
-        <FAQ />
-    </main>
-    <Footer />
-    <SearchModal />
-</Layout>
+<ChatLayout title="Cádiz Plus | Asistente de Movilidad">
+    
+    <div class="message bot">
+        <span class="bubble">¡Hola! 👋 Soy tu asistente de movilidad y turismo en Cádiz. ¿En qué puedo ayudarte hoy?</span>
+        <span class="message-time">10:00</span>
+    </div>
+
+    <div class="message user">
+        <span class="bubble">Necesito ir a la estación de tren rápido</span>
+        <span class="message-time">10:02</span>
+    </div>
+
+    <div class="message bot">
+        <span class="bubble">La forma más rápida es en taxi. Estás a unos 5 minutos. ¿Quieres que te facilite el número de RadioTaxi?</span>
+        <span class="message-time">10:02</span>
+    </div>
+
+    <!-- Ejemplo de cómo podríamos inyectar HTML complejo como botones en el futuro -->
+    <div class="message bot">
+        <div class="bubble" style="display: flex; flex-direction: column; gap: 0.5rem;">
+            <span>También puedes consultar los horarios de trenes directamente:</span>
+            <button style="background: var(--bg-color); border: 1px solid var(--primary-color); color: var(--primary-color); padding: 0.5rem; border-radius: 0.5rem; cursor: pointer; font-weight: 500;">Ver Horarios Renfe</button>
+        </div>
+        <span class="message-time">10:03</span>
+    </div>
+
+</ChatLayout>
