@@ -190,32 +190,25 @@ import ChatLayout from '../layouts/ChatLayout.astro';
         }
         if (data.cardType === 'MapCard') {
             return `
-            <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%;">
+            <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%; max-width: 85%; align-self: flex-start;">
                 <span class="bubble">${data.content}</span>
-                <div class="ai-card map-card" id="map-card-${msgId}">
-                    <div class="card-header">📍 ${data.stopName || 'Parada de Taxi'}</div>
-                    <div class="card-body" style="padding: 0;">
-                        ${data.lat && data.lon ? `
-                        <button class="call-btn expand-map-btn" style="display: none; background: #6a1b9a; margin: 10px; width: calc(100% - 20px);" onclick="window.openMapPanel('${data.lat}', '${data.lon}', '${msgId}')">🗺️ Ver en Pantalla Grande</button>
-                        <div class="map-container" id="map-container-${msgId}" style="display: none; border-radius: 0 0 12px 12px; overflow: hidden; height: 180px;"></div>
-                        ` : ''}
-                    </div>
+                ${data.lat && data.lon ? `
+                <div style="border-radius: 18px; overflow: hidden; height: 250px; width: 100%; position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                    <div id="leaflet-map-${msgId}" style="width: 100%; height: 100%;"></div>
                 </div>
+                ` : ''}
             </div>`;
         }
         if (data.cardType === 'NavigationCard') {
             return `
-            <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%;">
+            <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%; max-width: 85%; align-self: flex-start;">
                 <span class="bubble">${data.content}</span>
-                <div class="ai-card map-card" id="map-card-${msgId}">
-                    <div class="card-header">🗺️ Ruta hacia ${data.stopName || 'Destino'}</div>
-                    <div class="card-body" style="padding: 0;">
-                        ${data.lat && data.lon ? `
-                        <button class="call-btn expand-map-btn" style="display: none; background: #1565c0; margin: 10px; width: calc(100% - 20px);" onclick="window.openMapPanel('${data.lat}', '${data.lon}', '${msgId}', true)">🛣️ Ver Ruta Completa</button>
-                        <div class="map-container" id="map-container-${msgId}" style="display: none; border-radius: 0 0 12px 12px; overflow: hidden; height: 180px;"></div>
-                        ` : ''}
-                    </div>
+                ${data.lat && data.lon ? `
+                <div style="border-radius: 18px; overflow: hidden; height: 250px; width: 100%; position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                    <button id="dev-mock-btn-${msgId}" style="position:absolute; top:10px; right:10px; z-index:1000; padding:5px 10px; background:#d32f2f; color:white; font-size:12px; font-weight:bold; border:none; border-radius:4px; cursor:pointer;">DEV: Fake GPS</button>
+                    <div id="leaflet-map-${msgId}" style="width: 100%; height: 100%;"></div>
                 </div>
+                ` : ''}
             </div>`;
         }
         // Fallback para TextCard o desconocidos
@@ -259,10 +252,12 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             const cardHtml = renderCard(data, msgId);
             addMessage('bot', cardHtml);
 
-            // 5. Manejar Split-Screen automáticamente
+            // 5. Instanciar el mapa en línea
             if ((data.cardType === 'MapCard' || data.cardType === 'NavigationCard') && data.lat && data.lon) {
                 const isRouting = data.cardType === 'NavigationCard';
-                window.openMapPanel(data.lat, data.lon, msgId, isRouting);
+                setTimeout(() => {
+                    window.initInlineMap(data.lat, data.lon, msgId, isRouting);
+                }, 100);
             }
 
         } catch (error) {
@@ -271,145 +266,79 @@ import ChatLayout from '../layouts/ChatLayout.astro';
         }
     }
 
-    // --- LÓGICA DE PANTALLA DIVIDIDA Y LEAFLET ---
-    let currentMap: any = null;
-    let routingControl: any = null;
-
-    window.openMapPanel = function(lat: string, lon: string, msgId: string, routing = false) {
-        const topPanel = document.getElementById('top-panel');
-        if (!topPanel) return;
+    // --- LÓGICA DE LEAFLET INLINE ---
+    window.initInlineMap = function(lat: string, lon: string, msgId: string, routing = false) {
+        const mapElement = document.getElementById(`leaflet-map-${msgId}`);
+        if (!mapElement) return;
         
-        // Limpiar el contenedor de la burbuja por si tenía el iframe/mapa
-        const container = document.getElementById(`map-container-${msgId}`);
-        if (container) {
-            container.style.display = 'none';
-            container.innerHTML = '';
-        }
-        const expandBtn = document.querySelector(`#map-card-${msgId} .expand-map-btn`) as HTMLElement;
-        if (expandBtn) expandBtn.style.display = 'none';
-
-        // Preparar panel superior
-        topPanel.innerHTML = `
-            <button class="close-panel-btn" onclick="window.closeMapPanel('${lat}', '${lon}', '${msgId}', ${routing})">✕</button>
-            ${routing ? `<button id="dev-mock-btn" style="position:absolute; top:10px; left:50px; z-index:1000; padding:5px 10px; background:#d32f2f; color:white; font-size:12px; font-weight:bold; border:none; border-radius:4px; cursor:pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">BOTÓN DESARROLLO: Fake GPS</button>` : ''}
-            <div id="leaflet-map-large" style="width:100%; height:100%;"></div>
-        `;
-        topPanel.classList.remove('closed');
+        const mapL = (window as any).L;
+        // Impedir propagación de scroll para que no moleste en el feed
+        const map = mapL.map(`leaflet-map-${msgId}`, {
+            scrollWheelZoom: false
+        }).setView([lat, lon], 16);
         
-        setTimeout(() => {
-            if (currentMap) currentMap.remove();
-            
-            // Inicializar Leaflet (usar L)
-            const mapL = (window as any).L;
-            currentMap = mapL.map('leaflet-map-large').setView([lat, lon], 16);
-            mapL.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-                attribution: '© OpenStreetMap, © CartoDB',
-                subdomains: 'abcd',
-                maxZoom: 20
-            }).addTo(currentMap);
-            
-            const destMarker = mapL.marker([lat, lon]).addTo(currentMap)
-                .bindPopup('Destino')
-                .openPopup();
+        mapL.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+            attribution: '© OpenStreetMap, © CartoDB',
+            subdomains: 'abcd',
+            maxZoom: 20
+        }).addTo(map);
+        
+        mapL.marker([lat, lon]).addTo(map).bindPopup('Destino').openPopup();
 
-            if (routing) {
-                const startRouting = (userLat: number, userLon: number, isFake = false) => {
-                    if (routingControl) {
-                        currentMap.removeControl(routingControl);
+        if (routing) {
+            let routingControl: any = null;
+            const startRouting = (userLat: number, userLon: number, isFake = false) => {
+                if (routingControl) {
+                    map.removeControl(routingControl);
+                }
+                routingControl = mapL.Routing.control({
+                    waypoints: [
+                        mapL.latLng(userLat, userLon),
+                        mapL.latLng(lat, lon)
+                    ],
+                    routeWhileDragging: false,
+                    language: 'es',
+                    showAlternatives: false,
+                    createMarker: function() { return null; }
+                }).addTo(map);
+                
+                const label = isFake ? 'Ubicación simulada' : 'Tu ubicación';
+                mapL.circleMarker([userLat, userLon], { radius: 8, color: isFake ? '#d32f2f' : '#3b82f6', fillOpacity: 0.8 }).addTo(map).bindPopup(label).openPopup();
+            };
+
+            const devBtn = document.getElementById(`dev-mock-btn-${msgId}`);
+            if (devBtn) {
+                let isDevModeActive = false;
+                devBtn.addEventListener('click', () => {
+                    isDevModeActive = true;
+                    devBtn.style.background = '#388e3c';
+                    devBtn.innerText = 'CLIC EN MAPA';
+                });
+
+                map.on('click', (e: any) => {
+                    if (isDevModeActive) {
+                        startRouting(e.latlng.lat, e.latlng.lng, true);
+                        isDevModeActive = false;
+                        devBtn.style.background = '#d32f2f';
+                        devBtn.innerText = 'DEV: Fake GPS';
                     }
-                    routingControl = mapL.Routing.control({
-                        waypoints: [
-                            mapL.latLng(userLat, userLon),
-                            mapL.latLng(lat, lon)
-                        ],
-                        routeWhileDragging: false,
-                        language: 'es',
-                        showAlternatives: false,
-                        createMarker: function() { return null; }
-                    }).addTo(currentMap);
-                    
-                    const label = isFake ? 'Ubicación simulada' : 'Tu ubicación';
-                    mapL.circleMarker([userLat, userLon], { radius: 8, color: isFake ? '#d32f2f' : '#3b82f6', fillOpacity: 0.8 }).addTo(currentMap).bindPopup(label).openPopup();
-                };
+                });
+            }
 
-                // Lógica Botón de Desarrollo
-                const devBtn = document.getElementById('dev-mock-btn');
-                if (devBtn) {
-                    let isDevModeActive = false;
-                    devBtn.addEventListener('click', () => {
-                        isDevModeActive = true;
-                        devBtn.style.background = '#388e3c';
-                        devBtn.innerText = 'HAZ CLIC EN EL MAPA';
-                    });
-
-                    currentMap.on('click', (e: any) => {
-                        if (isDevModeActive) {
-                            startRouting(e.latlng.lat, e.latlng.lng, true);
-                            isDevModeActive = false;
-                            devBtn.style.background = '#d32f2f';
-                            devBtn.innerText = 'BOTÓN DESARROLLO: Fake GPS';
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        if (!routingControl) {
+                            startRouting(position.coords.latitude, position.coords.longitude);
                         }
-                    });
-                }
-
-                if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(
-                        (position) => {
-                            // Solo iniciar ruta real si no hay un control ya (por si el dev se adelantó)
-                            if (!routingControl) {
-                                startRouting(position.coords.latitude, position.coords.longitude);
-                            }
-                        },
-                        (error) => {
-                            console.error("Error obteniendo ubicación:", error);
-                        }
-                    );
-                }
+                    },
+                    (error) => {
+                        console.error("Error obteniendo ubicación:", error);
+                    }
+                );
             }
-
-            scrollToBottom();
-        }, 300);
-    };
-
-    window.closeMapPanel = function(lat: string, lon: string, msgId: string, routing = false) {
-        const topPanel = document.getElementById('top-panel');
-        if (!topPanel) return;
-
-        topPanel.classList.add('closed');
-        setTimeout(() => {
-            if (currentMap) {
-                currentMap.remove();
-                currentMap = null;
-            }
-            if (routingControl) {
-                routingControl = null;
-            }
-            topPanel.innerHTML = '';
-            
-            // Transportar el mapa a la burbuja del chat
-            const container = document.getElementById(`map-container-${msgId}`);
-            if (container) {
-                container.style.display = 'block';
-                container.innerHTML = `<div id="leaflet-map-small-${msgId}" style="width:100%; height:100%;"></div>`;
-                
-                // Reinicializar un mini-mapa estático en la burbuja
-                const mapL = (window as any).L;
-                const miniMap = mapL.map(`leaflet-map-small-${msgId}`, {
-                    zoomControl: false,
-                    dragging: false,
-                    scrollWheelZoom: false
-                }).setView([lat, lon], 15);
-                
-                mapL.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png').addTo(miniMap);
-                mapL.marker([lat, lon]).addTo(miniMap);
-            }
-            
-            // Mostrar botón para volver a expandir
-            const expandBtn = document.querySelector(`#map-card-${msgId} .expand-map-btn`) as HTMLElement;
-            if (expandBtn) expandBtn.style.display = 'block';
-            
-            scrollToBottom();
-        }, 300); // Esperar a que termine la animación
+        }
+        setTimeout(() => scrollToBottom(), 500);
     };
 
     // Exponer función global para botones internos de las tarjetas
