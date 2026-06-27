@@ -552,10 +552,32 @@ import ChatLayout from '../layouts/ChatLayout.astro';
     window.mapActionTaxi = function() {
         if (window.activeMapStopName) {
             window.switchPanel('chat');
-            const input = document.querySelector('.chat-input') as HTMLInputElement;
-            if (input) {
-                input.value = `Pedir taxi en parada: ${window.activeMapStopName}`;
-                input.focus();
+            // Añadir el mensaje del usuario
+            if (typeof addMessage === 'function') {
+                addMessage('user', `<span class="bubble">Quiero pedir un taxi desde la parada: ${window.activeMapStopName}</span>`);
+                
+                // Mostrar la tarjeta de contacto
+                const contactHtml = `
+                    <div class="card default-card">
+                        <div class="card-header">
+                            <span class="card-icon">📞</span>
+                            <h3>Radiotaxi Cádiz</h3>
+                        </div>
+                        <div class="card-body">
+                            <p>¡Claro! Para pedir un taxi ahora en Cádiz, debes ponerte en contacto directamente con la emisora oficial autorizada por el Ayuntamiento.</p>
+                            <p>Puedes llamarles por teléfono o pedir el taxi por WhatsApp.</p>
+                            <div style="display:flex; flex-direction:column; gap:10px; margin-top:15px;">
+                                <a href="tel:+34956212121" class="action-btn" style="background:#3b82f6; color:white; text-decoration:none; display:flex; align-items:center; justify-content:center; gap:8px;">
+                                    📞 Llamar al 956 21 21 21
+                                </a>
+                                <a href="https://wa.me/34956212121" target="_blank" class="action-btn" style="background:#25d366; color:white; text-decoration:none; display:flex; align-items:center; justify-content:center; gap:8px;">
+                                    💬 Pedir por WhatsApp
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                addMessage('bot', contactHtml);
             }
         }
     };
