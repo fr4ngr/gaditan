@@ -263,14 +263,14 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                     </div>
                 </div>
             </div>
-            <script>
+            <` + `script>
                 // Autoejecutar para inicializar la tarjeta con 'urbana' + 'dia'
                 setTimeout(() => {
                     if (window.changeTariffTab) {
                         window.changeTariffTab('${msgId}', 'urbana');
                     }
                 }, 50);
-            </script>`;
+            <` + `/script>`;
         }
 
         // Fallback para desconocidos
