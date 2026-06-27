@@ -625,32 +625,77 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                 const stopLon = window.activeMapStopLon;
                 const mapL = (window as any).L;
 
-                if (window.currentUserMarker) {
-                    window.currentMap.removeLayer(window.currentUserMarker);
-                }
-
-                const userIcon = mapL.divIcon({
-                    className: 'custom-user-marker',
-                    html: '<div style="width:14px;height:14px;background:#3b82f6;border-radius:50%;border:2px solid white;box-shadow:0 0 5px rgba(0,0,0,0.3);"></div>',
-                    iconSize: [18, 18],
-                    iconAnchor: [9, 9]
-                });
-
-                window.currentUserMarker = mapL.marker([userLat, userLon], {
-                    icon: userIcon,
-                    draggable: !!window.devMockLat
-                }).addTo(window.currentMap);
-
-                if (window.devMockLat) {
-                    window.currentUserMarker.on('dragend', function(event: any) {
-                        const marker = event.target;
-                        const position = marker.getLatLng();
-                        window.devMockLat = position.lat;
-                        window.devMockLon = position.lng;
-                        if (window.activeMapStopLat) {
-                            window.mapActionDirections();
-                        }
+                if (!window.currentUserMarker) {
+                    const userIcon = mapL.divIcon({
+                        className: 'custom-user-marker',
+                        html: '<div style="width:14px;height:14px;background:#3b82f6;border-radius:50%;border:2px solid white;box-shadow:0 0 5px rgba(0,0,0,0.3);"></div>',
+                        iconSize: [18, 18],
+                        iconAnchor: [9, 9]
                     });
+
+                    window.currentUserMarker = mapL.marker([userLat, userLon], {
+                        icon: userIcon,
+                        draggable: !!window.devMockLat
+                    }).addTo(window.currentMap);
+
+                    if (window.devMockLat) {
+                        window.currentUserMarker.on('dragstart', () => {
+                            window.isDraggingDevMarker = true;
+                        });
+
+                        window.currentUserMarker.on('drag', function(event: any) {
+                            if (!window.currentRoutePolylineBase) return;
+                            const latlngs = window.currentRoutePolylineBase.getLatLngs();
+                            if (!latlngs || latlngs.length < 2) return;
+                            
+                            const currentPoint = window.currentMap.latLngToLayerPoint(event.latlng);
+                            let minDistance = Infinity;
+                            let closestP = null;
+
+                            for (let i = 0; i < latlngs.length - 1; i++) {
+                                const p1 = window.currentMap.latLngToLayerPoint(latlngs[i]);
+                                const p2 = window.currentMap.latLngToLayerPoint(latlngs[i+1]);
+                                
+                                let x = p1.x, y = p1.y, dx = p2.x - x, dy = p2.y - y;
+                                const dot = dx * dx + dy * dy;
+                                if (dot > 0) {
+                                    const t = ((currentPoint.x - x) * dx + (currentPoint.y - y) * dy) / dot;
+                                    if (t > 1) { x = p2.x; y = p2.y; }
+                                    else if (t > 0) { x += dx * t; y += dy * t; }
+                                }
+                                const projectedPoint = mapL.point(x, y);
+                                const distance = currentPoint.distanceTo(projectedPoint);
+                                if (distance < minDistance) {
+                                    minDistance = distance;
+                                    closestP = window.currentMap.layerPointToLatLng(projectedPoint);
+                                }
+                            }
+                            
+                            if (closestP) {
+                                event.target.setLatLng(closestP);
+                                window.devMockLat = closestP.lat;
+                                window.devMockLon = closestP.lng;
+                                
+                                if (window.devDragThrottle) return;
+                                window.devDragThrottle = setTimeout(() => {
+                                    window.devDragThrottle = null;
+                                    if (window.activeMapStopLat) window.mapActionDirections();
+                                }, 400);
+                            }
+                        });
+
+                        window.currentUserMarker.on('dragend', function(event: any) {
+                            window.isDraggingDevMarker = false;
+                            const position = event.target.getLatLng();
+                            window.devMockLat = position.lat;
+                            window.devMockLon = position.lng;
+                            if (window.activeMapStopLat) window.mapActionDirections();
+                        });
+                    }
+                } else {
+                    if (!window.devMockLat || !window.isDraggingDevMarker) {
+                        window.currentUserMarker.setLatLng([userLat, userLon]);
+                    }
                 }
 
                 try {
@@ -711,38 +756,38 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                             }
                         }
 
-                        if (window.currentRoutePolyline) {
-                            window.currentMap.removeLayer(window.currentRoutePolyline);
-                        }
-                        if (window.currentRoutePolylineBase) {
-                            window.currentMap.removeLayer(window.currentRoutePolylineBase);
-                        }
-
                         const coordinates = route.geometry.coordinates.map((coord: number[]) => [coord[1], coord[0]]);
                         
-                        window.currentRoutePolylineBase = mapL.polyline(coordinates, {
-                            color: '#ffffff',
-                            weight: 6,
-                            opacity: 1,
-                            lineJoin: 'round'
-                        }).addTo(window.currentMap);
+                        if (!window.currentRoutePolylineBase) {
+                            window.currentRoutePolylineBase = mapL.polyline(coordinates, {
+                                color: '#ffffff',
+                                weight: 6,
+                                opacity: 1,
+                                lineJoin: 'round'
+                            }).addTo(window.currentMap);
 
-                        window.currentRoutePolyline = mapL.polyline(coordinates, {
-                            color: 'var(--primary-color)',
-                            weight: 6,
-                            opacity: 1,
-                            dashArray: '10, 10',
-                            lineJoin: 'round'
-                        }).addTo(window.currentMap);
+                            window.currentRoutePolyline = mapL.polyline(coordinates, {
+                                color: 'var(--primary-color)',
+                                weight: 6,
+                                opacity: 1,
+                                dashArray: '10, 10',
+                                lineJoin: 'round'
+                            }).addTo(window.currentMap);
+                        } else {
+                            window.currentRoutePolylineBase.setLatLngs(coordinates);
+                            window.currentRoutePolyline.setLatLngs(coordinates);
+                        }
 
-                        const bounds = mapL.latLngBounds([
-                            [userLat, userLon],
-                            [stopLat, stopLon]
-                        ]);
-                        window.currentMap.fitBounds(bounds, {
-                            paddingTopLeft: [20, 200],
-                            paddingBottomRight: [20, 20]
-                        });
+                        if (!window.isDraggingDevMarker) {
+                            const bounds = mapL.latLngBounds([
+                                [userLat, userLon],
+                                [stopLat, stopLon]
+                            ]);
+                            window.currentMap.fitBounds(bounds, {
+                                paddingTopLeft: [20, 200],
+                                paddingBottomRight: [20, 20]
+                            });
+                        }
 
                     } else {
                         if (routeTime) routeTime.innerText = "Error";
