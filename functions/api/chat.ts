@@ -37,9 +37,15 @@ Lógica a seguir:
 - Fase Interés (Tarifas, Aeropuertos, Favoritos) -> Sugiere Calculadora o Reservas directamente.
 - Fase Decisión (Calculadora) -> Sugiere SIEMPRE Reservas.
 
+**REGLA DE ORO SOBRE LAS TARIFAS**
+¡NUNCA muestres toda la lista de tarifas de golpe!
+Si el usuario pregunta genéricamente por "tarifas", usa una "TextCard" respondiendo algo como "¿Qué tarifa te interesa consultar?" y devuelve EXACTAMENTE estos 3 botones en suggestedBlocks: "Tarifa Urbana", "Tarifa Interurbana", "Suplementos".
+Solo cuando el usuario pida una de esas 3 específicamente (o si pregunta directamente por una de ellas), usarás la "TariffCard" para mostrar los precios de ESE bloque concreto en formato tabla.
+
 **TIPOS DE TARJETAS (cardType)**
 - "TextCard": Respuesta conversacional básica o información genérica (Juegos, FAQs).
-- "PriceCard": Para calcular precios o estimar tarifas basándote en la base de datos. (Ej: Tarifas, Calculadora).
+- "TariffCard": ÚSALA SOLO para mostrar los datos de una tarifa concreta (Urbana, Interurbana o Suplementos) en formato de tabla visual. Rellena el array 'tariffItems' con cada concepto y su precio exacto.
+- "PriceCard": Para calcular un presupuesto total de un viaje (Ej: Calculadora) sumando distancia y suplementos.
 - "RuleCard": Para normativas, maletas, mascotas, sillas de ruedas.
 - "MapCard": Para mostrar la ubicación de una parada específica.
 - "NavigationCard": Para dar indicaciones GPS en vivo ("cómo llego", "llévame allí").
@@ -52,13 +58,26 @@ Lógica a seguir:
             properties: {
                 cardType: {
                     type: Type.STRING,
-                    enum: ['TextCard', 'PriceCard', 'RuleCard', 'ContactCard', 'MapCard', 'NavigationCard', 'ReservationCard'],
+                    enum: ['TextCard', 'TariffCard', 'PriceCard', 'RuleCard', 'ContactCard', 'MapCard', 'NavigationCard', 'ReservationCard'],
                     description: "El tipo de tarjeta visual a mostrar."
                 },
                 content: {
                     type: Type.STRING,
                     description: "El mensaje principal del asistente. Usa emojis libremente y un tono directo y servicial. ¡NUNCA incluyas el número de teléfono literal en una ContactCard!"
                 },
+                tariffType: { type: Type.STRING, description: "Título de la tarifa. Ej: 'Tarifa Urbana'. Solo para TariffCard." },
+                tariffItems: {
+                    type: Type.ARRAY,
+                    description: "Lista de conceptos y precios. Solo para TariffCard.",
+                    items: {
+                        type: Type.OBJECT,
+                        properties: {
+                            name: { type: Type.STRING, description: "Concepto (ej. 'Bajada de bandera')" },
+                            price: { type: Type.STRING, description: "Precio (ej. '1.65€')" }
+                        }
+                    }
+                },
+                tariffNotes: { type: Type.STRING, description: "Notas adicionales de la tarifa (ej. horarios). Solo para TariffCard." },
                 priceEstimate: { type: Type.STRING, description: "Precio estimado con símbolo €. Solo para PriceCard." },
                 routeDetails: { type: Type.STRING, description: "Resumen de ruta/cálculo. Solo para PriceCard." },
                 lawSource: { type: Type.STRING, description: "Normativa exacta. Solo para RuleCard." },
@@ -70,7 +89,7 @@ Lógica a seguir:
                     type: Type.ARRAY,
                     items: {
                         type: Type.STRING,
-                        enum: ['TARIFAS', 'MAPA PARADAS', 'DESTINOS FAVORITOS', 'TRASLADOS A AEROPUERTOS', 'CALCULADORA', 'RESERVAS', 'PREGUNTAS FRECUENTES', 'JUEGOS DIDACTICOS']
+                        enum: ['TARIFAS', 'Tarifa Urbana', 'Tarifa Interurbana', 'Suplementos', 'MAPA PARADAS', 'DESTINOS FAVORITOS', 'TRASLADOS A AEROPUERTOS', 'CALCULADORA', 'RESERVAS', 'PREGUNTAS FRECUENTES', 'JUEGOS DIDACTICOS']
                     },
                     description: "1 a 3 bloques sugeridos para guiar al usuario hacia la conversión."
                 }

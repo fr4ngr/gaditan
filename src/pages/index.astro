@@ -233,7 +233,40 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                 ` : ''}
             </div>`;
         }
-        // Fallback para TextCard o desconocidos
+        if (data.cardType === 'TextCard') {
+            return `<span class="bubble">${data.content}</span>`;
+        }
+
+        if (data.cardType === 'TariffCard') {
+            let itemsHtml = '';
+            if (data.tariffItems && data.tariffItems.length > 0) {
+                itemsHtml = data.tariffItems.map((item: any) => `
+                    <div class="tariff-item">
+                        <span class="tariff-name">${item.name}</span>
+                        <span class="tariff-price">${item.price}</span>
+                    </div>
+                `).join('');
+            }
+            
+            let notesHtml = data.tariffNotes ? `<div class="tariff-notes">${data.tariffNotes}</div>` : '';
+
+            return `
+            <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%; max-width: 85%; align-self: flex-start; margin-bottom: 0.5rem;">
+                <span class="bubble" style="border-bottom-left-radius: 4px;">${data.content}</span>
+                <div class="tariff-card">
+                    <div class="tariff-header">
+                        <span class="tariff-icon">🏷️</span>
+                        <h3>${data.tariffType || 'Tarifas Oficiales'}</h3>
+                    </div>
+                    <div class="tariff-body">
+                        ${itemsHtml}
+                        ${notesHtml}
+                    </div>
+                </div>
+            </div>`;
+        }
+
+        // Fallback para desconocidos
         return `<span class="bubble">${data.content}</span>`;
     }
 
