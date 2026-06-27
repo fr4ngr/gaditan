@@ -624,8 +624,11 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             return `
             <div class="tariff-item-wrapper">
                 <div class="tariff-item">
-                    <span class="tariff-name">${item.name} ${infoBtn}</span>
-                    <span class="tariff-price">${item.price}</span>
+                    <span class="tariff-name">${item.name}</span>
+                    <div class="tariff-price-group">
+                        <span class="tariff-price">${item.price}</span>
+                        ${infoBtn}
+                    </div>
                 </div>
                 ${infoDetails}
             </div>
