@@ -483,23 +483,35 @@ import ChatLayout from '../layouts/ChatLayout.astro';
     // --- LÓGICA DE PÍLDORA DEL MAPA ---
     window.closeMapInfoPill = function() {
         const pill = document.getElementById('map-info-pill');
+        const mapCloseBtn = document.getElementById('map-close-btn');
         if (pill) {
             pill.style.opacity = '0';
-            pill.style.transform = 'translate(-50%, -10px)';
+            pill.style.transform = 'translateY(-10px)';
             pill.style.pointerEvents = 'none';
+        }
+        if (mapCloseBtn) {
+            mapCloseBtn.style.opacity = '1';
+            mapCloseBtn.style.pointerEvents = 'auto';
+            mapCloseBtn.style.transform = 'scale(1)';
         }
     };
 
     window.openMapInfoPill = function(title: string, desc: string) {
         const pill = document.getElementById('map-info-pill');
+        const mapCloseBtn = document.getElementById('map-close-btn');
         if (pill) {
             const titleEl = document.getElementById('map-info-title');
             const descEl = document.getElementById('map-info-desc');
             if (titleEl) titleEl.innerText = title;
             if (descEl) descEl.innerText = desc || '';
             pill.style.opacity = '1';
-            pill.style.transform = 'translate(-50%, 0)';
+            pill.style.transform = 'translateY(0)';
             pill.style.pointerEvents = 'auto';
+        }
+        if (mapCloseBtn) {
+            mapCloseBtn.style.opacity = '0';
+            mapCloseBtn.style.pointerEvents = 'none';
+            mapCloseBtn.style.transform = 'scale(0.8)';
         }
     };
 
