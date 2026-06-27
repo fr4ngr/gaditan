@@ -828,7 +828,7 @@ import ChatLayout from '../layouts/ChatLayout.astro';
 
     // --- INICIALIZACIÓN (MOMENTO 0) ---
     setTimeout(() => {
-        const initialBlocks = ['TARIFAS', 'MAPA PARADAS', 'DESTINOS FAVORITOS', 'TRASLADOS A AEROPUERTOS', 'CALCULADORA', 'RESERVAS', 'PREGUNTAS FRECUENTES', 'JUEGOS DIDACTICOS'];
+        const initialBlocks = ['🚕 TARIFAS', '📍 MAPA PARADAS', '🌟 DESTINOS FAVORITOS', '✈️ TRASLADOS A AEROPUERTOS', '🧮 CALCULADORA', '📅 RESERVAS', '❓ PREGUNTAS FRECUENTES', '🎲 JUEGOS DIDÁCTICOS'];
         const buttonsHtml = initialBlocks.map(block => {
             return `<button class="suggested-btn" onclick="window.sendToAI('${block}')">${block}</button>`;
         }).join('');
