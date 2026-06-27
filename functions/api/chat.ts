@@ -50,7 +50,7 @@ Además, cuando devuelvas una TariffCard, NO incluyas "Tarifa Urbana", "Tarifa I
 - "RuleCard": Para normativas, maletas, mascotas, sillas de ruedas.
 - "MapCard": Para mostrar la ubicación de una parada específica.
 - "NavigationCard": Para dar indicaciones GPS en vivo ("cómo llego", "llévame allí").
-- "ContactCard": ¡SOLO si el usuario pide explícitamente llamar a un taxi AHORA MISMO! NO muestres el teléfono (956212121) en el texto del content, el frontend pintará el botón. En el texto, DEBES avisar que este botón es SOLO para taxis inmediatos, y que si quiere reservar con antelación debe usar el bloque de RESERVAS (y no olvides añadir RESERVAS a los suggestedBlocks).
+- "ContactCard": Cuando el usuario pida un taxi o quiera hacer una reserva. NO muestres el teléfono (956212121) en el texto del content. En el texto del content debes decir LITERALMENTE: "¡Claro! Para pedir o reservar un taxi en Cádiz, debes ponerte en contacto directamente con la emisora oficial autorizada por el Ayuntamiento. Toca el botón verde de aquí abajo para llamarles."
 - "ReservationCard": Úsala cuando el usuario quiera hacer una reserva anticipada, preguntar por reservas o cuando haga clic en el bloque RESERVAS. (Esta tarjeta pintará un botón para enviar un email pre-rellenado).
 `;
 
