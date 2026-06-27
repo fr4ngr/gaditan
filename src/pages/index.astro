@@ -554,18 +554,25 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                 const mm = String(now.getMonth() + 1).padStart(2, '0');
                 const yyyy = now.getFullYear();
                 const todayStr = `${dd}/${mm}/${yyyy}`;
-                const months = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
-                const niceDate = `${now.getDate()} de ${months[now.getMonth()]}`;
+                
+                const fullMonths = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+                const niceDate = `${now.getDate()} de ${fullMonths[now.getMonth()]}`;
                 
                 const holidayName = HOLIDAYS[todayStr];
+                const todayMidnight = new Date(yyyy, now.getMonth(), now.getDate()).getTime();
                 
                 const festivosListHtml = Object.entries(HOLIDAYS).map(([date, name]) => {
-                    const year = date.split('/')[2];
-                    if (year === String(yyyy)) {
-                        return `<li><b>${date.substring(0,5)}</b>: ${name}</li>`;
+                    const [d, m, y] = date.split('/');
+                    const hDate = new Date(Number(y), Number(m)-1, Number(d));
+                    
+                    if (hDate.getTime() >= todayMidnight) {
+                        const hDay = hDate.getDate();
+                        const hMonth = fullMonths[hDate.getMonth()];
+                        const hYear = hDate.getFullYear();
+                        return `<li style="margin-bottom: 4px;"><b>${hDay} de ${hMonth} ${hYear}</b>: ${name}</li>`;
                     }
                     return '';
-                }).join('');
+                }).filter(Boolean).join('');
 
                 noteHtml += `
                 <div class="tariff-notes" style="margin-top: 8px; background: #fff3cd; padding: 10px; border-radius: 8px; color: #856404; border: 1px solid #ffeeba;">
@@ -573,14 +580,13 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                     ${holidayName 
                         ? `<b>SÍ</b> es festivo en Cádiz (${holidayName}).` 
                         : `<b>NO</b> es festivo oficial en Cádiz.`}
-                    
-                    <details style="margin-top: 8px; cursor: pointer;">
-                        <summary style="font-weight: 600; outline: none;">📅 Ver calendario de festivos ${yyyy}</summary>
-                        <ul style="margin: 8px 0 0 0; padding-left: 20px; font-size: 0.85rem; text-align: left;">
-                            ${festivosListHtml}
-                        </ul>
-                    </details>
-                </div>`;
+                </div>
+                <details style="margin-top: 8px; background: #eff6ff; padding: 10px; border-radius: 8px; color: #1e3a8a; border: 1px solid #bfdbfe; cursor: pointer;">
+                    <summary style="font-weight: 600; outline: none; list-style: none;">📅 Ver próximos festivos</summary>
+                    <ul style="margin: 10px 0 0 0; padding-left: 20px; font-size: 0.85rem; text-align: left; line-height: 1.4;">
+                        ${festivosListHtml || '<li>No hay más festivos previstos.</li>'}
+                    </ul>
+                </details>`;
             }
         }
 
