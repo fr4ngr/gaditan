@@ -33,11 +33,14 @@ const { title } = Astro.props;
                 <!-- PANEL 0: GUARDADOS -->
                 <div class="swipe-panel" id="panel-guardados">
                     <div class="app-container">
-                        <header class="chat-header" style="display: flex; align-items: center; justify-content: center; position: relative;">
-                            <div class="chat-title-group" style="text-align: center;">
+                        <header class="chat-header" style="display: flex; align-items: center; justify-content: space-between; position: relative;">
+                            <div class="chat-title-group">
                                 <h1>🔖 Guardados</h1>
-                                <span class="chat-subtitle">Tus respuestas favoritas</span>
+                                <span class="chat-subtitle">Tus favoritos</span>
                             </div>
+                            <button class="back-swipe-btn" onclick="document.getElementById('panel-chat').scrollIntoView({behavior:'smooth'})" aria-label="Volver">
+                                Volver ➡
+                            </button>
                         </header>
                         <main class="messages-area" id="saved-messages-container" style="padding: 20px;">
                             <p style="color:var(--text-secondary); text-align:center; margin-top:40px;">No tienes mensajes guardados aún.</p>
@@ -61,7 +64,8 @@ const { title } = Astro.props;
                                 </div>
                             </div>
                             
-                            <div class="theme-picker-container">
+                            <div class="theme-picker-container" style="display: flex; gap: 8px;">
+                                <button id="bookmarks-btn" class="theme-btn" aria-label="Ver Guardados" onclick="document.getElementById('panel-guardados').scrollIntoView({behavior:'smooth'})">🔖</button>
                                 <button id="theme-btn" class="theme-btn" aria-label="Cambiar tema">🎨</button>
                                 <div id="theme-menu" class="theme-menu" style="display: none;">
                                     <div class="theme-option" data-theme="classic"><span class="theme-dot" style="background: #3b82f6;"></span> Cádiz Classic</div>
@@ -144,11 +148,8 @@ const { title } = Astro.props;
             .swiper-container {
                 width: 100vw;
                 height: 100dvh;
-                overflow-x: auto;
-                overflow-y: hidden;
-                scroll-snap-type: x mandatory;
+                overflow: hidden; /* Disabled manual swiping */
                 scroll-behavior: smooth;
-                -webkit-overflow-scrolling: touch;
             }
             /* Hide scrollbar for swiper */
             .swiper-container::-webkit-scrollbar {
