@@ -679,11 +679,32 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                         if (actionElem && streetElem && route.legs && route.legs[0] && route.legs[0].steps) {
                             const steps = route.legs[0].steps;
                             const firstStep = steps[0];
+                            
                             if (firstStep) {
                                 const dist = Math.round(firstStep.distance);
-                                const street = firstStep.name || "la calle actual";
-                                actionElem.innerText = `Sigue ${dist} m`;
-                                streetElem.innerText = `hacia ${street}`;
+                                const type = firstStep.maneuver.type;
+                                const modifier = firstStep.maneuver.modifier || '';
+                                let name = firstStep.name;
+                                
+                                // Si es el paso de salida y no tiene nombre, pero el siguiente sí
+                                if (type === 'depart' && !name && steps.length > 1) {
+                                    name = steps[1].name;
+                                }
+
+                                let actionStr = `Avanza ${dist} m`;
+                                let streetStr = name ? `hacia ${name}` : "por esta vía";
+
+                                if (type === 'turn' || type === 'new name') {
+                                    if (modifier.includes('left')) actionStr = `Gira a la izq. y avanza ${dist} m`;
+                                    else if (modifier.includes('right')) actionStr = `Gira a la der. y avanza ${dist} m`;
+                                    else if (modifier === 'straight') actionStr = `Sigue recto ${dist} m`;
+                                } else if (type === 'arrive') {
+                                    actionStr = "Llegando";
+                                    streetStr = "a tu destino";
+                                }
+
+                                actionElem.innerText = actionStr;
+                                streetElem.innerText = streetStr;
                             } else {
                                 actionElem.innerText = "Sigue la ruta";
                                 streetElem.innerText = `hacia ${window.activeMapStopName}`;
