@@ -182,10 +182,11 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             const actionsDiv = document.createElement('div');
             actionsDiv.className = 'msg-actions-row';
             actionsDiv.style.display = 'flex';
+            actionsDiv.style.justifyContent = 'flex-end';
             actionsDiv.style.gap = '8px';
             actionsDiv.style.marginTop = '4px';
             actionsDiv.style.marginBottom = '8px';
-            actionsDiv.style.marginLeft = '8px';
+            actionsDiv.style.marginRight = '8px';
             
             actionsDiv.innerHTML = `
                 <button class="action-btn thumb-up" onclick="window.toggleThumb(this)" aria-label="Me gusta" style="background: transparent; color: var(--text-secondary); border: none; padding: 4px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: color 0.2s, transform 0.1s;">
