@@ -14,10 +14,10 @@ import ChatLayout from '../layouts/ChatLayout.astro';
 <style is:global>
     /* Estilos para las Tarjetas Generativas (Generative UI) */
     .ai-card {
-        background: white;
+        background: var(--bubble-bot-bg);
         border-radius: 16px;
         box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-        border: 1px solid #e0e0e0;
+        border: 1px solid var(--bubble-bot-border);
         overflow: hidden;
         margin-top: 5px;
         max-width: 100%;
@@ -27,40 +27,42 @@ import ChatLayout from '../layouts/ChatLayout.astro';
         padding: 12px 16px;
         font-weight: 600;
         font-size: 0.95rem;
-        border-bottom: 1px solid #eee;
+        border-bottom: 1px solid var(--bubble-bot-border);
+        background: var(--chat-bg);
+        color: var(--text-primary);
     }
-    .price-card .card-header { background: #e3f2fd; color: #1565c0; }
-    .rule-card .card-header { background: #fff3e0; color: #e65100; }
-    .contact-card .card-header { background: #e5f8eb; color: #20873c; }
-    .map-card .card-header { background: #f3e5f5; color: #6a1b9a; }
+    .price-card .card-header { border-top: 3px solid var(--primary-color); }
+    .rule-card .card-header { border-top: 3px solid #e65100; }
+    .contact-card .card-header { border-top: 3px solid #20873c; }
+    .map-card .card-header { border-top: 3px solid #6a1b9a; }
     
     .card-body {
         padding: 16px;
         font-size: 0.95rem;
         line-height: 1.5;
-        color: #333;
+        color: var(--text-primary);
     }
     .price-estimate {
         font-size: 2rem;
         font-weight: 700;
-        color: #1565c0;
+        color: var(--primary-color);
         text-align: center;
         margin: 10px 0;
     }
     .route-details {
         font-size: 0.85rem;
-        color: #666;
+        color: var(--text-secondary);
         text-align: center;
-        background: #f5f5f5;
+        background: var(--chat-bg);
         padding: 8px;
         border-radius: 8px;
     }
     .law-source {
         margin-top: 12px;
         font-size: 0.8rem;
-        color: #666;
+        color: var(--text-secondary);
         font-style: italic;
-        border-left: 3px solid #ffb74d;
+        border-left: 3px solid var(--primary-color);
         padding-left: 8px;
     }
     .phone-number {
@@ -232,11 +234,11 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             return `
             <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%; max-width: 100%; align-self: flex-start; margin-bottom: 0.5rem;">
                 <span class="bubble" style="border-bottom-left-radius: 4px;">${data.content}</span>
-                <div class="info-card contact-card">
+                <div class="info-card contact-card" style="background: var(--bubble-bot-bg); border: 1px solid var(--bubble-bot-border); padding: 15px; border-radius: 12px; margin-top: 4px;">
                     <div style="display: flex; align-items: center; justify-content: space-between;">
-                        <span style="font-weight: 600; color: #333;">RadioTaxi Cádiz</span>
+                        <span style="font-weight: 600; color: var(--text-primary);">RadioTaxi Cádiz</span>
                         <div style="display: flex; gap: 8px;">
-                            <a href="tel:956212121" class="call-btn" style="text-decoration: none; width: auto; padding: 8px 12px; margin: 0; display: flex; align-items: center; gap: 6px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M6.62 10.79c1.44 2.83 3.76 5.15 6.59 6.59l2.2-2.2c.28-.28.67-.36 1.02-.25 1.12.37 2.32.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg> <span class="btn-text">Llamar</span></a>
+                            <a href="tel:956212121" class="call-btn" style="text-decoration: none; width: auto; padding: 8px 12px; margin: 0; display: flex; align-items: center; gap: 6px; background: var(--primary-color); color: white; border-radius: 8px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M6.62 10.79c1.44 2.83 3.76 5.15 6.59 6.59l2.2-2.2c.28-.28.67-.36 1.02-.25 1.12.37 2.32.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg> <span class="btn-text">Llamar</span></a>
                             <a href="https://wa.me/34956212121" class="wa-btn" target="_blank" rel="noopener noreferrer" style="background: #25D366; color: white; border-radius: 8px; font-weight: 600; text-decoration: none; width: auto; padding: 8px 12px; margin: 0; display: flex; align-items: center; gap: 6px; transition: opacity 0.2s;" onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.6 2.326zM7.994 14.521a6.6 6.6 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.56 6.56 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592m3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.73.73 0 0 0-.529.247c-.182.198-.691.677-.691 1.654s.71 1.916.81 2.049c.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232"/></svg> <span class="btn-text">WhatsApp</span></a>
                         </div>
                     </div>
@@ -252,12 +254,12 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             return `
             <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%; max-width: 100%; align-self: flex-start; margin-bottom: 0.5rem;">
                 <span class="bubble" style="border-bottom-left-radius: 4px;">${data.content}</span>
-                <div class="info-card" style="background: linear-gradient(135deg, #eff6ff, #dbeafe); border: 1px solid #bfdbfe; padding: 15px; border-radius: 12px;">
+                <div class="info-card" style="background: var(--bubble-bot-bg); border: 1px solid var(--bubble-bot-border); padding: 15px; border-radius: 12px;">
                     <div style="display: flex; flex-direction: column; gap: 10px; align-items: center; text-align: center;">
                         <span style="font-size: 2rem;">📅</span>
-                        <h3 style="margin: 0; color: #1565c0; font-size: 1.1rem;">Reserva tu Taxi</h3>
-                        <p style="margin: 0; font-size: 0.9rem; color: #555;">Haz tu reserva con antelación enviándonos un email con los detalles de tu viaje.</p>
-                        <a href="mailto:${email}?subject=${subject}&body=${body}" class="call-btn" style="text-decoration: none; width: 100%; padding: 12px; margin-top: 5px; font-size: 1rem;">✉️ Enviar Email de Reserva</a>
+                        <h3 style="margin: 0; color: var(--primary-color); font-size: 1.1rem;">Reserva tu Taxi</h3>
+                        <p style="margin: 0; font-size: 0.9rem; color: var(--text-secondary);">Haz tu reserva con antelación enviándonos un email con los detalles de tu viaje.</p>
+                        <a href="mailto:${email}?subject=${subject}&body=${body}" class="call-btn" style="text-decoration: none; width: 100%; padding: 12px; margin-top: 5px; font-size: 1rem; background: var(--primary-color); color: white; border-radius: 8px;">✉️ Enviar Email de Reserva</a>
                     </div>
                 </div>
             </div>`;
@@ -266,7 +268,7 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             return `
             <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%; max-width: 100%; align-self: flex-start;">
                 <span class="bubble">${data.content}</span>
-                <button class="call-btn" style="background: #e3f2fd; color: #1565c0; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; gap: 8px; border-radius: 20px; border: 1px solid #bbdefb;" onclick="window.openFullscreenMap(${data.lat ? `'${data.lat}', '${data.lon}', '${msgId}'` : `null, null, '${msgId}'`})">
+                <button class="call-btn" style="background: var(--bubble-bot-bg); color: var(--primary-color); font-size: 0.95rem; display: flex; align-items: center; justify-content: center; gap: 8px; border-radius: 20px; border: 1px solid var(--primary-color);" onclick="window.openFullscreenMap(${data.lat ? `'${data.lat}', '${data.lon}', '${msgId}'` : `null, null, '${msgId}'`})">
                     <span>📍</span> Abrir Mapa Interactivo
                 </button>
             </div>`;
@@ -276,9 +278,9 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%; max-width: 85%; align-self: flex-start;">
                 <span class="bubble">${data.content}</span>
                 ${data.lat && data.lon ? `
-                <div style="border-radius: 18px; overflow: hidden; width: 100%; box-shadow: 0 2px 5px rgba(0,0,0,0.1); background: white; padding: 10px; display: flex; flex-direction: column; gap: 10px;">
+                <div style="border-radius: 18px; overflow: hidden; width: 100%; box-shadow: 0 2px 5px rgba(0,0,0,0.1); background: var(--bubble-bot-bg); border: 1px solid var(--bubble-bot-border); padding: 10px; display: flex; flex-direction: column; gap: 10px;">
                     <div style="font-weight: 600; text-align: center; color: var(--text-primary);">📍 Destino: ${data.stopName || 'Parada Seleccionada'}</div>
-                    <button class="call-btn" style="background: var(--primary-color); margin: 0; display: flex; align-items: center; justify-content: center; gap: 8px;" onclick="window.startLiveNavigation('${data.lat}', '${data.lon}', '${data.stopName || 'Destino'}')">
+                    <button class="call-btn" style="background: var(--primary-color); color: white; border-radius: 8px; padding: 12px; margin: 0; display: flex; align-items: center; justify-content: center; gap: 8px; border: none; cursor: pointer;" onclick="window.startLiveNavigation('${data.lat}', '${data.lon}', '${data.stopName || 'Destino'}')">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M12 2L4.5 20.29L5.21 21L12 18L18.79 21L19.5 20.29L12 2Z" fill="currentColor"/>
                         </svg>
