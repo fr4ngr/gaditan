@@ -340,16 +340,28 @@ body {
   }
 }
 
+.tariff-item-wrapper {
+  border-bottom: 1px solid var(--border-color);
+  padding: 12px 0;
+}
+.tariff-item-wrapper:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
 .tariff-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-bottom: 8px;
-  border-bottom: 1px dashed rgba(0,0,0,0.08);
 }
-.tariff-item:last-child {
-  border-bottom: none;
-  padding-bottom: 0;
+.tariff-info-btn {
+  cursor: pointer;
+  margin-left: 5px;
+  font-size: 0.9em;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+.tariff-info-btn:hover {
+  opacity: 1;
 }
 .tariff-name {
   font-size: 0.95rem;
