@@ -84,16 +84,20 @@ import ChatLayout from '../layouts/ChatLayout.astro';
         transition: background 0.2s;
     }
     .ai-card .call-btn:hover { background: #0056b3; }
-    .contact-card .call-btn { background: #34c759; }
-    .contact-card .call-btn:hover { background: #2da94f; }
+    .contact-card .call-btn { background: var(--primary-color); }
+    .contact-card .call-btn:hover { filter: brightness(0.9); }
     
     @media (max-width: 600px) {
         .contact-card .call-btn, .contact-card .wa-btn {
             border-radius: 50% !important;
             padding: 10px !important;
-            width: 44px !important;
-            height: 44px !important;
+            width: 46px !important;
+            height: 46px !important;
             justify-content: center;
+        }
+        .contact-card .call-btn svg, .contact-card .wa-btn svg {
+            width: 24px !important;
+            height: 24px !important;
         }
         .contact-card .btn-text {
             display: none;
