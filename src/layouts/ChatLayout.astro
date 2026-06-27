@@ -97,12 +97,24 @@ const { title } = Astro.props;
                                 <button onclick="window.closeMapInfoPill()" style="background: var(--chat-bg); border: none; font-size: 14px; color: var(--text-secondary); cursor: pointer; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: background 0.2s; flex-shrink: 0;" aria-label="Cerrar información">✕</button>
                             </div>
 
-                            <div style="display: flex; gap: 10px;">
+                            <div id="map-pill-actions" style="display: flex; gap: 10px;">
                                 <button onclick="window.mapActionDirections()" style="flex: 1; padding: 10px; border-radius: 12px; border: none; background: var(--chat-bg); color: var(--text-primary); font-weight: 600; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: background 0.2s;">
                                     Cómo ir
                                 </button>
                                 <button onclick="window.mapActionTaxi()" style="flex: 1; padding: 10px; border-radius: 12px; border: none; background: var(--primary-color); color: white; font-weight: 600; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: opacity 0.2s;">
                                     Pedir Taxi
+                                </button>
+                            </div>
+                            
+                            <!-- Contenedor de ruta en vivo (Oculto por defecto) -->
+                            <div id="map-pill-route-info" style="display: none; flex-direction: column; gap: 12px;">
+                                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                                    <span style="background: var(--primary-color); color: white; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 4px;">🚶‍♂️ Caminando</span>
+                                    <span id="route-time" style="background: var(--chat-bg); color: var(--text-primary); border: 1px solid var(--header-border); padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600;">-- min</span>
+                                    <span id="route-distance" style="background: var(--chat-bg); color: var(--text-primary); border: 1px solid var(--header-border); padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600;">-- m</span>
+                                </div>
+                                <button onclick="window.cancelMapRoute()" style="width: 100%; padding: 8px; border-radius: 12px; border: 1px solid var(--header-border); background: transparent; color: var(--text-secondary); font-weight: 600; font-size: 13px; cursor: pointer; transition: background 0.2s;">
+                                    ✕ Cancelar ruta
                                 </button>
                             </div>
                         </div>
