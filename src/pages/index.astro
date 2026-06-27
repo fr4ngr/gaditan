@@ -180,13 +180,12 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             const rawContent = encodeURIComponent(htmlContent);
             
             const actionsDiv = document.createElement('div');
-            actionsDiv.className = 'msg-actions-overlay';
-            actionsDiv.style.position = 'absolute';
-            actionsDiv.style.bottom = '6px';
-            actionsDiv.style.right = '6px';
+            actionsDiv.className = 'msg-actions-row';
             actionsDiv.style.display = 'flex';
-            actionsDiv.style.gap = '6px';
-            actionsDiv.style.zIndex = '10';
+            actionsDiv.style.gap = '8px';
+            actionsDiv.style.marginTop = '4px';
+            actionsDiv.style.marginBottom = '8px';
+            actionsDiv.style.marginLeft = '8px';
             
             actionsDiv.innerHTML = `
                 <button class="action-btn thumb-up" onclick="window.toggleThumb(this)" aria-label="Me gusta" style="background: transparent; color: var(--text-secondary); border: none; padding: 4px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: color 0.2s, transform 0.1s;">
@@ -203,23 +202,15 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                 </button>
             `;
             
-            // Buscar el contenedor principal (burbuja o tarjeta) para inyectar las acciones dentro
-            // Buscamos de abajo a arriba para meterlo en el último elemento si hay varios
-            const targets = messageDiv.querySelectorAll('.bubble, .ai-card, .info-card, .tariff-card, .suggested-blocks-container');
-            const target = targets.length > 0 ? targets[targets.length - 1] : messageDiv.firstElementChild;
+            // Insertar la fila de acciones antes de las píldoras (suggested-blocks-container) o al final
+            const suggestedBlocks = messageDiv.querySelector('.suggested-blocks-container');
+            const metaBlock = messageDiv.querySelector('.message-meta');
             
-            if (target && target.nodeType === 1) {
-                const el = target as HTMLElement;
-                el.style.position = 'relative';
-                // Añadir padding inferior para que los botones no pisen el texto
-                const currentPb = parseInt(window.getComputedStyle(el).paddingBottom || '12');
-                el.style.paddingBottom = (currentPb + 24) + 'px';
-                el.appendChild(actionsDiv);
+            if (suggestedBlocks) {
+                messageDiv.insertBefore(actionsDiv, suggestedBlocks);
+            } else if (metaBlock) {
+                messageDiv.insertBefore(actionsDiv, metaBlock);
             } else {
-                // Fallback
-                actionsDiv.style.position = 'static';
-                actionsDiv.style.justifyContent = 'flex-end';
-                actionsDiv.style.marginTop = '4px';
                 messageDiv.appendChild(actionsDiv);
             }
         }
