@@ -436,8 +436,9 @@ import ChatLayout from '../layouts/ChatLayout.astro';
     };
 
     window.openFullscreenMap = function(lat: string | null, lon: string | null, msgId: string) {
-        // Mover panel y actualizar cabecera
+        // Mover panel, actualizar cabecera y cerrar píldora por si estaba abierta
         window.switchPanel('mapa');
+        if (window.closeMapInfoPill) window.closeMapInfoPill();
 
         const container = document.getElementById('fullscreen-widget-area');
         if (!container) return;
@@ -456,7 +457,11 @@ import ChatLayout from '../layouts/ChatLayout.astro';
 
             if (lat && lon) {
                 map.setView([lat, lon], 16);
-                mapL.marker([lat, lon]).addTo(map).bindPopup('Destino').openPopup();
+                const marker = mapL.marker([lat, lon]).addTo(map);
+                marker.on('click', () => {
+                    window.openMapInfoPill("Destino Seleccionado", "Coordenadas exactas");
+                });
+                window.openMapInfoPill("Destino Seleccionado", "Coordenadas exactas");
             } else {
                 map.setView([36.516, -6.283], 13);
                 const taxiIcon = mapL.divIcon({
@@ -464,12 +469,38 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                     className: '', iconSize: [16, 16], iconAnchor: [8, 8]
                 });
                 CADIZ_STOPS.forEach(stop => {
-                    mapL.marker([stop.lat, stop.lon], {icon: taxiIcon}).addTo(map).bindPopup(`<b>${stop.name}</b>`);
+                    const marker = mapL.marker([stop.lat, stop.lon], {icon: taxiIcon}).addTo(map);
+                    marker.on('click', () => {
+                        window.openMapInfoPill(stop.name, stop.desc);
+                    });
                 });
             }
             // Forzar resize para que Leaflet dibuje bien en el nuevo panel
             setTimeout(() => map.invalidateSize(), 300);
         }, 100);
+    };
+
+    // --- LÓGICA DE PÍLDORA DEL MAPA ---
+    window.closeMapInfoPill = function() {
+        const pill = document.getElementById('map-info-pill');
+        if (pill) {
+            pill.style.opacity = '0';
+            pill.style.transform = 'translate(-50%, -10px)';
+            pill.style.pointerEvents = 'none';
+        }
+    };
+
+    window.openMapInfoPill = function(title: string, desc: string) {
+        const pill = document.getElementById('map-info-pill');
+        if (pill) {
+            const titleEl = document.getElementById('map-info-title');
+            const descEl = document.getElementById('map-info-desc');
+            if (titleEl) titleEl.innerText = title;
+            if (descEl) descEl.innerText = desc || '';
+            pill.style.opacity = '1';
+            pill.style.transform = 'translate(-50%, 0)';
+            pill.style.pointerEvents = 'auto';
+        }
     };
 
     // --- LÓGICA DE GUARDADOS (LOCALSTORAGE) ---
