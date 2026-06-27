@@ -276,7 +276,7 @@ body {
 
 /* --- Tariff Card Widget V2 --- */
 .tariff-card {
-  background: white;
+  background: var(--bubble-bot-bg);
   border: 1px solid var(--border-color);
   border-radius: 12px;
   overflow: hidden;
@@ -288,7 +288,7 @@ body {
 /* Fila 1: Pestañas Principales */
 .tariff-tabs-row1 {
   display: flex;
-  background: #f8fafc;
+  background: var(--chat-bg);
   border-bottom: 1px solid var(--border-color);
 }
 .t-tab {
@@ -298,35 +298,35 @@ body {
   padding: 12px 5px;
   font-size: 0.9rem;
   font-weight: 600;
-  color: #64748b;
+  color: var(--text-secondary);
   cursor: pointer;
   transition: all 0.2s;
   border-bottom: 2px solid transparent;
 }
 .t-tab:hover {
   color: var(--primary-color);
-  background: #f1f5f9;
+  background: var(--chat-bg);
 }
 .t-tab.active {
   color: var(--primary-color);
   border-bottom: 2px solid var(--primary-color);
-  background: white;
+  background: var(--bubble-bot-bg);
 }
 
 /* Fila 2: Sub-pestañas de Tiempo */
 .tariff-tabs-row2 {
   display: flex;
-  background: white;
-  border-bottom: 1px solid #e2e8f0;
+  background: var(--bubble-bot-bg);
+  border-bottom: 1px solid var(--border-color);
   padding: 8px 6px;
   gap: 4px;
   width: 100%;
 }
 .t-subtab {
   flex: 1;
-  background: #f1f5f9;
+  background: var(--chat-bg);
   border: 1px solid transparent;
-  color: #475569;
+  color: var(--text-secondary);
   padding: 6px 2px;
   border-radius: 20px;
   font-size: 0.75rem;
@@ -340,7 +340,7 @@ body {
   line-height: 1.1;
 }
 .t-subtab:hover {
-  background: #e2e8f0;
+  background: var(--input-border);
 }
 .t-subtab.active {
   background: var(--primary-color);
@@ -459,7 +459,7 @@ body {
 }
 
 .suggested-btn {
-  background: white;
+  background: var(--bubble-bot-bg);
   border: 1px solid var(--primary-color);
   color: var(--primary-color);
   padding: 8px 14px;
@@ -484,7 +484,7 @@ body {
 
 /* --- Tarjeta de Contacto UI --- */
 .contact-card {
-  background: white;
+  background: var(--bubble-bot-bg);
   border: 1px solid var(--header-border);
   border-radius: 0.75rem;
   padding: 1rem;
