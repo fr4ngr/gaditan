@@ -535,7 +535,7 @@ import ChatLayout from '../layouts/ChatLayout.astro';
 
         if (state.type === 'suplementos') {
             items = TARIFF_DATA.suplementos;
-            noteHtml = '<div class="tariff-notes">* Perros guía y sillas de ruedas SIEMPRE viajan gratis.</div>';
+            // La nota general de advertencia se añade más abajo, y las exenciones van en los acordeones 'ℹ️'
         } else {
             items = TARIFF_DATA[state.type][state.time];
             if (state.type === 'urbana' && state.time === 'dia') {
