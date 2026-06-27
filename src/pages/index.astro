@@ -176,16 +176,33 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             </div>`;
         }
         if (data.cardType === 'ContactCard') {
-            const phone = data.phoneNumber || '956 21 21 21';
-            const cleanPhone = phone.replace(/[^0-9+]/g, '');
             return `
-            <div class="ai-card contact-card">
-                <div class="card-header">📞 Contacto Directo</div>
-                <div class="card-body">
-                    <p>${data.content}</p>
-                    <div class="phone-number">${phone}</div>
+            <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%; max-width: 85%; align-self: flex-start; margin-bottom: 0.5rem;">
+                <span class="bubble" style="border-bottom-left-radius: 4px;">${data.content}</span>
+                <div class="info-card">
+                    <div style="display: flex; align-items: center; justify-content: space-between; background: white; padding: 10px; border-radius: 12px; border: 1px solid #ddd;">
+                        <span style="font-weight: 600; color: #333;">RadioTaxi Cádiz (Inmediato)</span>
+                        <a href="tel:956212121" class="call-btn" style="text-decoration: none; width: auto; padding: 8px 12px; margin: 0;">📞 Llamar Ahora</a>
+                    </div>
                 </div>
-                <a href="tel:${cleanPhone}" class="call-btn">Llamar Ahora</a>
+            </div>`;
+        }
+        if (data.cardType === 'ReservationCard') {
+            const email = "reservas@cadiz.taxi";
+            const subject = encodeURIComponent("Reserva de Taxi");
+            const body = encodeURIComponent("Hola, me gustaría reservar un taxi.\n\nMis datos:\n- Fecha y Hora:\n- Dirección de origen:\n- Dirección de destino:\n- Necesidades especiales (silla bebé, maletas grandes...):\n");
+            
+            return `
+            <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%; max-width: 85%; align-self: flex-start; margin-bottom: 0.5rem;">
+                <span class="bubble" style="border-bottom-left-radius: 4px;">${data.content}</span>
+                <div class="info-card" style="background: linear-gradient(135deg, #eff6ff, #dbeafe); border: 1px solid #bfdbfe; padding: 15px; border-radius: 12px;">
+                    <div style="display: flex; flex-direction: column; gap: 10px; align-items: center; text-align: center;">
+                        <span style="font-size: 2rem;">📅</span>
+                        <h3 style="margin: 0; color: #1565c0; font-size: 1.1rem;">Reserva tu Taxi</h3>
+                        <p style="margin: 0; font-size: 0.9rem; color: #555;">Haz tu reserva con antelación enviándonos un email con los detalles de tu viaje.</p>
+                        <a href="mailto:${email}?subject=${subject}&body=${body}" class="call-btn" style="text-decoration: none; width: 100%; padding: 12px; margin-top: 5px; font-size: 1rem;">✉️ Enviar Email de Reserva</a>
+                    </div>
+                </div>
             </div>`;
         }
         if (data.cardType === 'MapCard') {
@@ -266,8 +283,17 @@ import ChatLayout from '../layouts/ChatLayout.astro';
 
             // 4. Renderizar la Tarjeta generada por la IA
             const msgId = Date.now().toString();
-            const cardHtml = renderCard(data, msgId);
-            addMessage('bot', cardHtml);
+            let finalHtml = renderCard(data, msgId);
+
+            // Renderizar Suggested Blocks (Botones)
+            if (data.suggestedBlocks && data.suggestedBlocks.length > 0) {
+                const buttonsHtml = data.suggestedBlocks.map((block: string) => {
+                    return `<button class="suggested-btn" onclick="window.sendToAI('${block}')">${block}</button>`;
+                }).join('');
+                finalHtml += `<div class="suggested-blocks-container">${buttonsHtml}</div>`;
+            }
+            
+            addMessage('bot', finalHtml);
 
             // 5. Instanciar el mapa en línea o activar navegación
             if (data.cardType === 'MapCard' && data.lat && data.lon) {
@@ -512,15 +538,15 @@ import ChatLayout from '../layouts/ChatLayout.astro';
 
     // --- INICIALIZACIÓN (MOMENTO 0) ---
     setTimeout(() => {
-        const welcomeHtml = `
-            <span class="bubble">¡Hola! 👋 Soy Cádiz Plus, tu asistente dotado de Inteligencia Artificial. Conozco toda la normativa de taxis de Cádiz al dedillo. ¿En qué puedo ayudarte?</span>
-            <div class="action-chips">
-                <button class="chip" onclick="window.sendToAI('Quiero calcular un viaje')">🧮 Calcular Viaje</button>
-                <button class="chip" onclick="window.sendToAI('¿Cuánto cobran por maleta?')">🎒 Info Equipaje</button>
-                <button class="chip" onclick="window.sendToAI('Voy en silla de ruedas')">♿ Movilidad</button>
-            </div>
-        `;
-        addMessage('bot', welcomeHtml);
+        const initialBlocks = ['TARIFAS', 'MAPA PARADAS', 'DESTINOS FAVORITOS', 'TRASLADOS A AEROPUERTOS', 'CALCULADORA', 'RESERVAS', 'PREGUNTAS FRECUENTES', 'JUEGOS DIDACTICOS'];
+        const buttonsHtml = initialBlocks.map(block => {
+            return `<button class="suggested-btn" onclick="window.sendToAI('${block}')">${block}</button>`;
+        }).join('');
+        
+        addMessage('bot', `
+            <span class="bubble">¡Hola! 👋 Soy tu asistente virtual de <strong>cadiz.chat</strong>.<br><br>Actualmente estoy especializado en los taxis de Cádiz. ¿En qué te puedo ayudar hoy?</span>
+            <div class="suggested-blocks-container" style="margin-top: 8px;">${buttonsHtml}</div>
+        `);
     }, 500);
 
     // Tipado global

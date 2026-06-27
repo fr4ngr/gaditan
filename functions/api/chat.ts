@@ -18,18 +18,33 @@ export async function onRequestPost(context) {
         const ai = new GoogleGenAI({ apiKey: env.GEMINI_API_KEY });
 
         const systemInstruction = `
-Eres Cádiz Plus, el asistente oficial de movilidad en Cádiz. 
+Eres el asistente virtual de cadiz.chat. 
+Actualmente estás especializado en el módulo de TAXIS de la ciudad de Cádiz. Cuando des información, asegúrate de dejar claro que te refieres a los taxis (ya que en el futuro la plataforma tendrá más módulos).
+
 Responde siempre basándote EXCLUSIVAMENTE en esta base de conocimiento oficial:
 ---
 ${knowledgeBase}
 ---
-DEBES devolver SIEMPRE una estructura JSON válida que defina qué tarjeta visual pintar en el frontend.
-- Si el usuario hace una pregunta conversacional básica, usa "TextCard".
-- Si el usuario pide calcular o estimar un precio de taxi, usa "PriceCard" calculando tú mismo la suma basándote en la base de datos (aplica la tarifa correcta según la hora y suma suplementos).
-- Si el usuario pregunta por una norma, maletas, sillas de ruedas o derechos, usa "RuleCard".
-- Si el usuario pide llamar un taxi, usa "ContactCard" con el teléfono oficial de RadioTaxi Cádiz.
-- Si el usuario pregunta dónde está una parada específica, o dónde puede coger un taxi cerca de X sitio, usa "MapCard" aportando la latitud y longitud exacta de la parada según la tabla.
-- Si el usuario pregunta "cómo llego", "llévame allí" o pide indicaciones para una parada, usa "NavigationCard" aportando la latitud y longitud exacta de la parada destino. Es CRÍTICO que uses esta tarjeta para activar la navegación GPS en vivo.
+
+DEBES devolver SIEMPRE una estructura JSON válida que defina qué tarjeta visual pintar en el frontend y qué sugerencias dar a continuación.
+
+**SISTEMA DE SUGERENCIAS (EL EMBUDO DE CONVERSIÓN)**
+Tu objetivo final es conseguir que el usuario haga RESERVAS. 
+Tenemos 8 grandes bloques: TARIFAS, MAPA PARADAS, DESTINOS FAVORITOS, TRASLADOS A AEROPUERTOS, CALCULADORA, RESERVAS, PREGUNTAS FRECUENTES, JUEGOS DIDACTICOS.
+En CADA respuesta, debes elegir entre 1 y 3 bloques lógicos para sugerir al usuario en el campo "suggestedBlocks" (como un array de strings).
+Lógica a seguir:
+- Fase Descubrimiento (Mapas, FAQs, Juegos) -> Sugiere pasar a Interés (Calculadora, Tarifas, Aeropuertos).
+- Fase Interés (Tarifas, Aeropuertos, Favoritos) -> Sugiere Calculadora o Reservas directamente.
+- Fase Decisión (Calculadora) -> Sugiere SIEMPRE Reservas.
+
+**TIPOS DE TARJETAS (cardType)**
+- "TextCard": Respuesta conversacional básica o información genérica (Juegos, FAQs).
+- "PriceCard": Para calcular precios o estimar tarifas basándote en la base de datos. (Ej: Tarifas, Calculadora).
+- "RuleCard": Para normativas, maletas, mascotas, sillas de ruedas.
+- "MapCard": Para mostrar la ubicación de una parada específica.
+- "NavigationCard": Para dar indicaciones GPS en vivo ("cómo llego", "llévame allí").
+- "ContactCard": ¡SOLO si el usuario pide explícitamente llamar a un taxi AHORA MISMO! NO muestres el teléfono (956212121) en el texto del content, el frontend pintará el botón. En el texto, DEBES avisar que este botón es SOLO para taxis inmediatos, y que si quiere reservar con antelación debe usar el bloque de RESERVAS (y no olvides añadir RESERVAS a los suggestedBlocks).
+- "ReservationCard": Úsala cuando el usuario quiera hacer una reserva anticipada, preguntar por reservas o cuando haga clic en el bloque RESERVAS. (Esta tarjeta pintará un botón para enviar un email pre-rellenado).
 `;
 
         const schema = {
@@ -37,43 +52,30 @@ DEBES devolver SIEMPRE una estructura JSON válida que defina qué tarjeta visua
             properties: {
                 cardType: {
                     type: Type.STRING,
-                    enum: ['TextCard', 'PriceCard', 'RuleCard', 'ContactCard', 'MapCard', 'NavigationCard'],
+                    enum: ['TextCard', 'PriceCard', 'RuleCard', 'ContactCard', 'MapCard', 'NavigationCard', 'ReservationCard'],
                     description: "El tipo de tarjeta visual a mostrar."
                 },
                 content: {
                     type: Type.STRING,
-                    description: "El mensaje principal del asistente. Usa emojis libremente y un tono directo y servicial."
+                    description: "El mensaje principal del asistente. Usa emojis libremente y un tono directo y servicial. ¡NUNCA incluyas el número de teléfono literal en una ContactCard!"
                 },
-                priceEstimate: { 
-                    type: Type.STRING, 
-                    description: "Precio estimado calculado con el símbolo €. Solo si es PriceCard." 
-                },
-                routeDetails: { 
-                    type: Type.STRING, 
-                    description: "Resumen de la ruta (origen a destino) o cálculos desglosados. Solo si es PriceCard." 
-                },
-                lawSource: { 
-                    type: Type.STRING, 
-                    description: "La ley o normativa exacta en la que te basas. Solo si es RuleCard." 
-                },
-                phoneNumber: { 
-                    type: Type.STRING, 
-                    description: "El número de teléfono oficial. Solo si es ContactCard." 
-                },
-                stopName: { 
-                    type: Type.STRING, 
-                    description: "El nombre de la parada oficial. Solo si es MapCard o NavigationCard." 
-                },
-                lat: { 
-                    type: Type.STRING, 
-                    description: "La latitud GPS exacta de la parada extraída de la tabla. Solo si es MapCard o NavigationCard." 
-                },
-                lon: { 
-                    type: Type.STRING, 
-                    description: "La longitud GPS exacta de la parada extraída de la tabla. Solo si es MapCard o NavigationCard." 
+                priceEstimate: { type: Type.STRING, description: "Precio estimado con símbolo €. Solo para PriceCard." },
+                routeDetails: { type: Type.STRING, description: "Resumen de ruta/cálculo. Solo para PriceCard." },
+                lawSource: { type: Type.STRING, description: "Normativa exacta. Solo para RuleCard." },
+                phoneNumber: { type: Type.STRING, description: "Número oficial. Solo para ContactCard." },
+                stopName: { type: Type.STRING, description: "Nombre oficial de parada. Solo para MapCard/NavigationCard." },
+                lat: { type: Type.STRING, description: "Latitud exacta. Solo para MapCard/NavigationCard." },
+                lon: { type: Type.STRING, description: "Longitud exacta. Solo para MapCard/NavigationCard." },
+                suggestedBlocks: {
+                    type: Type.ARRAY,
+                    items: {
+                        type: Type.STRING,
+                        enum: ['TARIFAS', 'MAPA PARADAS', 'DESTINOS FAVORITOS', 'TRASLADOS A AEROPUERTOS', 'CALCULADORA', 'RESERVAS', 'PREGUNTAS FRECUENTES', 'JUEGOS DIDACTICOS']
+                    },
+                    description: "1 a 3 bloques sugeridos para guiar al usuario hacia la conversión."
                 }
             },
-            required: ['cardType', 'content']
+            required: ['cardType', 'content', 'suggestedBlocks']
         };
 
         const historyContents = body.history && body.history.length > 0 ? body.history : userMessage;

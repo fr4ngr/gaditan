@@ -227,26 +227,60 @@ body {
 /* --- Chips de Acción Rápida (Opciones) --- */
 .action-chips {
   display: flex;
-  flex-wrap: wrap;
   gap: 0.5rem;
+  flex-wrap: wrap;
   margin-top: 0.5rem;
 }
 
 .chip {
-  background-color: var(--header-bg);
-  border: 1px solid var(--primary-color);
-  color: var(--primary-color);
-  padding: 0.5rem 0.8rem;
-  border-radius: 1.5rem;
-  font-size: 0.85rem;
-  font-weight: 500;
+  background: white;
+  border: 1px solid var(--border-color);
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
   cursor: pointer;
   transition: all 0.2s;
+  color: var(--text-primary);
 }
 
 .chip:hover {
-  background-color: var(--primary-color);
+  background: var(--chat-bg);
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+/* --- Suggested Blocks (Quick Replies) --- */
+.suggested-blocks-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+  margin-bottom: 16px;
+  width: 100%;
+}
+
+.suggested-btn {
+  background: white;
+  border: 1px solid var(--primary-color);
+  color: var(--primary-color);
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.suggested-btn:hover {
+  background: var(--primary-color);
   color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+.suggested-btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
 /* --- Tarjeta de Contacto UI --- */
