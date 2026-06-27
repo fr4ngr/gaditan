@@ -238,32 +238,39 @@ import ChatLayout from '../layouts/ChatLayout.astro';
         }
 
         if (data.cardType === 'TariffCard') {
-            let itemsHtml = '';
-            if (data.tariffItems && data.tariffItems.length > 0) {
-                itemsHtml = data.tariffItems.map((item: any) => `
-                    <div class="tariff-item">
-                        <span class="tariff-name">${item.name}</span>
-                        <span class="tariff-price">${item.price}</span>
-                    </div>
-                `).join('');
-            }
-            
-            let notesHtml = data.tariffNotes ? `<div class="tariff-notes">${data.tariffNotes}</div>` : '';
-
             return `
-            <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%; max-width: 85%; align-self: flex-start; margin-bottom: 0.5rem;">
+            <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%; max-width: 90%; align-self: flex-start; margin-bottom: 0.5rem;">
                 <span class="bubble" style="border-bottom-left-radius: 4px;">${data.content}</span>
-                <div class="tariff-card">
-                    <div class="tariff-header">
-                        <span class="tariff-icon">🏷️</span>
-                        <h3>${data.tariffType || 'Tarifas Oficiales'}</h3>
+                <div class="tariff-card" id="tariff-widget-${msgId}">
+                    <!-- Fila 1: Pestañas Principales -->
+                    <div class="tariff-tabs-row1">
+                        <button class="t-tab active" onclick="window.changeTariffTab('${msgId}', 'urbana')">Urbana</button>
+                        <button class="t-tab" onclick="window.changeTariffTab('${msgId}', 'interurbana')">Interurbana</button>
+                        <button class="t-tab" onclick="window.changeTariffTab('${msgId}', 'suplementos')">Suplementos</button>
                     </div>
-                    <div class="tariff-body">
-                        ${itemsHtml}
-                        ${notesHtml}
+                    
+                    <!-- Fila 2: Sub-pestañas de Tiempo (Solo Urbana/Interurbana) -->
+                    <div class="tariff-tabs-row2" id="row2-${msgId}">
+                        <button class="t-subtab active" onclick="window.changeTariffTime('${msgId}', 'dia')">Día</button>
+                        <button class="t-subtab" onclick="window.changeTariffTime('${msgId}', 'noche')">Noche</button>
+                        <button class="t-subtab" onclick="window.changeTariffTime('${msgId}', 'finde')">Fin de semana</button>
+                        <button class="t-subtab" onclick="window.changeTariffTime('${msgId}', 'festivo')">Festivo</button>
+                    </div>
+
+                    <!-- Fila 3: Tabla de Precios -->
+                    <div class="tariff-body" id="tbody-${msgId}">
+                        <!-- Renderizado dinámico aquí -->
                     </div>
                 </div>
-            </div>`;
+            </div>
+            <script>
+                // Autoejecutar para inicializar la tarjeta con 'urbana' + 'dia'
+                setTimeout(() => {
+                    if (window.changeTariffTab) {
+                        window.changeTariffTab('${msgId}', 'urbana');
+                    }
+                }, 50);
+            </script>`;
         }
 
         // Fallback para desconocidos
@@ -365,7 +372,143 @@ import ChatLayout from '../layouts/ChatLayout.astro';
         setTimeout(() => scrollToBottom(), 500);
     };
 
-    // --- LÓGICA DE NAVEGACIÓN EN VIVO (FULLSCREEN) ---
+    // --- DATOS DEL WIDGET DE TARIFAS ---
+    const TARIFF_DATA: Record<string, any> = {
+        urbana: {
+            dia: [
+                { name: 'Bajada de Bandera', price: '1.39 €' },
+                { name: 'Precio por Kilómetro', price: '0.70 €' },
+                { name: 'Carrera Mínima', price: '3.56 €' },
+                { name: 'Hora de Espera', price: '18.95 €' }
+            ],
+            noche: [
+                { name: 'Bajada de Bandera', price: '1.73 €' },
+                { name: 'Precio por Kilómetro', price: '0.90 €' },
+                { name: 'Carrera Mínima', price: '4.43 €' },
+                { name: 'Hora de Espera', price: '23.66 €' }
+            ],
+            finde: [
+                { name: 'Bajada de Bandera', price: '1.73 €' },
+                { name: 'Precio por Kilómetro', price: '0.90 €' },
+                { name: 'Carrera Mínima', price: '4.43 €' },
+                { name: 'Hora de Espera', price: '23.66 €' }
+            ],
+            festivo: [
+                { name: 'Bajada de Bandera', price: '1.73 €' },
+                { name: 'Precio por Kilómetro', price: '0.90 €' },
+                { name: 'Carrera Mínima', price: '4.43 €' },
+                { name: 'Hora de Espera', price: '23.66 €' }
+            ]
+        },
+        interurbana: {
+            dia: [
+                { name: 'Bajada de Bandera (<12km)', price: '3.66 €' },
+                { name: 'Precio por Kilómetro', price: '0.71 €' },
+                { name: 'Mínimo de Percepción', price: '3.83 €' },
+                { name: 'Hora de Espera', price: '17.57 €' }
+            ],
+            noche: [
+                { name: 'Bajada de Bandera (<12km)', price: '3.60 €' },
+                { name: 'Precio por Kilómetro', price: '0.82 €' },
+                { name: 'Mínimo de Percepción', price: '4.51 €' },
+                { name: 'Hora de Espera', price: '20.71 €' }
+            ],
+            finde: [
+                { name: 'Bajada de Bandera (<12km)', price: '3.60 €' },
+                { name: 'Precio por Kilómetro', price: '0.82 €' },
+                { name: 'Mínimo de Percepción', price: '4.51 €' },
+                { name: 'Hora de Espera', price: '20.71 €' }
+            ],
+            festivo: [
+                { name: 'Bajada de Bandera (<12km)', price: '3.60 €' },
+                { name: 'Precio por Kilómetro', price: '0.82 €' },
+                { name: 'Mínimo de Percepción', price: '4.51 €' },
+                { name: 'Hora de Espera', price: '20.71 €' }
+            ]
+        },
+        suplementos: [
+            { name: 'Maleta o Bulto', price: '0.51 €' },
+            { name: 'Recogida Estación (Tren/Bus)', price: '0.82 €' },
+            { name: 'Entrada Astilleros/Puertos', price: '1.06 €' },
+            { name: 'Destino Cortadura-Torregorda', price: '4.46 €' },
+            { name: 'Plaza adicional (6ª y 7ª)', price: '0.91 €' }
+        ]
+    };
+
+    // Estado del widget por msgId
+    const widgetState: Record<string, { type: string, time: string }> = {};
+
+    window.changeTariffTab = (msgId: string, type: string) => {
+        if (!widgetState[msgId]) widgetState[msgId] = { type: 'urbana', time: 'dia' };
+        widgetState[msgId].type = type;
+
+        const widget = document.getElementById(`tariff-widget-${msgId}`);
+        if (!widget) return;
+
+        // Actualizar visual de pestañas Fila 1
+        widget.querySelectorAll('.t-tab').forEach(btn => btn.classList.remove('active'));
+        const activeTab = widget.querySelector(`.t-tab[onclick*="'${type}'"]`);
+        if (activeTab) activeTab.classList.add('active');
+
+        // Mostrar u ocultar Fila 2
+        const row2 = document.getElementById(`row2-${msgId}`);
+        if (row2) {
+            row2.style.display = (type === 'suplementos') ? 'none' : 'flex';
+        }
+
+        renderTariffTable(msgId);
+    };
+
+    window.changeTariffTime = (msgId: string, time: string) => {
+        if (!widgetState[msgId]) widgetState[msgId] = { type: 'urbana', time: 'dia' };
+        widgetState[msgId].time = time;
+
+        const widget = document.getElementById(`tariff-widget-${msgId}`);
+        if (!widget) return;
+
+        // Actualizar visual de pestañas Fila 2
+        widget.querySelectorAll('.t-subtab').forEach(btn => btn.classList.remove('active'));
+        const activeSubtab = widget.querySelector(`.t-subtab[onclick*="'${time}'"]`);
+        if (activeSubtab) activeSubtab.classList.add('active');
+
+        renderTariffTable(msgId);
+    };
+
+    function renderTariffTable(msgId: string) {
+        const tbody = document.getElementById(`tbody-${msgId}`);
+        if (!tbody) return;
+
+        const state = widgetState[msgId];
+        let items: any[] = [];
+        let noteHtml = '';
+
+        if (state.type === 'suplementos') {
+            items = TARIFF_DATA.suplementos;
+            noteHtml = '<div class="tariff-notes">* Perros guía y sillas de ruedas SIEMPRE viajan gratis.</div>';
+        } else {
+            items = TARIFF_DATA[state.type][state.time];
+            if (state.type === 'urbana' && state.time === 'dia') {
+                noteHtml = '<div class="tariff-notes">Laborables de 07:00 a 21:00h.</div>';
+            } else if (state.type === 'urbana' && state.time !== 'dia') {
+                noteHtml = '<div class="tariff-notes">Festivos, findes y noches (21:00 a 07:00h).</div>';
+            } else if (state.type === 'interurbana' && state.time === 'dia') {
+                noteHtml = '<div class="tariff-notes">Laborables de 06:00 a 22:00h.</div>';
+            } else if (state.type === 'interurbana' && state.time !== 'dia') {
+                noteHtml = '<div class="tariff-notes">Festivos, findes y noches (22:00 a 06:00h).</div>';
+            }
+        }
+
+        let html = items.map(item => `
+            <div class="tariff-item">
+                <span class="tariff-name">${item.name}</span>
+                <span class="tariff-price">${item.price}</span>
+            </div>
+        `).join('');
+
+        tbody.innerHTML = html + noteHtml;
+    }
+
+    // --- LEAFLET NAVEGACIÓN EN VIVO (FULLSCREEN) ---
     let liveMap: any = null;
     let liveRoutingControl: any = null;
     let watchId: number | null = null;
@@ -589,6 +732,8 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             initInlineMap: (lat: string, lon: string, msgId: string) => void;
             startLiveNavigation: (lat: string, lon: string, name: string) => void;
             exitLiveNavigation: () => void;
+            changeTariffTab: (msgId: string, type: string) => void;
+            changeTariffTime: (msgId: string, time: string) => void;
             L: any;
         }
     }
