@@ -540,12 +540,12 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             items = TARIFF_DATA[state.type][state.time];
             if (state.type === 'urbana' && state.time === 'dia') {
                 noteHtml = '<div class="tariff-notes">Laborables de 07:00 a 21:00h.</div>';
-            } else if (state.type === 'urbana' && state.time !== 'dia') {
-                noteHtml = '<div class="tariff-notes">Festivos, findes y noches (21:00 a 07:00h).</div>';
+            } else if (state.type === 'urbana' && state.time === 'noche') {
+                noteHtml = '<div class="tariff-notes">Laborables de 21:00 a 07:00h.</div>';
             } else if (state.type === 'interurbana' && state.time === 'dia') {
                 noteHtml = '<div class="tariff-notes">Laborables de 06:00 a 22:00h.</div>';
-            } else if (state.type === 'interurbana' && state.time !== 'dia') {
-                noteHtml = '<div class="tariff-notes">Festivos, findes y noches (22:00 a 06:00h).</div>';
+            } else if (state.type === 'interurbana' && state.time === 'noche') {
+                noteHtml = '<div class="tariff-notes">Laborables de 22:00 a 06:00h.</div>';
             }
 
             if (state.time === 'festivo') {
