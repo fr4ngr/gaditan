@@ -77,8 +77,7 @@ Además, cuando devuelvas una TariffCard, NO incluyas "Tarifa Urbana", "Tarifa I
                 suggestedBlocks: {
                     type: Type.ARRAY,
                     items: {
-                        type: Type.STRING,
-                        enum: ['TARIFAS', 'Tarifa Urbana', 'Tarifa Interurbana', 'Suplementos', 'MAPA PARADAS', 'DESTINOS FAVORITOS', 'TRASLADOS A AEROPUERTOS', 'CALCULADORA', 'RESERVAS', 'PREGUNTAS FRECUENTES', 'JUEGOS DIDACTICOS']
+                        type: Type.STRING
                     },
                     description: "1 a 3 bloques sugeridos para guiar al usuario hacia la conversión."
                 }
