@@ -177,7 +177,7 @@ import ChatLayout from '../layouts/ChatLayout.astro';
         }
         if (data.cardType === 'ContactCard') {
             return `
-            <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%; max-width: 85%; align-self: flex-start; margin-bottom: 0.5rem;">
+            <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%; max-width: 100%; align-self: flex-start; margin-bottom: 0.5rem;">
                 <span class="bubble" style="border-bottom-left-radius: 4px;">${data.content}</span>
                 <div class="info-card">
                     <div style="display: flex; align-items: center; justify-content: space-between; background: white; padding: 10px; border-radius: 12px; border: 1px solid #ddd;">
@@ -193,7 +193,7 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             const body = encodeURIComponent("Hola, me gustaría reservar un taxi.\n\nMis datos:\n- Fecha y Hora:\n- Dirección de origen:\n- Dirección de destino:\n- Necesidades especiales (silla bebé, maletas grandes...):\n");
             
             return `
-            <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%; max-width: 85%; align-self: flex-start; margin-bottom: 0.5rem;">
+            <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%; max-width: 100%; align-self: flex-start; margin-bottom: 0.5rem;">
                 <span class="bubble" style="border-bottom-left-radius: 4px;">${data.content}</span>
                 <div class="info-card" style="background: linear-gradient(135deg, #eff6ff, #dbeafe); border: 1px solid #bfdbfe; padding: 15px; border-radius: 12px;">
                     <div style="display: flex; flex-direction: column; gap: 10px; align-items: center; text-align: center;">
@@ -239,7 +239,7 @@ import ChatLayout from '../layouts/ChatLayout.astro';
 
         if (data.cardType === 'TariffCard') {
             return `
-            <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%; max-width: 90%; align-self: flex-start; margin-bottom: 0.5rem;">
+            <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%; max-width: 100%; align-self: flex-start; margin-bottom: 0.5rem;">
                 <span class="bubble" style="border-bottom-left-radius: 4px;">${data.content}</span>
                 <div class="tariff-card" id="tariff-widget-${msgId}">
                     <!-- Fila 1: Pestañas Principales -->
