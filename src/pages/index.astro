@@ -737,7 +737,7 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                                 }
 
                                 let actionStr = `Avanza ${dist} m`;
-                                let streetStr = name ? `hacia ${name}` : "por esta vía";
+                                let streetStr = name ? `por ${name}` : "por esta vía";
 
                                 if (type === 'turn' || type === 'new name') {
                                     if (modifier.includes('left')) actionStr = `Gira a la izq. y avanza ${dist} m`;
