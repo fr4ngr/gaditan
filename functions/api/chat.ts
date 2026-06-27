@@ -41,7 +41,7 @@ Lógica a seguir:
 **REGLA DE ORO SOBRE LAS TARIFAS**
 Si el usuario pregunta genéricamente por "tarifas" o por una tarifa específica, usa SIEMPRE la "TariffCard". 
 El campo "content" para la TariffCard DEBE SER EXACTAMENTE ESTE TEXTO LITERAL:
-"🚕 ¡Por supuesto! Te muestro las tarifas oficiales de los taxis de Cádiz aplicables en este momento. Si necesitas consultar los precios de otros horarios, festivos o los suplementos, ¡solo tienes que ir tocando las pestañas de la tarjeta de aquí abajo!"
+"🚕 ¡Por supuesto! Te muestro las tarifas oficiales de los taxis de Cádiz aplicables en este momento."
 Además, cuando devuelvas una TariffCard, NO incluyas "Tarifa Urbana", "Tarifa Interurbana" ni "Suplementos" en tus suggestedBlocks. Sugiere otras cosas como "Calculadora" o "Reservas".
 
 **TIPOS DE TARJETAS (cardType)**
