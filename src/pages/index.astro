@@ -639,11 +639,14 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             html += `<div class="tariff-notes" style="margin-top: 10px; text-align: center; color: #64748b; font-style: normal;">⚠️ <strong>Recuerda:</strong> Los suplementos solo se aplican a las tarifas urbanas.</div>`;
         }
 
+        let sourceText = state.type === 'interurbana' ? 'Fuente: BOJA' : 'Fuente: BOP Cádiz';
+        let sourceHtml = `<div style="text-align: right; font-size: 0.75rem; color: #94a3b8; margin-top: 12px; font-style: italic;">${sourceText}</div>`;
+
         // Reset animation by clearing and reflowing
         tbody.innerHTML = '';
         void tbody.offsetWidth; // Force reflow
         
-        tbody.innerHTML = `<div class="tariff-anim-layer">${html}${noteHtml}</div>`;
+        tbody.innerHTML = `<div class="tariff-anim-layer">${html}${noteHtml}${sourceHtml}</div>`;
     }
 
     // --- LEAFLET NAVEGACIÓN EN VIVO (FULLSCREEN) ---
