@@ -448,6 +448,37 @@ import ChatLayout from '../layouts/ChatLayout.astro';
         ]
     };
 
+    const HOLIDAYS: Record<string, string> = {
+        "01/01/2026": "Año Nuevo",
+        "06/01/2026": "Reyes Magos",
+        "16/02/2026": "Lunes de Coros (Carnaval)",
+        "28/02/2026": "Día de Andalucía",
+        "02/04/2026": "Jueves Santo",
+        "03/04/2026": "Viernes Santo",
+        "01/05/2026": "Fiesta del Trabajo",
+        "15/08/2026": "Asunción de la Virgen",
+        "07/10/2026": "Virgen del Rosario",
+        "12/10/2026": "Fiesta Nacional",
+        "02/11/2026": "Todos los Santos",
+        "07/12/2026": "Día de la Constitución",
+        "08/12/2026": "Inmaculada Concepción",
+        "25/12/2026": "Navidad",
+        "01/01/2027": "Año Nuevo",
+        "06/01/2027": "Reyes Magos",
+        "08/02/2027": "Lunes Carnaval",
+        "01/03/2027": "Día de Andalucía",
+        "25/03/2027": "Jueves Santo",
+        "26/03/2027": "Viernes Santo",
+        "01/05/2027": "Fiesta del Trabajo",
+        "16/08/2027": "Asunción de la Virgen",
+        "07/10/2027": "Virgen del Rosario",
+        "12/10/2027": "Fiesta Nacional",
+        "01/11/2027": "Todos los Santos",
+        "06/12/2027": "Día de la Constitución",
+        "08/12/2027": "Inmaculada Concepción",
+        "25/12/2027": "Navidad"
+    };
+
     // Estado del widget por msgId
     const widgetState: Record<string, { type: string, time: string }> = {};
 
@@ -515,6 +546,41 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                 noteHtml = '<div class="tariff-notes">Laborables de 06:00 a 22:00h.</div>';
             } else if (state.type === 'interurbana' && state.time !== 'dia') {
                 noteHtml = '<div class="tariff-notes">Festivos, findes y noches (22:00 a 06:00h).</div>';
+            }
+
+            if (state.time === 'festivo') {
+                const now = new Date();
+                const dd = String(now.getDate()).padStart(2, '0');
+                const mm = String(now.getMonth() + 1).padStart(2, '0');
+                const yyyy = now.getFullYear();
+                const todayStr = `${dd}/${mm}/${yyyy}`;
+                const months = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+                const niceDate = `${now.getDate()} de ${months[now.getMonth()]}`;
+                
+                const holidayName = HOLIDAYS[todayStr];
+                
+                const festivosListHtml = Object.entries(HOLIDAYS).map(([date, name]) => {
+                    const year = date.split('/')[2];
+                    if (year === String(yyyy)) {
+                        return `<li><b>${date.substring(0,5)}</b>: ${name}</li>`;
+                    }
+                    return '';
+                }).join('');
+
+                noteHtml += `
+                <div class="tariff-notes" style="margin-top: 8px; background: #fff3cd; padding: 10px; border-radius: 8px; color: #856404; border: 1px solid #ffeeba;">
+                    <strong>ℹ️ Info Festivos:</strong> Hoy ${niceDate} 
+                    ${holidayName 
+                        ? `<b>SÍ</b> es festivo en Cádiz (${holidayName}).` 
+                        : `<b>NO</b> es festivo oficial en Cádiz.`}
+                    
+                    <details style="margin-top: 8px; cursor: pointer;">
+                        <summary style="font-weight: 600; outline: none;">📅 Ver calendario de festivos ${yyyy}</summary>
+                        <ul style="margin: 8px 0 0 0; padding-left: 20px; font-size: 0.85rem; text-align: left;">
+                            ${festivosListHtml}
+                        </ul>
+                    </details>
+                </div>`;
             }
         }
 
