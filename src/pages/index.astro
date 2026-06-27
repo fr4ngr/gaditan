@@ -173,13 +173,47 @@ import ChatLayout from '../layouts/ChatLayout.astro';
         const messageDiv = document.createElement('div');
         messageDiv.className = `message ${sender}`;
         
-        let saveBtnHTML = '';
+        // Asignamos el HTML principal y el tiempo
+        messageDiv.innerHTML = `${htmlContent}<div class="message-meta"><span class="message-time">${time}</span></div>`;
+        
         if (sender === 'bot') {
             const rawContent = encodeURIComponent(htmlContent);
-            saveBtnHTML = `<button class="save-msg-btn" onclick="window.saveMessage(this, '${rawContent}')" aria-label="Guardar">🔖</button>`;
+            
+            const actionsDiv = document.createElement('div');
+            actionsDiv.className = 'msg-actions-overlay';
+            actionsDiv.style.position = 'absolute';
+            actionsDiv.style.bottom = '6px';
+            actionsDiv.style.right = '6px';
+            actionsDiv.style.display = 'flex';
+            actionsDiv.style.gap = '6px';
+            actionsDiv.style.zIndex = '10';
+            
+            actionsDiv.innerHTML = `
+                <button class="action-btn" onclick="window.shareMessage('${rawContent}')" aria-label="Compartir" style="background: var(--chat-bg); color: var(--text-primary); border: 1px solid var(--border-color, #e2e8f0); border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">📤</button>
+                <button class="action-btn save-msg-btn" onclick="window.saveMessage(this, '${rawContent}')" aria-label="Guardar" style="background: var(--chat-bg); color: var(--text-primary); border: 1px solid var(--border-color, #e2e8f0); border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">🔖</button>
+            `;
+            
+            // Buscar el contenedor principal (burbuja o tarjeta) para inyectar las acciones dentro
+            // Buscamos de abajo a arriba para meterlo en el último elemento si hay varios
+            const targets = messageDiv.querySelectorAll('.bubble, .ai-card, .info-card, .tariff-card, .suggested-blocks-container');
+            const target = targets.length > 0 ? targets[targets.length - 1] : messageDiv.firstElementChild;
+            
+            if (target && target.nodeType === 1) {
+                const el = target as HTMLElement;
+                el.style.position = 'relative';
+                // Añadir padding inferior para que los botones no pisen el texto
+                const currentPb = parseInt(window.getComputedStyle(el).paddingBottom || '12');
+                el.style.paddingBottom = (currentPb + 24) + 'px';
+                el.appendChild(actionsDiv);
+            } else {
+                // Fallback
+                actionsDiv.style.position = 'static';
+                actionsDiv.style.justifyContent = 'flex-end';
+                actionsDiv.style.marginTop = '4px';
+                messageDiv.appendChild(actionsDiv);
+            }
         }
         
-        messageDiv.innerHTML = `${htmlContent}<div class="message-meta">${saveBtnHTML}<span class="message-time">${time}</span></div>`;
         messagesContainer?.appendChild(messageDiv);
         scrollToBottom();
     }
@@ -890,6 +924,29 @@ import ChatLayout from '../layouts/ChatLayout.astro';
     };
 
     // --- LÓGICA DE GUARDADOS (LOCALSTORAGE) ---
+    window.shareMessage = async function(encodedHtml: string) {
+        const html = decodeURIComponent(encodedHtml);
+        const temp = document.createElement('div');
+        temp.innerHTML = html;
+        const text = temp.innerText.trim();
+        
+        if (navigator.share) {
+            try {
+                await navigator.share({
+                    title: 'Info de Cádiz Plus',
+                    text: text,
+                    url: window.location.href
+                });
+            } catch (err) {
+                console.error('Error al compartir:', err);
+            }
+        } else {
+            navigator.clipboard.writeText(text).then(() => {
+                alert('¡Información copiada al portapapeles!');
+            });
+        }
+    };
+
     window.saveMessage = function(btn: HTMLElement, encodedHtml: string) {
         const html = decodeURIComponent(encodedHtml);
         let saved = JSON.parse(localStorage.getItem('cadiz_saved_messages') || '[]');
@@ -899,9 +956,11 @@ import ChatLayout from '../layouts/ChatLayout.astro';
         if (index > -1) {
             saved.splice(index, 1);
             btn.classList.remove('saved');
+            btn.innerHTML = '🔖';
         } else {
             saved.push(html);
             btn.classList.add('saved');
+            btn.innerHTML = '✓';
         }
         
         localStorage.setItem('cadiz_saved_messages', JSON.stringify(saved));
@@ -944,7 +1003,7 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             div.className = 'message bot';
             // Añadimos botón para eliminar desde la propia vista de guardados
             const rawContent = encodeURIComponent(html);
-            div.innerHTML = `${html}<div class="message-meta"><button class="save-msg-btn saved" onclick="window.saveMessage(this, '${rawContent}')" aria-label="Eliminar">🗑️</button></div>`;
+            div.innerHTML = `${html}<div class="message-meta" style="justify-content: flex-end; display: flex; width: 100%; margin-top: 8px;"><button class="action-btn" onclick="window.saveMessage(this, '${rawContent}')" aria-label="Eliminar" style="background: #fee2e2; color: #ef4444; border: none; border-radius: 8px; padding: 6px 12px; display: flex; align-items: center; gap: 6px; font-weight: 600; cursor: pointer; font-size: 0.85rem;">🗑️ Eliminar de Guardados</button></div>`;
             container.appendChild(div);
         });
     };
