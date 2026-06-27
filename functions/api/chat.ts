@@ -84,18 +84,35 @@ Si el usuario pregunta genéricamente por "tarifas" o por una tarifa específica
 
         const historyContents = body.history && body.history.length > 0 ? body.history : userMessage;
 
-        const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
-            contents: historyContents,
-            config: {
-                systemInstruction: systemInstruction,
-                responseMimeType: "application/json",
-                responseSchema: schema,
-                temperature: 0.1
-            }
-        });
+        let responseText = '';
+        try {
+            const response = await ai.models.generateContent({
+                model: 'gemini-2.5-flash',
+                contents: historyContents,
+                config: {
+                    systemInstruction: systemInstruction,
+                    responseMimeType: "application/json",
+                    responseSchema: schema,
+                    temperature: 0.1
+                }
+            });
+            responseText = response.text;
+        } catch (error: any) {
+            console.error("Error con gemini-2.5-flash, intentando fallback a gemini-2.0-flash...", error);
+            // Fallback si los servidores de 2.5-flash están caídos o saturados (503)
+            const fallbackResponse = await ai.models.generateContent({
+                model: 'gemini-2.0-flash',
+                contents: historyContents,
+                config: {
+                    systemInstruction: systemInstruction,
+                    responseMimeType: "application/json",
+                    responseSchema: schema,
+                    temperature: 0.1
+                }
+            });
+            responseText = fallbackResponse.text;
+        }
 
-        const responseText = response.text;
         const data = JSON.parse(responseText);
 
         return new Response(JSON.stringify(data), {
