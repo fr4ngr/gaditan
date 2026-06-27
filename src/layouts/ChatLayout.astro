@@ -45,14 +45,27 @@ const { title } = Astro.props;
                 </div>
                 
                 <!-- Botones de Acción (Derecha) -->
-                <div class="theme-picker-container" id="header-actions" style="display: flex; gap: 8px;">
-                    <button id="bookmarks-btn" class="theme-btn" aria-label="Ver Guardados" onclick="window.switchPanel('guardados')">🔖</button>
-                    <button id="theme-btn" class="theme-btn" aria-label="Cambiar tema">🎨</button>
-                    <div id="theme-menu" class="theme-menu" style="display: none;">
-                        <div class="theme-option" data-theme="classic"><span class="theme-dot" style="background: #3b82f6;"></span> Cádiz Classic</div>
-                        <div class="theme-option" data-theme="noche"><span class="theme-dot" style="background: #0f172a;"></span> Noche Naranja</div>
-                        <div class="theme-option" data-theme="caleta"><span class="theme-dot" style="background: #fdfbf7;"></span> Caleta</div>
-                        <div class="theme-option" data-theme="oscuro"><span class="theme-dot" style="background: #000000;"></span> Oscuro Puro</div>
+                <div class="theme-picker-container" id="header-actions" style="display: flex; gap: 8px; position: relative;">
+                    <button id="bookmarks-btn" class="theme-btn" aria-label="Ver Guardados" onclick="window.switchPanel('guardados')" style="position: relative; display: flex; align-items: center; justify-content: center;">
+                        <svg id="bookmark-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/>
+                        </svg>
+                        <span id="bookmarks-badge" style="display: none; position: absolute; top: -2px; right: -2px; background: #ef4444; color: white; border-radius: 50%; width: 16px; height: 16px; font-size: 10px; font-weight: bold; align-items: center; justify-content: center;">0</span>
+                    </button>
+                    <button id="theme-btn" class="theme-btn" aria-label="Opciones" onclick="const m = document.getElementById('dropdown-menu'); m.style.display = m.style.display === 'flex' ? 'none' : 'flex';">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/>
+                        </svg>
+                    </button>
+                    
+                    <!-- Menú de opciones -->
+                    <div id="dropdown-menu" style="display: none; position: absolute; top: 100%; right: 0; margin-top: 8px; background: var(--header-bg); border: 1px solid var(--header-border); border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); flex-direction: column; min-width: 180px; z-index: 1000; overflow: hidden;">
+                        <button onclick="window.toggleDarkMode(); document.getElementById('dropdown-menu').style.display = 'none';" style="display: flex; align-items: center; gap: 8px; padding: 12px 16px; width: 100%; background: none; border: none; cursor: pointer; color: var(--primary-color); font-weight: 600; font-size: 14px; text-align: left; transition: background 0.2s;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
+                            </svg>
+                            Modo Oscuro
+                        </button>
                     </div>
                 </div>
             </header>
@@ -231,38 +244,6 @@ const { title } = Astro.props;
             .theme-btn:hover {
                 background: rgba(0,0,0,0.05);
             }
-            .theme-menu {
-                position: absolute;
-                top: 100%;
-                right: 15px;
-                background: var(--header-bg);
-                border: 1px solid var(--header-border);
-                border-radius: 8px;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-                z-index: 1000;
-                overflow: hidden;
-                min-width: 150px;
-            }
-            .theme-option {
-                padding: 10px 15px;
-                font-size: 0.85rem;
-                color: var(--text-primary);
-                cursor: pointer;
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                transition: background 0.2s;
-            }
-            .theme-option:hover {
-                background: rgba(0,0,0,0.05);
-            }
-            .theme-dot {
-                width: 12px;
-                height: 12px;
-                border-radius: 50%;
-                display: inline-block;
-                border: 1px solid rgba(0,0,0,0.1);
-            }
         </style>
         
         <script>
@@ -283,40 +264,6 @@ const { title } = Astro.props;
                     '--bubble-bot-border': '#e2e8f0',
                     '--input-bg': '#ffffff',
                     '--input-border': '#e2e8f0'
-                },
-                noche: {
-                    '--bg-color': '#0f172a',
-                    '--header-bg': '#1e293b',
-                    '--header-border': '#334155',
-                    '--text-primary': '#f8fafc',
-                    '--text-secondary': '#cbd5e1',
-                    '--primary-color': '#f97316',
-                    '--primary-hover': '#ea580c',
-                    '--chat-bg': '#0f172a',
-                    '--bubble-user-bg': '#f97316',
-                    '--bubble-user-text': '#ffffff',
-                    '--bubble-bot-bg': '#1e293b',
-                    '--bubble-bot-text': '#f8fafc',
-                    '--bubble-bot-border': '#334155',
-                    '--input-bg': '#1e293b',
-                    '--input-border': '#334155'
-                },
-                caleta: {
-                    '--bg-color': '#fdfbf7',
-                    '--header-bg': '#ffffff',
-                    '--header-border': '#e5e0d8',
-                    '--text-primary': '#3f3931',
-                    '--text-secondary': '#7d7463',
-                    '--primary-color': '#0ea5e9',
-                    '--primary-hover': '#0284c7',
-                    '--chat-bg': '#f6f4ed',
-                    '--bubble-user-bg': '#0ea5e9',
-                    '--bubble-user-text': '#ffffff',
-                    '--bubble-bot-bg': '#ffffff',
-                    '--bubble-bot-text': '#3f3931',
-                    '--bubble-bot-border': '#e5e0d8',
-                    '--input-bg': '#ffffff',
-                    '--input-border': '#e5e0d8'
                 },
                 oscuro: {
                     '--bg-color': '#000000',
@@ -346,35 +293,28 @@ const { title } = Astro.props;
                 }
                 localStorage.setItem('cadiz_chat_theme', themeName);
             }
+
+            window.toggleDarkMode = function() {
+                const currentTheme = localStorage.getItem('cadiz_chat_theme') || 'classic';
+                if (currentTheme === 'oscuro') {
+                    applyTheme('classic');
+                } else {
+                    applyTheme('oscuro');
+                }
+            };
         
             document.addEventListener('DOMContentLoaded', () => {
-                // Pre-apply theme early to avoid flicker
-                const savedTheme = localStorage.getItem('cadiz_chat_theme');
-                if (savedTheme && THEMES[savedTheme]) {
-                    applyTheme(savedTheme);
-                }
+                const savedTheme = localStorage.getItem('cadiz_chat_theme') || 'classic';
+                applyTheme(savedTheme);
                 
-                const themeBtn = document.getElementById('theme-btn');
-                const themeMenu = document.getElementById('theme-menu');
-                
-                if (themeBtn && themeMenu) {
-                    themeBtn.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        themeMenu.style.display = themeMenu.style.display === 'none' ? 'block' : 'none';
-                    });
-                    
-                    document.addEventListener('click', () => {
-                        themeMenu.style.display = 'none';
-                    });
-                    
-                    themeMenu.querySelectorAll('.theme-option').forEach(opt => {
-                        opt.addEventListener('click', (e) => {
-                            const themeId = e.currentTarget.getAttribute('data-theme');
-                            applyTheme(themeId);
-                        });
-                    });
-                }
-
+                // Clic fuera del menú para cerrarlo
+                document.addEventListener('click', (e) => {
+                    const btn = document.getElementById('theme-btn');
+                    const menu = document.getElementById('dropdown-menu');
+                    if (menu && btn && !btn.contains(e.target) && !menu.contains(e.target)) {
+                        menu.style.display = 'none';
+                    }
+                });
             });
         </script>
     </body>
