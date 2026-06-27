@@ -727,25 +727,43 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                             
                             if (firstStep) {
                                 const dist = Math.round(firstStep.distance);
-                                const type = firstStep.maneuver.type;
-                                const modifier = firstStep.maneuver.modifier || '';
-                                let name = firstStep.name;
-                                
-                                // Si es el paso de salida y no tiene nombre, pero el siguiente sí
-                                if (type === 'depart' && !name && steps.length > 1) {
-                                    name = steps[1].name;
-                                }
+                                const nextStep = steps[1];
 
                                 let actionStr = `Avanza ${dist} m`;
-                                let streetStr = name ? `por ${name}` : "por esta vía";
+                                let streetStr = firstStep.name ? `por ${firstStep.name}` : "por esta vía";
 
-                                if (type === 'turn' || type === 'new name') {
-                                    if (modifier.includes('left')) actionStr = `Gira a la izq. y avanza ${dist} m`;
-                                    else if (modifier.includes('right')) actionStr = `Gira a la der. y avanza ${dist} m`;
-                                    else if (modifier === 'straight') actionStr = `Sigue recto ${dist} m`;
-                                } else if (type === 'arrive') {
-                                    actionStr = "Llegando";
-                                    streetStr = "a tu destino";
+                                if (nextStep) {
+                                    const nextType = nextStep.maneuver.type;
+                                    const nextModifier = nextStep.maneuver.modifier || '';
+                                    const nextName = nextStep.name || 'la vía';
+
+                                    if (nextType === 'turn' || nextType === 'new name' || nextType === 'roundabout' || nextType === 'fork') {
+                                        let action = 'Gira';
+                                        if (nextModifier.includes('left')) action = 'Gira a la izq.';
+                                        else if (nextModifier.includes('right')) action = 'Gira a la der.';
+                                        else if (nextModifier === 'straight') action = 'Sigue recto';
+
+                                        if (dist > 15) {
+                                            actionStr = `En ${dist} m, ${action.toLowerCase()}`;
+                                            streetStr = `por ${nextName}`;
+                                        } else {
+                                            actionStr = `${action}`;
+                                            streetStr = `por ${nextName}`;
+                                        }
+                                    } else if (nextType === 'arrive') {
+                                        if (dist > 15) {
+                                            actionStr = `En ${dist} m llegarás`;
+                                            streetStr = `a tu destino`;
+                                        } else {
+                                            actionStr = `Has llegado`;
+                                            streetStr = `a tu destino`;
+                                        }
+                                    }
+                                } else {
+                                    if (firstStep.maneuver.type === 'arrive' || dist <= 15) {
+                                        actionStr = `Has llegado`;
+                                        streetStr = `a tu destino`;
+                                    }
                                 }
 
                                 actionElem.innerText = actionStr;
