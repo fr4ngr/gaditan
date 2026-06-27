@@ -388,10 +388,51 @@ import ChatLayout from '../layouts/ChatLayout.astro';
         }
     }
 
-    window.openFullscreenMap = function(lat: string | null, lon: string | null, msgId: string) {
-        // Deslizar al panel derecho
+    // --- LÓGICA DE NAVEGACIÓN Y CABECERA ESTÁTICA ---
+    window.switchPanel = function(panelId: 'guardados' | 'chat' | 'mapa') {
         const swiper = document.getElementById('main-swiper');
-        if (swiper) swiper.scrollTo({ left: window.innerWidth * 2, behavior: 'smooth' });
+        const headerInfo = document.getElementById('header-info');
+        const headerActions = document.getElementById('header-actions');
+        const headerBackBtn = document.getElementById('header-back-btn');
+        const headerTitleGroup = document.getElementById('header-title-group');
+        
+        if (!swiper) return;
+
+        let leftPos = 0;
+        
+        if (panelId === 'guardados') {
+            leftPos = 0;
+            if (headerInfo) headerInfo.style.display = 'none';
+            if (headerActions) headerActions.style.display = 'none';
+            if (headerBackBtn) headerBackBtn.style.display = 'block';
+            if (headerTitleGroup) {
+                // we can dynamically inject a temp title, or just keep it simple
+                headerBackBtn.innerHTML = '⬅ Volver al Chat';
+                headerBackBtn.style.margin = '0 auto';
+            }
+        } else if (panelId === 'chat') {
+            leftPos = window.innerWidth;
+            if (headerInfo) headerInfo.style.display = 'flex';
+            if (headerActions) headerActions.style.display = 'flex';
+            if (headerBackBtn) headerBackBtn.style.display = 'none';
+            if (headerBackBtn) headerBackBtn.style.margin = '0';
+        } else if (panelId === 'mapa') {
+            leftPos = window.innerWidth * 2;
+            if (headerInfo) headerInfo.style.display = 'none';
+            if (headerActions) headerActions.style.display = 'none';
+            if (headerBackBtn) {
+                headerBackBtn.style.display = 'block';
+                headerBackBtn.innerHTML = '⬅ Volver al Chat';
+                headerBackBtn.style.margin = '0 auto';
+            }
+        }
+
+        swiper.scrollTo({ left: leftPos, behavior: 'smooth' });
+    };
+
+    window.openFullscreenMap = function(lat: string | null, lon: string | null, msgId: string) {
+        // Mover panel y actualizar cabecera
+        window.switchPanel('mapa');
 
         const container = document.getElementById('fullscreen-widget-area');
         if (!container) return;
@@ -467,9 +508,16 @@ import ChatLayout from '../layouts/ChatLayout.astro';
         });
     };
 
-    // Cargar guardados al iniciar
+    // Cargar guardados al iniciar y posicionar el swiper en el chat
     document.addEventListener('DOMContentLoaded', () => {
         window.renderSavedMessages();
+        // Inicializar estado del panel central
+        const swiper = document.getElementById('main-swiper');
+        if (swiper) {
+            setTimeout(() => {
+                swiper.scrollTo({ left: window.innerWidth, behavior: 'instant' });
+            }, 50);
+        }
     });
 
     // --- DATOS DEL WIDGET DE TARIFAS ---

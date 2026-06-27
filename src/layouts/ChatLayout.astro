@@ -27,115 +27,103 @@ const { title } = Astro.props;
 		<script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
 	</head>
 	<body>
-        <div class="swiper-container" id="main-swiper">
-            <div class="swiper-wrapper">
+        <div class="app-container" style="display: flex; flex-direction: column; height: 100dvh; max-width: 100%;">
+            <!-- CABECERA ÚNICA Y ESTÁTICA -->
+            <header class="chat-header" id="main-header" style="display: flex; justify-content: space-between; align-items: center; position: relative; max-width: 480px; margin: 0 auto; width: 100%;">
                 
-                <!-- PANEL 0: GUARDADOS -->
-                <div class="swipe-panel" id="panel-guardados">
-                    <div class="app-container">
-                        <header class="chat-header" style="display: flex; align-items: center; justify-content: space-between; position: relative;">
-                            <div class="chat-title-group">
-                                <h1>🔖 Guardados</h1>
-                                <span class="chat-subtitle">Tus favoritos</span>
-                            </div>
-                            <button class="back-swipe-btn" onclick="document.getElementById('panel-chat').scrollIntoView({behavior:'smooth'})" aria-label="Volver">
-                                Volver ➡
-                            </button>
-                        </header>
-                        <main class="messages-area" id="saved-messages-container" style="padding: 20px;">
+                <!-- Botón Volver (Izquierda, Oculto por defecto) -->
+                <button id="header-back-btn" class="back-swipe-btn" style="display: none;" onclick="window.switchPanel('chat')" aria-label="Volver">⬅ Volver</button>
+                
+                <!-- Info Central (Avatar y Títulos) -->
+                <div class="chat-header-info" id="header-info" style="display: flex;">
+                    <div class="chat-avatar" id="header-avatar">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM11 19.93C7.06 19.43 4 16.05 4 12C4 7.95 7.06 4.57 11 4.07V19.93ZM13 4.07C16.94 4.57 20 7.95 20 12C20 16.05 16.94 19.43 13 19.93V4.07Z" fill="currentColor"/>
+                        </svg>
+                    </div>
+                    <div class="chat-title-group" id="header-title-group">
+                        <h1 id="header-title">cadiz.chat</h1>
+                        <span class="chat-subtitle" id="header-subtitle">Asistente Virtual</span>
+                    </div>
+                </div>
+                
+                <!-- Botones de Acción (Derecha) -->
+                <div class="theme-picker-container" id="header-actions" style="display: flex; gap: 8px;">
+                    <button id="bookmarks-btn" class="theme-btn" aria-label="Ver Guardados" onclick="window.switchPanel('guardados')">🔖</button>
+                    <button id="theme-btn" class="theme-btn" aria-label="Cambiar tema">🎨</button>
+                    <div id="theme-menu" class="theme-menu" style="display: none;">
+                        <div class="theme-option" data-theme="classic"><span class="theme-dot" style="background: #3b82f6;"></span> Cádiz Classic</div>
+                        <div class="theme-option" data-theme="noche"><span class="theme-dot" style="background: #0f172a;"></span> Noche Naranja</div>
+                        <div class="theme-option" data-theme="caleta"><span class="theme-dot" style="background: #fdfbf7;"></span> Caleta</div>
+                        <div class="theme-option" data-theme="oscuro"><span class="theme-dot" style="background: #000000;"></span> Oscuro Puro</div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- CONTENEDOR DESLIZABLE (SWIPER) -->
+            <div class="swiper-container" id="main-swiper" style="flex: 1; width: 100%; min-height: 0;">
+                <div class="swiper-wrapper">
+                    
+                    <!-- PANEL 0: GUARDADOS -->
+                    <div class="swipe-panel" id="panel-guardados">
+                        <main class="messages-area" id="saved-messages-container" style="padding: 20px; width: 100%; max-width: 480px; margin: 0 auto; height: 100%; overflow-y: auto; background: var(--bg-color);">
                             <p style="color:var(--text-secondary); text-align:center; margin-top:40px;">No tienes mensajes guardados aún.</p>
                         </main>
                     </div>
-                </div>
 
-                <!-- PANEL 1: CHAT PRINCIPAL -->
-                <div class="swipe-panel" id="panel-chat">
-                    <div class="app-container">
-                        <header class="chat-header" style="display: flex; justify-content: space-between; align-items: center; position: relative;">
-                            <div class="chat-header-info">
-                                <div class="chat-avatar">
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM11 19.93C7.06 19.43 4 16.05 4 12C4 7.95 7.06 4.57 11 4.07V19.93ZM13 4.07C16.94 4.57 20 7.95 20 12C20 16.05 16.94 19.43 13 19.93V4.07Z" fill="currentColor"/>
-                                    </svg>
-                                </div>
-                                <div class="chat-title-group">
-                                    <h1>cadiz.chat</h1>
-                                    <span class="chat-subtitle">Asistente Virtual</span>
-                                </div>
-                            </div>
-                            
-                            <div class="theme-picker-container" style="display: flex; gap: 8px;">
-                                <button id="bookmarks-btn" class="theme-btn" aria-label="Ver Guardados" onclick="document.getElementById('panel-guardados').scrollIntoView({behavior:'smooth'})">🔖</button>
-                                <button id="theme-btn" class="theme-btn" aria-label="Cambiar tema">🎨</button>
-                                <div id="theme-menu" class="theme-menu" style="display: none;">
-                                    <div class="theme-option" data-theme="classic"><span class="theme-dot" style="background: #3b82f6;"></span> Cádiz Classic</div>
-                                    <div class="theme-option" data-theme="noche"><span class="theme-dot" style="background: #0f172a;"></span> Noche Naranja</div>
-                                    <div class="theme-option" data-theme="caleta"><span class="theme-dot" style="background: #fdfbf7;"></span> Caleta</div>
-                                    <div class="theme-option" data-theme="oscuro"><span class="theme-dot" style="background: #000000;"></span> Oscuro Puro</div>
-                                </div>
-                            </div>
-                        </header>
-                        
-                        <main class="messages-area" id="messages-container">
+                    <!-- PANEL 1: CHAT PRINCIPAL -->
+                    <div class="swipe-panel" id="panel-chat">
+                        <main class="messages-area" id="messages-container" style="width: 100%; max-width: 480px; margin: 0 auto; height: 100%; overflow-y: auto; background: var(--chat-bg);">
                             <slot />
                         </main>
-                        
-                        <div class="input-area">
-                            <div class="chat-input-wrapper">
-                                <textarea id="chat-input" class="chat-input" placeholder="Pregunta por una parada, tarifa, objetos perdidos..." rows="1"></textarea>
-                                <button id="send-btn" class="send-button" aria-label="Enviar mensaje">
-                                    <svg viewBox="0 0 24 24">
-                                        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
-                                    </svg>
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Capa de Navegación en Vivo a Pantalla Completa (dentro del chat container por ahora, o podría ir al panel 3) -->
-                        <div id="fullscreen-nav-layer" class="fullscreen-nav closed">
-                            <button class="nav-close-btn" onclick="window.exitLiveNavigation()" aria-label="Cerrar Navegación">✕</button>
-                            <button id="nav-dev-btn" class="nav-dev-btn" style="display:none;">DEV: FAKE GPS</button>
-                            
-                            <div class="nav-top-panel">
-                                <div class="nav-eta" id="nav-eta">-- min</div>
-                                <div class="nav-distance" id="nav-distance">-- km</div>
-                            </div>
-                            
-                            <div id="nav-map" class="nav-map-container"></div>
-                            
-                            <div class="nav-bottom-panel">
-                                <div class="nav-instruction-pill" id="nav-instruction">
-                                    <span class="nav-icon" id="nav-instruction-icon">🧭</span>
-                                    <div class="nav-text-container">
-                                        <div class="nav-main-text" id="nav-instruction-text">Buscando ruta...</div>
-                                        <div class="nav-sub-text" id="nav-instruction-dist"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
-                </div>
 
-                <!-- PANEL 2: PANTALLA COMPLETA (WIDGETS) -->
-                <div class="swipe-panel" id="panel-fullscreen">
-                    <div class="app-container" style="background: var(--bg-color);">
-                        <header class="chat-header" style="display: flex; align-items: center; justify-content: space-between; position: relative;">
-                            <button class="back-swipe-btn" onclick="document.getElementById('panel-chat').scrollIntoView({behavior:'smooth'})" aria-label="Volver">
-                                ⬅ Volver
-                            </button>
-                            <div class="chat-title-group" style="text-align: right;">
-                                <h1>📍 Mapa Interactivo</h1>
-                            </div>
-                        </header>
-                        <div id="fullscreen-widget-area" style="flex: 1; width: 100%; height: 100%; position: relative;">
+                    <!-- PANEL 2: PANTALLA COMPLETA (WIDGETS) -->
+                    <div class="swipe-panel" id="panel-fullscreen">
+                        <div id="fullscreen-widget-area" style="width: 100%; max-width: 480px; margin: 0 auto; height: 100%; position: relative; background: var(--bg-color);">
                             <!-- Widgets inyectados por JS -->
                             <div style="display: flex; height: 100%; align-items: center; justify-content: center; color: var(--text-secondary);">
                                 Cargando...
                             </div>
                         </div>
                     </div>
-                </div>
 
+                </div>
+            </div>
+            
+            <!-- ÁREA DE INPUT ESTÁTICA -->
+            <div class="input-area" id="main-input" style="width: 100%; max-width: 480px; margin: 0 auto;">
+                <div class="chat-input-wrapper">
+                    <textarea id="chat-input" class="chat-input" placeholder="Pregunta por una parada, tarifa, objetos perdidos..." rows="1"></textarea>
+                    <button id="send-btn" class="send-button" aria-label="Enviar mensaje">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Capa de Navegación en Vivo a Pantalla Completa -->
+            <div id="fullscreen-nav-layer" class="fullscreen-nav closed">
+                <button class="nav-close-btn" onclick="window.exitLiveNavigation()" aria-label="Cerrar Navegación">✕</button>
+                <button id="nav-dev-btn" class="nav-dev-btn" style="display:none;">DEV: FAKE GPS</button>
+                
+                <div class="nav-top-panel">
+                    <div class="nav-eta" id="nav-eta">-- min</div>
+                    <div class="nav-distance" id="nav-distance">-- km</div>
+                </div>
+                
+                <div id="nav-map" class="nav-map-container"></div>
+                
+                <div class="nav-bottom-panel">
+                    <div class="nav-instruction-pill" id="nav-instruction">
+                        <span class="nav-icon" id="nav-instruction-icon">🧭</span>
+                        <div class="nav-text-container">
+                            <div class="nav-main-text" id="nav-instruction-text">Buscando ruta...</div>
+                            <div class="nav-sub-text" id="nav-instruction-dist"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         
@@ -340,13 +328,6 @@ const { title } = Astro.props;
                     });
                 }
 
-                // Snap to Center Panel on load
-                const swiper = document.getElementById('main-swiper');
-                if (swiper) {
-                    setTimeout(() => {
-                        swiper.scrollTo({ left: window.innerWidth, behavior: 'instant' });
-                    }, 50);
-                }
             });
         </script>
     </body>
