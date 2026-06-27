@@ -449,6 +449,8 @@ import ChatLayout from '../layouts/ChatLayout.astro';
         setTimeout(() => {
             const mapL = (window as any).L;
             const map = mapL.map(`fullscreen-leaflet-${msgId}`, { zoomControl: false });
+            window.currentMap = map; // Guardar referencia global
+            
             mapL.control.zoom({ position: 'bottomright' }).addTo(map);
             
             mapL.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
@@ -464,14 +466,29 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                 window.openMapInfoPill("Destino Seleccionado", "Coordenadas exactas");
             } else {
                 map.setView([36.516, -6.283], 13);
+                
                 const taxiIcon = mapL.divIcon({
                     html: '<div style="background:var(--primary-color); border: 2px solid white; width:16px; height:16px; border-radius:50%; box-shadow:0 2px 4px rgba(0,0,0,0.4);"></div>',
                     className: '', iconSize: [16, 16], iconAnchor: [8, 8]
                 });
+                
+                const markersLayer = mapL.layerGroup().addTo(map);
+                window.currentMarkersLayer = markersLayer; // Guardar referencia global
+
                 CADIZ_STOPS.forEach(stop => {
-                    const marker = mapL.marker([stop.lat, stop.lon], {icon: taxiIcon}).addTo(map);
+                    const marker = mapL.marker([stop.lat, stop.lon], {icon: taxiIcon});
+                    marker.addTo(markersLayer);
+                    
                     marker.on('click', () => {
                         window.openMapInfoPill(stop.name, stop.desc);
+                        
+                        // Hacer zoom y aislar el marcador
+                        map.setView([stop.lat, stop.lon], 16);
+                        map.removeLayer(markersLayer); // Ocultar todos
+                        
+                        // Crear un marcador temporal solo para esta vista
+                        if (window.currentActiveMarker) map.removeLayer(window.currentActiveMarker);
+                        window.currentActiveMarker = mapL.marker([stop.lat, stop.lon], {icon: taxiIcon}).addTo(map);
                     });
                 });
             }
@@ -493,6 +510,13 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             mapCloseBtn.style.opacity = '1';
             mapCloseBtn.style.pointerEvents = 'auto';
             mapCloseBtn.style.transform = 'scale(1)';
+        }
+        
+        // Restaurar mapa global si existe
+        if (window.currentMap && window.currentMarkersLayer) {
+            window.currentMap.setView([36.516, -6.283], 13); // Zoom out
+            if (window.currentActiveMarker) window.currentMap.removeLayer(window.currentActiveMarker); // Quitar el aislado
+            window.currentMap.addLayer(window.currentMarkersLayer); // Mostrar todos
         }
     };
 
