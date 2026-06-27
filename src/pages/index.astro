@@ -262,15 +262,7 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                         <!-- Renderizado dinámico aquí -->
                     </div>
                 </div>
-            </div>
-            <` + `script>
-                // Autoejecutar para inicializar la tarjeta con 'urbana' + 'dia'
-                setTimeout(() => {
-                    if (window.changeTariffTab) {
-                        window.changeTariffTab('${msgId}', 'urbana');
-                    }
-                }, 50);
-            <` + `/script>`;
+            </div>`;
         }
 
         // Fallback para desconocidos
@@ -334,6 +326,13 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             }
             
             addMessage('bot', finalHtml);
+
+            // Inicializar Widget de Tarifas si corresponde
+            if (data.cardType === 'TariffCard') {
+                setTimeout(() => {
+                    if (window.changeTariffTab) window.changeTariffTab(msgId, 'urbana');
+                }, 10);
+            }
 
             // 5. Instanciar el mapa en línea o activar navegación
             if (data.cardType === 'MapCard' && data.lat && data.lon) {
