@@ -141,7 +141,14 @@ import ChatLayout from '../layouts/ChatLayout.astro';
         const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         const messageDiv = document.createElement('div');
         messageDiv.className = `message ${sender}`;
-        messageDiv.innerHTML = `${htmlContent}<span class="message-time">${time}</span>`;
+        
+        let saveBtnHTML = '';
+        if (sender === 'bot') {
+            const rawContent = encodeURIComponent(htmlContent);
+            saveBtnHTML = `<button class="save-msg-btn" onclick="window.saveMessage(this, '${rawContent}')" aria-label="Guardar">🔖</button>`;
+        }
+        
+        messageDiv.innerHTML = `${htmlContent}<div class="message-meta">${saveBtnHTML}<span class="message-time">${time}</span></div>`;
         messagesContainer?.appendChild(messageDiv);
         scrollToBottom();
     }
@@ -230,15 +237,9 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             return `
             <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%; max-width: 100%; align-self: flex-start;">
                 <span class="bubble">${data.content}</span>
-                ${data.lat && data.lon ? `
-                <div style="border-radius: 18px; overflow: hidden; height: 250px; width: 100%; position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-                    <div id="leaflet-map-${msgId}" style="width: 100%; height: 100%;"></div>
-                </div>
-                ` : `
-                <div style="border-radius: 18px; overflow: hidden; height: 350px; width: 100%; position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-top: 5px;">
-                    <div id="leaflet-map-global-${msgId}" style="width: 100%; height: 100%;"></div>
-                </div>
-                `}
+                <button class="call-btn" style="background: #e3f2fd; color: #1565c0; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; gap: 8px; border-radius: 20px; border: 1px solid #bbdefb;" onclick="window.openFullscreenMap(${data.lat ? `'${data.lat}', '${data.lon}', '${msgId}'` : `null, null, '${msgId}'`})">
+                    <span>📍</span> Abrir Mapa Interactivo
+                </button>
             </div>`;
         }
         if (data.cardType === 'NavigationCard') {
@@ -375,15 +376,7 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             }
 
             // 5. Instanciar el mapa en línea o activar navegación
-            if (data.cardType === 'MapCard') {
-                setTimeout(() => {
-                    if (data.lat && data.lon) {
-                        window.initInlineMap(data.lat, data.lon, msgId);
-                    } else {
-                        window.initGlobalMap(msgId);
-                    }
-                }, 100);
-            } else if (data.cardType === 'NavigationCard' && data.lat && data.lon) {
+            if (data.cardType === 'NavigationCard' && data.lat && data.lon) {
                 setTimeout(() => {
                     window.startLiveNavigation(data.lat, data.lon, data.stopName || 'Destino');
                 }, 800); // Dar un poco de tiempo para leer el mensaje antes de abrir a pantalla completa
@@ -395,81 +388,89 @@ import ChatLayout from '../layouts/ChatLayout.astro';
         }
     }
 
-    // --- LÓGICA DE LEAFLET INLINE PARA MAPCARD ---
-    window.initInlineMap = function(lat: string, lon: string, msgId: string) {
-        const mapElement = document.getElementById(`leaflet-map-${msgId}`);
-        if (!mapElement) return;
-        
-        const mapL = (window as any).L;
-        const map = mapL.map(`leaflet-map-${msgId}`, {
-            scrollWheelZoom: false
-        }).setView([lat, lon], 16);
-        
-        mapL.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-            attribution: '© OpenStreetMap, © CartoDB',
-            subdomains: 'abcd',
-            maxZoom: 20
-        }).addTo(map);
-        
-        mapL.marker([lat, lon]).addTo(map).bindPopup('Destino').openPopup();
-        setTimeout(() => scrollToBottom(), 500);
+    window.openFullscreenMap = function(lat: string | null, lon: string | null, msgId: string) {
+        // Deslizar al panel derecho
+        const swiper = document.getElementById('main-swiper');
+        if (swiper) swiper.scrollTo({ left: window.innerWidth * 2, behavior: 'smooth' });
+
+        const container = document.getElementById('fullscreen-widget-area');
+        if (!container) return;
+
+        // Limpiar contenedor e inyectar el div del mapa
+        container.innerHTML = `<div id="fullscreen-leaflet-${msgId}" style="width: 100%; height: 100%;"></div>`;
+
+        setTimeout(() => {
+            const mapL = (window as any).L;
+            const map = mapL.map(`fullscreen-leaflet-${msgId}`, { zoomControl: false });
+            mapL.control.zoom({ position: 'bottomright' }).addTo(map);
+            
+            mapL.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+                attribution: '© OpenStreetMap, © CartoDB', subdomains: 'abcd', maxZoom: 20
+            }).addTo(map);
+
+            if (lat && lon) {
+                map.setView([lat, lon], 16);
+                mapL.marker([lat, lon]).addTo(map).bindPopup('Destino').openPopup();
+            } else {
+                map.setView([36.516, -6.283], 13);
+                const taxiIcon = mapL.divIcon({
+                    html: '<div style="background:#20873c; color:white; width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; border:2px solid white; box-shadow:0 2px 5px rgba(0,0,0,0.3);">📍</div>',
+                    className: '', iconSize: [24, 24], iconAnchor: [12, 12]
+                });
+                CADIZ_STOPS.forEach(stop => {
+                    mapL.marker([stop.lat, stop.lon], {icon: taxiIcon}).addTo(map).bindPopup(`<b>${stop.name}</b>`);
+                });
+            }
+            // Forzar resize para que Leaflet dibuje bien en el nuevo panel
+            setTimeout(() => map.invalidateSize(), 300);
+        }, 100);
     };
 
-    const CADIZ_STOPS = [
-        { name: "Parador de Cádiz", lat: 36.5342075, lon: -6.3050849 },
-        { name: "Falla", lat: 36.5334696, lon: -6.3021514 },
-        { name: "Mora", lat: 36.531308, lon: -6.305134 },
-        { name: "San Antonio", lat: 36.5342418, lon: -6.3050868 },
-        { name: "Palillero", lat: 36.5318437, lon: -6.2964062 },
-        { name: "Plaza Tortugas", lat: 36.533451, lon: -6.293564 },
-        { name: "La Punta (Solo noches 22-7h)", lat: 36.537434, lon: -6.290726 },
-        { name: "Comes", lat: 36.535364, lon: -6.291775 },
-        { name: "Catedral", lat: 36.529217, lon: -6.295707 },
-        { name: "San Juan de Dios", lat: 36.530537, lon: -6.291444 },
-        { name: "Estación de Tren", lat: 36.528159, lon: -6.287746 },
-        { name: "Caja Nacional", lat: 36.526253, lon: -6.289851 },
-        { name: "Monte Puerta Tierra", lat: 36.520385, lon: -6.285054 },
-        { name: "Pabellón", lat: 36.520156, lon: -6.282787 },
-        { name: "Corte Inglés", lat: 36.521661, lon: -6.276634 },
-        { name: "Bar Parada", lat: 36.519283, lon: -6.277154 },
-        { name: "Hotel Barceló", lat: 36.514442, lon: -6.281504 },
-        { name: "Camelia", lat: 36.511658, lon: -6.279901 },
-        { name: "Barriada", lat: 36.511384, lon: -6.271984 },
-        { name: "Residencia (Hospital)", lat: 36.507906, lon: -6.277750 },
-        { name: "Mercadona", lat: 36.507279, lon: -6.268245 },
-        { name: "Canary (Glorieta Zona Franca)", lat: 36.505821, lon: -6.276564 },
-        { name: "Helios (Estadio)", lat: 36.501347, lon: -6.274249 },
-        { name: "Piscina (Ciudad de Cádiz)", lat: 36.497418, lon: -6.271457 },
-        { name: "Zona Franca", lat: 36.500538, lon: -6.268548 }
-    ];
-
-    window.initGlobalMap = function(msgId: string) {
-        const mapElement = document.getElementById(`leaflet-map-global-${msgId}`);
-        if (!mapElement) return;
+    // --- LÓGICA DE GUARDADOS (LOCALSTORAGE) ---
+    window.saveMessage = function(btn: HTMLElement, encodedHtml: string) {
+        const html = decodeURIComponent(encodedHtml);
+        let saved = JSON.parse(localStorage.getItem('cadiz_saved_messages') || '[]');
         
-        const mapL = (window as any).L;
-        const map = mapL.map(`leaflet-map-global-${msgId}`, {
-            scrollWheelZoom: false
-        }).setView([36.516, -6.283], 13);
+        // Comprobar si ya existe para quitarlo (toggle)
+        const index = saved.indexOf(html);
+        if (index > -1) {
+            saved.splice(index, 1);
+            btn.classList.remove('saved');
+        } else {
+            saved.push(html);
+            btn.classList.add('saved');
+        }
         
-        mapL.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-            attribution: '© OpenStreetMap, © CartoDB',
-            subdomains: 'abcd',
-            maxZoom: 20
-        }).addTo(map);
-
-        const taxiIcon = mapL.divIcon({
-            html: '<div style="background:#20873c; color:white; width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; border:2px solid white; box-shadow:0 2px 5px rgba(0,0,0,0.3);">📍</div>',
-            className: '',
-            iconSize: [24, 24],
-            iconAnchor: [12, 12]
-        });
-        
-        CADIZ_STOPS.forEach(stop => {
-            mapL.marker([stop.lat, stop.lon], {icon: taxiIcon}).addTo(map).bindPopup(`<b>${stop.name}</b>`);
-        });
-        setTimeout(() => scrollToBottom(), 500);
+        localStorage.setItem('cadiz_saved_messages', JSON.stringify(saved));
+        window.renderSavedMessages();
     };
+
+    window.renderSavedMessages = function() {
+        const container = document.getElementById('saved-messages-container');
+        if (!container) return;
+        
+        const saved = JSON.parse(localStorage.getItem('cadiz_saved_messages') || '[]');
+        if (saved.length === 0) {
+            container.innerHTML = '<p style="color:var(--text-secondary); text-align:center; margin-top:40px;">No tienes mensajes guardados aún.</p>';
+            return;
+        }
+
+        container.innerHTML = '';
+        // Mostramos de más nuevo a más viejo (invertimos el array)
+        [...saved].reverse().forEach((html, i) => {
+            const div = document.createElement('div');
+            div.className = 'message bot';
+            // Añadimos botón para eliminar desde la propia vista de guardados
+            const rawContent = encodeURIComponent(html);
+            div.innerHTML = `${html}<div class="message-meta"><button class="save-msg-btn saved" onclick="window.saveMessage(this, '${rawContent}')" aria-label="Eliminar">🗑️</button></div>`;
+            container.appendChild(div);
+        });
+    };
+
+    // Cargar guardados al iniciar
+    document.addEventListener('DOMContentLoaded', () => {
+        window.renderSavedMessages();
+    });
 
     // --- DATOS DEL WIDGET DE TARIFAS ---
     const TARIFF_DATA: Record<string, any> = {

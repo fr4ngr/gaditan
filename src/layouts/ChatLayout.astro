@@ -27,71 +27,162 @@ const { title } = Astro.props;
 		<script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
 	</head>
 	<body>
-        <div class="app-container">
-            <header class="chat-header" style="display: flex; justify-content: space-between; align-items: center; position: relative;">
-                <div class="chat-header-info">
-                    <div class="chat-avatar">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM11 19.93C7.06 19.43 4 16.05 4 12C4 7.95 7.06 4.57 11 4.07V19.93ZM13 4.07C16.94 4.57 20 7.95 20 12C20 16.05 16.94 19.43 13 19.93V4.07Z" fill="currentColor"/>
-                        </svg>
-                    </div>
-                    <div class="chat-title-group">
-                        <h1>cadiz.chat</h1>
-                        <span class="chat-subtitle">Asistente Virtual</span>
-                    </div>
-                </div>
+        <div class="swiper-container" id="main-swiper">
+            <div class="swiper-wrapper">
                 
-                <div class="theme-picker-container">
-                    <button id="theme-btn" class="theme-btn" aria-label="Cambiar tema">🎨</button>
-                    <div id="theme-menu" class="theme-menu" style="display: none;">
-                        <div class="theme-option" data-theme="classic"><span class="theme-dot" style="background: #3b82f6;"></span> Cádiz Classic</div>
-                        <div class="theme-option" data-theme="noche"><span class="theme-dot" style="background: #0f172a;"></span> Noche Naranja</div>
-                        <div class="theme-option" data-theme="caleta"><span class="theme-dot" style="background: #fdfbf7;"></span> Caleta</div>
-                        <div class="theme-option" data-theme="oscuro"><span class="theme-dot" style="background: #000000;"></span> Oscuro Puro</div>
+                <!-- PANEL 0: GUARDADOS -->
+                <div class="swipe-panel" id="panel-guardados">
+                    <div class="app-container">
+                        <header class="chat-header" style="display: flex; align-items: center; justify-content: center; position: relative;">
+                            <div class="chat-title-group" style="text-align: center;">
+                                <h1>🔖 Guardados</h1>
+                                <span class="chat-subtitle">Tus respuestas favoritas</span>
+                            </div>
+                        </header>
+                        <main class="messages-area" id="saved-messages-container" style="padding: 20px;">
+                            <p style="color:var(--text-secondary); text-align:center; margin-top:40px;">No tienes mensajes guardados aún.</p>
+                        </main>
                     </div>
                 </div>
-            </header>
-            
-            <main class="messages-area" id="messages-container">
-                <slot />
-            </main>
-            
-            <div class="input-area">
-                <div class="chat-input-wrapper">
-                    <textarea id="chat-input" class="chat-input" placeholder="Pregunta por una parada, tarifa, objetos perdidos..." rows="1"></textarea>
-                    <button id="send-btn" class="send-button" aria-label="Enviar mensaje">
-                        <svg viewBox="0 0 24 24">
-                            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
-                        </svg>
-                    </button>
-                </div>
-            </div>
 
-            <!-- Capa de Navegación en Vivo a Pantalla Completa (ahora debajo del header) -->
-            <div id="fullscreen-nav-layer" class="fullscreen-nav closed">
-                <button class="nav-close-btn" onclick="window.exitLiveNavigation()" aria-label="Cerrar Navegación">✕</button>
-                <button id="nav-dev-btn" class="nav-dev-btn" style="display:none;">DEV: FAKE GPS</button>
-                
-                <div class="nav-top-panel">
-                    <div class="nav-eta" id="nav-eta">-- min</div>
-                    <div class="nav-distance" id="nav-distance">-- km</div>
-                </div>
-                
-                <div id="nav-map" class="nav-map-container"></div>
-                
-                <div class="nav-bottom-panel">
-                    <div class="nav-instruction-pill" id="nav-instruction">
-                        <span class="nav-icon" id="nav-instruction-icon">🧭</span>
-                        <div class="nav-text-container">
-                            <div class="nav-main-text" id="nav-instruction-text">Buscando ruta...</div>
-                            <div class="nav-sub-text" id="nav-instruction-dist"></div>
+                <!-- PANEL 1: CHAT PRINCIPAL -->
+                <div class="swipe-panel" id="panel-chat">
+                    <div class="app-container">
+                        <header class="chat-header" style="display: flex; justify-content: space-between; align-items: center; position: relative;">
+                            <div class="chat-header-info">
+                                <div class="chat-avatar">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM11 19.93C7.06 19.43 4 16.05 4 12C4 7.95 7.06 4.57 11 4.07V19.93ZM13 4.07C16.94 4.57 20 7.95 20 12C20 16.05 16.94 19.43 13 19.93V4.07Z" fill="currentColor"/>
+                                    </svg>
+                                </div>
+                                <div class="chat-title-group">
+                                    <h1>cadiz.chat</h1>
+                                    <span class="chat-subtitle">Asistente Virtual</span>
+                                </div>
+                            </div>
+                            
+                            <div class="theme-picker-container">
+                                <button id="theme-btn" class="theme-btn" aria-label="Cambiar tema">🎨</button>
+                                <div id="theme-menu" class="theme-menu" style="display: none;">
+                                    <div class="theme-option" data-theme="classic"><span class="theme-dot" style="background: #3b82f6;"></span> Cádiz Classic</div>
+                                    <div class="theme-option" data-theme="noche"><span class="theme-dot" style="background: #0f172a;"></span> Noche Naranja</div>
+                                    <div class="theme-option" data-theme="caleta"><span class="theme-dot" style="background: #fdfbf7;"></span> Caleta</div>
+                                    <div class="theme-option" data-theme="oscuro"><span class="theme-dot" style="background: #000000;"></span> Oscuro Puro</div>
+                                </div>
+                            </div>
+                        </header>
+                        
+                        <main class="messages-area" id="messages-container">
+                            <slot />
+                        </main>
+                        
+                        <div class="input-area">
+                            <div class="chat-input-wrapper">
+                                <textarea id="chat-input" class="chat-input" placeholder="Pregunta por una parada, tarifa, objetos perdidos..." rows="1"></textarea>
+                                <button id="send-btn" class="send-button" aria-label="Enviar mensaje">
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Capa de Navegación en Vivo a Pantalla Completa (dentro del chat container por ahora, o podría ir al panel 3) -->
+                        <div id="fullscreen-nav-layer" class="fullscreen-nav closed">
+                            <button class="nav-close-btn" onclick="window.exitLiveNavigation()" aria-label="Cerrar Navegación">✕</button>
+                            <button id="nav-dev-btn" class="nav-dev-btn" style="display:none;">DEV: FAKE GPS</button>
+                            
+                            <div class="nav-top-panel">
+                                <div class="nav-eta" id="nav-eta">-- min</div>
+                                <div class="nav-distance" id="nav-distance">-- km</div>
+                            </div>
+                            
+                            <div id="nav-map" class="nav-map-container"></div>
+                            
+                            <div class="nav-bottom-panel">
+                                <div class="nav-instruction-pill" id="nav-instruction">
+                                    <span class="nav-icon" id="nav-instruction-icon">🧭</span>
+                                    <div class="nav-text-container">
+                                        <div class="nav-main-text" id="nav-instruction-text">Buscando ruta...</div>
+                                        <div class="nav-sub-text" id="nav-instruction-dist"></div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
+
+                <!-- PANEL 2: PANTALLA COMPLETA (WIDGETS) -->
+                <div class="swipe-panel" id="panel-fullscreen">
+                    <div class="app-container" style="background: var(--bg-color);">
+                        <header class="chat-header" style="display: flex; align-items: center; justify-content: space-between; position: relative;">
+                            <button class="back-swipe-btn" onclick="document.getElementById('panel-chat').scrollIntoView({behavior:'smooth'})" aria-label="Volver">
+                                ⬅ Volver
+                            </button>
+                            <div class="chat-title-group" style="text-align: right;">
+                                <h1>📍 Mapa Interactivo</h1>
+                            </div>
+                        </header>
+                        <div id="fullscreen-widget-area" style="flex: 1; width: 100%; height: 100%; position: relative;">
+                            <!-- Widgets inyectados por JS -->
+                            <div style="display: flex; height: 100%; align-items: center; justify-content: center; color: var(--text-secondary);">
+                                Cargando...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
         
         <style is:global>
+            /* SWIPER LAYOUT */
+            body, html {
+                margin: 0; padding: 0;
+                overflow: hidden; /* Prevent scrolling on body, swiper handles it */
+            }
+            .swiper-container {
+                width: 100vw;
+                height: 100dvh;
+                overflow-x: auto;
+                overflow-y: hidden;
+                scroll-snap-type: x mandatory;
+                scroll-behavior: smooth;
+                -webkit-overflow-scrolling: touch;
+            }
+            /* Hide scrollbar for swiper */
+            .swiper-container::-webkit-scrollbar {
+                display: none;
+            }
+            .swiper-container {
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+            .swiper-wrapper {
+                display: flex;
+                width: 300vw;
+                height: 100%;
+            }
+            .swipe-panel {
+                width: 100vw;
+                flex-shrink: 0;
+                height: 100%;
+                scroll-snap-align: center;
+                display: flex;
+                flex-direction: column;
+                align-items: center; /* Center the .app-container */
+            }
+            
+            .back-swipe-btn {
+                background: transparent;
+                border: none;
+                color: var(--primary-color);
+                font-weight: 600;
+                font-size: 1rem;
+                cursor: pointer;
+                padding: 10px 0;
+            }
+
             .theme-btn {
                 background: transparent;
                 border: none;
@@ -246,6 +337,14 @@ const { title } = Astro.props;
                             applyTheme(themeId);
                         });
                     });
+                }
+
+                // Snap to Center Panel on load
+                const swiper = document.getElementById('main-swiper');
+                if (swiper) {
+                    setTimeout(() => {
+                        swiper.scrollTo({ left: window.innerWidth, behavior: 'instant' });
+                    }, 50);
                 }
             });
         </script>
