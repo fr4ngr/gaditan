@@ -330,7 +330,21 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             // Inicializar Widget de Tarifas si corresponde
             if (data.cardType === 'TariffCard') {
                 setTimeout(() => {
-                    if (window.changeTariffTab) window.changeTariffTab(msgId, 'urbana');
+                    if (window.changeTariffTab) {
+                        // Determinar periodo actual
+                        const now = new Date();
+                        const day = now.getDay(); // 0=Dom, 1=Lun, ..., 6=Sab
+                        const hour = now.getHours();
+                        let currentTime = 'dia';
+
+                        if (day === 0 || day === 6) {
+                            currentTime = 'finde';
+                        } else if (hour >= 21 || hour < 7) {
+                            currentTime = 'noche';
+                        }
+                        
+                        window.changeTariffTab(msgId, 'urbana', currentTime);
+                    }
                 }, 10);
             }
 
@@ -437,9 +451,10 @@ import ChatLayout from '../layouts/ChatLayout.astro';
     // Estado del widget por msgId
     const widgetState: Record<string, { type: string, time: string }> = {};
 
-    window.changeTariffTab = (msgId: string, type: string) => {
+    window.changeTariffTab = (msgId: string, type: string, forceTime?: string) => {
         if (!widgetState[msgId]) widgetState[msgId] = { type: 'urbana', time: 'dia' };
         widgetState[msgId].type = type;
+        if (forceTime) widgetState[msgId].time = forceTime;
 
         const widget = document.getElementById(`tariff-widget-${msgId}`);
         if (!widget) return;
@@ -453,6 +468,12 @@ import ChatLayout from '../layouts/ChatLayout.astro';
         const row2 = document.getElementById(`row2-${msgId}`);
         if (row2) {
             row2.style.display = (type === 'suplementos') ? 'none' : 'flex';
+            
+            // Actualizar visual de pestañas Fila 2 con el tiempo actual
+            const currentTime = widgetState[msgId].time;
+            row2.querySelectorAll('.t-subtab').forEach(btn => btn.classList.remove('active'));
+            const activeSubtab = row2.querySelector(`.t-subtab[onclick*="'${currentTime}'"]`);
+            if (activeSubtab) activeSubtab.classList.add('active');
         }
 
         renderTariffTable(msgId);
@@ -504,7 +525,11 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             </div>
         `).join('');
 
-        tbody.innerHTML = html + noteHtml;
+        // Reset animation by clearing and reflowing
+        tbody.innerHTML = '';
+        void tbody.offsetWidth; // Force reflow
+        
+        tbody.innerHTML = `<div class="tariff-anim-layer">${html}${noteHtml}</div>`;
     }
 
     // --- LEAFLET NAVEGACIÓN EN VIVO (FULLSCREEN) ---

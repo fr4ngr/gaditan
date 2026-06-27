@@ -320,7 +320,26 @@ body {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  min-height: 150px; /* Previene saltos bruscos de altura al cambiar pestaña */
 }
+.tariff-anim-layer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  animation: slideFadeUp 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes slideFadeUp {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .tariff-item {
   display: flex;
   justify-content: space-between;
