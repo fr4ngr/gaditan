@@ -663,15 +663,20 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                             }
                         }
 
-                        if (routeInstructionText && route.legs && route.legs[0] && route.legs[0].steps) {
+                        const actionElem = document.getElementById('route-instruction-action');
+                        const streetElem = document.getElementById('route-instruction-street');
+
+                        if (actionElem && streetElem && route.legs && route.legs[0] && route.legs[0].steps) {
                             const steps = route.legs[0].steps;
                             const firstStep = steps[0];
                             if (firstStep) {
                                 const dist = Math.round(firstStep.distance);
                                 const street = firstStep.name || "la calle actual";
-                                routeInstructionText.innerText = `Sigue ${dist}m por ${street}`;
+                                actionElem.innerText = `Sigue ${dist} m`;
+                                streetElem.innerText = `hacia ${street}`;
                             } else {
-                                routeInstructionText.innerText = `Dirígete hacia ${window.activeMapStopName}`;
+                                actionElem.innerText = "Sigue la ruta";
+                                streetElem.innerText = `hacia ${window.activeMapStopName}`;
                             }
                         }
 
