@@ -284,25 +284,26 @@ body {
   display: flex;
   background: white;
   border-bottom: 1px solid #e2e8f0;
-  padding: 8px 12px;
-  gap: 6px;
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-.tariff-tabs-row2::-webkit-scrollbar {
-  display: none;
+  padding: 8px 6px;
+  gap: 4px;
+  width: 100%;
 }
 .t-subtab {
+  flex: 1;
   background: #f1f5f9;
   border: 1px solid transparent;
   color: #475569;
-  padding: 6px 12px;
+  padding: 6px 2px;
   border-radius: 20px;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 600;
   cursor: pointer;
-  white-space: nowrap;
+  text-align: center;
   transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.1;
 }
 .t-subtab:hover {
   background: #e2e8f0;
