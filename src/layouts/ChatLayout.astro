@@ -28,7 +28,7 @@ const { title } = Astro.props;
 	</head>
 	<body>
         <div class="app-container">
-            <header class="chat-header">
+            <header class="chat-header" style="display: flex; justify-content: space-between; align-items: center; position: relative;">
                 <div class="chat-header-info">
                     <div class="chat-avatar">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -38,6 +38,16 @@ const { title } = Astro.props;
                     <div class="chat-title-group">
                         <h1>cadiz.chat</h1>
                         <span class="chat-subtitle">Asistente Virtual</span>
+                    </div>
+                </div>
+                
+                <div class="theme-picker-container">
+                    <button id="theme-btn" class="theme-btn" aria-label="Cambiar tema">🎨</button>
+                    <div id="theme-menu" class="theme-menu" style="display: none;">
+                        <div class="theme-option" data-theme="classic"><span class="theme-dot" style="background: #3b82f6;"></span> Cádiz Classic</div>
+                        <div class="theme-option" data-theme="noche"><span class="theme-dot" style="background: #0f172a;"></span> Noche Naranja</div>
+                        <div class="theme-option" data-theme="caleta"><span class="theme-dot" style="background: #fdfbf7;"></span> Caleta</div>
+                        <div class="theme-option" data-theme="oscuro"><span class="theme-dot" style="background: #000000;"></span> Oscuro Puro</div>
                     </div>
                 </div>
             </header>
@@ -80,5 +90,164 @@ const { title } = Astro.props;
                 </div>
             </div>
         </div>
+        
+        <style is:global>
+            .theme-btn {
+                background: transparent;
+                border: none;
+                font-size: 1.2rem;
+                cursor: pointer;
+                padding: 5px;
+                border-radius: 50%;
+                transition: background 0.2s;
+            }
+            .theme-btn:hover {
+                background: rgba(0,0,0,0.05);
+            }
+            .theme-menu {
+                position: absolute;
+                top: 100%;
+                right: 15px;
+                background: var(--header-bg);
+                border: 1px solid var(--header-border);
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                z-index: 1000;
+                overflow: hidden;
+                min-width: 150px;
+            }
+            .theme-option {
+                padding: 10px 15px;
+                font-size: 0.85rem;
+                color: var(--text-primary);
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                transition: background 0.2s;
+            }
+            .theme-option:hover {
+                background: rgba(0,0,0,0.05);
+            }
+            .theme-dot {
+                width: 12px;
+                height: 12px;
+                border-radius: 50%;
+                display: inline-block;
+                border: 1px solid rgba(0,0,0,0.1);
+            }
+        </style>
+        
+        <script>
+            const THEMES = {
+                classic: {
+                    '--bg-color': '#f8fafc',
+                    '--header-bg': '#ffffff',
+                    '--header-border': '#e2e8f0',
+                    '--text-primary': '#1e293b',
+                    '--text-secondary': '#64748b',
+                    '--primary-color': '#3b82f6',
+                    '--primary-hover': '#2563eb',
+                    '--chat-bg': '#f1f5f9',
+                    '--bubble-user-bg': '#3b82f6',
+                    '--bubble-user-text': '#ffffff',
+                    '--bubble-bot-bg': '#ffffff',
+                    '--bubble-bot-text': '#1e293b',
+                    '--bubble-bot-border': '#e2e8f0',
+                    '--input-bg': '#ffffff',
+                    '--input-border': '#e2e8f0'
+                },
+                noche: {
+                    '--bg-color': '#0f172a',
+                    '--header-bg': '#1e293b',
+                    '--header-border': '#334155',
+                    '--text-primary': '#f8fafc',
+                    '--text-secondary': '#cbd5e1',
+                    '--primary-color': '#f97316',
+                    '--primary-hover': '#ea580c',
+                    '--chat-bg': '#0f172a',
+                    '--bubble-user-bg': '#f97316',
+                    '--bubble-user-text': '#ffffff',
+                    '--bubble-bot-bg': '#1e293b',
+                    '--bubble-bot-text': '#f8fafc',
+                    '--bubble-bot-border': '#334155',
+                    '--input-bg': '#1e293b',
+                    '--input-border': '#334155'
+                },
+                caleta: {
+                    '--bg-color': '#fdfbf7',
+                    '--header-bg': '#ffffff',
+                    '--header-border': '#e5e0d8',
+                    '--text-primary': '#3f3931',
+                    '--text-secondary': '#7d7463',
+                    '--primary-color': '#0ea5e9',
+                    '--primary-hover': '#0284c7',
+                    '--chat-bg': '#f6f4ed',
+                    '--bubble-user-bg': '#0ea5e9',
+                    '--bubble-user-text': '#ffffff',
+                    '--bubble-bot-bg': '#ffffff',
+                    '--bubble-bot-text': '#3f3931',
+                    '--bubble-bot-border': '#e5e0d8',
+                    '--input-bg': '#ffffff',
+                    '--input-border': '#e5e0d8'
+                },
+                oscuro: {
+                    '--bg-color': '#000000',
+                    '--header-bg': '#121212',
+                    '--header-border': '#2d2d2d',
+                    '--text-primary': '#ffffff',
+                    '--text-secondary': '#a0a0a0',
+                    '--primary-color': '#8b5cf6',
+                    '--primary-hover': '#7c3aed',
+                    '--chat-bg': '#000000',
+                    '--bubble-user-bg': '#8b5cf6',
+                    '--bubble-user-text': '#ffffff',
+                    '--bubble-bot-bg': '#1e1e1e',
+                    '--bubble-bot-text': '#ffffff',
+                    '--bubble-bot-border': '#2d2d2d',
+                    '--input-bg': '#121212',
+                    '--input-border': '#2d2d2d'
+                }
+            };
+        
+            function applyTheme(themeName) {
+                const theme = THEMES[themeName];
+                if (!theme) return;
+                
+                for (const [key, value] of Object.entries(theme)) {
+                    document.documentElement.style.setProperty(key, value);
+                }
+                localStorage.setItem('cadiz_chat_theme', themeName);
+            }
+        
+            document.addEventListener('DOMContentLoaded', () => {
+                // Pre-apply theme early to avoid flicker
+                const savedTheme = localStorage.getItem('cadiz_chat_theme');
+                if (savedTheme && THEMES[savedTheme]) {
+                    applyTheme(savedTheme);
+                }
+                
+                const themeBtn = document.getElementById('theme-btn');
+                const themeMenu = document.getElementById('theme-menu');
+                
+                if (themeBtn && themeMenu) {
+                    themeBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        themeMenu.style.display = themeMenu.style.display === 'none' ? 'block' : 'none';
+                    });
+                    
+                    document.addEventListener('click', () => {
+                        themeMenu.style.display = 'none';
+                    });
+                    
+                    themeMenu.querySelectorAll('.theme-option').forEach(opt => {
+                        opt.addEventListener('click', (e) => {
+                            const themeId = e.currentTarget.getAttribute('data-theme');
+                            applyTheme(themeId);
+                        });
+                    });
+                }
+            });
+        </script>
     </body>
 </html>
