@@ -504,8 +504,18 @@ import ChatLayout from '../layouts/ChatLayout.astro';
 
             mapL.control.zoom({ position: 'bottomright' }).addTo(map);
             
-            mapL.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+            // Crear panel para los textos (labels) encima de los vectores (zIndex 650)
+            map.createPane('labels');
+            map.getPane('labels').style.zIndex = 650;
+            map.getPane('labels').style.pointerEvents = 'none'; // No bloquear clics
+            
+            mapL.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png', {
                 attribution: '© OpenStreetMap, © CartoDB', subdomains: 'abcd', maxZoom: 20
+            }).addTo(map);
+
+            mapL.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_only_labels/{z}/{x}/{y}{r}.png', {
+                subdomains: 'abcd', maxZoom: 20,
+                pane: 'labels'
             }).addTo(map);
 
             if (lat && lon) {
@@ -1112,8 +1122,17 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             const mapL = (window as any).L;
             if (!liveMap) {
                 liveMap = mapL.map('nav-map', { zoomControl: false }).setView([destLat, destLon], 16);
-                mapL.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+                liveMap.createPane('labels');
+                liveMap.getPane('labels').style.zIndex = 650;
+                liveMap.getPane('labels').style.pointerEvents = 'none';
+
+                mapL.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png', {
                     attribution: '© OSM, CartoDB', subdomains: 'abcd', maxZoom: 20
+                }).addTo(liveMap);
+
+                mapL.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_only_labels/{z}/{x}/{y}{r}.png', {
+                    subdomains: 'abcd', maxZoom: 20,
+                    pane: 'labels'
                 }).addTo(liveMap);
                 
                 // Botones de Zoom personalizados
