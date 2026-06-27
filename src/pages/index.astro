@@ -124,6 +124,35 @@ import ChatLayout from '../layouts/ChatLayout.astro';
 </style>
 
 <script>
+    // --- DATOS DE PARADAS GLOBALES ---
+    const CADIZ_STOPS = [
+        { name: "Parador", desc: "Parador de Cádiz", lat: 36.5342075, lon: -6.3050849 },
+        { name: "Falla", desc: "Plaza de Falla", lat: 36.5334696, lon: -6.3021514 },
+        { name: "Mora", desc: "Glorieta Carlos Con", lat: 36.531308, lon: -6.305134 },
+        { name: "San Antonio", desc: "Plaza de San Antonio", lat: 36.5342418, lon: -6.3050868 },
+        { name: "Palillero", desc: "Plaza del Palillero", lat: 36.5318437, lon: -6.2964062 },
+        { name: "Plaza Tortugas", desc: "Plaza de las Tortugas", lat: 36.533451, lon: -6.293564 },
+        { name: "La Punta", desc: "Paseo Almirante Pascual Pery (Solo noches)", lat: 36.537434, lon: -6.290726 },
+        { name: "Comes", desc: "Plaza de la Hispanidad", lat: 36.535364, lon: -6.291775 },
+        { name: "Catedral", desc: "Plaza de la Catedral", lat: 36.529217, lon: -6.295707 },
+        { name: "San Juan de Dios", desc: "Plaza de San Juan de Dios", lat: 36.530537, lon: -6.291444 },
+        { name: "Estación", desc: "Entrada Oeste de la Estación de Adif", lat: 36.528159, lon: -6.287746 },
+        { name: "Caja Nacional", desc: "Junto al INSS", lat: 36.526253, lon: -6.289851 },
+        { name: "Monte Puerta Tierra", desc: "Avenida Andalucía, 34", lat: 36.520385, lon: -6.285054 },
+        { name: "Pabellón", desc: "Calle Brunete", lat: 36.520156, lon: -6.282787 },
+        { name: "Corte Inglés", desc: "Avenida de las Cortes de Cádiz", lat: 36.521661, lon: -6.276634 },
+        { name: "Bar Parada", desc: "Avenida Guadalquivir, 23", lat: 36.519283, lon: -6.277154 },
+        { name: "Hotel Barceló", desc: "Avenida Andalucía, 89", lat: 36.514442, lon: -6.281504 },
+        { name: "Camelia", desc: "Avenida Ana de Viya, 7", lat: 36.511658, lon: -6.279901 },
+        { name: "Barriada", desc: "Avenida Guadalete", lat: 36.511384, lon: -6.271984 },
+        { name: "Residencia", desc: "Avenida Cayetano del Toro, 1 (Hospital Puerta del Mar)", lat: 36.507906, lon: -6.277750 },
+        { name: "Mercadona", desc: "Avenida de la Ilustración, 1", lat: 36.507279, lon: -6.268245 },
+        { name: "Canary", desc: "Glorieta Zona Franca", lat: 36.505821, lon: -6.276564 },
+        { name: "Helios", desc: "Plaza Helios (Estadio)", lat: 36.501347, lon: -6.274249 },
+        { name: "Piscina", desc: "Complejo Deportivo Ciudad de Cádiz", lat: 36.497418, lon: -6.271457 },
+        { name: "Zona Franca", desc: "Glorieta de la Zona Franca", lat: 36.500538, lon: -6.268548 }
+    ];
+
     // --- ESTADO DEL CHAT ---
     const messagesContainer = document.getElementById('messages-container');
     const inputField = document.querySelector('.chat-input') as HTMLInputElement;
@@ -431,8 +460,8 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             } else {
                 map.setView([36.516, -6.283], 13);
                 const taxiIcon = mapL.divIcon({
-                    html: '<div style="background:#20873c; color:white; width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; border:2px solid white; box-shadow:0 2px 5px rgba(0,0,0,0.3);">📍</div>',
-                    className: '', iconSize: [24, 24], iconAnchor: [12, 12]
+                    html: '<div style="background:var(--primary-color); border: 2px solid white; width:16px; height:16px; border-radius:50%; box-shadow:0 2px 4px rgba(0,0,0,0.4);"></div>',
+                    className: '', iconSize: [16, 16], iconAnchor: [8, 8]
                 });
                 CADIZ_STOPS.forEach(stop => {
                     mapL.marker([stop.lat, stop.lon], {icon: taxiIcon}).addTo(map).bindPopup(`<b>${stop.name}</b>`);
