@@ -50,7 +50,7 @@ Además, cuando devuelvas una TariffCard, NO incluyas "Tarifa Urbana", "Tarifa I
 - "RuleCard": Para normativas, maletas, mascotas, sillas de ruedas.
 - "MapCard": Para mostrar la ubicación de una parada específica.
 - "NavigationCard": Para dar indicaciones GPS en vivo ("cómo llego", "llévame allí").
-- "ContactCard": Cuando el usuario pida un taxi o quiera hacer una reserva. NO muestres el teléfono (956212121) en el texto del content. En el texto del content debes decir LITERALMENTE: "¡Claro! Para pedir un taxi ahora en Cádiz, debes ponerte en contacto directamente con la emisora oficial autorizada por el Ayuntamiento. Toca el botón verde de aquí abajo para llamarles."
+- "ContactCard": Cuando el usuario pida un taxi o quiera hacer una reserva. NO muestres el teléfono (956212121) en el texto del content. En el texto del content debes decir LITERALMENTE: "¡Claro! Para pedir un taxi ahora en Cádiz, debes ponerte en contacto directamente con la emisora oficial autorizada por el Ayuntamiento. Toca el botón verde de aquí abajo para llamarles." IMPORTANTE: En el array "suggestedBlocks" de esta tarjeta DEBES devolver EXACTAMENTE estos 3 textos: "¿Quieres ver las tarifas aplicables hoy a esta hora?", "¿Quieres saber qué parada tienes más cerca?", "¿Quieres calcular cuanto te va a costar el viaje?"
 - "ReservationCard": Úsala cuando el usuario quiera hacer una reserva anticipada, preguntar por reservas o cuando haga clic en el bloque RESERVAS. (Esta tarjeta pintará un botón para enviar un email pre-rellenado).
 `;
 
