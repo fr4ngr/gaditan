@@ -639,7 +639,9 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             html += `<div class="tariff-notes" style="margin-top: 10px; text-align: center; color: #64748b; font-style: normal;">⚠️ <strong>Recuerda:</strong> Los suplementos solo se aplican a las tarifas urbanas.</div>`;
         }
 
-        let sourceText = state.type === 'interurbana' ? 'Fuente: BOJA' : 'Fuente: BOP Cádiz';
+        let sourceText = state.type === 'interurbana' 
+            ? 'Fuente: BOJA n.º 30 (12/02/2024)' 
+            : 'Fuente: BOJA n.º 202 (16/10/2024)';
         let sourceHtml = `<div style="text-align: right; font-size: 0.75rem; color: #94a3b8; margin-top: 12px; font-style: italic;">${sourceText}</div>`;
 
         // Reset animation by clearing and reflowing
