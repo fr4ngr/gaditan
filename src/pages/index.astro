@@ -555,7 +555,7 @@ import ChatLayout from '../layouts/ChatLayout.astro';
         const mapCloseBtn = document.getElementById('map-close-btn');
         if (pill) {
             pill.style.opacity = '0';
-            pill.style.transform = 'translateY(-10px)';
+            pill.style.transform = 'translateX(-50%) translateY(-10px)';
             pill.style.pointerEvents = 'none';
         }
         if (mapCloseBtn) {
@@ -586,7 +586,7 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             if (titleEl) titleEl.innerText = title;
             if (descEl) descEl.innerText = desc || '';
             pill.style.opacity = '1';
-            pill.style.transform = 'translateY(0)';
+            pill.style.transform = 'translateX(-50%) translateY(0)';
             pill.style.pointerEvents = 'auto';
         }
         if (mapCloseBtn) {
