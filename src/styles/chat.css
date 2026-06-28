@@ -222,9 +222,10 @@ body {
   background-color: var(--header-bg); /* Fondo sólido sin transparencia */
   border-radius: 28px; /* Mitad de 56px para bordes totalmente redondos */
   border: 1px solid var(--input-border);
-  padding: 0 1.2rem;
+  padding: 0 0.4rem 0 1.2rem; /* Menos padding derecho para que el botón encaje */
   display: flex;
   align-items: center;
+  gap: 0.5rem;
   height: 56px; /* Altura exacta para igualar al botón */
   box-sizing: border-box; /* Asegurar que el borde no suma altura extra */
   box-shadow: 0 8px 24px rgba(0,0,0,0.12);
