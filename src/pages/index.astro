@@ -704,7 +704,10 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                     const map = window.currentMap;
                     const mapL = (window as any).L;
                     
-                    map.setView([userLat, userLon], 9);
+                    const bounds = mapL.latLngBounds([userLat, userLon]);
+                    AIRPORTS.forEach(p => bounds.extend([p.lat, p.lon]));
+                    map.fitBounds(bounds, { padding: [50, 50] });
+                    window.globalAirportsBounds = bounds;
                     
                     const userIcon = mapL.divIcon({
                         html: '<div style="background:#4285F4; border: 2px solid white; width:16px; height:16px; border-radius:50%; box-shadow:0 2px 4px rgba(0,0,0,0.4);"></div>',
@@ -738,7 +741,8 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                         const marker = mapL.marker([res.lat, res.lon], {icon: airportIcon}).addTo(markersLayer);
                         marker.on('click', async () => {
                             window.openMapInfoPill(res.name, res.desc, res.lat, res.lon, 'airport');
-                            map.setView([res.lat, res.lon], 10);
+                            const routeBounds = mapL.latLngBounds([userLat, userLon], [res.lat, res.lon]);
+                            map.fitBounds(routeBounds, { padding: [50, 50] });
                             map.removeLayer(markersLayer);
                             
                             if (window.currentActiveMarker) map.removeLayer(window.currentActiveMarker);
@@ -756,9 +760,11 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                                     const routeData = data.routes[0];
                                     const coordinates = routeData.geometry.coordinates.map((c: number[]) => [c[1], c[0]]);
                                     
-                                    mapL.polyline(coordinates, {
+                                    const polyline = mapL.polyline(coordinates, {
                                         color: 'white', weight: 6, opacity: 0.8
                                     }).addTo(window.currentAirportRouteLayer);
+                                    
+                                    map.fitBounds(polyline.getBounds(), { padding: [50, 50] });
                                     
                                     mapL.polyline(coordinates, {
                                         color: '#4285F4', weight: 4, opacity: 0.8,
@@ -917,7 +923,11 @@ import ChatLayout from '../layouts/ChatLayout.astro';
         // Restaurar mapa global si existe
         if (window.currentMap && window.currentMarkersLayer) {
             const isAirportMode = window.activePoiType === 'airport';
-            window.currentMap.setView(isAirportMode ? [36.516, -6.0] : [36.516, -6.283], isAirportMode ? 10 : 13); // Zoom out
+            if (isAirportMode && window.globalAirportsBounds) {
+                window.currentMap.fitBounds(window.globalAirportsBounds, { padding: [50, 50] });
+            } else {
+                window.currentMap.setView([36.516, -6.283], 13); // Zoom out
+            }
             if (window.currentActiveMarker) window.currentMap.removeLayer(window.currentActiveMarker); // Quitar el aislado
             if (window.currentAirportRouteLayer) window.currentMap.removeLayer(window.currentAirportRouteLayer); // Quitar ruta de aeropuerto
             window.currentMap.addLayer(window.currentMarkersLayer); // Mostrar todos
