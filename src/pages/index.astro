@@ -587,16 +587,27 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                             const response = await fetch(url);
                             const data = await response.json();
                             if (data.routes && data.routes[0]) {
-                                return { ...p, realDistance: data.routes[0].distance }; // distancia en metros
+                                return { ...p, realDistance: data.routes[0].distance, duration: data.routes[0].duration }; // distancia en metros
                             }
-                            return { ...p, realDistance: Infinity };
+                            return { ...p, realDistance: Infinity, duration: 0 };
                         } catch (e) {
-                            return { ...p, realDistance: Infinity };
+                            return { ...p, realDistance: Infinity, duration: 0 };
                         }
                     })).then(resultados => {
                         document.body.style.cursor = 'default';
                         resultados.sort((a, b) => a.realDistance - b.realDistance);
                         const masCercana = resultados[0];
+                        
+                        // Formatear distancia y tiempo
+                        let distText = '';
+                        if (masCercana.realDistance !== Infinity) {
+                            if (masCercana.realDistance > 1000) {
+                                distText = `a ${(masCercana.realDistance / 1000).toFixed(1)} km`;
+                            } else {
+                                distText = `a ${Math.round(masCercana.realDistance)} metros`;
+                            }
+                        }
+                        const timeText = masCercana.duration ? `(${Math.ceil(masCercana.duration / 60)} min a pie)` : '';
                         
                         // Añadir un mensaje al chat con el nombre de la parada
                         const chatOutput = document.getElementById('chat-output');
@@ -605,7 +616,7 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                             <div class="message bot" style="animation: slideUp 0.3s ease;">
                                 <div class="message-content">
                                     <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%; max-width: 100%; align-self: flex-start;">
-                                        <span class="bubble">¡Lista! Tu parada oficial más cercana es <strong>${masCercana.name}</strong>. Te la he marcado en el mapa con la ruta a pie.</span>
+                                        <span class="bubble">¡Lista! Tu parada oficial más cercana es <strong>${masCercana.name}</strong>, ${distText} ${timeText}. Te la he marcado en el mapa con las indicaciones de ruta activadas.</span>
                                     </div>
                                 </div>
                             </div>`;
@@ -613,7 +624,7 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                             chatOutput.scrollTop = chatOutput.scrollHeight;
                         }
                         
-                        // Mostrar el mapa normal con la InfoPill abierta (estilo estándar) como fallback
+                        // Mostrar el mapa normal con la InfoPill abierta y las indicaciones iniciadas
                         map.setView([masCercana.lat, masCercana.lon], 16);
                         const taxiIcon = mapL.divIcon({
                             html: '<div style="background:var(--primary-color); border: 2px solid white; width:16px; height:16px; border-radius:50%; box-shadow:0 2px 4px rgba(0,0,0,0.4);"></div>',
@@ -622,12 +633,12 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                         const marker = mapL.marker([masCercana.lat, masCercana.lon], {icon: taxiIcon}).addTo(map);
                         marker.on('click', () => {
                             window.openMapInfoPill(masCercana.name, masCercana.desc, masCercana.lat, masCercana.lon);
-                            window.startLiveNavigation(masCercana.lat.toString(), masCercana.lon.toString(), masCercana.name);
+                            window.mapActionDirections();
                         });
                         window.openMapInfoPill(masCercana.name, masCercana.desc, masCercana.lat, masCercana.lon);
                         
-                        // Activar inmediatamente la navegación en vivo (obligarle a caminar)
-                        window.startLiveNavigation(masCercana.lat.toString(), masCercana.lon.toString(), masCercana.name);
+                        // Activar inmediatamente la ruta y mostrar las indicaciones en la tarjeta
+                        window.mapActionDirections();
                     });
                 };
 
@@ -694,14 +705,14 @@ import ChatLayout from '../layouts/ChatLayout.astro';
     // --- LÓGICA DE PÍLDORA DEL MAPA ---
     window.closeMapInfoPill = function() {
         if (window.cancelMapRoute) window.cancelMapRoute();
-        const pill = document.getElementById('map-info-pill');
+        const uiContainer = document.getElementById('map-ui-container');
         const mapCloseBtn = document.getElementById('map-close-btn');
         const floatingStats = document.getElementById('map-floating-route-stats');
         
-        if (pill) {
-            pill.style.opacity = '0';
-            pill.style.transform = 'translateX(-50%) translateY(-10px)';
-            pill.style.pointerEvents = 'none';
+        if (uiContainer) {
+            uiContainer.style.opacity = '0';
+            uiContainer.style.transform = 'translateX(-50%) translateY(-10px)';
+            uiContainer.style.pointerEvents = 'none';
         }
         if (floatingStats) {
             floatingStats.style.display = 'none';
@@ -721,14 +732,14 @@ import ChatLayout from '../layouts/ChatLayout.astro';
     };
 
     window.openMapInfoPill = function(title: string, desc: string, lat: string | number, lon: string | number) {
-        if (window.cancelMapRoute) window.cancelMapRoute();
-        window.activeMapStopLat = lat;
-        window.activeMapStopLon = lon;
+        const mapL = (window as any).L;
+        window.activeMapStopLat = parseFloat(lat as string);
+        window.activeMapStopLon = parseFloat(lon as string);
         window.activeMapStopName = title;
 
-        const pill = document.getElementById('map-info-pill');
+        const uiContainer = document.getElementById('map-ui-container');
         const mapCloseBtn = document.getElementById('map-close-btn');
-        if (pill) {
+        if (uiContainer) {
             const titleEl = document.getElementById('map-info-title');
             const descEl = document.getElementById('map-info-desc');
             const labelEl = document.getElementById('map-info-label');
@@ -738,12 +749,14 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             
             const actions = document.getElementById('map-pill-actions');
             const floatingStats = document.getElementById('map-floating-route-stats');
+            const instEl = document.getElementById('route-instruction');
             if (actions) actions.style.display = 'flex';
             if (floatingStats) floatingStats.style.display = 'none';
+            if (instEl) instEl.style.display = 'none';
             
-            pill.style.opacity = '1';
-            pill.style.transform = 'translateX(-50%) translateY(0)';
-            pill.style.pointerEvents = 'auto';
+            uiContainer.style.opacity = '1';
+            uiContainer.style.transform = 'translateX(-50%) translateY(0)';
+            uiContainer.style.pointerEvents = 'auto';
         }
         if (mapCloseBtn) {
             mapCloseBtn.style.opacity = '0';
@@ -761,9 +774,11 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             const routeTime = document.getElementById('route-time');
             const routeDistance = document.getElementById('route-distance');
             const labelEl = document.getElementById('map-info-label');
+            const instEl = document.getElementById('route-instruction');
 
             if (actions) actions.style.display = 'none';
             if (floatingStats) floatingStats.style.display = 'flex';
+            if (instEl) instEl.style.display = 'flex';
             if (routeTime) routeTime.innerText = "Calculando...";
             if (routeDistance) routeDistance.innerText = "-- m";
             if (labelEl) labelEl.innerText = 'DESTINO: PARADA DE TAXI';
