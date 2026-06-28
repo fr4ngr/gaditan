@@ -200,7 +200,7 @@ body {
   padding: 0 1rem 1rem 1rem;
   display: flex;
   gap: 0.75rem;
-  align-items: flex-end;
+  align-items: center; /* Alineación vertical central en lugar de flex-end */
   flex-shrink: 0;
   padding-bottom: max(1rem, env(safe-area-inset-bottom));
   
@@ -220,7 +220,7 @@ body {
 .chat-input-wrapper {
   flex-grow: 1;
   background-color: rgba(255, 255, 255, 0.85); /* Semi-transparente base */
-  border-radius: 1.5rem;
+  border-radius: 28px; /* Mitad de 56px para bordes totalmente redondos */
   border: 1px solid var(--input-border);
   padding: 0 1.2rem;
   display: flex;
