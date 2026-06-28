@@ -511,7 +511,17 @@ import ChatLayout from '../layouts/ChatLayout.astro';
 
         setTimeout(() => {
             const mapL = (window as any).L;
-            const map = mapL.map(`fullscreen-leaflet-${msgId}`, { zoomControl: false });
+            const map = mapL.map(`fullscreen-leaflet-${msgId}`, { 
+                zoomControl: false, 
+                gestureHandling: true,
+                gestureHandlingOptions: {
+                    text: {
+                        touch: "Usa dos dedos para mover el mapa",
+                        scroll: "Usa ctrl + scroll para hacer zoom",
+                        scrollMac: "Usa ⌘ + scroll para hacer zoom"
+                    }
+                }
+            });
             window.currentMap = map; // Guardar referencia global
             
             // --- Botón DEV Mode ---
