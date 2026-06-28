@@ -948,7 +948,14 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             const descEl = document.getElementById('map-info-desc');
             const labelEl = document.getElementById('map-info-label');
             if (titleEl) titleEl.innerText = title;
-            if (descEl) descEl.innerText = desc || '';
+            if (descEl) {
+                if (type === 'airport') {
+                    descEl.style.display = 'none';
+                } else {
+                    descEl.style.display = 'block';
+                    descEl.innerText = desc || '';
+                }
+            }
             if (labelEl) labelEl.innerText = type === 'airport' ? 'DESTINO: AEROPUERTO' : 'PARADA DE TAXI';
             
             const actions = document.getElementById('map-pill-actions');
