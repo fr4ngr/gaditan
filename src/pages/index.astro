@@ -156,10 +156,10 @@ import ChatLayout from '../layouts/ChatLayout.astro';
     ];
 
     const AIRPORTS = [
-        { name: "Aeropuerto de Jerez (XRY)", desc: "Tren Cercanías directo (1h aprox)", lat: 36.750488, lon: -6.064420 },
-        { name: "Aeropuerto de Sevilla (SVQ)", desc: "Tren a Sevilla Santa Justa + Autobús aeropuerto (3h aprox)", lat: 37.423518, lon: -5.900192 },
-        { name: "Aeropuerto de Gibraltar (GIB)", desc: "Bus a Algeciras + Bus al aeropuerto (4h aprox)", lat: 36.153944, lon: -5.347113 },
-        { name: "Aeropuerto de Málaga (AGP)", desc: "Bus a Algeciras + Bus al aeropuerto (6h aprox)", lat: 36.677706, lon: -4.491414 }
+        { name: "Aeropuerto de Jerez (XRY)", desc: "Tren Cercanías directo (1h aprox)", lat: 36.750488, lon: -6.064420, approxTime: "35m", approxDist: "43km" },
+        { name: "Aeropuerto de Sevilla (SVQ)", desc: "Tren a Sevilla Santa Justa + Autobús aeropuerto (3h aprox)", lat: 37.423518, lon: -5.900192, approxTime: "1h 15m", approxDist: "130km" },
+        { name: "Aeropuerto de Gibraltar (GIB)", desc: "Bus a Algeciras + Bus al aeropuerto (4h aprox)", lat: 36.153944, lon: -5.347113, approxTime: "1h 20m", approxDist: "118km" },
+        { name: "Aeropuerto de Málaga (AGP)", desc: "Bus a Algeciras + Bus al aeropuerto (6h aprox)", lat: 36.677706, lon: -4.491414, approxTime: "2h 20m", approxDist: "225km" }
     ];
 
     // --- ESTADO DEL CHAT ---
@@ -720,61 +720,41 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                     const markersLayer = mapL.layerGroup().addTo(map);
                     window.currentMarkersLayer = markersLayer;
 
-                    Promise.all(AIRPORTS.map(async (p) => {
-                        try {
-                            const url = `https://routing.openstreetmap.de/routed-car/route/v1/driving/${userLon},${userLat};${p.lon},${p.lat}?overview=full&geometries=geojson`;
-                            const response = await fetch(url);
-                            const data = await response.json();
-                            if (data.routes && data.routes[0]) {
-                                return { ...p, routeData: data.routes[0] };
-                            }
-                            return { ...p, routeData: null };
-                        } catch (e) {
-                            return { ...p, routeData: null };
-                        }
-                    })).then(resultados => {
-                        document.body.style.cursor = 'default';
-                        
-                        resultados.forEach(res => {
-                            let durationText = "? min";
-                            let distanceText = "? km";
-                            if (res.routeData) {
-                                const durationMin = Math.ceil(res.routeData.duration / 60);
-                                const distanceKm = (res.routeData.distance / 1000).toFixed(1);
-                                const h = Math.floor(durationMin / 60);
-                                const m = durationMin % 60;
-                                durationText = h > 0 ? `${h}h ${m}m` : `${m}m`;
-                                distanceText = `${distanceKm}km`;
-                            }
+                    AIRPORTS.forEach(res => {
+                        const codeMatch = res.name.match(/\(([^)]+)\)/);
+                        const code = codeMatch ? codeMatch[1] : res.name;
+                        const bubbleHtml = `
+                            <div style="position:relative; background:var(--primary-color); color:white; border:2px solid white; border-radius:12px; padding:6px 12px; font-family:sans-serif; text-align:center; box-shadow:0 2px 5px rgba(0,0,0,0.4); white-space:nowrap;">
+                                <div style="font-weight:bold; font-size:13px; letter-spacing:0.5px;">${code} | ${res.approxTime} | ${res.approxDist}</div>
+                                <div style="position:absolute; right:-8px; top:50%; transform:translateY(-50%); width:0; height:0; border-top:6px solid transparent; border-bottom:6px solid transparent; border-left:6px solid white;"></div>
+                                <div style="position:absolute; right:-5px; top:50%; transform:translateY(-50%); width:0; height:0; border-top:4px solid transparent; border-bottom:4px solid transparent; border-left:4px solid var(--primary-color);"></div>
+                            </div>
+                        `;
+                        const airportIcon = mapL.divIcon({
+                            html: bubbleHtml,
+                            className: '', iconSize: [140, 32], iconAnchor: [148, 16]
+                        });
 
-                            const codeMatch = res.name.match(/\(([^)]+)\)/);
-                            const code = codeMatch ? codeMatch[1] : res.name;
-                            const bubbleHtml = `
-                                <div style="position:relative; background:var(--primary-color); color:white; border:2px solid white; border-radius:12px; padding:6px 12px; font-family:sans-serif; text-align:center; box-shadow:0 2px 5px rgba(0,0,0,0.4); white-space:nowrap;">
-                                    <div style="font-weight:bold; font-size:13px; letter-spacing:0.5px;">${code} | ${durationText} | ${distanceText}</div>
-                                    <div style="position:absolute; right:-8px; top:50%; transform:translateY(-50%); width:0; height:0; border-top:6px solid transparent; border-bottom:6px solid transparent; border-left:6px solid white;"></div>
-                                    <div style="position:absolute; right:-5px; top:50%; transform:translateY(-50%); width:0; height:0; border-top:4px solid transparent; border-bottom:4px solid transparent; border-left:4px solid var(--primary-color);"></div>
-                                </div>
-                            `;
-                            const airportIcon = mapL.divIcon({
-                                html: bubbleHtml,
-                                className: '', iconSize: [140, 32], iconAnchor: [148, 16]
-                            });
+                        const marker = mapL.marker([res.lat, res.lon], {icon: airportIcon}).addTo(markersLayer);
+                        marker.on('click', async () => {
+                            window.openMapInfoPill(res.name, res.desc, res.lat, res.lon, 'airport');
+                            map.setView([res.lat, res.lon], 10);
+                            map.removeLayer(markersLayer);
+                            
+                            if (window.currentActiveMarker) map.removeLayer(window.currentActiveMarker);
+                            window.currentActiveMarker = mapL.marker([res.lat, res.lon], {icon: targetIcon}).addTo(map);
 
-                            const marker = mapL.marker([res.lat, res.lon], {icon: airportIcon}).addTo(markersLayer);
-                            marker.on('click', () => {
-                                window.openMapInfoPill(res.name, res.desc, res.lat, res.lon, 'airport');
-                                map.setView([res.lat, res.lon], 10);
-                                map.removeLayer(markersLayer);
-                                
-                                if (window.currentActiveMarker) map.removeLayer(window.currentActiveMarker);
-                                window.currentActiveMarker = mapL.marker([res.lat, res.lon], {icon: targetIcon}).addTo(map);
+                            if (window.currentAirportRouteLayer) map.removeLayer(window.currentAirportRouteLayer);
+                            window.currentAirportRouteLayer = mapL.layerGroup().addTo(map);
 
-                                if (window.currentAirportRouteLayer) map.removeLayer(window.currentAirportRouteLayer);
-                                window.currentAirportRouteLayer = mapL.layerGroup().addTo(map);
-
-                                if (res.routeData) {
-                                    const coordinates = res.routeData.geometry.coordinates.map((c: number[]) => [c[1], c[0]]);
+                            document.body.style.cursor = 'wait';
+                            try {
+                                const url = `https://routing.openstreetmap.de/routed-car/route/v1/driving/${userLon},${userLat};${res.lon},${res.lat}?overview=full&geometries=geojson`;
+                                const response = await fetch(url);
+                                const data = await response.json();
+                                if (data.routes && data.routes[0]) {
+                                    const routeData = data.routes[0];
+                                    const coordinates = routeData.geometry.coordinates.map((c: number[]) => [c[1], c[0]]);
                                     
                                     mapL.polyline(coordinates, {
                                         color: 'white', weight: 6, opacity: 0.8
@@ -785,7 +765,13 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                                         dashArray: '10, 10', className: 'animated-route'
                                     }).addTo(window.currentAirportRouteLayer);
 
-                                    // Mostrar píldoras de stats flotantes
+                                    const durationMin = Math.ceil(routeData.duration / 60);
+                                    const distanceKm = (routeData.distance / 1000).toFixed(1);
+                                    const h = Math.floor(durationMin / 60);
+                                    const m = durationMin % 60;
+                                    const durationText = h > 0 ? `${h}h ${m}m` : `${m}m`;
+                                    const distanceText = `${distanceKm}km`;
+
                                     const statsEl = document.getElementById('map-floating-route-stats');
                                     const timeEl = document.getElementById('route-time');
                                     const distEl = document.getElementById('route-distance');
@@ -795,16 +781,20 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                                         distEl.innerText = distanceText;
                                     }
                                 }
-                            });
+                            } catch (e) {
+                                console.error('Error fetching route', e);
+                            }
+                            document.body.style.cursor = 'default';
                         });
-                        
-                        if (!document.getElementById('anim-route-style')) {
-                            document.head.insertAdjacentHTML('beforeend', `<style id="anim-route-style">
-                                .animated-route { animation: dashAnim 15s linear infinite; }
-                                @keyframes dashAnim { to { stroke-dashoffset: -1000; } }
-                            </style>`);
-                        }
                     });
+                    
+                    if (!document.getElementById('anim-route-style')) {
+                        document.head.insertAdjacentHTML('beforeend', `<style id="anim-route-style">
+                            .animated-route { animation: dashAnim 15s linear infinite; }
+                            @keyframes dashAnim { to { stroke-dashoffset: -1000; } }
+                        </style>`);
+                    }
+                    document.body.style.cursor = 'default';
                 }, 100);
             };
 
