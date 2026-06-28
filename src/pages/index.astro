@@ -307,9 +307,22 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             </div>`;
         }
         if (data.cardType === 'MapCard') {
-            const isNearest = data.stopName === 'NEAREST';
-            const onclickParam = isNearest ? `'NEAREST', null, '${msgId}'` : (data.lat ? `'${data.lat}', '${data.lon}', '${msgId}'` : `null, null, '${msgId}'`);
-            const btnText = isNearest ? '📍 Localizar Parada Cercana' : '📍 Abrir Mapa Interactivo';
+            let onclickParam = `null, null, '${msgId}'`;
+            let btnText = '📍 Abrir Mapa Interactivo';
+
+            if (data.stopName === 'NEAREST') {
+                onclickParam = `'NEAREST', null, '${msgId}'`;
+                btnText = '📍 Localizar Parada Cercana';
+            } else if (data.stopName === 'NEAREST_AIRPORT') {
+                onclickParam = `'NEAREST_AIRPORT', null, '${msgId}'`;
+                btnText = '✈️ Localizar Aeropuerto Cercano';
+            } else if (data.stopName === 'ALL_AIRPORTS') {
+                onclickParam = `'ALL_AIRPORTS', null, '${msgId}'`;
+                btnText = '✈️ Ver Mapa de Aeropuertos';
+            } else if (data.lat) {
+                onclickParam = `'${data.lat}', '${data.lon}', '${msgId}'`;
+            }
+
             return `
             <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%; max-width: 100%; align-self: flex-start;">
                 <span class="bubble">${data.content}</span>
