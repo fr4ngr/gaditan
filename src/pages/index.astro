@@ -736,37 +736,63 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                         document.body.style.cursor = 'default';
                         
                         resultados.forEach(res => {
-                            const marker = mapL.marker([res.lat, res.lon], {icon: targetIcon}).addTo(markersLayer);
-                            marker.on('click', () => {
-                                window.openMapInfoPill(res.name, res.desc, res.lat, res.lon, 'airport');
-                                map.setView([res.lat, res.lon], 14);
-                                map.removeLayer(markersLayer);
-                                if (window.currentActiveMarker) map.removeLayer(window.currentActiveMarker);
-                                window.currentActiveMarker = mapL.marker([res.lat, res.lon], {icon: targetIcon}).addTo(map);
+                            let durationText = "? min";
+                            let distanceText = "? km";
+                            if (res.routeData) {
+                                const durationMin = Math.ceil(res.routeData.duration / 60);
+                                const distanceKm = (res.routeData.distance / 1000).toFixed(1);
+                                const h = Math.floor(durationMin / 60);
+                                const m = durationMin % 60;
+                                durationText = h > 0 ? `${h}h ${m}m` : `${m}m`;
+                                distanceText = `${distanceKm}km`;
+                            }
+
+                            const bubbleHtml = `
+                                <div style="background:var(--primary-color); color:white; border:2px solid white; border-radius:12px; padding:6px 8px; font-family:sans-serif; text-align:center; box-shadow:0 2px 5px rgba(0,0,0,0.4); min-width:90px;">
+                                    <div style="font-weight:bold; font-size:14px; margin-bottom:2px;">✈️ ${res.name.replace('Aeropuerto de ', '')}</div>
+                                    <div style="font-size:11px; opacity:0.9;">${durationText} | ${distanceText}</div>
+                                </div>
+                            `;
+                            const airportIcon = mapL.divIcon({
+                                html: bubbleHtml,
+                                className: '', iconSize: [110, 48], iconAnchor: [55, 48]
                             });
 
-                            if (res.routeData) {
-                                const coordinates = res.routeData.geometry.coordinates.map((c: number[]) => [c[1], c[0]]);
+                            const marker = mapL.marker([res.lat, res.lon], {icon: airportIcon}).addTo(markersLayer);
+                            marker.on('click', () => {
+                                window.openMapInfoPill(res.name, res.desc, res.lat, res.lon, 'airport');
+                                map.setView([res.lat, res.lon], 10);
+                                map.removeLayer(markersLayer);
                                 
-                                mapL.polyline(coordinates, {
-                                    color: 'white', weight: 6, opacity: 0.8
-                                }).addTo(map);
-                                
-                                mapL.polyline(coordinates, {
-                                    color: '#4285F4', weight: 4, opacity: 0.8,
-                                    dashArray: '10, 10', className: 'animated-route'
-                                }).addTo(map);
+                                if (window.currentActiveMarker) map.removeLayer(window.currentActiveMarker);
+                                window.currentActiveMarker = mapL.marker([res.lat, res.lon], {icon: airportIcon}).addTo(map);
 
-                                const midIndex = Math.floor(coordinates.length / 2);
-                                const midPoint = coordinates[midIndex];
-                                const durationMin = Math.ceil(res.routeData.duration / 60);
-                                
-                                const timeIcon = mapL.divIcon({
-                                    html: `<div style="background:var(--primary-color); color:white; font-size:12px; font-weight:bold; padding:3px 10px; border-radius:12px; border:2px solid white; box-shadow:0 2px 4px rgba(0,0,0,0.3); white-space:nowrap;">${durationMin} min</div>`,
-                                    className: '', iconSize: [60, 20], iconAnchor: [30, 10]
-                                });
-                                mapL.marker(midPoint, {icon: timeIcon}).addTo(map);
-                            }
+                                if (window.currentAirportRouteLayer) map.removeLayer(window.currentAirportRouteLayer);
+                                window.currentAirportRouteLayer = mapL.layerGroup().addTo(map);
+
+                                if (res.routeData) {
+                                    const coordinates = res.routeData.geometry.coordinates.map((c: number[]) => [c[1], c[0]]);
+                                    
+                                    mapL.polyline(coordinates, {
+                                        color: 'white', weight: 6, opacity: 0.8
+                                    }).addTo(window.currentAirportRouteLayer);
+                                    
+                                    mapL.polyline(coordinates, {
+                                        color: '#4285F4', weight: 4, opacity: 0.8,
+                                        dashArray: '10, 10', className: 'animated-route'
+                                    }).addTo(window.currentAirportRouteLayer);
+
+                                    // Mostrar píldoras de stats flotantes
+                                    const statsEl = document.getElementById('map-floating-route-stats');
+                                    const timeEl = document.getElementById('route-time');
+                                    const distEl = document.getElementById('route-distance');
+                                    if (statsEl && timeEl && distEl) {
+                                        statsEl.style.display = 'flex';
+                                        timeEl.innerText = durationText;
+                                        distEl.innerText = distanceText;
+                                    }
+                                }
+                            });
                         });
                         
                         if (!document.getElementById('anim-route-style')) {
