@@ -713,6 +713,8 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             uiContainer.style.opacity = '0';
             uiContainer.style.transform = 'translateX(-50%) translateY(-10px)';
             uiContainer.style.pointerEvents = 'none';
+            const pill = document.getElementById('map-info-pill');
+            if (pill) pill.style.pointerEvents = 'none';
         }
         if (floatingStats) {
             floatingStats.style.display = 'none';
@@ -757,6 +759,8 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             uiContainer.style.opacity = '1';
             uiContainer.style.transform = 'translateX(-50%) translateY(0)';
             uiContainer.style.pointerEvents = 'auto';
+            const pill = document.getElementById('map-info-pill');
+            if (pill) pill.style.pointerEvents = 'auto';
         }
         if (mapCloseBtn) {
             mapCloseBtn.style.opacity = '0';
