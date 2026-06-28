@@ -605,6 +605,7 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                     
                     const map = window.currentMap;
                     const mapL = (window as any).L;
+                    map.invalidateSize();
                     
                     // 1. Calcular distancias en línea recta para filtrar
                     const getDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
@@ -691,7 +692,7 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                             window.mapActionDirections(poiType);
                         }, 500);
                     });
-                }, 100);
+                }, 400);
             };
 
             window.doAllAirportsWithRoutes = function(userLat: number, userLon: number) {
@@ -704,6 +705,7 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                 setTimeout(() => {
                     const map = window.currentMap;
                     const mapL = (window as any).L;
+                    map.invalidateSize();
                     
                     const bounds = mapL.latLngBounds([userLat, userLon]);
                     AIRPORTS.forEach(p => bounds.extend([p.lat, p.lon]));
@@ -795,7 +797,7 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                         });
                     });
                     document.body.style.cursor = 'default';
-                }, 100);
+                }, 400);
             };
 
             window.doAllAirportsFallback = function() {
