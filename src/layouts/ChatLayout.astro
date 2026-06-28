@@ -118,26 +118,11 @@ const { title } = Astro.props;
                                     Pedir Taxi
                                 </button>
                             </div>
-                            
-                            <!-- Contenedor de ruta en vivo (Oculto por defecto) -->
-                            <div id="map-pill-route-info" style="display: none; flex-direction: column; gap: 12px;">
-                                <div style="display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end;">
-                                    <span id="route-time" style="background: var(--chat-bg); color: var(--text-primary); border: 1px solid var(--header-border); padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600;">-- min</span>
-                                    <span id="route-distance" style="background: var(--chat-bg); color: var(--text-primary); border: 1px solid var(--header-border); padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600;">-- m</span>
-                                </div>
-                                <div id="route-instruction" style="width: 100%; display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-radius: 16px; background: var(--card-bg, #ffffff); box-shadow: 0 4px 20px rgba(0,0,0,0.08); border: 1px solid var(--header-border);">
-                                    <div style="background: var(--primary-color); color: white; width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);">
-                                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                            <path d="M12 19V5" />
-                                            <path d="M5 12l7-7 7 7" />
-                                        </svg>
-                                    </div>
-                                    <div style="display: flex; flex-direction: column; gap: 2px;">
-                                        <span id="route-instruction-action" style="font-size: 16px; font-weight: 700; color: var(--text-primary); letter-spacing: -0.3px;">Calculando...</span>
-                                        <span id="route-instruction-street" style="font-size: 13px; font-weight: 500; color: var(--text-secondary);">Buscando la mejor ruta a pie</span>
-                                    </div>
-                                </div>
-                            </div>
+                        </div>
+                        <!-- Píldoras flotantes de ruta (Distancia y Tiempo) -->
+                        <div id="map-floating-route-stats" style="position: absolute; bottom: 16px; right: 16px; z-index: 1000; display: none; flex-direction: column; gap: 8px; align-items: flex-end; pointer-events: none;">
+                            <div id="route-time" style="background: var(--primary-color); color: white; padding: 6px 14px; border-radius: 20px; font-size: 14px; font-weight: 700; box-shadow: 0 4px 10px rgba(0,0,0,0.15); pointer-events: auto;">-- min</div>
+                            <div id="route-distance" style="background: var(--header-bg); color: var(--text-primary); border: 1px solid var(--header-border); padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; box-shadow: 0 4px 10px rgba(0,0,0,0.15); pointer-events: auto;">-- m</div>
                         </div>
 
                         <div id="fullscreen-widget-area" style="width: 100%; max-width: 480px; height: 100%; position: relative; background: var(--bg-color);">

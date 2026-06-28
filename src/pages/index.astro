@@ -696,10 +696,15 @@ import ChatLayout from '../layouts/ChatLayout.astro';
         if (window.cancelMapRoute) window.cancelMapRoute();
         const pill = document.getElementById('map-info-pill');
         const mapCloseBtn = document.getElementById('map-close-btn');
+        const floatingStats = document.getElementById('map-floating-route-stats');
+        
         if (pill) {
             pill.style.opacity = '0';
             pill.style.transform = 'translateX(-50%) translateY(-10px)';
             pill.style.pointerEvents = 'none';
+        }
+        if (floatingStats) {
+            floatingStats.style.display = 'none';
         }
         if (mapCloseBtn) {
             mapCloseBtn.style.opacity = '1';
@@ -730,6 +735,12 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             if (titleEl) titleEl.innerText = title;
             if (descEl) descEl.innerText = desc || '';
             if (labelEl) labelEl.innerText = 'PARADA DE TAXI';
+            
+            const actions = document.getElementById('map-pill-actions');
+            const floatingStats = document.getElementById('map-floating-route-stats');
+            if (actions) actions.style.display = 'flex';
+            if (floatingStats) floatingStats.style.display = 'none';
+            
             pill.style.opacity = '1';
             pill.style.transform = 'translateX(-50%) translateY(0)';
             pill.style.pointerEvents = 'auto';
@@ -746,13 +757,13 @@ import ChatLayout from '../layouts/ChatLayout.astro';
 
         if (navigator.geolocation || window.devMockLat) {
             const actions = document.getElementById('map-pill-actions');
-            const routeInfo = document.getElementById('map-pill-route-info');
+            const floatingStats = document.getElementById('map-floating-route-stats');
             const routeTime = document.getElementById('route-time');
             const routeDistance = document.getElementById('route-distance');
             const labelEl = document.getElementById('map-info-label');
 
             if (actions) actions.style.display = 'none';
-            if (routeInfo) routeInfo.style.display = 'flex';
+            if (floatingStats) floatingStats.style.display = 'flex';
             if (routeTime) routeTime.innerText = "Calculando...";
             if (routeDistance) routeDistance.innerText = "-- m";
             if (labelEl) labelEl.innerText = 'DESTINO: PARADA DE TAXI';
