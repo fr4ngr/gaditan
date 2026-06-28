@@ -694,7 +694,7 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                             window.mapActionDirections(poiType);
                         }, 500);
                     });
-                }, 400);
+                }, 10);
             };
 
             window.doAllAirportsWithRoutes = function(userLat: number, userLon: number) {
@@ -711,7 +711,7 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                     
                     const bounds = mapL.latLngBounds([userLat, userLon]);
                     AIRPORTS.forEach(p => bounds.extend([p.lat, p.lon]));
-                    map.fitBounds(bounds, { padding: [10, 10] });
+                    map.fitBounds(bounds, { padding: [20, 20] });
                     window.globalAirportsBounds = bounds;
                     
                     const userIcon = mapL.divIcon({
@@ -825,7 +825,7 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                         }
                     });
                     document.body.style.cursor = 'default';
-                }, 400);
+                }, 10);
             };
 
             window.doAllAirportsFallback = function() {
@@ -948,7 +948,7 @@ import ChatLayout from '../layouts/ChatLayout.astro';
         if (window.currentMap && window.currentMarkersLayer) {
             const isAirportMode = window.activePoiType === 'airport';
             if (isAirportMode && window.globalAirportsBounds) {
-                window.currentMap.fitBounds(window.globalAirportsBounds, { padding: [10, 10] });
+                window.currentMap.fitBounds(window.globalAirportsBounds, { padding: [20, 20] });
                 const topPills = document.getElementById('map-top-pills');
                 if (topPills) topPills.style.display = 'flex';
             } else {
