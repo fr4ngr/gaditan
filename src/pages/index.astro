@@ -706,7 +706,7 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                     
                     const bounds = mapL.latLngBounds([userLat, userLon]);
                     AIRPORTS.forEach(p => bounds.extend([p.lat, p.lon]));
-                    map.fitBounds(bounds, { padding: [50, 50] });
+                    map.fitBounds(bounds, { paddingTopLeft: [180, 50], paddingBottomRight: [50, 50] });
                     window.globalAirportsBounds = bounds;
                     
                     const userIcon = mapL.divIcon({
@@ -742,7 +742,7 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                         marker.on('click', async () => {
                             window.openMapInfoPill(res.name, res.desc, res.lat, res.lon, 'airport');
                             const routeBounds = mapL.latLngBounds([userLat, userLon], [res.lat, res.lon]);
-                            map.fitBounds(routeBounds, { padding: [50, 50] });
+                            map.fitBounds(routeBounds, { paddingTopLeft: [50, 50], paddingBottomRight: [50, 250] });
                             map.removeLayer(markersLayer);
                             
                             if (window.currentActiveMarker) map.removeLayer(window.currentActiveMarker);
@@ -764,7 +764,7 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                                         color: 'white', weight: 6, opacity: 0.8
                                     }).addTo(window.currentAirportRouteLayer);
                                     
-                                    map.fitBounds(polyline.getBounds(), { padding: [50, 50] });
+                                    map.fitBounds(polyline.getBounds(), { paddingTopLeft: [50, 50], paddingBottomRight: [50, 250] });
                                     
                                     mapL.polyline(coordinates, {
                                         color: '#4285F4', weight: 4, opacity: 0.8,
@@ -924,7 +924,7 @@ import ChatLayout from '../layouts/ChatLayout.astro';
         if (window.currentMap && window.currentMarkersLayer) {
             const isAirportMode = window.activePoiType === 'airport';
             if (isAirportMode && window.globalAirportsBounds) {
-                window.currentMap.fitBounds(window.globalAirportsBounds, { padding: [50, 50] });
+                window.currentMap.fitBounds(window.globalAirportsBounds, { paddingTopLeft: [180, 50], paddingBottomRight: [50, 50] });
             } else {
                 window.currentMap.setView([36.516, -6.283], 13); // Zoom out
             }
