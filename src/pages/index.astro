@@ -300,11 +300,14 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             </div>`;
         }
         if (data.cardType === 'MapCard') {
+            const isNearest = data.stopName === 'NEAREST';
+            const onclickParam = isNearest ? `'NEAREST', null, '${msgId}'` : (data.lat ? `'${data.lat}', '${data.lon}', '${msgId}'` : `null, null, '${msgId}'`);
+            const btnText = isNearest ? '📍 Localizar Parada Cercana' : '📍 Abrir Mapa Interactivo';
             return `
             <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%; max-width: 100%; align-self: flex-start;">
                 <span class="bubble">${data.content}</span>
-                <button class="call-btn" style="background: var(--bubble-bot-bg); color: var(--primary-color); font-size: 0.95rem; display: flex; align-items: center; justify-content: center; gap: 8px; border-radius: 20px; border: 1px solid var(--primary-color);" onclick="window.openFullscreenMap(${data.lat ? `'${data.lat}', '${data.lon}', '${msgId}'` : `null, null, '${msgId}'`})">
-                    <span>📍</span> Abrir Mapa Interactivo
+                <button class="call-btn" style="background: var(--bubble-bot-bg); color: var(--primary-color); font-size: 0.95rem; display: flex; align-items: center; justify-content: center; gap: 8px; border-radius: 20px; border: 1px solid var(--primary-color);" onclick="window.openFullscreenMap(${onclickParam})">
+                    ${btnText}
                 </button>
             </div>`;
         }
@@ -555,7 +558,70 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                 pane: 'labels'
             }).addTo(map);
 
-            if (lat && lon) {
+
+            if (lat === 'NEAREST') {
+                if (navigator.geolocation) {
+                    // Mostrar algún indicador visual opcional (o cambiar el cursor)
+                    document.body.style.cursor = 'wait';
+                    
+                    navigator.geolocation.getCurrentPosition((position) => {
+                        const userLat = position.coords.latitude;
+                        const userLon = position.coords.longitude;
+                        
+                        // 1. Pre-filtrado con distancia Haversine (línea recta)
+                        const getDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
+                            const R = 6371; // km
+                            const dLat = (lat2-lat1)*Math.PI/180;
+                            const dLon = (lon2-lon1)*Math.PI/180;
+                            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                                      Math.cos(lat1*Math.PI/180) * Math.cos(lat2*Math.PI/180) *
+                                      Math.sin(dLon/2) * Math.sin(dLon/2);
+                            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+                            return R * c;
+                        };
+                        
+                        const paradasConDist = CADIZ_STOPS.map(p => ({
+                            ...p,
+                            distance: getDistance(userLat, userLon, parseFloat(p.lat), parseFloat(p.lon))
+                        })).sort((a,b) => a.distance - b.distance);
+                        
+                        const top5 = paradasConDist.slice(0, 5);
+                        
+                        // 2. Cálculo real de ruta a pie con OSRM/Valhalla
+                        Promise.all(top5.map(async (p) => {
+                            try {
+                                const url = `https://routing.openstreetmap.de/routed-foot/route/v1/foot/${userLon},${userLat};${p.lon},${p.lat}?overview=false`;
+                                const response = await fetch(url);
+                                const data = await response.json();
+                                if (data.routes && data.routes[0]) {
+                                    return { ...p, realDistance: data.routes[0].distance }; // distancia en metros
+                                }
+                                return { ...p, realDistance: Infinity };
+                            } catch (e) {
+                                return { ...p, realDistance: Infinity };
+                            }
+                        })).then(resultados => {
+                            document.body.style.cursor = 'default';
+                            resultados.sort((a, b) => a.realDistance - b.realDistance);
+                            const masCercana = resultados[0];
+                            
+                            // Abrimos la capa de navegación directamente
+                            window.switchPanel('chat'); // Para que al cerrar la nav estemos en chat
+                            window.startLiveNavigation(masCercana.lat, masCercana.lon, masCercana.name);
+                        });
+                        
+                    }, (err) => {
+                        document.body.style.cursor = 'default';
+                        console.error("GPS Error:", err);
+                        alert("No se pudo obtener la ubicación. Mostrando mapa general.");
+                        // Cargar mapa general
+                        window.openFullscreenMap(null, null, msgId);
+                    }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 });
+                } else {
+                    alert("Geolocalización no soportada. Mostrando mapa general.");
+                    window.openFullscreenMap(null, null, msgId);
+                }
+            } else if (lat && lon) {
                 map.setView([lat, lon], 16);
                 const marker = mapL.marker([lat, lon]).addTo(map);
                 marker.on('click', () => {
