@@ -711,7 +711,7 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                     
                     const bounds = mapL.latLngBounds([userLat, userLon]);
                     AIRPORTS.forEach(p => bounds.extend([p.lat, p.lon]));
-                    map.fitBounds(bounds, { paddingTopLeft: [50, 50], paddingBottomRight: [180, 50] });
+                    map.fitBounds(bounds, { paddingTopLeft: [20, 60], paddingBottomRight: [130, 20] });
                     window.globalAirportsBounds = bounds;
                     
                     const userIcon = mapL.divIcon({
@@ -948,7 +948,7 @@ import ChatLayout from '../layouts/ChatLayout.astro';
         if (window.currentMap && window.currentMarkersLayer) {
             const isAirportMode = window.activePoiType === 'airport';
             if (isAirportMode && window.globalAirportsBounds) {
-                window.currentMap.fitBounds(window.globalAirportsBounds, { paddingTopLeft: [50, 50], paddingBottomRight: [180, 50] });
+                window.currentMap.fitBounds(window.globalAirportsBounds, { paddingTopLeft: [20, 60], paddingBottomRight: [130, 20] });
                 const topPills = document.getElementById('map-top-pills');
                 if (topPills) topPills.style.display = 'flex';
             } else {
