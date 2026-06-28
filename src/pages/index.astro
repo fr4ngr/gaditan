@@ -750,8 +750,8 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                             const codeMatch = res.name.match(/\(([^)]+)\)/);
                             const code = codeMatch ? codeMatch[1] : res.name;
                             const bubbleHtml = `
-                                <div style="background:var(--primary-color); color:white; border:2px solid white; border-radius:12px; padding:6px 10px; font-family:sans-serif; text-align:center; box-shadow:0 2px 5px rgba(0,0,0,0.4); white-space:nowrap;">
-                                    <div style="font-weight:bold; font-size:13px;">✈️ ${code} | ${durationText} | ${distanceText}</div>
+                                <div style="background:var(--primary-color); color:white; border:2px solid white; border-radius:12px; padding:6px 12px; font-family:sans-serif; text-align:center; box-shadow:0 2px 5px rgba(0,0,0,0.4); white-space:nowrap;">
+                                    <div style="font-weight:bold; font-size:13px; letter-spacing:0.5px;">${code} | ${durationText} | ${distanceText}</div>
                                 </div>
                             `;
                             const airportIcon = mapL.divIcon({
@@ -924,8 +924,10 @@ import ChatLayout from '../layouts/ChatLayout.astro';
         
         // Restaurar mapa global si existe
         if (window.currentMap && window.currentMarkersLayer) {
-            window.currentMap.setView([36.516, -6.283], 13); // Zoom out
+            const isAirportMode = window.activePoiType === 'airport';
+            window.currentMap.setView(isAirportMode ? [36.516, -6.0] : [36.516, -6.283], isAirportMode ? 10 : 13); // Zoom out
             if (window.currentActiveMarker) window.currentMap.removeLayer(window.currentActiveMarker); // Quitar el aislado
+            if (window.currentAirportRouteLayer) window.currentMap.removeLayer(window.currentAirportRouteLayer); // Quitar ruta de aeropuerto
             window.currentMap.addLayer(window.currentMarkersLayer); // Mostrar todos
         }
     };
