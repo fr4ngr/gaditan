@@ -893,12 +893,12 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                                 const nextStep = steps[1];
 
                                 let actionStr = `Avanza ${dist} m`;
-                                let streetStr = firstStep.name ? `por ${firstStep.name}` : "por esta vía";
+                                let streetStr = (firstStep.name && firstStep.name.trim() !== '') ? `por ${firstStep.name}` : "por esta vía";
 
                                 if (nextStep) {
                                     const nextType = nextStep.maneuver.type;
                                     const nextModifier = nextStep.maneuver.modifier || '';
-                                    const nextName = nextStep.name || 'la vía';
+                                    const nextName = (nextStep.name && nextStep.name.trim() !== '') ? nextStep.name : 'la vía';
 
                                     if (nextType === 'turn' || nextType === 'new name' || nextType === 'roundabout' || nextType === 'fork') {
                                         let action = 'Gira';
