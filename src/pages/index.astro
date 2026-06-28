@@ -578,6 +578,8 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                 pane: 'labels'
             }).addTo(map);
 
+
+
             window.doNearestPOI = function(userLat: number, userLon: number, poiType: 'stop' | 'airport' = 'stop') {
                 const loadingHtml = `
                 <div class="message bot" id="loading-nearest">
@@ -691,28 +693,148 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                 }, 100);
             };
 
-            if (lat === 'NEAREST' || lat === 'NEAREST_AIRPORT') {
-                const poiType = lat === 'NEAREST_AIRPORT' ? 'airport' : 'stop';
+            window.doAllAirportsWithRoutes = function(userLat: number, userLon: number) {
+                document.body.style.cursor = 'wait';
+                if (userLat > 37 || userLat < 36 || userLon > -6 || userLon < -7) {
+                    userLat = 36.529217;
+                    userLon = -6.295707;
+                }
+
+                setTimeout(() => {
+                    const map = window.currentMap;
+                    const mapL = (window as any).L;
+                    
+                    map.setView([userLat, userLon], 9);
+                    
+                    const userIcon = mapL.divIcon({
+                        html: '<div style="background:#4285F4; border: 2px solid white; width:16px; height:16px; border-radius:50%; box-shadow:0 2px 4px rgba(0,0,0,0.4);"></div>',
+                        className: '', iconSize: [16, 16], iconAnchor: [8, 8]
+                    });
+                    mapL.marker([userLat, userLon], {icon: userIcon, zIndexOffset: 1000}).addTo(map);
+
+                    const targetIcon = mapL.divIcon({
+                        html: '<div style="background:var(--primary-color); border: 2px solid white; width:16px; height:16px; border-radius:50%; box-shadow:0 2px 4px rgba(0,0,0,0.4);"></div>',
+                        className: '', iconSize: [16, 16], iconAnchor: [8, 8]
+                    });
+
+                    const markersLayer = mapL.layerGroup().addTo(map);
+                    window.currentMarkersLayer = markersLayer;
+
+                    Promise.all(AIRPORTS.map(async (p) => {
+                        try {
+                            const url = `https://routing.openstreetmap.de/routed-car/route/v1/driving/${userLon},${userLat};${p.lon},${p.lat}?overview=full&geometries=geojson`;
+                            const response = await fetch(url);
+                            const data = await response.json();
+                            if (data.routes && data.routes[0]) {
+                                return { ...p, routeData: data.routes[0] };
+                            }
+                            return { ...p, routeData: null };
+                        } catch (e) {
+                            return { ...p, routeData: null };
+                        }
+                    })).then(resultados => {
+                        document.body.style.cursor = 'default';
+                        
+                        resultados.forEach(res => {
+                            const marker = mapL.marker([res.lat, res.lon], {icon: targetIcon}).addTo(markersLayer);
+                            marker.on('click', () => {
+                                window.openMapInfoPill(res.name, res.desc, res.lat, res.lon, 'airport');
+                                map.setView([res.lat, res.lon], 14);
+                                map.removeLayer(markersLayer);
+                                if (window.currentActiveMarker) map.removeLayer(window.currentActiveMarker);
+                                window.currentActiveMarker = mapL.marker([res.lat, res.lon], {icon: targetIcon}).addTo(map);
+                            });
+
+                            if (res.routeData) {
+                                const coordinates = res.routeData.geometry.coordinates.map((c: number[]) => [c[1], c[0]]);
+                                
+                                mapL.polyline(coordinates, {
+                                    color: 'white', weight: 6, opacity: 0.8
+                                }).addTo(map);
+                                
+                                mapL.polyline(coordinates, {
+                                    color: '#4285F4', weight: 4, opacity: 0.8,
+                                    dashArray: '10, 10', className: 'animated-route'
+                                }).addTo(map);
+
+                                const midIndex = Math.floor(coordinates.length / 2);
+                                const midPoint = coordinates[midIndex];
+                                const durationMin = Math.ceil(res.routeData.duration / 60);
+                                
+                                const timeIcon = mapL.divIcon({
+                                    html: `<div style="background:var(--primary-color); color:white; font-size:12px; font-weight:bold; padding:3px 10px; border-radius:12px; border:2px solid white; box-shadow:0 2px 4px rgba(0,0,0,0.3); white-space:nowrap;">${durationMin} min</div>`,
+                                    className: '', iconSize: [60, 20], iconAnchor: [30, 10]
+                                });
+                                mapL.marker(midPoint, {icon: timeIcon}).addTo(map);
+                            }
+                        });
+                        
+                        if (!document.getElementById('anim-route-style')) {
+                            document.head.insertAdjacentHTML('beforeend', `<style id="anim-route-style">
+                                .animated-route { animation: dashAnim 15s linear infinite; }
+                                @keyframes dashAnim { to { stroke-dashoffset: -1000; } }
+                            </style>`);
+                        }
+                    });
+                }, 100);
+            };
+
+            window.doAllAirportsFallback = function() {
+                const map = window.currentMap;
+                const mapL = (window as any).L;
+                map.setView([36.516, -6.0], 10);
+                const targetIcon = mapL.divIcon({
+                    html: '<div style="background:var(--primary-color); border: 2px solid white; width:16px; height:16px; border-radius:50%; box-shadow:0 2px 4px rgba(0,0,0,0.4);"></div>',
+                    className: '', iconSize: [16, 16], iconAnchor: [8, 8]
+                });
+                const markersLayer = mapL.layerGroup().addTo(map);
+                window.currentMarkersLayer = markersLayer;
+                AIRPORTS.forEach(stop => {
+                    const marker = mapL.marker([stop.lat, stop.lon], {icon: targetIcon}).addTo(markersLayer);
+                    marker.on('click', () => {
+                        window.openMapInfoPill(stop.name, stop.desc, stop.lat, stop.lon, 'airport');
+                        map.setView([stop.lat, stop.lon], 14);
+                        map.removeLayer(markersLayer);
+                        if (window.currentActiveMarker) map.removeLayer(window.currentActiveMarker);
+                        window.currentActiveMarker = mapL.marker([stop.lat, stop.lon], {icon: targetIcon}).addTo(map);
+                    });
+                });
+            };
+
+            if (lat === 'NEAREST' || lat === 'NEAREST_AIRPORT' || lat === 'ALL_AIRPORTS') {
+                const isNearestAirport = lat === 'NEAREST_AIRPORT';
+                const isAllAirports = lat === 'ALL_AIRPORTS';
+                const poiType = (isNearestAirport || isAllAirports) ? 'airport' : 'stop';
+
+                const onLocationSuccess = (uLat: number, uLon: number) => {
+                    if (isAllAirports) {
+                        window.doAllAirportsWithRoutes(uLat, uLon);
+                    } else {
+                        window.doNearestPOI(uLat, uLon, poiType);
+                    }
+                };
+
+                const onLocationError = () => {
+                    document.body.style.cursor = 'default';
+                    alert("No se pudo obtener la ubicación. Mostrando mapa general.");
+                    if (isAllAirports) {
+                        window.doAllAirportsFallback();
+                    } else {
+                        window.openFullscreenMap(poiType === 'airport' ? 'ALL_AIRPORTS' : null, null, msgId);
+                    }
+                };
+
                 if (window.devMockLat && window.devMockLon) {
-                    // Usar fake location si está definida
-                    window.doNearestPOI(window.devMockLat, window.devMockLon, poiType);
+                    onLocationSuccess(window.devMockLat, window.devMockLon);
                 } else if (navigator.geolocation) {
                     navigator.geolocation.getCurrentPosition((position) => {
-                        window.doNearestPOI(position.coords.latitude, position.coords.longitude, poiType);
-                    }, (err) => {
-                        document.body.style.cursor = 'default';
-                        console.error("GPS Error:", err);
-                        alert("No se pudo obtener la ubicación. Mostrando mapa general.");
-                        window.openFullscreenMap(poiType === 'airport' ? 'ALL_AIRPORTS' : null, null, msgId);
-                    }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 });
+                        onLocationSuccess(position.coords.latitude, position.coords.longitude);
+                    }, onLocationError, { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 });
                 } else {
-                    document.body.style.cursor = 'default';
-                    alert("Geolocalización no soportada. Mostrando mapa general.");
-                    window.openFullscreenMap(poiType === 'airport' ? 'ALL_AIRPORTS' : null, null, msgId);
+                    onLocationError();
                 }
-            } else if (lat === 'ALL_AIRPORTS' || !lat) {
-                const isAirport = lat === 'ALL_AIRPORTS';
-                map.setView(isAirport ? [36.516, -6.0] : [36.516, -6.283], isAirport ? 10 : 13);
+            } else if (!lat) {
+                map.setView([36.516, -6.283], 13);
                 
                 const targetIcon = mapL.divIcon({
                     html: '<div style="background:var(--primary-color); border: 2px solid white; width:16px; height:16px; border-radius:50%; box-shadow:0 2px 4px rgba(0,0,0,0.4);"></div>',
@@ -720,21 +842,18 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                 });
                 
                 const markersLayer = mapL.layerGroup().addTo(map);
-                window.currentMarkersLayer = markersLayer; // Guardar referencia global
+                window.currentMarkersLayer = markersLayer;
 
-                const POI_LIST = isAirport ? AIRPORTS : CADIZ_STOPS;
-                POI_LIST.forEach(stop => {
+                CADIZ_STOPS.forEach(stop => {
                     const marker = mapL.marker([stop.lat, stop.lon], {icon: targetIcon});
                     marker.addTo(markersLayer);
                     
                     marker.on('click', () => {
-                        window.openMapInfoPill(stop.name, stop.desc, stop.lat, stop.lon, isAirport ? 'airport' : 'stop');
+                        window.openMapInfoPill(stop.name, stop.desc, stop.lat, stop.lon, 'stop');
                         
-                        // Hacer zoom y aislar el marcador
-                        map.setView([stop.lat, stop.lon], isAirport ? 14 : 16);
-                        map.removeLayer(markersLayer); // Ocultar todos
+                        map.setView([stop.lat, stop.lon], 16);
+                        map.removeLayer(markersLayer); 
                         
-                        // Crear un marcador temporal solo para esta vista
                         if (window.currentActiveMarker) map.removeLayer(window.currentActiveMarker);
                         window.currentActiveMarker = mapL.marker([stop.lat, stop.lon], {icon: targetIcon}).addTo(map);
                     });
@@ -804,9 +923,23 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             const actions = document.getElementById('map-pill-actions');
             const floatingStats = document.getElementById('map-floating-route-stats');
             const instEl = document.getElementById('route-instruction');
+            
+            const btnDirections = document.getElementById('pill-btn-directions');
+            const btnReserve = document.getElementById('pill-btn-reserve');
+            
             if (actions) actions.style.display = 'flex';
             if (floatingStats) floatingStats.style.display = 'none';
             if (instEl) instEl.style.display = 'none';
+
+            if (btnDirections && btnReserve) {
+                if (type === 'airport') {
+                    btnDirections.style.display = 'none';
+                    btnReserve.style.display = 'flex';
+                } else {
+                    btnDirections.style.display = 'flex';
+                    btnReserve.style.display = 'none';
+                }
+            }
             
             uiContainer.style.opacity = '1';
             uiContainer.style.transform = 'translateX(-50%) translateY(0)';
@@ -1078,6 +1211,24 @@ import ChatLayout from '../layouts/ChatLayout.astro';
 
         if (window.activeMapStopLat && window.activeMapStopLon && window.currentMap) {
             window.currentMap.setView([window.activeMapStopLat, window.activeMapStopLon], 16);
+        }
+    };
+
+    window.mapActionReserve = function() {
+        const title = window.activeMapStopName || 'el aeropuerto';
+        window.closeMapInfoPill();
+        
+        // Llamar global addMessage si existe
+        if (typeof addMessage === 'function') {
+            addMessage('user', `<span class="bubble">Quiero reservar un taxi para: ${title}</span>`);
+            const chatOutput = document.getElementById('chat-output');
+            if (chatOutput) {
+                chatOutput.insertAdjacentHTML('beforeend', window.renderCard({
+                    cardType: 'ReservationCard',
+                    content: `¡Perfecto! Te preparo el acceso rápido para solicitar una reserva hacia <strong>${title}</strong>.`
+                }, 'reserve-' + Date.now()));
+                chatOutput.scrollTop = chatOutput.scrollHeight;
+            }
         }
     };
 
