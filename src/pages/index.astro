@@ -726,8 +726,10 @@ import ChatLayout from '../layouts/ChatLayout.astro';
         if (pill) {
             const titleEl = document.getElementById('map-info-title');
             const descEl = document.getElementById('map-info-desc');
+            const labelEl = document.getElementById('map-info-label');
             if (titleEl) titleEl.innerText = title;
             if (descEl) descEl.innerText = desc || '';
+            if (labelEl) labelEl.innerText = 'PARADA DE TAXI';
             pill.style.opacity = '1';
             pill.style.transform = 'translateX(-50%) translateY(0)';
             pill.style.pointerEvents = 'auto';
@@ -747,11 +749,13 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             const routeInfo = document.getElementById('map-pill-route-info');
             const routeTime = document.getElementById('route-time');
             const routeDistance = document.getElementById('route-distance');
+            const labelEl = document.getElementById('map-info-label');
 
             if (actions) actions.style.display = 'none';
             if (routeInfo) routeInfo.style.display = 'flex';
             if (routeTime) routeTime.innerText = "Calculando...";
             if (routeDistance) routeDistance.innerText = "-- m";
+            if (labelEl) labelEl.innerText = 'DESTINO: PARADA DE TAXI';
 
             const handlePosition = async (userLat: number, userLon: number) => {
                 const stopLat = window.activeMapStopLat;
