@@ -598,6 +598,21 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                         resultados.sort((a, b) => a.realDistance - b.realDistance);
                         const masCercana = resultados[0];
                         
+                        // Añadir un mensaje al chat con el nombre de la parada
+                        const chatOutput = document.getElementById('chat-output');
+                        if (chatOutput) {
+                            const bubbleHtml = `
+                            <div class="message bot" style="animation: slideUp 0.3s ease;">
+                                <div class="message-content">
+                                    <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%; max-width: 100%; align-self: flex-start;">
+                                        <span class="bubble">¡Lista! Tu parada oficial más cercana es <strong>${masCercana.name}</strong>. Te la he marcado en el mapa con la ruta a pie.</span>
+                                    </div>
+                                </div>
+                            </div>`;
+                            chatOutput.insertAdjacentHTML('beforeend', bubbleHtml);
+                            chatOutput.scrollTop = chatOutput.scrollHeight;
+                        }
+                        
                         // Mostrar el mapa normal con la InfoPill abierta (estilo estándar)
                         map.setView([masCercana.lat, masCercana.lon], 16);
                         const taxiIcon = mapL.divIcon({
@@ -607,8 +622,12 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                         const marker = mapL.marker([masCercana.lat, masCercana.lon], {icon: taxiIcon}).addTo(map);
                         marker.on('click', () => {
                             window.openMapInfoPill(masCercana.name, masCercana.desc, masCercana.lat, masCercana.lon);
+                            window.mapActionDirections();
                         });
                         window.openMapInfoPill(masCercana.name, masCercana.desc, masCercana.lat, masCercana.lon);
+                        
+                        // Activar inmediatamente el cálculo de ruta (muestra distancia y tiempo en la InfoPill y dibuja la línea)
+                        window.mapActionDirections();
                     });
                 };
 
