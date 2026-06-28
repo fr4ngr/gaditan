@@ -500,6 +500,9 @@ import ChatLayout from '../layouts/ChatLayout.astro';
         // Mover panel, actualizar cabecera y cerrar píldora por si estaba abierta
         window.switchPanel('mapa');
         if (window.closeMapInfoPill) window.closeMapInfoPill();
+        
+        const topPills = document.getElementById('map-top-pills');
+        if (topPills) topPills.style.display = 'none';
 
         const container = document.getElementById('fullscreen-widget-area');
         if (!container) return;
@@ -726,23 +729,20 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                     const markersLayer = mapL.layerGroup().addTo(map);
                     window.currentMarkersLayer = markersLayer;
 
-                    AIRPORTS.forEach(res => {
-                        const codeMatch = res.name.match(/\(([^)]+)\)/);
-                        const code = codeMatch ? codeMatch[1] : res.name;
-                        const bubbleHtml = `
-                            <div style="position:relative; background:var(--primary-color); color:white; border:2px solid white; border-radius:12px; padding:6px 12px; font-family:sans-serif; text-align:center; box-shadow:0 2px 5px rgba(0,0,0,0.4); white-space:nowrap;">
-                                <div style="font-weight:bold; font-size:13px; letter-spacing:0.5px;">${code} | ${res.approxTime} | ${res.approxDist}</div>
-                                <div style="position:absolute; right:-8px; top:50%; transform:translateY(-50%); width:0; height:0; border-top:6px solid transparent; border-bottom:6px solid transparent; border-left:6px solid white;"></div>
-                                <div style="position:absolute; right:-5px; top:50%; transform:translateY(-50%); width:0; height:0; border-top:4px solid transparent; border-bottom:4px solid transparent; border-left:4px solid var(--primary-color);"></div>
-                            </div>
-                        `;
-                        const airportIcon = mapL.divIcon({
-                            html: bubbleHtml,
-                            className: '', iconSize: [140, 32], iconAnchor: [148, 16]
-                        });
+                    const topPillsContainer = document.getElementById('map-top-pills');
+                    if (topPillsContainer) {
+                        topPillsContainer.innerHTML = '';
+                        topPillsContainer.style.display = 'flex';
+                    }
 
-                        const marker = mapL.marker([res.lat, res.lon], {icon: airportIcon}).addTo(markersLayer);
-                        marker.on('click', async () => {
+                    AIRPORTS.forEach(res => {
+                        const cityName = res.name.replace("Aeropuerto de ", "").replace("Aeroporto do ", "").replace(/\s*\(.*?\)\s*/g, "");
+
+                        const marker = mapL.marker([res.lat, res.lon], {icon: targetIcon}).addTo(markersLayer);
+                        
+                        const selectAirport = async () => {
+                            if (topPillsContainer) topPillsContainer.style.display = 'none';
+                            
                             window.openMapInfoPill(res.name, res.desc, res.lat, res.lon, 'airport');
                             const routeBounds = mapL.latLngBounds([userLat, userLon], [res.lat, res.lon]);
                             map.fitBounds(routeBounds, { paddingTopLeft: [50, 50], paddingBottomRight: [50, 250] });
@@ -794,7 +794,17 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                                 console.error('Error fetching route', e);
                             }
                             document.body.style.cursor = 'default';
-                        });
+                        };
+
+                        marker.on('click', selectAirport);
+                        
+                        if (topPillsContainer) {
+                            const btn = document.createElement('button');
+                            btn.innerHTML = `✈️ ${cityName}`;
+                            btn.style.cssText = 'background: var(--header-bg); border: 1px solid var(--header-border); border-radius: 20px; padding: 6px 14px; font-size: 13px; font-weight: 600; color: var(--text-primary); cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.1); flex-shrink: 0;';
+                            btn.onclick = selectAirport;
+                            topPillsContainer.appendChild(btn);
+                        }
                     });
                     document.body.style.cursor = 'default';
                 }, 400);
@@ -921,6 +931,8 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             const isAirportMode = window.activePoiType === 'airport';
             if (isAirportMode && window.globalAirportsBounds) {
                 window.currentMap.fitBounds(window.globalAirportsBounds, { padding: [50, 50] });
+                const topPills = document.getElementById('map-top-pills');
+                if (topPills) topPills.style.display = 'flex';
             } else {
                 window.currentMap.setView([36.516, -6.283], 13); // Zoom out
             }

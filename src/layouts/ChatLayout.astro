@@ -97,6 +97,9 @@ const { title } = Astro.props;
                         <button id="map-close-btn" class="map-close-btn" onclick="window.switchPanel('chat')" style="position: absolute; top: 16px; right: 16px; z-index: 1005; box-shadow: 0 2px 10px rgba(0,0,0,0.1); background: var(--header-bg); color: var(--text-primary); border: none; width: 40px; height: 40px; border-radius: 50%; font-size: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: opacity 0.3s, transform 0.3s; opacity: 1;" aria-label="Cerrar Mapa">
                             ✕
                         </button>
+
+                        <div id="map-top-pills" style="position: absolute; top: 16px; left: 16px; right: 64px; z-index: 1005; display: none; gap: 8px; overflow-x: auto; padding-bottom: 8px; white-space: nowrap; scrollbar-width: none; -ms-overflow-style: none;">
+                        </div>
                         
                         <!-- Contenedor UI de la InfoPill -->
                         <div id="map-ui-container" style="position: absolute; top: 16px; left: 50%; z-index: 1001; transform: translateX(-50%); width: calc(100% - 32px); max-width: 448px; display: flex; flex-direction: column; gap: 8px; transition: opacity 0.3s, transform 0.3s; opacity: 0; pointer-events: none;">
