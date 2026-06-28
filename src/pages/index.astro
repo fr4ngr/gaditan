@@ -747,15 +747,16 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                                 distanceText = `${distanceKm}km`;
                             }
 
+                            const codeMatch = res.name.match(/\(([^)]+)\)/);
+                            const code = codeMatch ? codeMatch[1] : res.name;
                             const bubbleHtml = `
-                                <div style="background:var(--primary-color); color:white; border:2px solid white; border-radius:12px; padding:6px 8px; font-family:sans-serif; text-align:center; box-shadow:0 2px 5px rgba(0,0,0,0.4); min-width:90px;">
-                                    <div style="font-weight:bold; font-size:14px; margin-bottom:2px;">✈️ ${res.name.replace('Aeropuerto de ', '')}</div>
-                                    <div style="font-size:11px; opacity:0.9;">${durationText} | ${distanceText}</div>
+                                <div style="background:var(--primary-color); color:white; border:2px solid white; border-radius:12px; padding:6px 10px; font-family:sans-serif; text-align:center; box-shadow:0 2px 5px rgba(0,0,0,0.4); white-space:nowrap;">
+                                    <div style="font-weight:bold; font-size:13px;">✈️ ${code} | ${durationText} | ${distanceText}</div>
                                 </div>
                             `;
                             const airportIcon = mapL.divIcon({
                                 html: bubbleHtml,
-                                className: '', iconSize: [110, 48], iconAnchor: [55, 48]
+                                className: '', iconSize: [140, 32], iconAnchor: [70, 32]
                             });
 
                             const marker = mapL.marker([res.lat, res.lon], {icon: airportIcon}).addTo(markersLayer);
@@ -944,7 +945,7 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             const labelEl = document.getElementById('map-info-label');
             if (titleEl) titleEl.innerText = title;
             if (descEl) descEl.innerText = desc || '';
-            if (labelEl) labelEl.innerText = type === 'airport' ? 'AEROPUERTO' : 'PARADA DE TAXI';
+            if (labelEl) labelEl.innerText = type === 'airport' ? 'DESTINO: AEROPUERTO' : 'PARADA DE TAXI';
             
             const actions = document.getElementById('map-pill-actions');
             const floatingStats = document.getElementById('map-floating-route-stats');
