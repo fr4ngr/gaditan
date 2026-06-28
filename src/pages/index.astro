@@ -876,9 +876,10 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                 if (window.devMockLat && window.devMockLon) {
                     onLocationSuccess(window.devMockLat, window.devMockLon);
                 } else if (navigator.geolocation) {
+                    const needHighAccuracy = (lat !== 'ALL_AIRPORTS');
                     navigator.geolocation.getCurrentPosition((position) => {
                         onLocationSuccess(position.coords.latitude, position.coords.longitude);
-                    }, onLocationError, { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 });
+                    }, onLocationError, { enableHighAccuracy: needHighAccuracy, timeout: 10000, maximumAge: 300000 });
                 } else {
                     onLocationError();
                 }
