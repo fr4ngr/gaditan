@@ -219,14 +219,15 @@ body {
 
 .chat-input-wrapper {
   flex-grow: 1;
-  background-color: var(--header-bg); /* Fondo sólido sin transparencia */
-  border-radius: 28px; /* Mitad de 56px para bordes totalmente redondos */
+  background-color: var(--header-bg);
+  border-radius: 28px;
   border: 1px solid var(--input-border);
-  padding: 0 0.4rem 0 1.2rem; /* Menos padding derecho para que el botón encaje */
+  padding: 0 0.2rem 0 1.2rem; /* Pegar más el botón a la derecha */
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  height: 56px; /* Altura exacta para igualar al botón */
+  justify-content: space-between;
+  gap: 0.25rem;
+  height: 56px;
   box-sizing: border-box; /* Asegurar que el borde no suma altura extra */
   box-shadow: 0 8px 24px rgba(0,0,0,0.12);
 }
@@ -236,6 +237,7 @@ body {
 }
 
 .chat-input {
+  flex-grow: 1;
   width: 100%;
   border: none;
   background: transparent;
@@ -246,8 +248,8 @@ body {
   resize: none;
   max-height: 100px;
   line-height: 1.4;
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 .chat-input::-webkit-scrollbar {
