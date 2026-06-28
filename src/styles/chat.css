@@ -225,7 +225,8 @@ body {
   padding: 0 1.2rem;
   display: flex;
   align-items: center;
-  min-height: 56px; /* Igualar al botón */
+  height: 56px; /* Altura exacta para igualar al botón */
+  box-sizing: border-box; /* Asegurar que el borde no suma altura extra */
   box-shadow: 0 8px 24px rgba(0,0,0,0.12);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
@@ -267,6 +268,9 @@ body {
   box-shadow: none;
   overflow: visible;
   padding: 0;
+  outline: none;
+  -webkit-tap-highlight-color: transparent; /* Quitar cuadrado azul en móviles */
+  user-select: none;
 }
 
 .send-button:hover {
