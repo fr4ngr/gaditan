@@ -219,7 +219,7 @@ body {
 
 .chat-input-wrapper {
   flex-grow: 1;
-  background-color: rgba(255, 255, 255, 0.85); /* Semi-transparente base */
+  background-color: var(--header-bg); /* Fondo sólido sin transparencia */
   border-radius: 28px; /* Mitad de 56px para bordes totalmente redondos */
   border: 1px solid var(--input-border);
   padding: 0 1.2rem;
@@ -228,12 +228,10 @@ body {
   height: 56px; /* Altura exacta para igualar al botón */
   box-sizing: border-box; /* Asegurar que el borde no suma altura extra */
   box-shadow: 0 8px 24px rgba(0,0,0,0.12);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
 }
 
 [data-theme="dark"] .chat-input-wrapper {
-  background-color: rgba(30, 30, 30, 0.85);
+  background-color: var(--header-bg);
 }
 
 .chat-input {
