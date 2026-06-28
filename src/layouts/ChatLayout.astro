@@ -26,9 +26,16 @@ const { title } = Astro.props;
 		<link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
 		<script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
         
-        <!-- Leaflet Gesture Handling -->
-        <link rel="stylesheet" href="https://unpkg.com/leaflet-gesture-handling@1.2.2/dist/leaflet-gesture-handling.min.css" type="text/css">
-        <script src="https://unpkg.com/leaflet-gesture-handling@1.2.2/dist/leaflet-gesture-handling.min.js"></script>
+		<!-- Leaflet Gesture Handling -->
+        <link rel="stylesheet" href="https://unpkg.com/leaflet-gesture-handling/dist/leaflet-gesture-handling.min.css" type="text/css">
+        <script src="https://unpkg.com/leaflet-gesture-handling"></script>
+        
+        <style>
+            /* Permitir scroll nativo horizontal para el swiper */
+            .leaflet-container {
+                touch-action: pan-x pan-y !important;
+            }
+        </style>
 	</head>
 	<body>
         <div class="app-container" style="display: flex; flex-direction: column; height: 100dvh; max-width: 100%;">
