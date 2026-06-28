@@ -194,6 +194,11 @@ const { title } = Astro.props;
         </div>
         
         <style is:global>
+            /* ELIMINAR FONDO GRIS POR DEFECTO DE LEAFLET AL CARGAR */
+            .leaflet-container {
+                background: var(--bg-color) !important;
+            }
+            
             /* RUTAS ANIMADAS (Hormiguitas) */
             .animated-route {
                 animation: dash-animation 2s linear infinite;
