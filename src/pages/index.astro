@@ -811,13 +811,16 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                         if (topPillsContainer) {
                             const btn = document.createElement('button');
                             const miniSvg = `
-                            <div style="background:var(--primary-color); width: 16px; height: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 6px;">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="10" height="10" style="transform: rotate(45deg);">
+                            <div style="background:var(--primary-color); width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 8px;">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="16" height="16" style="transform: rotate(45deg);">
                                     <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/>
                                 </svg>
                             </div>`;
                             btn.innerHTML = `${miniSvg}${cityName}`;
-                            btn.style.cssText = 'display: flex; align-items: center; background: var(--header-bg); border: 1px solid var(--header-border); border-radius: 20px; padding: 6px 14px 6px 10px; font-size: 13px; font-weight: 600; color: var(--text-primary); cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.1); flex-shrink: 0;';
+                            btn.style.cssText = 'display: flex; align-items: center; background: var(--header-bg); border: 1px solid var(--header-border); border-radius: 20px; padding: 6px 16px 6px 6px; font-size: 14px; font-weight: 600; color: var(--text-primary); cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.15); flex-shrink: 0; transition: transform 0.2s;';
+                            btn.onmousedown = () => btn.style.transform = 'scale(0.95)';
+                            btn.onmouseup = () => btn.style.transform = 'scale(1)';
+                            btn.onmouseleave = () => btn.style.transform = 'scale(1)';
                             btn.onclick = selectAirport;
                             topPillsContainer.appendChild(btn);
                         }
