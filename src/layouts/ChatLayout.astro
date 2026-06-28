@@ -43,7 +43,7 @@ const { title } = Astro.props;
                 
                 <!-- Info Central (Avatar y Títulos) -->
                 <div class="chat-header-info" id="header-info" style="display: flex; align-items: center; gap: 0.5rem;">
-                    <div class="logo" id="header-lottie" style="width: 38px; height: 38px; transform: scale(1.4); flex-shrink: 0;"></div>
+                    <div class="logo" id="header-lottie" style="width: 44px; height: 44px; overflow: hidden; flex-shrink: 0;"></div>
                     <div class="chat-title-group" id="header-title-group">
                         <h1 id="header-title">cadiz.chat</h1>
                         <span class="chat-subtitle" id="header-subtitle">Asistente Virtual</span>
@@ -426,7 +426,10 @@ const { title } = Astro.props;
                         renderer: 'svg',
                         loop: true,
                         autoplay: true,
-                        path: '/lottie/blob-rounding.json' // Blob con Azul Institucional y Cyan
+                        path: '/lottie/chat.json',
+                        rendererSettings: {
+                            preserveAspectRatio: 'xMidYBottom slice'
+                        }
                     });
                 }
             });
