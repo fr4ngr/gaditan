@@ -82,12 +82,12 @@ const { title } = Astro.props;
                     
                     <!-- PANEL 0: GUARDADOS -->
                     <div class="swipe-panel" id="panel-guardados">
-                        <main class="messages-area" id="saved-messages-container" style="padding: 20px; width: 100%; max-width: 480px; margin: 0 auto; height: 100%; overflow-y: auto; background: var(--bg-color); position: relative;">
+                        <main class="messages-area" id="saved-messages-container" style="padding: 20px; width: 100%; max-width: 480px; margin: 0 auto; height: 100%; overflow-y: auto; background: rgba(59, 130, 246, 0.5); position: relative;">
                             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
-                                <button class="back-swipe-btn" onclick="window.switchPanel('chat')" aria-label="Volver">⬅ Volver al Chat</button>
-                                <h2 style="margin:0; font-size:16px; color: var(--text-primary);">🔖 Guardados</h2>
+                                <button class="back-swipe-btn" style="color: white;" onclick="window.switchPanel('chat')" aria-label="Volver">⬅ Volver al Chat</button>
+                                <h2 style="margin:0; font-size:16px; color: white;">⭐ Guardados</h2>
                             </div>
-                            <p style="color:var(--text-secondary); text-align:center; margin-top:40px;">No tienes mensajes guardados aún.</p>
+                            <p style="color: rgba(255, 255, 255, 0.85); text-align:center; margin-top:40px;">No tienes mensajes guardados aún.</p>
                         </main>
                     </div>
 
