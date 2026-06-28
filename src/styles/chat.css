@@ -681,6 +681,22 @@ body {
   padding-left: 12px;
 }
 
+.messages-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: max(1rem, env(safe-area-inset-top)) 1rem 70px 1rem;
+  scroll-behavior: smooth;
+  height: 100%;
+  padding-bottom: 90px;
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+/* Ocultar barra de desplazamiento en el chat */
+.messages-container::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
+}
+
 .nav-bottom-panel {
   position: absolute;
   bottom: env(safe-area-inset-bottom, 30px);
