@@ -349,46 +349,10 @@ const { title } = Astro.props;
                     }
                 });
 
-                // --- EFECTO "DECK DE CARTAS" AL DESLIZAR ---
+                // Cierre magnético manejado por CSS (scroll-snap-type: x mandatory)
+                // Se ha eliminado el efecto "deck de cartas" por preferencia del usuario.
                 const swiper = document.getElementById('main-swiper');
-                const panels = document.querySelectorAll('.swipe-panel');
-                if (!swiper || panels.length === 0) return;
-
-                const updateCards = () => {
-                    const scrollX = swiper.scrollLeft;
-                    const viewportCenter = scrollX + (window.innerWidth / 2);
-                    const maxDistance = window.innerWidth;
-                    
-                    panels.forEach((panel) => {
-                        const htmlPanel = panel;
-                        const panelCenter = htmlPanel.offsetLeft + (htmlPanel.clientWidth / 2);
-                        const distance = Math.abs(viewportCenter - panelCenter);
-                        
-                        let normalized = distance / maxDistance;
-                        if (normalized > 1) normalized = 1;
-
-                        const scale = 1 - (normalized * 0.15);
-                        const opacity = 1 - (normalized * 0.6);
-                        const borderRadius = normalized * 30;
-                        
-                        htmlPanel.style.transform = `scale(${scale})`;
-                        htmlPanel.style.opacity = opacity.toString();
-                        htmlPanel.style.borderRadius = `${borderRadius}px`;
-                        htmlPanel.style.overflow = 'hidden';
-                        
-                        if (normalized > 0.1) {
-                            htmlPanel.style.boxShadow = `0 10px 40px rgba(0,0,0,${0.15 * normalized})`;
-                        } else {
-                            htmlPanel.style.boxShadow = 'none';
-                        }
-                    });
-                };
-
-                swiper.addEventListener('scroll', () => {
-                    requestAnimationFrame(updateCards);
-                });
-                setTimeout(updateCards, 100);
-                window.addEventListener('resize', updateCards);
+                if (!swiper) return;
                 
                 // --- INICIALIZAR LOTTIE ANIMATION EN BOTÓN DE ENVIAR ---
                 const lottieContainer = document.getElementById('lottie-send');
