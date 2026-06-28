@@ -758,11 +758,6 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             uiContainer.style.transform = 'translateX(-50%) translateY(0)';
             uiContainer.style.pointerEvents = 'auto';
         }
-        if (mapCloseBtn) {
-            mapCloseBtn.style.opacity = '0';
-            mapCloseBtn.style.pointerEvents = 'none';
-            mapCloseBtn.style.transform = 'scale(0.8)';
-        }
     };
 
     window.mapActionDirections = function() {
@@ -952,7 +947,8 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                                 weight: 6,
                                 opacity: 1,
                                 dashArray: '10, 10',
-                                lineJoin: 'round'
+                                lineJoin: 'round',
+                                className: 'animated-route'
                             }).addTo(window.currentMap);
                         } else {
                             window.currentRoutePolylineBase.setLatLngs(coordinates);
