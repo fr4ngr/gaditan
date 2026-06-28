@@ -94,7 +94,7 @@ const { title } = Astro.props;
 
                     <!-- PANEL 1: CHAT PRINCIPAL -->
                     <div class="swipe-panel" id="panel-chat">
-                        <main class="messages-area" id="messages-container" style="width: 100%; max-width: 480px; margin: 0 auto; height: 100%; overflow-y: auto; background: var(--chat-bg);">
+                        <main class="messages-area" id="messages-container" style="width: 100%; max-width: 480px; margin: 0 auto; height: 100%; overflow-y: auto; background: var(--chat-bg); padding-bottom: 90px;">
                             <slot />
                         </main>
                     </div>
@@ -167,16 +167,16 @@ const { title } = Astro.props;
                 </div>
             </div>
             
-            <!-- ÁREA DE INPUT ESTÁTICA -->
+            <!-- ÁREA DE INPUT ESTÁTICA Y FLOTANTE -->
             <div class="input-area" id="main-input" style="width: 100%; max-width: 480px; margin: 0 auto;">
                 <div class="chat-input-wrapper">
-                    <textarea id="chat-input" class="chat-input" placeholder="Pregunta por una parada, tarifa, objetos perdidos..." rows="1"></textarea>
-                    <button id="send-btn" class="send-button" aria-label="Enviar mensaje">
-                        <svg viewBox="0 0 24 24">
-                            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
-                        </svg>
-                    </button>
+                    <textarea id="chat-input" class="chat-input" placeholder="Pregunta por una parada, tarifa..." rows="1"></textarea>
                 </div>
+                <button id="send-btn" class="send-button" aria-label="Enviar mensaje">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                    </svg>
+                </button>
             </div>
 
             <!-- Capa de Navegación en Vivo a Pantalla Completa -->
