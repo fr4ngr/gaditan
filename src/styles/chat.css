@@ -100,6 +100,12 @@ body {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.messages-area::-webkit-scrollbar {
+  display: none;
 }
 
 /* --- Burbujas de Chat --- */
@@ -681,19 +687,17 @@ body {
   padding-left: 12px;
 }
 
-.messages-container {
-  flex: 1;
-  overflow-y: auto;
-  padding: max(1rem, env(safe-area-inset-top)) 1rem 70px 1rem;
-  scroll-behavior: smooth;
-  height: 100%;
-  padding-bottom: 90px;
+#messages-container,
+#saved-messages-container,
+.messages-area {
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
 }
 
-/* Ocultar barra de desplazamiento en el chat */
-.messages-container::-webkit-scrollbar {
+/* Ocultar barra de desplazamiento en todas las áreas de mensajes */
+#messages-container::-webkit-scrollbar,
+#saved-messages-container::-webkit-scrollbar,
+.messages-area::-webkit-scrollbar {
   display: none; /* Chrome, Safari and Opera */
 }
 
