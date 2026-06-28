@@ -247,6 +247,12 @@ body {
   resize: none;
   max-height: 100px;
   line-height: 1.4;
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.chat-input::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
 }
 
 .chat-input::placeholder {
