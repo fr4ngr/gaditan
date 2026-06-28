@@ -478,6 +478,16 @@ import ChatLayout from '../layouts/ChatLayout.astro';
     }
 
     // --- LÓGICA DE NAVEGACIÓN Y CABECERA ESTÁTICA ---
+    document.addEventListener("DOMContentLoaded", () => {
+        const swiper = document.getElementById('main-swiper');
+        if (swiper) {
+            // Ajustar al chat sin animación al cargar la página
+            swiper.style.scrollBehavior = 'auto';
+            swiper.scrollLeft = window.innerWidth;
+            setTimeout(() => { swiper.style.scrollBehavior = 'smooth'; }, 50);
+        }
+    });
+
     window.switchPanel = function(panelId: 'guardados' | 'chat' | 'mapa') {
         const swiper = document.getElementById('main-swiper');
         if (!swiper) return;

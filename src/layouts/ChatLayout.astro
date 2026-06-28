@@ -231,7 +231,9 @@ const { title } = Astro.props;
             .swiper-container {
                 width: 100vw;
                 height: 100dvh;
-                overflow: hidden; /* Disabled manual swiping */
+                overflow-x: auto; /* Enable manual swiping */
+                overflow-y: hidden;
+                scroll-snap-type: x mandatory;
                 scroll-behavior: smooth;
             }
             /* Hide scrollbar for swiper */
