@@ -113,10 +113,9 @@ Además, cuando devuelvas una TariffCard, NO incluyas "Tarifa Urbana", "Tarifa I
         let currentModel = 'gemini-2.5-flash';
         
         try {
+            // PRIMERA LLAMADA: Con tools, pero SIN responseMimeType ni schema (porque son incompatibles)
             let configObj = {
                 systemInstruction: systemInstruction,
-                responseMimeType: "application/json",
-                responseSchema: schema,
                 temperature: 0.1,
                 tools: [beachTool]
             };
@@ -179,11 +178,18 @@ Además, cuando devuelvas una TariffCard, NO incluyas "Tarifa Urbana", "Tarifa I
                         }]
                     });
 
-                    // Call generateContent again with the new history
+                    // SEGUNDA LLAMADA: Sin tools, pero CON responseMimeType y schema para forzar el JSON
+                    let configObjFinal = {
+                        systemInstruction: systemInstruction,
+                        responseMimeType: "application/json",
+                        responseSchema: schema,
+                        temperature: 0.1
+                    };
+
                     response = await ai.models.generateContent({
                         model: currentModel,
                         contents: historyContents,
-                        config: configObj
+                        config: configObjFinal
                     });
                 }
             }
@@ -201,7 +207,9 @@ Además, cuando devuelvas una TariffCard, NO incluyas "Tarifa Urbana", "Tarifa I
 
         let parsedData;
         try {
-            parsedData = JSON.parse(responseText);
+            // Limpiar posibles bloques markdown de código si la primera llamada (sin schema) devolvió texto
+            let cleanText = responseText.replace(/```json/gi, '').replace(/```/g, '').trim();
+            parsedData = JSON.parse(cleanText);
         } catch(e) {
             // Si el modelo alucinó texto plano
             parsedData = { cardType: 'TextCard', content: responseText, suggestedBlocks: ['🚕 Ver tarifas'] };
