@@ -30,7 +30,12 @@ function decodeBase64Utf8(base64) {
 
 function encodeUtf8Base64(str) {
     const utf8Bytes = new TextEncoder().encode(str);
-    return btoa(String.fromCharCode(...utf8Bytes));
+    let binary = '';
+    const chunkSize = 8192;
+    for (let i = 0; i < utf8Bytes.length; i += chunkSize) {
+        binary += String.fromCharCode.apply(null, utf8Bytes.subarray(i, i + chunkSize));
+    }
+    return btoa(binary);
 }
 
 export async function onRequestGet(context) {
