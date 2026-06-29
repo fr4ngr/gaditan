@@ -51,6 +51,8 @@ export async function onRequest(context) {
         let currentTemp = "N/A";
         let currentSky = "N/A";
         let currentSkyDesc = "";
+        let currentWindDir = "N/A";
+        let currentWindSpeed = "N/A";
         let tMax = "N/A";
         let tMin = "N/A";
         let uvMax = "N/A";
@@ -79,6 +81,13 @@ export async function onRequest(context) {
                 currentSky = hourlyData.estadoCielo[0].value;
                 currentSkyDesc = hourlyData.estadoCielo[0].descripcion;
             }
+            if (hourlyData.vientoAndRachaMax && hourlyData.vientoAndRachaMax.length > 0) {
+                const windObj = hourlyData.vientoAndRachaMax.find(v => v.direccion && v.velocidad);
+                if (windObj) {
+                    currentWindDir = windObj.direccion[0];
+                    currentWindSpeed = windObj.velocidad[0];
+                }
+            }
         }
 
         // Tides formatting
@@ -98,7 +107,9 @@ export async function onRequest(context) {
             current: {
                 temp: currentTemp,
                 sky: currentSky,
-                skyDesc: currentSkyDesc
+                skyDesc: currentSkyDesc,
+                windDir: currentWindDir,
+                windSpeed: currentWindSpeed
             },
             daily: {
                 tempMax: tMax,
@@ -109,7 +120,7 @@ export async function onRequest(context) {
         }), {
             headers: {
                 "Content-Type": "application/json",
-                "Cache-Control": "max-age=1800" // Cache for 30 mins
+                "Cache-Control": "max-age=0, no-cache, no-store, must-revalidate" // Prevent caching issues during test
             }
         });
 

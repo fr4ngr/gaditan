@@ -1960,7 +1960,7 @@ import ChatLayout from '../layouts/ChatLayout.astro';
         
         let weatherHtml = '';
         try {
-            const wRes = await fetch('/api/weather');
+            const wRes = await fetch('/api/weather?t=' + new Date().getTime());
             if (wRes.ok) {
                 const wData = await wRes.json();
                 if (!wData.error) {
@@ -1976,6 +1976,11 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                     else if (desc.includes('nuboso') || desc.includes('cubierto')) weatherIcon = '☁️';
                     else if (desc.includes('despejado')) weatherIcon = '☀️';
 
+                    let windStr = '';
+                    if (wData.current.windSpeed && wData.current.windSpeed !== 'N/A') {
+                        windStr = `<div>💨 Viento: ${wData.current.windSpeed} km/h (${wData.current.windDir})</div>`;
+                    }
+
                     weatherHtml = `
                         <div class="ai-card weather-card" style="margin-top: 12px; margin-bottom: 12px; border-left: 4px solid #0ea5e9;">
                             <div class="card-header" style="display:flex; align-items:center; gap:8px;">
@@ -1988,6 +1993,7 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                                     <div style="text-align:right; font-size:0.85rem; color:var(--text-secondary);">
                                         <div>Máx: ${wData.daily.tempMax}° | Mín: ${wData.daily.tempMin}°</div>
                                         <div>Índice UV: ${wData.daily.uvMax}</div>
+                                        ${windStr}
                                     </div>
                                 </div>
                                 <div style="font-size:0.95rem; font-weight:500; margin-top:4px;">${wData.current.skyDesc}</div>
