@@ -1158,7 +1158,7 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                     descEl.innerText = desc || '';
                 }
             }
-            if (labelEl) labelEl.innerText = type === 'airport' ? 'DESTINO: AEROPUERTO' : 'PARADA DE TAXI';
+            if (labelEl) labelEl.innerText = type === 'airport' ? 'DESTINO:' : 'PARADA DE TAXI';
             
             const actions = document.getElementById('map-pill-actions');
             const floatingStats = document.getElementById('map-floating-route-stats');
@@ -1211,7 +1211,7 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             if (instEl) instEl.style.display = 'flex';
             if (routeTime) routeTime.innerText = "Calculando...";
             if (routeDistance) routeDistance.innerText = "-- m";
-            if (labelEl) labelEl.innerText = `DESTINO: ${type === 'airport' ? 'AEROPUERTO' : 'PARADA DE TAXI'}`;
+            if (labelEl) labelEl.innerText = type === 'airport' ? 'DESTINO:' : 'DESTINO: PARADA DE TAXI';
 
             const handlePosition = async (userLat: number, userLon: number) => {
                 const stopLat = window.activeMapStopLat;
