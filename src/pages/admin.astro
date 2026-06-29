@@ -146,6 +146,8 @@ import '../styles/components.css';
                 <button class="tab-btn active" onclick="switchTab('estado')">Estado del Servicio</button>
                 <button class="tab-btn" onclick="switchTab('ver-cerebros')">Mis Cerebros</button>
                 <button class="tab-btn" onclick="switchTab('crear-cerebro')">+ Nuevo Cerebro</button>
+                <button class="tab-btn" onclick="switchTab('personalidad')">🤖 Personalidad</button>
+                <button class="tab-btn" onclick="switchTab('simulador')">🧪 Simulador</button>
             </div>
 
             <div class="card">
@@ -222,6 +224,38 @@ import '../styles/components.css';
                         <button class="btn btn-primary" onclick="createNewBrain()">➕ Crear Cerebro</button>
                     </div>
 
+                    <!-- TAB 4: Personalidad -->
+                    <div id="tab-personalidad" class="tab-content">
+                        <h3 class="text-title">El "Alma" del Bot (System Prompt)</h3>
+                        <p class="text-muted">Modifica la forma de ser, el tono y las reglas inquebrantables de la IA.</p>
+                        
+                        <div class="form-group">
+                            <label>System Prompt (Markdown):</label>
+                            <textarea id="system-prompt-text" style="display: block; min-height: 400px; font-family: monospace; font-size: 13px;" required></textarea>
+                        </div>
+                        
+                        <button class="btn btn-primary" onclick="saveSystemPrompt()">💾 Guardar Personalidad</button>
+                    </div>
+
+                    <!-- TAB 5: Simulador -->
+                    <div id="tab-simulador" class="tab-content">
+                        <h3 class="text-title">Laboratorio de Pruebas</h3>
+                        <p class="text-muted">Prueba cómo responde la IA con los cerebros actuales sin afectar a la web pública.</p>
+                        
+                        <div style="border: 1px solid var(--bubble-bot-border); border-radius: 8px; background: white; display: flex; flex-direction: column; height: 400px;">
+                            <div id="sim-chat-window" style="flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;">
+                                <div style="background: var(--ds-bg-light); padding: 10px; border-radius: 8px; align-self: flex-start; max-width: 80%;">
+                                    <strong>Bot:</strong> ¡Hola! Hazme preguntas para probar mi conocimiento.
+                                </div>
+                            </div>
+                            <div style="border-top: 1px solid var(--bubble-bot-border); padding: 10px; display: flex; gap: 10px;">
+                                <input type="text" id="sim-input" placeholder="Escribe un mensaje..." style="flex: 1; margin: 0;" onkeypress="if(event.key === 'Enter') sendSimMessage()" />
+                                <button class="btn btn-primary" style="margin: 0;" onclick="sendSimMessage()">Enviar</button>
+                            </div>
+                        </div>
+                        <button class="btn btn-secondary mt-sm" onclick="clearSimChat()">🧹 Limpiar Chat</button>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -264,6 +298,7 @@ import '../styles/components.css';
             document.getElementById('tab-' + tabId).classList.add('active');
 
             if (tabId === 'ver-cerebros') loadBrainsList();
+            if (tabId === 'personalidad') loadSystemPrompt();
         }
 
         function showMessage(msg, isError = false) {
@@ -430,6 +465,127 @@ import '../styles/components.css';
             } catch (e) {
                 showMessage("Error de red", true);
             }
+        };
+
+        // --- Personalidad Tab ---
+        window.loadSystemPrompt = async function() {
+            document.getElementById('system-prompt-text').value = 'Cargando personalidad desde GitHub...';
+            try {
+                const res = await fetch(`/api/admin/system`, { headers: { 'Authorization': 'Bearer ' + sessionPwd } });
+                const data = await res.json();
+                if (res.ok) {
+                    document.getElementById('system-prompt-text').value = data.content;
+                } else {
+                    document.getElementById('system-prompt-text').value = "Error al cargar: " + data.error;
+                }
+            } catch(e) {
+                document.getElementById('system-prompt-text').value = "Error de red.";
+            }
+        };
+
+        window.saveSystemPrompt = async function() {
+            const text = document.getElementById('system-prompt-text').value;
+            showMessage("Guardando nueva personalidad en GitHub...", false);
+            try {
+                const res = await fetch('/api/admin/system', {
+                    method: 'POST',
+                    headers: { 'Authorization': 'Bearer ' + sessionPwd, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ content: text })
+                });
+                if (res.ok) {
+                    showMessage("¡Personalidad actualizada! El bot usará esta configuración en unos minutos.");
+                } else {
+                    const data = await res.json();
+                    showMessage("Error: " + data.error, true);
+                }
+            } catch (e) {
+                showMessage("Error de red", true);
+            }
+        };
+
+        // --- Simulador Tab ---
+        let simHistory = [];
+        
+        window.sendSimMessage = async function() {
+            const input = document.getElementById('sim-input');
+            const msg = input.value.trim();
+            if (!msg) return;
+            
+            input.value = '';
+            appendSimBubble('User', msg);
+            
+            // Build history format for API
+            const historyForApi = simHistory.map(h => ({ role: h.role, parts: [{ text: h.text }] }));
+            historyForApi.push({ role: 'user', parts: [{ text: msg }] });
+            
+            simHistory.push({ role: 'user', text: msg });
+            
+            appendSimBubble('System', '...', true);
+            
+            try {
+                const res = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: msg, history: historyForApi })
+                });
+                const data = await res.json();
+                
+                // remove loading bubble
+                document.getElementById('sim-chat-window').lastChild.remove();
+                
+                if (res.ok) {
+                    let botText = data.content;
+                    if (data.cardType !== 'TextCard') {
+                        botText += `\n\n[Tarjeta renderizada: ${data.cardType}]`;
+                    }
+                    if (data.suggestedBlocks) {
+                        botText += `\n[Sugerencias: ${data.suggestedBlocks.join(' | ')}]`;
+                    }
+                    appendSimBubble('Bot', botText);
+                    simHistory.push({ role: 'model', text: data.content }); // we only store pure text in history
+                } else {
+                    appendSimBubble('Error', data.error);
+                }
+            } catch(e) {
+                document.getElementById('sim-chat-window').lastChild.remove();
+                appendSimBubble('Error', 'Error de red conectando con el bot.');
+            }
+        };
+
+        window.appendSimBubble = function(sender, text, isTemp = false) {
+            const windowDiv = document.getElementById('sim-chat-window');
+            const div = document.createElement('div');
+            div.style.padding = '10px';
+            div.style.borderRadius = '8px';
+            div.style.maxWidth = '80%';
+            div.style.whiteSpace = 'pre-wrap';
+            
+            if (sender === 'User') {
+                div.style.alignSelf = 'flex-end';
+                div.style.background = 'var(--ds-primary)';
+                div.style.color = 'white';
+            } else if (sender === 'Error') {
+                div.style.alignSelf = 'center';
+                div.style.background = '#ffebee';
+                div.style.color = '#c62828';
+            } else {
+                div.style.alignSelf = 'flex-start';
+                div.style.background = 'var(--ds-bg-light)';
+                div.style.border = '1px solid var(--bubble-bot-border)';
+            }
+            
+            div.innerHTML = `<strong>${sender}:</strong> ${text}`;
+            windowDiv.appendChild(div);
+            windowDiv.scrollTop = windowDiv.scrollHeight;
+        };
+
+        window.clearSimChat = function() {
+            simHistory = [];
+            document.getElementById('sim-chat-window').innerHTML = `
+                <div style="background: var(--ds-bg-light); padding: 10px; border-radius: 8px; align-self: flex-start; max-width: 80%;">
+                    <strong>Bot:</strong> ¡Hola! Hazme preguntas para probar mi conocimiento.
+                </div>
+            `;
         };
 
         // --- PDF Extraction Helper ---
