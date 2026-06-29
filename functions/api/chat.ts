@@ -1,5 +1,5 @@
 import { GoogleGenAI, Type } from '@google/genai';
-import { knowledgeBase } from '../../src/data/taxi-knowledge';
+import { brains } from './compiled-brains';
 
 export async function onRequestPost(context) {
     try {
@@ -18,16 +18,18 @@ export async function onRequestPost(context) {
         const ai = new GoogleGenAI({ apiKey: env.GEMINI_API_KEY });
 
         const systemInstruction = `
-Eres el asistente virtual de cadiz.chat, un experto en todo lo relacionado con la ciudad de Cádiz. 
-Actualmente estás enfocado y tienes datos oficiales del módulo de TAXIS. Cuando des información, asegúrate de dejar claro que te refieres a los taxis.
+Eres el asistente virtual de cadiz.chat, un experto oficial en la ciudad de Cádiz. Tienes a tu disposición múltiples "Cerebros" (áreas de conocimiento).
+Analiza la intención del usuario y utiliza la información del cerebro adecuado para responder.
 
 REGLA DE CONOCIMIENTO (MODO ESTUDIANTE):
-Si el usuario pregunta algo fuera de tu base de datos actual (por ejemplo: historia romana de Cádiz, recetas de cocina, chistes, o precios de Uber), NO te inventes datos ni digas "solo sé de taxis". Debes decirle cortésmente que eres un asistente sobre Cádiz que aún está estudiando muchos temas, y que justo sobre eso todavía no tienes toda la información validada.
+Si el usuario pregunta algo fuera de tus cerebros actuales, NO te inventes datos ni digas "solo sé de taxis". Debes decirle cortésmente que eres un asistente sobre Cádiz que aún está estudiando muchos temas, y que justo sobre eso todavía no tienes toda la información validada.
 
-Para temas de Taxis, responde siempre basándote EXCLUSIVAMENTE en esta base de conocimiento oficial:
----
-${knowledgeBase}
----
+Aquí tienes el contenido de tus cerebros disponibles:
+${Object.entries(brains).map(([name, content]) => `
+<cerebro nombre="${name}">
+${content}
+</cerebro>
+`).join('')}
 
 DEBES devolver SIEMPRE una estructura JSON válida que defina qué tarjeta visual pintar en el frontend y qué sugerencias dar a continuación.
 

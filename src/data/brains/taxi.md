@@ -1,4 +1,4 @@
-export const knowledgeBase = `
+`
 # BASE DE CONOCIMIENTO: CONFIGURACIÓN INTEGRAL DEL TAXI EN CÁDIZ (2026)
 
 ## 1. Tarifas Urbanas (Cádiz Capital)
@@ -18,7 +18,7 @@ Las tarifas aplicables en el ámbito del término municipal de Cádiz están reg
 *   **Tarifa 3 (Incremento del 20% sobre T1 o T2):** Se activa exclusivamente en los siguientes periodos y horarios específicos:
     *   **Sábados:** De 03:00 a 06:00 horas.
     *   **Domingos y Festivos:** De 03:00 a 07:00 horas.
-    *   **Carnavales de Cádiz:** Las 24 horas durante los dos sábados, los dos domingos de carnaval y el lunes de resaca; para el resto de días de carnaval, aplica únicamente de 23:00 a 06:00 horas.
+    *   **Carnavales de Cádiz:** Las 24 horas durante los dos sábados, los dos domingos de carnaval y el lunes de resaca para el resto de días de carnaval, aplica únicamente de 23:00 a 06:00 horas.
     *   **Semana Santa:** Desde las 15:00 horas del Jueves Santo hasta las 07:00 horas del Sábado Santo.
     *   **Navidad y Año Nuevo:** Desde las 21:00 horas del 24 de diciembre hasta las 23:59 horas del 25 de diciembre; y desde las 21:00 horas del 31 de diciembre hasta las 23:59 horas del 1 de enero.
 
