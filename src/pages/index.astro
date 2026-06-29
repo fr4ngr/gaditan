@@ -429,19 +429,28 @@ import ChatLayout from '../layouts/ChatLayout.astro';
         }
         if (data.cardType === 'MapCard') {
             let onclickParam = `null, null, '${msgId}'`;
-            let btnText = '📍 Abrir Mapa Interactivo';
+            const mapIcon = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>`;
+            const planeIcon = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.2-1.1.6L3 8l6 5.5L6 17l-3 1 1 3 4.5-1.5L13 22l3-1-1-3 3.5-3 5.5 6 1.2-.7c.4-.2.7-.6.6-1.1Z"/></svg>`;
+
+            let btnText = `${mapIcon} Ver mapa de paradas de taxi`;
+            let extraBtn = '';
 
             if (data.stopName === 'NEAREST') {
                 onclickParam = `'NEAREST', null, '${msgId}'`;
-                btnText = '📍 Localizar Parada Cercana';
+                btnText = `${mapIcon} Localizar Parada Cercana`;
             } else if (data.stopName === 'NEAREST_AIRPORT') {
                 onclickParam = `'NEAREST_AIRPORT', null, '${msgId}'`;
-                btnText = '✈️ Localizar Aeropuerto Cercano';
+                btnText = `${planeIcon} Localizar Aeropuerto Cercano`;
             } else if (data.stopName === 'ALL_AIRPORTS') {
                 onclickParam = `'ALL_AIRPORTS', null, '${msgId}'`;
-                btnText = '✈️ Ver Mapa de Aeropuertos';
+                btnText = `${planeIcon} Ver aeropuertos cerca`;
             } else if (data.lat) {
                 onclickParam = `'${data.lat}', '${data.lon}', '${msgId}'`;
+            } else {
+                extraBtn = `
+                <button class="call-btn" style="background: var(--primary-color); color: white; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; gap: 8px; border-radius: 20px; border: none;" onclick="window.openFullscreenMap('NEAREST', null, '${msgId}')">
+                    ${mapIcon} Ver parada más cercana
+                </button>`;
             }
 
             return `
@@ -450,6 +459,7 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                 <button class="call-btn" style="background: var(--bubble-bot-bg); color: var(--primary-color); font-size: 0.95rem; display: flex; align-items: center; justify-content: center; gap: 8px; border-radius: 20px; border: 1px solid var(--primary-color);" onclick="window.openFullscreenMap(${onclickParam})">
                     ${btnText}
                 </button>
+                ${extraBtn}
             </div>`;
         }
         if (data.cardType === 'NavigationCard') {
