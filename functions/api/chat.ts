@@ -143,12 +143,12 @@ Además, cuando devuelvas una TariffCard, NO incluyas "Tarifa Urbana", "Tarifa I
                                 const todayData = dataArr[0].prediccion.dia[0];
                                 beachData = {
                                     nombre: dataArr[0].nombre,
-                                    estadoCielo: todayData.estadoCielo ? todayData.estadoCielo.descripcion : "N/A",
-                                    viento: todayData.viento ? `${todayData.viento.velocidad} km/h (${todayData.viento.direccion})` : "N/A",
-                                    oleaje: todayData.oleaje ? todayData.oleaje.descripcion : "N/A",
-                                    temperaturaAgua: todayData.tAgua ? `${todayData.tAgua.valor}ºC` : "N/A",
-                                    sensacionTermica: todayData.sTermica ? todayData.sTermica.descripcion : "N/A",
-                                    uvMax: todayData.uvMax !== undefined ? todayData.uvMax : "N/A"
+                                    estadoCielo: todayData.estadoCielo ? todayData.estadoCielo.descripcion1 : "N/A",
+                                    viento: todayData.viento ? todayData.viento.descripcion1 : "N/A",
+                                    oleaje: todayData.oleaje ? todayData.oleaje.descripcion1 : "N/A",
+                                    temperaturaAgua: todayData.tAgua ? `${todayData.tAgua.valor1}ºC` : "N/A",
+                                    sensacionTermica: todayData.sTermica ? todayData.sTermica.descripcion1 : "N/A",
+                                    uvMax: todayData.uvMax ? todayData.uvMax.valor1 : "N/A"
                                 };
                             }
                         }
