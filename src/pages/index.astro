@@ -276,10 +276,10 @@ import ChatLayout from '../layouts/ChatLayout.astro';
         if (data.cardType === 'RuleCard') {
             return `
             <div class="ai-card rule-card">
-                <div class="card-header">⚖️ Normativa Oficial</div>
+                <div class="card-header">⚖️ Información Oficial</div>
                 <div class="card-body">
                     <p>${data.content}</p>
-                    ${data.lawSource ? `<div class="law-source">📚 Fuente: ${data.lawSource}</div>` : ''}
+                    ${data.lawSource ? `<div class="law-source">📚 Fuente: ${data.lawSource}</div>` : '<div class="law-source">📚 Fuente: Ayuntamiento de Cádiz</div>'}
                 </div>
             </div>`;
         }
@@ -1982,10 +1982,9 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                     }
 
                     weatherHtml = `
-                        <div class="ai-card weather-card" style="margin-top: 12px; margin-bottom: 12px; border-left: 4px solid #0ea5e9;">
+                        <div class="ai-card rule-card" style="margin-top: 12px; margin-bottom: 12px;">
                             <div class="card-header" style="display:flex; align-items:center; gap:8px;">
-                                <span style="font-size:1.2rem">${weatherIcon}</span>
-                                <span>Cádiz Ahora</span>
+                                <span>⚖️ Información Oficial</span>
                             </div>
                             <div class="card-body">
                                 <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -1996,8 +1995,9 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                                         ${windStr}
                                     </div>
                                 </div>
-                                <div style="font-size:0.95rem; font-weight:500; margin-top:4px;">${wData.current.skyDesc}</div>
+                                <div style="font-size:0.95rem; font-weight:500; margin-top:4px;">${weatherIcon} ${wData.current.skyDesc}</div>
                                 ${tidesStr}
+                                <div class="law-source">📚 Fuente: AEMET</div>
                             </div>
                         </div>
                     `;
