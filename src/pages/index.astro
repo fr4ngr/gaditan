@@ -363,31 +363,33 @@ import ChatLayout from '../layouts/ChatLayout.astro';
     function renderCard(data: any, msgId: string): string {
         if (data.cardType === 'PriceCard') {
             return `
-            <div class="ai-card price-card">
-                <div class="card-header">
+            <div class="card price-card mt-sm">
+                <div class="card-header primary">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="20" x="4" y="2" rx="2"/><path d="M8 6h.01M16 6h.01M12 6h.01M8 10h.01M16 10h.01M12 10h.01M8 14h.01M16 14h.01M12 14h.01M8 18h.01M16 18h.01M12 18h.01"/></svg>
                     <span>Estimación de Precio</span>
                 </div>
                 <div class="card-body">
-                    <p>${data.content}</p>
-                    ${data.priceEstimate ? `<div class="price-estimate">${data.priceEstimate}</div>` : ''}
-                    ${data.routeDetails ? `<div class="route-details">${data.routeDetails}</div>` : ''}
+                    <p class="text-muted" style="margin:0">${data.content}</p>
+                    ${data.priceEstimate ? `<div class="price-estimate text-title" style="font-size: 1.5rem; text-align: center;">${data.priceEstimate}</div>` : ''}
+                    ${data.routeDetails ? `<div class="route-details text-muted text-center" style="font-size: 0.9rem;">${data.routeDetails}</div>` : ''}
                 </div>
                 <div class="card-footer">
                     Cálculo basado en tarifas oficiales
                 </div>
-                <button class="call-btn" onclick="window.sendToAI('Quiero pedir un taxi ahora')">🚕 Llamar Taxi Ahora</button>
+                <div style="padding: 0 16px 16px 16px;">
+                    <button class="btn btn-primary" onclick="window.sendToAI('Quiero pedir un taxi ahora')">🚕 Llamar Taxi Ahora</button>
+                </div>
             </div>`;
         }
         if (data.cardType === 'RuleCard') {
             return `
-            <div class="ai-card rule-card" style="display: flex; flex-direction: column;">
-                <div class="card-header">
+            <div class="card rule-card mt-sm flex-col">
+                <div class="card-header primary">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                     <span>Normativa del Taxi</span>
                 </div>
                 <div class="card-body" style="flex: 1;">
-                    <p>${data.content}</p>
+                    <p class="text-muted" style="margin:0">${data.content}</p>
                 </div>
                 <div class="card-footer">
                     ${data.lawSource ? `Fuente: ${data.lawSource}` : 'Fuente: Ayuntamiento de Cádiz'}
@@ -396,14 +398,16 @@ import ChatLayout from '../layouts/ChatLayout.astro';
         }
         if (data.cardType === 'ContactCard') {
             return `
-            <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%; max-width: 100%; align-self: flex-start; margin-bottom: 0.5rem;">
+            <div class="flex-col gap-sm" style="width: 100%; max-width: 100%; align-self: flex-start; margin-bottom: 0.5rem;">
                 <span class="bubble" style="border-bottom-left-radius: 4px;">${data.content}</span>
-                <div class="info-card contact-card" style="background: var(--bubble-bot-bg); border: 1px solid var(--bubble-bot-border); padding: 15px; border-radius: 12px; margin-top: 4px;">
-                    <div style="display: flex; align-items: center; justify-content: space-between;">
-                        <span style="font-weight: 600; color: var(--text-primary);">RadioTaxi Cádiz</span>
-                        <div style="display: flex; gap: 8px;">
-                            <a href="tel:956212121" class="call-btn" style="text-decoration: none; width: auto; padding: 8px 12px; margin: 0; display: flex; align-items: center; gap: 6px; background: var(--primary-color); color: white; border-radius: 8px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M6.62 10.79c1.44 2.83 3.76 5.15 6.59 6.59l2.2-2.2c.28-.28.67-.36 1.02-.25 1.12.37 2.32.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg> <span class="btn-text">Llamar</span></a>
-                            <a href="https://wa.me/34956212121" class="wa-btn" target="_blank" rel="noopener noreferrer" style="background: #25D366; color: white; border-radius: 8px; font-weight: 600; text-decoration: none; width: auto; padding: 8px 12px; margin: 0; display: flex; align-items: center; gap: 6px; transition: opacity 0.2s;" onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.6 2.326zM7.994 14.521a6.6 6.6 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.56 6.56 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592m3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.73.73 0 0 0-.529.247c-.182.198-.691.677-.691 1.654s.71 1.916.81 2.049c.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232"/></svg> <span class="btn-text">WhatsApp</span></a>
+                <div class="card mt-sm">
+                    <div class="card-body">
+                        <div style="display: flex; align-items: center; justify-content: space-between;">
+                            <span class="text-title">RadioTaxi Cádiz</span>
+                            <div style="display: flex; gap: 8px;">
+                                <a href="tel:956212121" class="btn btn-success btn-rect" style="width: auto; padding: 8px 12px; margin: 0;"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M6.62 10.79c1.44 2.83 3.76 5.15 6.59 6.59l2.2-2.2c.28-.28.67-.36 1.02-.25 1.12.37 2.32.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg> <span class="btn-text">Llamar</span></a>
+                                <a href="https://wa.me/34956212121" class="btn btn-rect" target="_blank" rel="noopener noreferrer" style="background: #25D366; color: white; width: auto; padding: 8px 12px; margin: 0; transition: opacity 0.2s;" onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.6 2.326zM7.994 14.521a6.6 6.6 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.56 6.56 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592m3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.73.73 0 0 0-.529.247c-.182.198-.691.677-.691 1.654s.71 1.916.81 2.049c.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232"/></svg> <span class="btn-text">WhatsApp</span></a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -415,21 +419,21 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             const body = encodeURIComponent("Hola, me gustaría reservar un taxi.\n\nMis datos:\n- Fecha y Hora:\n- Dirección de origen:\n- Dirección de destino:\n- Necesidades especiales (silla bebé, maletas grandes...):\n");
             
             return `
-            <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%; max-width: 100%; align-self: flex-start; margin-bottom: 0.5rem;">
+            <div class="flex-col gap-sm" style="width: 100%; max-width: 100%; align-self: flex-start; margin-bottom: 0.5rem;">
                 <span class="bubble" style="border-bottom-left-radius: 4px;">${data.content}</span>
-                <div class="info-card" style="background: var(--bubble-bot-bg); border: 1px solid var(--bubble-bot-border); padding: 15px; border-radius: 12px;">
-                    <div style="display: flex; flex-direction: column; gap: 10px; align-items: center; text-align: center;">
+                <div class="card mt-sm">
+                    <div class="card-body flex-col text-center" style="align-items: center;">
                         <span style="font-size: 2rem;">📅</span>
-                        <h3 style="margin: 0; color: var(--primary-color); font-size: 1.1rem;">Reserva tu Taxi</h3>
-                        <p style="margin: 0; font-size: 0.9rem; color: var(--text-secondary);">Haz tu reserva con antelación enviándonos un email con los detalles de tu viaje.</p>
-                        <a href="mailto:${email}?subject=${subject}&body=${body}" class="call-btn" style="text-decoration: none; width: 100%; padding: 12px; margin-top: 5px; font-size: 1rem; background: var(--primary-color); color: white; border-radius: 8px;">✉️ Enviar Email de Reserva</a>
+                        <h3 class="text-title text-primary">Reserva tu Taxi</h3>
+                        <p class="text-muted" style="margin: 0; font-size: 0.9rem;">Haz tu reserva con antelación enviándonos un email con los detalles de tu viaje.</p>
+                        <a href="mailto:${email}?subject=${subject}&body=${body}" class="btn btn-primary mt-sm">✉️ Enviar Email de Reserva</a>
                     </div>
                 </div>
             </div>`;
         }
         if (data.cardType === 'MapCard') {
-            const mapIcon = `<div style="background: white; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); flex-shrink: 0; font-size: 15px;">📍</div>`;
-            const planeIcon = `<div style="background: white; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); flex-shrink: 0; font-size: 15px;">✈️</div>`;
+            const mapIcon = `📍`;
+            const planeIcon = `✈️`;
 
             let isAirport = data.stopName === 'ALL_AIRPORTS' || data.stopName === 'NEAREST_AIRPORT';
             
@@ -443,38 +447,40 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             if (data.lat) {
                 // Specific stop map - only 1 primary action button needed
                 return `
-                <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%; max-width: 100%; align-self: flex-start;">
+                <div class="flex-col gap-sm" style="width: 100%; max-width: 100%; align-self: flex-start;">
                     <span class="bubble">${data.content}</span>
-                    <button class="call-btn" style="background: var(--primary-color); color: white; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; gap: 8px; border-radius: 20px; border: none;" onclick="window.openFullscreenMap('${data.lat}', '${data.lon}', '${msgId}')">
-                        ${icon} Ver ubicación en mapa
+                    <button class="btn btn-primary" onclick="window.openFullscreenMap('${data.lat}', '${data.lon}', '${msgId}')">
+                        <div class="icon-circle">${icon}</div> Ver ubicación en mapa
                     </button>
                 </div>`;
             }
 
             return `
-            <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%; max-width: 100%; align-self: flex-start;">
+            <div class="flex-col gap-sm" style="width: 100%; max-width: 100%; align-self: flex-start;">
                 <span class="bubble">${data.content}</span>
-                <button class="call-btn" style="background: var(--bubble-bot-bg); color: var(--primary-color); font-size: 0.95rem; display: flex; align-items: center; justify-content: center; gap: 8px; border-radius: 20px; border: 1px solid var(--primary-color);" onclick="window.openFullscreenMap(${btn1Onclick})">
+                <button class="btn btn-secondary" onclick="window.openFullscreenMap(${btn1Onclick})">
                     ${btn1Text}
                 </button>
-                <button class="call-btn" style="background: var(--primary-color); color: white; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; gap: 8px; border-radius: 20px; border: none;" onclick="window.openFullscreenMap(${btn2Onclick})">
-                    ${icon} ${btn2Text}
+                <button class="btn btn-primary" onclick="window.openFullscreenMap(${btn2Onclick})">
+                    <div class="icon-circle">${icon}</div> ${btn2Text}
                 </button>
             </div>`;
         }
         if (data.cardType === 'NavigationCard') {
             return `
-            <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%; max-width: 85%; align-self: flex-start;">
+            <div class="flex-col gap-sm" style="width: 100%; max-width: 85%; align-self: flex-start;">
                 <span class="bubble">${data.content}</span>
                 ${data.lat && data.lon ? `
-                <div style="border-radius: 18px; overflow: hidden; width: 100%; box-shadow: 0 2px 5px rgba(0,0,0,0.1); background: var(--bubble-bot-bg); border: 1px solid var(--bubble-bot-border); padding: 10px; display: flex; flex-direction: column; gap: 10px;">
-                    <div style="font-weight: 600; text-align: center; color: var(--text-primary);">📍 Destino: ${data.stopName || 'Parada Seleccionada'}</div>
-                    <button class="call-btn" style="background: var(--primary-color); color: white; border-radius: 8px; padding: 12px; margin: 0; display: flex; align-items: center; justify-content: center; gap: 8px; border: none; cursor: pointer;" onclick="window.startLiveNavigation('${data.lat}', '${data.lon}', '${data.stopName || 'Destino'}')">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M12 2L4.5 20.29L5.21 21L12 18L18.79 21L19.5 20.29L12 2Z" fill="currentColor"/>
-                        </svg>
-                        Iniciar Navegación
-                    </button>
+                <div class="card card-lg mt-sm">
+                    <div class="card-body">
+                        <div class="text-title text-center">📍 Destino: ${data.stopName || 'Parada Seleccionada'}</div>
+                        <button class="btn btn-primary btn-rect mt-sm" style="margin:0" onclick="window.startLiveNavigation('${data.lat}', '${data.lon}', '${data.stopName || 'Destino'}')">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 2L4.5 20.29L5.21 21L12 18L18.79 21L19.5 20.29L12 2Z" fill="currentColor"/>
+                            </svg>
+                            Iniciar Navegación
+                        </button>
+                    </div>
                 </div>
                 ` : ''}
             </div>`;
@@ -485,14 +491,14 @@ import ChatLayout from '../layouts/ChatLayout.astro';
 
         if (data.cardType === 'TariffCard') {
             return `
-            <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%; max-width: 100%; align-self: flex-start; margin-bottom: 0.5rem;">
+            <div class="flex-col gap-sm" style="width: 100%; max-width: 100%; align-self: flex-start; margin-bottom: 0.5rem;">
                 <span class="bubble" style="border-bottom-left-radius: 4px;">${data.content}</span>
-                <div class="ai-card tariff-card-container">
-                    <div class="card-header">
+                <div class="card tariff-card-container mt-sm">
+                    <div class="card-header primary">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h12"/><path d="M4 14h9"/><path d="M19 6a7.7 7.7 0 0 0-5.2-2A7.9 7.9 0 0 0 6 12c0 4.4 3.5 8 7.8 8 2 0 3.8-.8 5.2-2"/></svg>
                         <span>Precios del Taxi en Cádiz</span>
                     </div>
-                    <div class="tariff-card" id="tariff-widget-${msgId}" style="border: none; border-radius: 0; box-shadow: none; margin-top: 0;">
+                    <div class="tariff-card flex-col" id="tariff-widget-${msgId}" style="border: none; border-radius: 0; box-shadow: none; margin-top: 0;">
                         <!-- Fila 1: Pestañas Principales -->
                         <div class="tariff-tabs-row1">
                             <button class="t-tab active" onclick="window.changeTariffTab('${msgId}', 'urbana')">Urbana</button>

@@ -1,0 +1,235 @@
+/* 
+ * CADIZ.CHAT - DESIGN SYSTEM COMPONENTS
+ * Basado en las normativas de AGENTS.md
+ */
+
+/* =========================================
+   VARIABLES & PALETA BASE
+   ========================================= */
+   :root {
+    --ds-bg-white: #ffffff;
+    --ds-bg-light: #f8fafc;
+    --ds-bg-chat: #f1f5f9;
+    
+    --ds-text-primary: #1e293b;
+    --ds-text-secondary: #64748b;
+    
+    --ds-primary: #3b82f6; /* Azul Eléctrico */
+    --ds-success: #16a34a; /* Verde Funcional */
+    --ds-success-dark: #20873c;
+    --ds-danger: #ef4444; /* Rojo Alerta */
+    
+    --ds-warning-bg: #fff3cd; /* Amarillo Pastel */
+    --ds-warning-text: #856404;
+
+    --ds-border-radius-sm: 8px;
+    --ds-border-radius-md: 12px;
+    --ds-border-radius-lg: 18px;
+    --ds-border-radius-pill: 9999px;
+
+    --ds-shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+    --ds-shadow-md: 0 2px 5px rgba(0,0,0,0.1);
+    --ds-shadow-lg: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+}
+
+/* =========================================
+   LAYOUT & CONTENEDORES
+   ========================================= */
+
+/* Tarjeta Base Estándar */
+.card {
+    background: var(--ds-bg-white);
+    border: 1px solid var(--bubble-bot-border, #e2e8f0);
+    border-radius: var(--ds-border-radius-md);
+    box-shadow: var(--ds-shadow-md);
+    overflow: hidden;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Tarjeta más redondeada (para navegación/mapas) */
+.card-lg {
+    border-radius: var(--ds-border-radius-lg);
+}
+
+/* Cabecera de Tarjeta */
+.card-header {
+    background: var(--ds-bg-white);
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--bubble-bot-border, #e2e8f0);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    color: var(--ds-text-primary);
+}
+
+.card-header.primary { color: var(--ds-primary); }
+.card-header.success { color: var(--ds-success); }
+
+/* Cuerpo de Tarjeta */
+.card-body {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* Pie de Tarjeta (Fuentes, avisos menores) */
+.card-footer {
+    background: var(--ds-bg-light);
+    padding: 12px 16px;
+    border-top: 1px solid var(--bubble-bot-border, #e2e8f0);
+    font-size: 0.8rem;
+    color: var(--ds-text-secondary);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* =========================================
+   BOTONES (Regla 6 y General)
+   ========================================= */
+
+/* Base de todos los botones */
+.btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 16px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    border-radius: var(--ds-border-radius-pill); /* Por defecto tipo píldora */
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    width: 100%;
+    line-height: 1.4;
+    font-family: inherit;
+}
+
+.btn:active { transform: scale(0.98); }
+
+/* Botón Cuadrado/Rectangular */
+.btn-rect { border-radius: var(--ds-border-radius-sm); }
+
+/* Acción Principal (Norma 6: Azul, texto blanco, icono en círculo blanco) */
+.btn-primary {
+    background: var(--ds-primary);
+    color: var(--ds-bg-white);
+    box-shadow: var(--ds-shadow-sm);
+}
+
+.btn-primary:hover { filter: brightness(1.1); }
+
+/* El círculo blanco para el icono dentro del botón principal */
+.icon-circle {
+    background: var(--ds-bg-white);
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--ds-shadow-sm);
+    flex-shrink: 0;
+    font-size: 15px;
+    color: var(--ds-primary); 
+}
+
+/* Acción Secundaria (Norma 6: Gris helado, borde azul, texto azul, SIN icono) */
+.btn-secondary {
+    background: var(--ds-bg-chat); /* #f1f5f9 */
+    color: var(--ds-primary);
+    border: 1px solid var(--ds-primary);
+}
+
+.btn-secondary:hover { background: #e2e8f0; }
+
+/* Acción Directa / Llamada (Verde) */
+.btn-success {
+    background: var(--ds-success);
+    color: var(--ds-bg-white);
+}
+
+.btn-success:hover { background: var(--ds-success-dark); }
+
+/* =========================================
+   PÍLDORAS Y AVISOS (Norma 4)
+   ========================================= */
+
+/* Píldora Informativa (Amarillo Pastel) */
+.info-pill {
+    background: var(--ds-warning-bg);
+    color: var(--ds-warning-text);
+    border: 1px solid #ffeeba;
+    padding: 10px 14px;
+    border-radius: var(--ds-border-radius-sm);
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.info-pill svg, .info-pill .icon {
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+/* Alertas Oficiales / Errores */
+.alert-danger {
+    background: #fef2f2;
+    color: var(--ds-danger);
+    border: 1px solid #fecaca;
+    padding: 12px;
+    border-radius: var(--ds-border-radius-sm);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 500;
+}
+
+/* =========================================
+   TIPOGRAFÍA Y LISTAS
+   ========================================= */
+
+.text-title {
+    color: var(--ds-text-primary);
+    font-weight: 600;
+    margin: 0;
+}
+
+.text-muted { color: var(--ds-text-secondary); }
+.text-center { text-align: center; }
+
+/* Listas con estilo */
+.list-unstyled {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--bubble-bot-border, #e2e8f0);
+}
+
+.list-item:last-child { border-bottom: none; }
+
+/* =========================================
+   UTILIDADES
+   ========================================= */
+.flex-col { display: flex; flex-direction: column; }
+.gap-sm { gap: 8px; }
+.gap-md { gap: 16px; }
+.gap-lg { gap: 24px; }
+.mt-sm { margin-top: 8px; }
+.mt-md { margin-top: 16px; }
+.mb-sm { margin-bottom: 8px; }
