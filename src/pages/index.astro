@@ -479,7 +479,7 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                 <span class="bubble" style="border-bottom-left-radius: 4px;">${data.content}</span>
                 <div class="ai-card tariff-card-container">
                     <div class="card-header">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h12"/><path d="M4 14h9"/><path d="M19 6a7.7 7.7 0 0 0-5.2-2A7.9 7.9 0 0 0 6 12c0 4.4 3.5 8 7.8 8 2 0 3.8-.8 5.2-2"/></svg>
                         <span>Precios del Taxi en Cádiz</span>
                     </div>
                     <div class="tariff-card" id="tariff-widget-${msgId}" style="border: none; border-radius: 0; box-shadow: none; margin-top: 0;">
@@ -1824,7 +1824,7 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             
             if (item.info) {
                 const infoId = `info-${msgId}-${idx}`;
-                infoBtn = `<span class="tariff-info-btn" onclick="document.getElementById('${infoId}').style.display = document.getElementById('${infoId}').style.display === 'none' ? 'block' : 'none'">ℹ️</span>`;
+                infoBtn = `<span class="tariff-info-btn" onclick="document.getElementById('${infoId}').style.display = document.getElementById('${infoId}').style.display === 'none' ? 'block' : 'none'" style="display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--primary-color); opacity: 0.6; transition: opacity 0.2s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.6"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></span>`;
                 infoDetails = `<div id="${infoId}" class="tariff-item-details" style="display: none; font-size: 0.85rem; color: #64748b; margin-top: 8px; padding-top: 8px; border-top: 1px dashed #e2e8f0; font-weight: normal; line-height: 1.4;">${item.info}</div>`;
             }
 
