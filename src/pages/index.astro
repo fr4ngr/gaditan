@@ -193,6 +193,19 @@ import ChatLayout from '../layouts/ChatLayout.astro';
         display: flex;
         align-items: center;
         gap: 6px;
+        white-space: nowrap;
+    }
+    
+    /* Responsive styling para pantallas muy pequeñas (iPhone SE, etc.) */
+    @media (max-width: 380px) {
+        .wg-icon { font-size: 2.8rem; }
+        .wg-temp { font-size: 2.6rem; }
+        .wg-main-row { gap: 10px; }
+        .wg-right-col {
+            padding-left: 10px;
+            font-size: 0.75rem;
+            letter-spacing: -0.2px;
+        }
     }
     .wg-footer {
         background-color: var(--chat-bg);
