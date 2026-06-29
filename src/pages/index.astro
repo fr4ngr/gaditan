@@ -1995,7 +1995,11 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                             </div>
                         </div>
                     `;
+                } else {
+                    console.error("API returned error:", wData.error);
                 }
+            } else {
+                console.error("Fetch failed with status:", wRes.status);
             }
         } catch (e) {
             console.error('Weather fetch error:', e);
