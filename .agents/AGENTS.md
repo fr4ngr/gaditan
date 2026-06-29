@@ -11,3 +11,4 @@
    - Azul Oficial (`#3b82f6` - Blue 500): Lo usamos para los títulos de las tarjetas que muestren información tomada de una fuente oficial que podamos poner en el pie de la tarjeta.
    - Amarillo Pastel (Fondo `#fff3cd` con texto marrón dorado `#856404`): Es el color de las elegantes "píldoras informativas" (como los festivos, el aviso de noche/día y el recordatorio de suplementos).
    - Rojo Alerta (`#ef4444`): Se usa para detalles muy puntuales, como la burbujita roja flotante (badge) si tienes elementos guardados en favoritos, o alertas oficiales de color rojo de la aemet.
+5. **No Emoticons**: No usar emoticonos por norma. Se pueden usar en algun caso puntual pero solo si están justificados para alguna info, no para sentimientos que puedan parecer reales ni por rellenar los textos.
