@@ -266,7 +266,7 @@ import ChatLayout from '../layouts/ChatLayout.astro';
         }
     }
 
-    function addMessage(sender: 'user' | 'bot', htmlContent: string) {
+    function addMessage(sender: 'user' | 'bot', htmlContent: string, shouldScroll: boolean = true) {
         const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         const messageDiv = document.createElement('div');
         messageDiv.className = `message ${sender}`;
@@ -315,7 +315,9 @@ import ChatLayout from '../layouts/ChatLayout.astro';
         }
         
         messagesContainer?.appendChild(messageDiv);
-        scrollToBottom();
+        if (shouldScroll) {
+            scrollToBottom();
+        }
     }
 
     function showTypingIndicator() {
@@ -2068,7 +2070,7 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             <span class="bubble">¡Hola! 👋 Soy tu asistente virtual de Cádiz.<br><br>Tengo acceso a fuentes oficiales en diferentes áreas para ayudarte con cualquier duda sobre la ciudad de Cádiz. Parece que estás buscando información sobre taxis.<br><br>Cuéntame, ¿qué necesitas saber exactamente?</span>
             ${skeletonHtml}
             <div class="suggested-blocks-container" style="margin-top: 8px;">${buttonsHtml}</div>
-        `);
+        `, false);
 
         // Llamada asíncrona a la API del clima
         fetch('/api/weather?t=' + new Date().getTime())
