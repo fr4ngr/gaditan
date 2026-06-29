@@ -15,10 +15,11 @@ export async function onRequest(context) {
         const diariaJson = await diariaRes.json();
         
         let dailyData = null;
+        let dDataArr = null;
         if (diariaJson.estado == 200 && diariaJson.datos) {
             const dataRes = await fetch(diariaJson.datos);
-            const dataArr = await dataRes.json();
-            dailyData = dataArr[0].prediccion.dia[0]; // Today
+            dDataArr = await dataRes.json();
+            dailyData = dDataArr[0].prediccion.dia[0]; // Today
         }
 
         // 2. Fetch AEMET Horaria (Current temp, sky)
@@ -46,47 +47,38 @@ export async function onRequest(context) {
             console.error("Error fetching tides:", e);
         }
 
-        // Process data
-        // For Cloudflare workers, new Date() is UTC. We need Spain time (UTC+1 or +2)
-        // Best approach is just to use string matching or parse dates correctly.
-        // Let's format the date to Europe/Madrid timezone
-        const madridDateStr = new Intl.DateTimeFormat('en-US', {
-            timeZone: 'Europe/Madrid',
-            hour: '2-digit',
-            hour12: false
-        }).format(new Date());
-        let currentHourStr = madridDateStr;
-        if (currentHourStr === '24') currentHourStr = '00';
-
-        // Extract current temp and sky
+        // Extraer datos útiles
         let currentTemp = "N/A";
         let currentSky = "N/A";
         let currentSkyDesc = "";
-        
-        if (hourlyData && hourlyData.temperatura) {
-            const tempObj = hourlyData.temperatura.find((t) => t.periodo === currentHourStr);
-            if (tempObj) currentTemp = tempObj.value;
-        }
-
-        if (hourlyData && hourlyData.estadoCielo) {
-            const skyObj = hourlyData.estadoCielo.find((s) => s.periodo === currentHourStr);
-            if (skyObj) {
-                currentSky = skyObj.value;
-                currentSkyDesc = skyObj.descripcion;
-            }
-        }
-        
-        // Extract Max/Min Temp and UV
         let tMax = "N/A";
         let tMin = "N/A";
         let uvMax = "N/A";
 
-        if (dailyData && dailyData.temperatura) {
-            tMax = dailyData.temperatura.maxima;
-            tMin = dailyData.temperatura.minima;
+        if (dailyData) {
+            if (dailyData.temperatura) {
+                tMax = dailyData.temperatura.maxima;
+                tMin = dailyData.temperatura.minima;
+            }
+            if (dailyData.uvMax !== undefined) {
+                uvMax = dailyData.uvMax;
+            } else if (diariaJson && diariaJson.datos && dDataArr) {
+                // If today has no UV, try tomorrow
+                const tomorrow = dDataArr[0].prediccion?.dia[1];
+                if (tomorrow && tomorrow.uvMax !== undefined) {
+                    uvMax = tomorrow.uvMax;
+                }
+            }
         }
-        if (dailyData && dailyData.uvMax !== undefined) {
-            uvMax = dailyData.uvMax;
+
+        if (hourlyData) {
+            if (hourlyData.temperatura && hourlyData.temperatura.length > 0) {
+                currentTemp = hourlyData.temperatura[0].value;
+            }
+            if (hourlyData.estadoCielo && hourlyData.estadoCielo.length > 0) {
+                currentSky = hourlyData.estadoCielo[0].value;
+                currentSkyDesc = hourlyData.estadoCielo[0].descripcion;
+            }
         }
 
         // Tides formatting
