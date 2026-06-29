@@ -1766,14 +1766,22 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             // La nota general de advertencia se añade más abajo, y las exenciones van en los acordeones 'ℹ️'
         } else {
             items = TARIFF_DATA[state.type][state.time];
+            const getInfoPill = (text: string) => `
+                <div style="margin-top: 8px; background: #fff3cd; padding: 10px; border-radius: 8px; color: #856404; border: 1px solid #ffeeba; display: flex; align-items: flex-start; gap: 8px;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 2px;"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                    <span style="flex: 1; line-height: 1.4;">
+                        <strong>Info:</strong> ${text}
+                    </span>
+                </div>`;
+
             if (state.type === 'urbana' && state.time === 'dia') {
-                noteHtml = '<div class="tariff-notes">Laborables de 07:00 a 21:00h.</div>';
+                noteHtml = getInfoPill('laborables de 07:00 a 21:00h.');
             } else if (state.type === 'urbana' && state.time === 'noche') {
-                noteHtml = '<div class="tariff-notes">Laborables de 21:00 a 07:00h.</div>';
+                noteHtml = getInfoPill('laborables de 21:00 a 07:00h.');
             } else if (state.type === 'interurbana' && state.time === 'dia') {
-                noteHtml = '<div class="tariff-notes">Laborables de 06:00 a 22:00h.</div>';
+                noteHtml = getInfoPill('laborables de 06:00 a 22:00h.');
             } else if (state.type === 'interurbana' && state.time === 'noche') {
-                noteHtml = '<div class="tariff-notes">Laborables de 22:00 a 06:00h.</div>';
+                noteHtml = getInfoPill('laborables de 22:00 a 06:00h.');
             }
 
             if (state.time === 'festivo') {
