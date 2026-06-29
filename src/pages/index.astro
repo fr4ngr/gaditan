@@ -428,40 +428,38 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             </div>`;
         }
         if (data.cardType === 'MapCard') {
-            let onclickParam = `null, null, '${msgId}'`;
             const mapIcon = `<div style="background: white; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); flex-shrink: 0; font-size: 15px;">📍</div>`;
             const planeIcon = `<div style="background: white; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); flex-shrink: 0; font-size: 15px;">✈️</div>`;
 
-            let btnText = `${mapIcon} Ver todas las paradas de taxi`;
-            let extraBtn = '';
-            let btnStyle = `background: var(--bubble-bot-bg); color: var(--primary-color); border: 1px solid var(--primary-color);`;
+            let isAirport = data.stopName === 'ALL_AIRPORTS' || data.stopName === 'NEAREST_AIRPORT';
+            
+            let btn1Text = isAirport ? "Ver aeropuertos cerca" : "Ver todas las paradas de taxi";
+            let btn1Onclick = isAirport ? `'ALL_AIRPORTS', null, '${msgId}'` : `null, null, '${msgId}'`;
+            
+            let btn2Text = isAirport ? "Ver aeropuerto más cercano" : "Ver parada más cercana";
+            let btn2Onclick = isAirport ? `'NEAREST_AIRPORT', null, '${msgId}'` : `'NEAREST', null, '${msgId}'`;
+            let icon = isAirport ? planeIcon : mapIcon;
 
-            if (data.stopName === 'NEAREST') {
-                onclickParam = `'NEAREST', null, '${msgId}'`;
-                btnText = `${mapIcon} Localizar Parada Cercana`;
-            } else if (data.stopName === 'NEAREST_AIRPORT') {
-                onclickParam = `'NEAREST_AIRPORT', null, '${msgId}'`;
-                btnText = `${planeIcon} Localizar Aeropuerto Cercano`;
-            } else if (data.stopName === 'ALL_AIRPORTS') {
-                onclickParam = `'ALL_AIRPORTS', null, '${msgId}'`;
-                btnText = `${planeIcon} Ver aeropuertos cerca`;
-                btnStyle = `background: var(--primary-color); color: white; border: none;`;
-            } else if (data.lat) {
-                onclickParam = `'${data.lat}', '${data.lon}', '${msgId}'`;
-            } else {
-                extraBtn = `
-                <button class="call-btn" style="background: var(--primary-color); color: white; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; gap: 8px; border-radius: 20px; border: none;" onclick="window.openFullscreenMap('NEAREST', null, '${msgId}')">
-                    ${mapIcon} Ver parada más cercana
-                </button>`;
+            if (data.lat) {
+                // Specific stop map - only 1 primary action button needed
+                return `
+                <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%; max-width: 100%; align-self: flex-start;">
+                    <span class="bubble">${data.content}</span>
+                    <button class="call-btn" style="background: var(--primary-color); color: white; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; gap: 8px; border-radius: 20px; border: none;" onclick="window.openFullscreenMap('${data.lat}', '${data.lon}', '${msgId}')">
+                        ${icon} Ver ubicación en mapa
+                    </button>
+                </div>`;
             }
 
             return `
             <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%; max-width: 100%; align-self: flex-start;">
                 <span class="bubble">${data.content}</span>
-                <button class="call-btn" style="${btnStyle} font-size: 0.95rem; display: flex; align-items: center; justify-content: center; gap: 8px; border-radius: 20px;" onclick="window.openFullscreenMap(${onclickParam})">
-                    ${btnText}
+                <button class="call-btn" style="background: var(--bubble-bot-bg); color: var(--primary-color); font-size: 0.95rem; display: flex; align-items: center; justify-content: center; gap: 8px; border-radius: 20px; border: 1px solid var(--primary-color);" onclick="window.openFullscreenMap(${btn1Onclick})">
+                    ${btn1Text}
                 </button>
-                ${extraBtn}
+                <button class="call-btn" style="background: var(--primary-color); color: white; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; gap: 8px; border-radius: 20px; border: none;" onclick="window.openFullscreenMap(${btn2Onclick})">
+                    ${icon} ${btn2Text}
+                </button>
             </div>`;
         }
         if (data.cardType === 'NavigationCard') {
