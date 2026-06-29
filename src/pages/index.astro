@@ -2075,77 +2075,91 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             ${skeletonHtml}
             <div class="suggested-blocks-container" style="margin-top: 8px;">${buttonsHtml}</div>
         `, false);
+        // Llamada asíncrona a la API del clima con reintentos
+        const fetchWeatherWithRetry = (retriesLeft = 3, delay = 2000) => {
+            fetch('/api/weather?t=' + new Date().getTime())
+                .then(wRes => {
+                    if (!wRes.ok) throw new Error('Fetch failed with status: ' + wRes.status);
+                    return wRes.json();
+                })
+                .then(wData => {
+                    const container = document.getElementById('weather-widget-container');
+                    if (!container) return;
 
-        // Llamada asíncrona a la API del clima
-        fetch('/api/weather?t=' + new Date().getTime())
-            .then(wRes => {
-                if (!wRes.ok) throw new Error('Fetch failed with status: ' + wRes.status);
-                return wRes.json();
-            })
-            .then(wData => {
-                const container = document.getElementById('weather-widget-container');
-                if (!container) return;
+                    if (!wData.error && wData.current && wData.current.temp !== 'N/A') {
+                        let weatherIcon = '🌤️';
+                        const desc = (wData.current.skyDesc || '').toLowerCase();
+                        if (desc.includes('lluvia') || desc.includes('chubasco')) weatherIcon = '🌧️';
+                        else if (desc.includes('nuboso') || desc.includes('cubierto')) weatherIcon = '☁️';
+                        else if (desc.includes('despejado')) weatherIcon = '☀️';
 
-                if (!wData.error && wData.current && wData.current.temp !== 'N/A') {
-                    let weatherIcon = '🌤️';
-                    const desc = (wData.current.skyDesc || '').toLowerCase();
-                    if (desc.includes('lluvia') || desc.includes('chubasco')) weatherIcon = '🌧️';
-                    else if (desc.includes('nuboso') || desc.includes('cubierto')) weatherIcon = '☁️';
-                    else if (desc.includes('despejado')) weatherIcon = '☀️';
+                        let windStr = '';
+                        if (wData.current.windSpeed && wData.current.windSpeed !== 'N/A') {
+                            const windDir = wData.current.windDir && wData.current.windDir !== 'N/A' ? ` (${wData.current.windDir})` : '';
+                            windStr = `${wData.current.windSpeed} km/h${windDir}`;
+                        } else {
+                            windStr = '--';
+                        }
 
-                    let windStr = '';
-                    if (wData.current.windSpeed && wData.current.windSpeed !== 'N/A') {
-                        const windDir = wData.current.windDir && wData.current.windDir !== 'N/A' ? ` (${wData.current.windDir})` : '';
-                        windStr = `${wData.current.windSpeed} km/h${windDir}`;
-                    } else {
-                        windStr = '--';
-                    }
+                        const now = new Date();
+                        const fetchTimeStr = now.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: '2-digit' }) + ' ' + now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }) + ' h';
 
-                    const now = new Date();
-                    const fetchTimeStr = now.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: '2-digit' }) + ' ' + now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }) + ' h';
-
-                    let maxTimeSuffix = wData.daily.tempMaxTime && wData.daily.tempMaxTime !== 'N/A' ? ` a las ${wData.daily.tempMaxTime.replace(':00', '')}` : '';
-                    let minTimeSuffix = wData.daily.tempMinTime && wData.daily.tempMinTime !== 'N/A' ? ` a las ${wData.daily.tempMinTime.replace(':00', '')}` : '';
-
-                    container.outerHTML = `
-                        <div class="wg-card" style="animation: slideIn 0.3s ease-out;">
-                            <div class="wg-header">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
-                                <span>El clima en Cádiz</span>
-                            </div>
-                            <div class="wg-body">
-                                <div class="wg-status">Hoy, ${wData.current.skyDesc.toLowerCase()}</div>
-                                
-                                <div class="wg-main-row">
-                                    <div style="display: flex; align-items: center; gap: 8px;">
-                                        <div class="wg-icon">${weatherIcon}</div>
-                                        <div class="wg-temp-container">
-                                            <span class="wg-temp">${wData.current.temp}</span>
-                                            <span class="wg-unit">°C</span>
+                        container.outerHTML = `
+                            <div class="wg-card" style="animation: slideIn 0.3s ease-out;">
+                                <div class="wg-header">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
+                                    <span>El clima en Cádiz</span>
+                                </div>
+                                <div class="wg-body">
+                                    <div class="wg-status">Hoy, ${wData.current.skyDesc.toLowerCase()}</div>
+                                    
+                                    <div class="wg-main-row">
+                                        <div style="display: flex; align-items: center; gap: 8px;">
+                                            <div class="wg-icon">${weatherIcon}</div>
+                                            <div class="wg-temp-container">
+                                                <span class="wg-temp">${wData.current.temp}</span>
+                                                <span class="wg-unit">°C</span>
+                                            </div>
+                                        </div>
+                                        <div class="wg-right-col">
+                                            <span>${windStr}</span>
+                                            <span>Máx ${wData.daily.tempMax}°C | ${wData.daily.tempMaxTime.replace(':00', '')}</span>
+                                            <span>Mín ${wData.daily.tempMin}°C | ${wData.daily.tempMinTime.replace(':00', '')}</span>
                                         </div>
                                     </div>
-                                    <div class="wg-right-col">
-                                        <span>${windStr}</span>
-                                        <span>Máx ${wData.daily.tempMax}°C | ${wData.daily.tempMaxTime.replace(':00', '')}</span>
-                                        <span>Mín ${wData.daily.tempMin}°C | ${wData.daily.tempMinTime.replace(':00', '')}</span>
-                                    </div>
+                                </div>
+                                <div class="wg-footer">
+                                    Fuente: AEMET - ${fetchTimeStr}
                                 </div>
                             </div>
-                            <div class="wg-footer">
-                                Fuente: AEMET - ${fetchTimeStr}
-                            </div>
-                        </div>
-                    `;
-                } else {
-                    container.style.display = 'none';
-                    console.error("API returned error or N/A:", wData.error);
-                }
-            })
-            .catch(e => {
-                console.error('Weather fetch error:', e);
-                const container = document.getElementById('weather-widget-container');
-                if (container) container.style.display = 'none';
-            });
+                        `;
+                    } else {
+                        throw new Error('API returned error or N/A');
+                    }
+                })
+                .catch(e => {
+                    console.error('Weather fetch error:', e);
+                    if (retriesLeft > 0) {
+                        setTimeout(() => fetchWeatherWithRetry(retriesLeft - 1, delay * 1.5), delay);
+                    } else {
+                        const container = document.getElementById('weather-widget-container');
+                        if (container) {
+                            container.innerHTML = `
+                                <div class="wg-header">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
+                                    <span>El clima en Cádiz</span>
+                                </div>
+                                <div class="wg-body" style="text-align: center; padding: 24px 16px;">
+                                    <div style="font-size: 2rem; margin-bottom: 8px;">⚠️</div>
+                                    <div style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 500; margin-bottom: 16px;">Servicio temporalmente no disponible</div>
+                                    <button onclick="this.innerHTML='Reintentando...'; setTimeout(() => window.location.reload(), 500);" style="background: var(--primary-color); color: white; border: none; padding: 6px 16px; border-radius: 6px; font-weight: 500; font-size: 0.8rem; cursor: pointer; transition: opacity 0.2s;">Reintentar</button>
+                                </div>
+                            `;
+                        }
+                    }
+                });
+        };
+        fetchWeatherWithRetry();
     }, 500);
 
     // Tipado global
