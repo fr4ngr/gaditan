@@ -90,24 +90,109 @@ Además, cuando devuelvas una TariffCard, NO incluyas "Tarifa Urbana", "Tarifa I
             required: ['cardType', 'content', 'suggestedBlocks']
         };
 
-        const historyContents = body.history && body.history.length > 0 ? body.history : userMessage;
+        const historyContents = body.history && body.history.length > 0 ? body.history : [{ role: 'user', parts: [{ text: userMessage }] }];
+
+        const beachTool = {
+            functionDeclarations: [{
+                name: "get_beach_conditions",
+                description: "Llama a esta función EXCLUSIVAMENTE cuando el usuario te pregunte explícitamente por el clima, el tiempo o el estado de las PLAYAS (ej. 'cómo está la playa', 'hace día de playa en la caleta', 'estado de las olas'). Devuelve datos reales de AEMET (temperatura del agua, oleaje, viento, sensación térmica). NO la llames para saludos genéricos ni para preguntas de taxis.",
+                parameters: {
+                    type: Type.OBJECT,
+                    properties: {
+                        beach_id: {
+                            type: Type.STRING,
+                            description: "El ID de la playa a consultar. Usa '1101201' si preguntan por La Caleta. Usa '1101203' si preguntan por La Victoria, Cortadura, Santa Maria del Mar, o por las playas de Cádiz en general."
+                        }
+                    },
+                    required: ["beach_id"]
+                }
+            }]
+        };
 
         let responseText = '';
+        let currentModel = 'gemini-2.5-flash';
+        
         try {
-            const response = await ai.models.generateContent({
-                model: 'gemini-2.5-flash',
+            let configObj = {
+                systemInstruction: systemInstruction,
+                responseMimeType: "application/json",
+                responseSchema: schema,
+                temperature: 0.1,
+                tools: [beachTool]
+            };
+
+            let response = await ai.models.generateContent({
+                model: currentModel,
                 contents: historyContents,
-                config: {
-                    systemInstruction: systemInstruction,
-                    responseMimeType: "application/json",
-                    responseSchema: schema,
-                    temperature: 0.1
-                }
+                config: configObj
             });
+
+            // Handle Function Call for Beaches
+            if (response.functionCalls && response.functionCalls.length > 0) {
+                const call = response.functionCalls[0];
+                if (call.name === 'get_beach_conditions') {
+                    const beachId = call.args.beach_id || '1101203';
+                    let beachData = { error: "No se pudo obtener datos" };
+                    
+                    try {
+                        const playaRes = await fetch(`https://opendata.aemet.es/opendata/api/prediccion/especifica/playa/${beachId}/?api_key=${env.AEMET_API_KEY}`);
+                        const playaJson = await playaRes.json();
+                        if (playaJson.estado == 200 && playaJson.datos) {
+                            const dataRes = await fetch(playaJson.datos);
+                            const dataArr = await dataRes.json();
+                            if (dataArr && dataArr[0] && dataArr[0].prediccion && dataArr[0].prediccion.dia) {
+                                const todayData = dataArr[0].prediccion.dia[0];
+                                beachData = {
+                                    nombre: dataArr[0].nombre,
+                                    estadoCielo: todayData.estadoCielo ? todayData.estadoCielo.descripcion : "N/A",
+                                    viento: todayData.viento ? `${todayData.viento.velocidad} km/h (${todayData.viento.direccion})` : "N/A",
+                                    oleaje: todayData.oleaje ? todayData.oleaje.descripcion : "N/A",
+                                    temperaturaAgua: todayData.tAgua ? `${todayData.tAgua.valor}ºC` : "N/A",
+                                    sensacionTermica: todayData.sTermica ? todayData.sTermica.descripcion : "N/A",
+                                    uvMax: todayData.uvMax !== undefined ? todayData.uvMax : "N/A"
+                                };
+                            }
+                        }
+                    } catch (e) {
+                        console.error("AEMET API error:", e);
+                    }
+
+                    // Append model's function call to history
+                    historyContents.push({
+                        role: 'model',
+                        parts: [{
+                            functionCall: {
+                                name: call.name,
+                                args: call.args
+                            }
+                        }]
+                    });
+
+                    // Append function response back to history
+                    historyContents.push({
+                        role: 'user',
+                        parts: [{
+                            functionResponse: {
+                                name: call.name,
+                                response: beachData
+                            }
+                        }]
+                    });
+
+                    // Call generateContent again with the new history
+                    response = await ai.models.generateContent({
+                        model: currentModel,
+                        contents: historyContents,
+                        config: configObj
+                    });
+                }
+            }
+            
             responseText = response.text;
+            
         } catch (error: any) {
-            console.error("Error con gemini-2.5-flash, intentando fallback a gemini-2.0-flash...", error);
-            // Fallback si los servidores de 2.5-flash están caídos o saturados (503)
+            console.error("Error with model, fallback...", error);
+            // Fallback sin herramientas por simplicidad si falla 2.5
             const fallbackResponse = await ai.models.generateContent({
                 model: 'gemini-2.0-flash',
                 contents: historyContents,
@@ -121,9 +206,15 @@ Además, cuando devuelvas una TariffCard, NO incluyas "Tarifa Urbana", "Tarifa I
             responseText = fallbackResponse.text;
         }
 
-        const data = JSON.parse(responseText);
+        let parsedData;
+        try {
+            parsedData = JSON.parse(responseText);
+        } catch(e) {
+            // Si el modelo alucinó texto plano
+            parsedData = { cardType: 'TextCard', content: responseText, suggestedBlocks: ['🚕 Ver tarifas'] };
+        }
 
-        return new Response(JSON.stringify(data), {
+        return new Response(JSON.stringify(parsedData), {
             status: 200,
             headers: { 'Content-Type': 'application/json' }
         });
