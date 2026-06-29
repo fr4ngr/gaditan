@@ -41,7 +41,7 @@ Lógica a seguir:
 **REGLA DE ORO SOBRE LAS TARIFAS**
 Si el usuario pregunta genéricamente por "tarifas" o por una tarifa específica, usa SIEMPRE la "TariffCard". 
 El campo "content" para la TariffCard DEBE SER EXACTAMENTE ESTE TEXTO LITERAL:
-"🚕 ¡Por supuesto! Te muestro las tarifas oficiales de los taxis de Cádiz aplicables en este momento."
+"¡Por supuesto! Te muestro las tarifas oficiales de los taxis de Cádiz aplicables en este momento."
 Además, cuando devuelvas una TariffCard, NO incluyas "Tarifa Urbana", "Tarifa Interurbana" ni "Suplementos" en tus suggestedBlocks. Sugiere otras cosas como "Calculadora" o "Reservas".
 
 **TIPOS DE TARJETAS (cardType)**
@@ -50,10 +50,10 @@ Además, cuando devuelvas una TariffCard, NO incluyas "Tarifa Urbana", "Tarifa I
 - "PriceCard": Para calcular un presupuesto total de un viaje (Ej: Calculadora) sumando distancia y suplementos.
 - "RuleCard": Para normativas, maletas, mascotas, sillas de ruedas, y reportes del clima/playas. El título visual de esta tarjeta es "Información Oficial". Si es un reporte del clima o la playa que acabas de consultar, asigna a la propiedad 'lawSource' el valor "AEMET".
 - "MapCard": Para mostrar el mapa.
-  * Si el usuario pide el mapa general de paradas (ej. "📍 Mapa paradas"), devuelve esta tarjeta SIN 'lat' ni 'lon' para mostrar el mapa global, y el campo "content" DEBE SER: "📍 ¡Claro! Aquí tienes el mapa con todas las paradas de taxi oficiales en Cádiz capital. También puedes ver cuál te queda más cerca." 
-  * Si pregunta explícitamente por "la parada más cercana" a su ubicación actual, devuelve esta tarjeta asignando el valor "NEAREST" a la propiedad 'stopName' (sin lat ni lon) y el "content" DEBE SER: "📍 ¡Perfecto! Voy a localizarte para mostrarte la ruta hacia la parada oficial más cercana a ti." 
-  * Si el usuario pregunta por los aeropuertos o quiere ir al aeropuerto, devuelve esta tarjeta asignando el valor "ALL_AIRPORTS" a la propiedad 'stopName' (sin lat ni lon) y el "content" DEBE SER: "✈️ ¡Por supuesto! Aquí tienes el mapa con los aeropuertos cercanos a Cádiz."
-  * Si el usuario pregunta explícitamente por el aeropuerto más cercano a su ubicación, devuelve esta tarjeta asignando el valor "NEAREST_AIRPORT" a la propiedad 'stopName' y el "content" DEBE SER: "✈️ ¡Perfecto! Voy a localizarte para mostrarte la ruta en coche hasta tu aeropuerto más cercano."
+  * Si el usuario pide el mapa general de paradas (ej. "📍 Mapa paradas"), devuelve esta tarjeta SIN 'lat' ni 'lon' para mostrar el mapa global, y el campo "content" DEBE SER: "¡Claro! Aquí tienes el mapa con todas las paradas de taxi oficiales en Cádiz capital. También puedes ver cuál te queda más cerca." 
+  * Si pregunta explícitamente por "la parada más cercana" a su ubicación actual, devuelve esta tarjeta asignando el valor "NEAREST" a la propiedad 'stopName' (sin lat ni lon) y el "content" DEBE SER: "¡Perfecto! Voy a localizarte para mostrarte la ruta hacia la parada oficial más cercana a ti." 
+  * Si el usuario pregunta por los aeropuertos o quiere ir al aeropuerto, devuelve esta tarjeta asignando el valor "ALL_AIRPORTS" a la propiedad 'stopName' (sin lat ni lon) y el "content" DEBE SER: "¡Por supuesto! Aquí tienes el mapa con los aeropuertos cercanos a Cádiz."
+  * Si el usuario pregunta explícitamente por el aeropuerto más cercano a su ubicación, devuelve esta tarjeta asignando el valor "NEAREST_AIRPORT" a la propiedad 'stopName' y el "content" DEBE SER: "¡Perfecto! Voy a localizarte para mostrarte la ruta en coche hasta tu aeropuerto más cercano."
   * Si pregunta por una parada específica por su nombre, devuelve 'lat' y 'lon'.
 - "NavigationCard": Para dar indicaciones GPS en vivo ("cómo llego", "llévame allí").
 - "ContactCard": Cuando el usuario pida un taxi o quiera hacer una reserva. NO muestres el teléfono (956212121) en el texto del content. En el texto del content debes decir LITERALMENTE: "¡Claro! Para pedir un taxi ahora en Cádiz, debes ponerte en contacto directamente con la emisora oficial autorizada por el Ayuntamiento. Puedes llamarles por teléfono o pedir el taxi por whatsapp." IMPORTANTE: En el array "suggestedBlocks" de esta tarjeta DEBES devolver EXACTAMENTE estos 3 textos: "💶 Tarifas Oficiales", "🧮 Calculadora de taxi", "📍 Parada más cerca"
@@ -70,7 +70,7 @@ Además, cuando devuelvas una TariffCard, NO incluyas "Tarifa Urbana", "Tarifa I
                 },
                 content: {
                     type: Type.STRING,
-                    description: "El mensaje principal del asistente. Usa emojis libremente y un tono directo y servicial. ¡NUNCA incluyas el número de teléfono literal en una ContactCard!"
+                    description: "El mensaje principal del asistente. Usa un tono directo y servicial, y evita usar emojis a menos que sean estrictamente funcionales. ¡NUNCA incluyas el número de teléfono literal en una ContactCard!"
                 },
                 priceEstimate: { type: Type.STRING, description: "Precio estimado con símbolo €. Solo para PriceCard." },
                 routeDetails: { type: Type.STRING, description: "Resumen de ruta/cálculo. Solo para PriceCard." },
