@@ -429,8 +429,8 @@ import ChatLayout from '../layouts/ChatLayout.astro';
         }
         if (data.cardType === 'MapCard') {
             let onclickParam = `null, null, '${msgId}'`;
-            const mapIcon = `📍`;
-            const planeIcon = `✈️`;
+            const mapIcon = `<div style="background: white; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); flex-shrink: 0; font-size: 15px;">📍</div>`;
+            const planeIcon = `<div style="background: white; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); flex-shrink: 0; font-size: 15px;">✈️</div>`;
 
             let btnText = `${mapIcon} Ver todas las paradas de taxi`;
             let extraBtn = '';
@@ -444,7 +444,7 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                 btnText = `${planeIcon} Localizar Aeropuerto Cercano`;
             } else if (data.stopName === 'ALL_AIRPORTS') {
                 onclickParam = `'ALL_AIRPORTS', null, '${msgId}'`;
-                btnText = `${planeIcon} Aeropuertos en la zona`;
+                btnText = `${planeIcon} Ver aeropuertos cerca`;
                 btnStyle = `background: var(--primary-color); color: white; border: none;`;
             } else if (data.lat) {
                 onclickParam = `'${data.lat}', '${data.lon}', '${msgId}'`;
