@@ -191,19 +191,12 @@ Además, cuando devuelvas una TariffCard, NO incluyas "Tarifa Urbana", "Tarifa I
             responseText = response.text;
             
         } catch (error: any) {
-            console.error("Error with model, fallback...", error);
-            // Fallback sin herramientas por simplicidad si falla 2.5
-            const fallbackResponse = await ai.models.generateContent({
-                model: 'gemini-1.5-flash',
-                contents: historyContents,
-                config: {
-                    systemInstruction: systemInstruction,
-                    responseMimeType: "application/json",
-                    responseSchema: schema,
-                    temperature: 0.1
-                }
+            console.error("Error with model:", error);
+            // Return the actual error to the client to debug why gemini-2.5-flash failed
+            return new Response(JSON.stringify({ error: `gemini-2.5-flash error: ${error.message || JSON.stringify(error)}` }), {
+                status: 500,
+                headers: { 'Content-Type': 'application/json' }
             });
-            responseText = fallbackResponse.text;
         }
 
         let parsedData;
