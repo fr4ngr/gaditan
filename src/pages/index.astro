@@ -123,6 +123,67 @@ import ChatLayout from '../layouts/ChatLayout.astro';
         from { opacity: 0; transform: translateY(10px); }
         to { opacity: 1; transform: translateY(0); }
     }
+
+    /* Estilos responsivos de la tarjeta del clima */
+    .weather-card-grid {
+        padding: 16px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        align-items: center;
+    }
+    .weather-icon-temp {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    .weather-temp-text {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        line-height: 1;
+    }
+    .weather-icon-symbol {
+        font-size: 2.8rem;
+        line-height: 1;
+    }
+    .weather-wind-text {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+    }
+    .weather-right-col {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+    }
+    
+    @media (max-width: 375px) {
+        .weather-card-grid {
+            padding: 12px 10px;
+            gap: 8px;
+        }
+        .weather-icon-temp {
+            gap: 8px;
+        }
+        .weather-icon-symbol {
+            font-size: 2.3rem;
+        }
+        .weather-temp-text {
+            font-size: 1.25rem;
+        }
+        .weather-right-col {
+            font-size: 0.75rem;
+            gap: 6px;
+        }
+        .weather-right-col svg {
+            width: 12px !important;
+            height: 12px !important;
+        }
+    }
 </style>
 
 <script>
@@ -1987,7 +2048,7 @@ import ChatLayout from '../layouts/ChatLayout.astro';
 
                     let windStr = '';
                     if (wData.current.windSpeed && wData.current.windSpeed !== 'N/A') {
-                        windStr = `<div style="font-size: 0.85rem; font-weight: 600; color: var(--text-secondary);">${wData.current.windSpeed} KM/H</div>`;
+                        windStr = `<div class="weather-wind-text">${wData.current.windSpeed} KM/H</div>`;
                     }
 
                     weatherHtml = `
@@ -1995,24 +2056,24 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                             <div style="background-color: var(--primary-color); color: white; padding: 10px 16px; text-align: center; font-weight: 600; font-size: 1rem;">
                                 El clima en Cádiz
                             </div>
-                            <div class="card-body" style="padding: 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: center;">
+                            <div class="card-body weather-card-grid">
                                 
                                 <!-- Left Column -->
                                 <div style="display: flex; flex-direction: column;">
                                     <div style="font-weight: 800; font-size: 0.95rem; text-transform: uppercase; margin-bottom: 8px; color: var(--text-primary); letter-spacing: 0.5px;">
                                         ${wData.current.skyDesc}
                                     </div>
-                                    <div style="display: flex; align-items: center; gap: 12px;">
-                                        <div style="font-size: 2.8rem; line-height: 1;">${weatherIcon}</div>
+                                    <div class="weather-icon-temp">
+                                        <div class="weather-icon-symbol">${weatherIcon}</div>
                                         <div style="display: flex; flex-direction: column; gap: 4px;">
-                                            <div style="font-size: 1.4rem; font-weight: 700; color: var(--text-primary); line-height: 1;">${wData.current.temp}° C</div>
+                                            <div class="weather-temp-text">${wData.current.temp}° C</div>
                                             ${windStr}
                                         </div>
                                     </div>
                                 </div>
                                 
                                 <!-- Right Column -->
-                                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 0.85rem; font-weight: 600; color: var(--text-secondary);">
+                                <div class="weather-right-col">
                                     <div style="display: flex; align-items: center; gap: 6px;">
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="${maxColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/><path d="M11.5 6v6"/></svg>
                                         <span>MAX ${wData.daily.tempMax}°C <span style="font-weight:normal; opacity:0.8;">${maxTimeText}</span></span>
