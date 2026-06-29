@@ -2027,8 +2027,8 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             if (wRes.ok) {
                 const wData = await wRes.json();
                 if (!wData.error) {
-                    let maxTimeText = wData.daily.tempMaxTime && wData.daily.tempMaxTime !== 'N/A' ? ` ${wData.daily.tempMaxTime.replace(':00', '')}` : '';
-                    let minTimeText = wData.daily.tempMinTime && wData.daily.tempMinTime !== 'N/A' ? ` ${wData.daily.tempMinTime.replace(':00', '')}` : '';
+                    let maxTimeText = wData.daily.tempMaxTime && wData.daily.tempMaxTime !== 'N/A' ? ` | ${wData.daily.tempMaxTime.replace(':00', '')}` : '';
+                    let minTimeText = wData.daily.tempMinTime && wData.daily.tempMinTime !== 'N/A' ? ` | ${wData.daily.tempMinTime.replace(':00', '')}` : '';
 
                     let weatherIcon = '🌤️';
                     const desc = (wData.current.skyDesc || '').toLowerCase();
@@ -2041,42 +2041,44 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                         windStr = `<div class="weather-wind-text">${wData.current.windSpeed} KM/H</div>`;
                     }
 
+                    const now = new Date();
+                    const fetchTimeStr = now.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: '2-digit' }) + ' ' + now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }) + ' h';
+
                     weatherHtml = `
                         <div class="ai-card" style="margin-top: 12px; margin-bottom: 12px; border-radius: 12px; overflow: hidden; border: 1px solid var(--bubble-bot-border);">
-                            <div style="background-color: var(--primary-color); color: white; padding: 10px 16px; text-align: center; font-weight: 600; font-size: 1rem;">
-                                El clima en Cádiz
+                            <div style="background-color: var(--primary-color); color: white; padding: 10px 16px; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600; font-size: 1rem;">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
+                                <span>El clima en Cádiz</span>
                             </div>
-                            <div class="card-body weather-card-grid">
+                            <div style="padding: 12px 16px 0 16px; font-weight: 800; font-size: 0.95rem; text-transform: uppercase; text-align: center; color: var(--text-primary); letter-spacing: 0.5px;">
+                                HOY ${wData.current.skyDesc}
+                            </div>
+                            <div class="card-body weather-card-grid" style="padding-top: 8px;">
                                 
                                 <!-- Left Column -->
-                                <div style="display: flex; flex-direction: column;">
-                                    <div style="font-weight: 800; font-size: 0.95rem; text-transform: uppercase; margin-bottom: 8px; color: var(--text-primary); letter-spacing: 0.5px;">
-                                        ${wData.current.skyDesc}
-                                    </div>
-                                    <div class="weather-icon-temp">
-                                        <div class="weather-icon-symbol">${weatherIcon}</div>
-                                        <div style="display: flex; flex-direction: column; gap: 4px;">
-                                            <div class="weather-temp-text">${wData.current.temp}° C</div>
-                                            ${windStr}
-                                        </div>
+                                <div class="weather-icon-temp">
+                                    <div class="weather-icon-symbol">${weatherIcon}</div>
+                                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                                        <div class="weather-temp-text">${wData.current.temp}° C</div>
+                                        ${windStr}
                                     </div>
                                 </div>
                                 
                                 <!-- Right Column -->
                                 <div class="weather-right-col">
                                     <div>
-                                        <span>MAX ${wData.daily.tempMax}°C <span style="font-weight:normal; opacity:0.8;">${maxTimeText}</span></span>
+                                        <span>MAX ${wData.daily.tempMax}ºC<span style="font-weight:normal; opacity:0.8;">${maxTimeText}</span></span>
                                     </div>
                                     <div>
-                                        <span>MIN ${wData.daily.tempMin}°C <span style="font-weight:normal; opacity:0.8;">${minTimeText}</span></span>
+                                        <span>MIN ${wData.daily.tempMin}ºC<span style="font-weight:normal; opacity:0.8;">${minTimeText}</span></span>
                                     </div>
                                     <div>
                                         <span>ÍNDICE UV: ${wData.daily.uvMax}</span>
                                     </div>
                                 </div>
                             </div>
-                            <div style="background-color: var(--chat-bg); color: var(--primary-color); padding: 6px 16px; font-size: 0.75rem; text-align: right; border-top: 1px solid var(--bubble-bot-border); font-weight: 500;">
-                                Fuente: AEMET
+                            <div style="background-color: #e5e7eb; color: var(--text-primary); padding: 6px 16px; font-size: 0.8rem; text-align: center; border-top: 1px solid var(--bubble-bot-border); font-weight: 500;">
+                                Fuente: AEMET - ${fetchTimeStr}
                             </div>
                         </div>
                     `;
