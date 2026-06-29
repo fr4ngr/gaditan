@@ -84,8 +84,9 @@ export async function onRequest(context) {
                 let minFound = 999;
                 hourlyData.temperatura.forEach(t => {
                     let v = parseInt(t.value);
-                    if (v > maxFound) { maxFound = v; tMaxTime = t.periodo + ":00h"; }
-                    if (v < minFound) { minFound = v; tMinTime = t.periodo + ":00h"; }
+                    let hourNum = parseInt(t.periodo, 10);
+                    if (v > maxFound) { maxFound = v; tMaxTime = hourNum + ":00h"; }
+                    if (v < minFound) { minFound = v; tMinTime = hourNum + ":00h"; }
                 });
             }
             if (hourlyData.estadoCielo && hourlyData.estadoCielo.length > 0) {

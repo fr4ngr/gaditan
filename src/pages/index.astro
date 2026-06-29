@@ -2027,16 +2027,6 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             if (wRes.ok) {
                 const wData = await wRes.json();
                 if (!wData.error) {
-                    let getThermColor = (tempStr) => {
-                        let t = parseFloat(tempStr);
-                        if (isNaN(t)) return '#f97316';
-                        if (t < 15) return '#06b6d4'; // turquoise
-                        if (t > 27) return '#ef4444'; // red
-                        return '#f97316'; // orange
-                    };
-                    let maxColor = getThermColor(wData.daily.tempMax);
-                    let minColor = getThermColor(wData.daily.tempMin);
-                    
                     let maxTimeText = wData.daily.tempMaxTime && wData.daily.tempMaxTime !== 'N/A' ? ` ${wData.daily.tempMaxTime.replace(':00', '')}` : '';
                     let minTimeText = wData.daily.tempMinTime && wData.daily.tempMinTime !== 'N/A' ? ` ${wData.daily.tempMinTime.replace(':00', '')}` : '';
 
@@ -2074,16 +2064,13 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                                 
                                 <!-- Right Column -->
                                 <div class="weather-right-col">
-                                    <div style="display: flex; align-items: center; gap: 6px;">
-                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="${maxColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/><path d="M11.5 6v6"/></svg>
+                                    <div>
                                         <span>MAX ${wData.daily.tempMax}°C <span style="font-weight:normal; opacity:0.8;">${maxTimeText}</span></span>
                                     </div>
-                                    <div style="display: flex; align-items: center; gap: 6px;">
-                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="${minColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.8;"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/><path d="M11.5 6v6"/></svg>
+                                    <div>
                                         <span>MIN ${wData.daily.tempMin}°C <span style="font-weight:normal; opacity:0.8;">${minTimeText}</span></span>
                                     </div>
-                                    <div style="display: flex; align-items: center; gap: 6px;">
-                                        <span>☀️</span>
+                                    <div>
                                         <span>ÍNDICE UV: ${wData.daily.uvMax}</span>
                                     </div>
                                 </div>
