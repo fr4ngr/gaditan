@@ -1853,7 +1853,13 @@ import ChatLayout from '../layouts/ChatLayout.astro';
         }).join('');
 
         if (state.type === 'suplementos') {
-            html += `<div class="tariff-notes" style="margin-top: 10px; text-align: center; color: #64748b; font-style: normal;">⚠️ <strong>Recuerda:</strong> Los suplementos solo se aplican a las tarifas urbanas.</div>`;
+            html += `
+            <div style="margin-top: 10px; background: #fff3cd; padding: 10px; border-radius: 8px; color: #856404; border: 1px solid #ffeeba; display: flex; align-items: flex-start; gap: 8px;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 2px;"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+                <span style="flex: 1; line-height: 1.4;">
+                    <strong>Recuerda:</strong> los suplementos solo se aplican a las tarifas urbanas.
+                </span>
+            </div>`;
         }
 
         let sourceText = 'Fuente: BOJA n.º 202 (16/10/2024)';
