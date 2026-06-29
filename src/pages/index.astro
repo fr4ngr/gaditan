@@ -178,30 +178,21 @@ import ChatLayout from '../layouts/ChatLayout.astro';
         color: var(--text-secondary);
         margin-top: 4px;
     }
-    .wg-details {
-        margin-top: 16px;
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 12px;
-        border-top: 1px solid var(--bubble-bot-border);
-        padding-top: 16px;
-    }
-    .wg-detail-item {
+    .wg-right-col {
         display: flex;
         flex-direction: column;
-        gap: 2px;
-    }
-    .wg-detail-label {
-        font-size: 0.7rem;
-        color: var(--text-secondary);
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-    .wg-detail-value {
+        gap: 6px;
         font-size: 0.85rem;
+        color: var(--text-secondary);
         font-weight: 500;
-        color: var(--text-primary);
+        margin-left: auto; /* Push to the right */
+        border-left: 1px solid var(--bubble-bot-border);
+        padding-left: 16px;
+    }
+    .wg-right-col span {
+        display: flex;
+        align-items: center;
+        gap: 6px;
     }
     .wg-footer {
         background-color: var(--chat-bg);
@@ -2091,7 +2082,8 @@ import ChatLayout from '../layouts/ChatLayout.astro';
 
                     let windStr = '';
                     if (wData.current.windSpeed && wData.current.windSpeed !== 'N/A') {
-                        windStr = `${wData.current.windSpeed} km/h`;
+                        const windDir = wData.current.windDir && wData.current.windDir !== 'N/A' ? ` (${wData.current.windDir})` : '';
+                        windStr = `${wData.current.windSpeed} km/h${windDir}`;
                     } else {
                         windStr = '--';
                     }
@@ -2112,29 +2104,17 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                                 <div class="wg-status">Hoy, ${wData.current.skyDesc.toLowerCase()}</div>
                                 
                                 <div class="wg-main-row">
-                                    <div class="wg-icon">${weatherIcon}</div>
-                                    <div class="wg-temp-container">
-                                        <span class="wg-temp">${wData.current.temp}</span>
-                                        <span class="wg-unit">°C</span>
+                                    <div style="display: flex; align-items: center; gap: 8px;">
+                                        <div class="wg-icon">${weatherIcon}</div>
+                                        <div class="wg-temp-container">
+                                            <span class="wg-temp">${wData.current.temp}</span>
+                                            <span class="wg-unit">°C</span>
+                                        </div>
                                     </div>
-                                </div>
-
-                                <div class="wg-details">
-                                    <div class="wg-detail-item">
-                                        <span class="wg-detail-label">Viento</span>
-                                        <span class="wg-detail-value">${windStr}</span>
-                                    </div>
-                                    <div class="wg-detail-item">
-                                        <span class="wg-detail-label">Índice UV</span>
-                                        <span class="wg-detail-value">${wData.daily.uvMax}</span>
-                                    </div>
-                                    <div class="wg-detail-item">
-                                        <span class="wg-detail-label">Máxima</span>
-                                        <span class="wg-detail-value">${wData.daily.tempMax}°C${maxTimeSuffix}</span>
-                                    </div>
-                                    <div class="wg-detail-item">
-                                        <span class="wg-detail-label">Mínima</span>
-                                        <span class="wg-detail-value">${wData.daily.tempMin}°C${minTimeSuffix}</span>
+                                    <div class="wg-right-col">
+                                        <span>💨 ${windStr}</span>
+                                        <span>🔺 Máx ${wData.daily.tempMax}°C | ${wData.daily.tempMaxTime.replace(':00', '')}h</span>
+                                        <span>🔻 Mín ${wData.daily.tempMin}°C | ${wData.daily.tempMinTime.replace(':00', '')}h</span>
                                     </div>
                                 </div>
                             </div>
