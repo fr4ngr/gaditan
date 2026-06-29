@@ -187,10 +187,10 @@ import '../styles/components.css';
                                 </div>
                             </div>
                             
-                            <div class="form-group">
-                                <label>Contenido del Cerebro (Markdown):</label>
-                                <textarea id="edit-knowledge-text" required></textarea>
-                            </div>
+                        <div class="form-group" style="display: none;">
+                            <label>Contenido del Cerebro (Markdown):</label>
+                            <textarea id="edit-knowledge-text" required></textarea>
+                        </div>
                             
                             <div style="display: flex; gap: 10px;">
                                 <button class="btn btn-primary" onclick="saveEditedBrain()">💾 Guardar Cambios</button>
@@ -214,7 +214,7 @@ import '../styles/components.css';
                             <input type="file" id="new-pdf-upload" accept="application/pdf" />
                         </div>
                         
-                        <div class="form-group">
+                        <div class="form-group" style="display: none;">
                             <label>Contenido del Cerebro (Markdown):</label>
                             <textarea id="new-knowledge-text" required placeholder="Pega aquí la información o súbela desde un PDF..."></textarea>
                         </div>
@@ -442,8 +442,9 @@ import '../styles/components.css';
                 const file = e.target.files[0];
                 if (!file) return;
                 
-                const originalText = appendMode && textArea.value ? textArea.value + "\n\n--- NUEVO DOCUMENTO ---\n\n" : "";
-                textArea.value = originalText + "Extrayendo texto del PDF... Por favor espera.";
+                const dateStr = new Date().toLocaleString('es-ES');
+                const originalText = appendMode && textArea.value ? textArea.value + `\n\n--- NUEVO DOCUMENTO AÑADIDO: ${dateStr} ---\n\n` : `--- DOCUMENTO CREADO: ${dateStr} ---\n\n`;
+                showMessage("Extrayendo PDF... no cierres la ventana.", false);
                 
                 try {
                     const arrayBuffer = await file.arrayBuffer();
@@ -459,11 +460,10 @@ import '../styles/components.css';
                     }
                     
                     textArea.value = originalText + fullText.trim();
+                    showMessage("✅ PDF extraído y listo para guardar.");
                 } catch (err) {
-                    textArea.value = originalText + "\nError al extraer PDF: " + err.message;
+                    showMessage("Error al extraer PDF: " + err.message, true);
                 }
-                // Reset file input
-                fileInput.value = '';
             });
         }
 
