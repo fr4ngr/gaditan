@@ -73,9 +73,20 @@ export async function onRequest(context) {
             }
         }
 
+        let tMaxTime = "N/A";
+        let tMinTime = "N/A";
+
         if (hourlyData) {
             if (hourlyData.temperatura && hourlyData.temperatura.length > 0) {
                 currentTemp = hourlyData.temperatura[0].value;
+                
+                let maxFound = -999;
+                let minFound = 999;
+                hourlyData.temperatura.forEach(t => {
+                    let v = parseInt(t.value);
+                    if (v > maxFound) { maxFound = v; tMaxTime = t.periodo + ":00h"; }
+                    if (v < minFound) { minFound = v; tMinTime = t.periodo + ":00h"; }
+                });
             }
             if (hourlyData.estadoCielo && hourlyData.estadoCielo.length > 0) {
                 currentSky = hourlyData.estadoCielo[0].value;
@@ -113,7 +124,9 @@ export async function onRequest(context) {
             },
             daily: {
                 tempMax: tMax,
+                tempMaxTime: tMaxTime,
                 tempMin: tMin,
+                tempMinTime: tMinTime,
                 uvMax: uvMax
             },
             tides: formattedTides

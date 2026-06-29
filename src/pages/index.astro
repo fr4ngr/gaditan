@@ -1966,10 +1966,18 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             if (wRes.ok) {
                 const wData = await wRes.json();
                 if (!wData.error) {
-                    let currentTempNum = parseFloat(wData.current.temp);
-                    let thermColor = '#f97316'; // orange (mild)
-                    if (currentTempNum < 15) thermColor = '#06b6d4'; // turquoise (cold)
-                    else if (currentTempNum > 27) thermColor = '#ef4444'; // red (hot)
+                    let getThermColor = (tempStr) => {
+                        let t = parseFloat(tempStr);
+                        if (isNaN(t)) return '#f97316';
+                        if (t < 15) return '#06b6d4'; // turquoise
+                        if (t > 27) return '#ef4444'; // red
+                        return '#f97316'; // orange
+                    };
+                    let maxColor = getThermColor(wData.daily.tempMax);
+                    let minColor = getThermColor(wData.daily.tempMin);
+                    
+                    let maxTimeStr = wData.daily.tempMaxTime && wData.daily.tempMaxTime !== 'N/A' ? ` <span style="opacity:0.7; font-size:0.75rem;">(${wData.daily.tempMaxTime})</span>` : '';
+                    let minTimeStr = wData.daily.tempMinTime && wData.daily.tempMinTime !== 'N/A' ? ` <span style="opacity:0.7; font-size:0.75rem;">(${wData.daily.tempMinTime})</span>` : '';
 
                     let weatherIcon = '🌤️';
                     const desc = (wData.current.skyDesc || '').toLowerCase();
@@ -2001,9 +2009,15 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                                 </div>
                                 
                                 <div style="text-align: right; font-size: 0.85rem; color: var(--text-secondary); display: flex; flex-direction: column; gap: 6px;">
-                                    <div style="display: flex; align-items: center; justify-content: flex-end; gap: 4px;">
-                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="${thermColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/><path d="M11.5 6v6"/></svg>
-                                        <span>Máx: ${wData.daily.tempMax}° | Mín: ${wData.daily.tempMin}°</span>
+                                    <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 2px;">
+                                        <div style="display: flex; align-items: center; justify-content: flex-end; gap: 4px;">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="${maxColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/><path d="M11.5 6v6"/></svg>
+                                            <span>Máx: ${wData.daily.tempMax}°${maxTimeStr}</span>
+                                        </div>
+                                        <div style="display: flex; align-items: center; justify-content: flex-end; gap: 4px;">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="${minColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.8;"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/><path d="M11.5 6v6"/></svg>
+                                            <span>Mín: ${wData.daily.tempMin}°${minTimeStr}</span>
+                                        </div>
                                     </div>
                                     <div style="display: flex; align-items: center; justify-content: flex-end; gap: 4px;">
                                         <span>☀️</span>
