@@ -156,8 +156,13 @@ import '../styles/components.css';
 
                     <!-- TAB 1: Estado -->
                     <div id="tab-estado" class="tab-content active">
-                        <h3 class="text-title">Estado del Sistema</h3>
-                        <p class="text-muted">Verifica que todas las conexiones necesarias estén operativas.</p>
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <h3 class="text-title">Estado del Sistema</h3>
+                                <p class="text-muted">Verifica que todas las conexiones necesarias estén operativas.</p>
+                            </div>
+                            <button class="btn btn-primary" style="background: var(--ds-primary); border: none;" onclick="forceDeploy()">🚀 Forzar Actualización del Bot</button>
+                        </div>
                         <button class="btn btn-secondary" onclick="checkStatus()">🔄 Comprobar ahora</button>
                         <div class="status-grid" id="status-grid">
                             <!-- Injected by JS -->
@@ -308,7 +313,7 @@ import '../styles/components.css';
             setTimeout(() => div.innerText = '', 5000);
         }
 
-        // --- Status Tab ---
+        // --- Status & Deploy ---
         async function checkStatus() {
             const grid = document.getElementById('status-grid');
             grid.innerHTML = "<div class='text-center w-100'>Cargando estado...</div>";
@@ -336,6 +341,25 @@ import '../styles/components.css';
                 }
             } catch (e) {
                 grid.innerHTML = "<div class='text-danger'>Error al conectar con la API de estado.</div>";
+            }
+        }
+
+        window.forceDeploy = async function() {
+            if(!confirm("¿Forzar una actualización en todo el mundo ahora? (Tardará 1-2 minutos en completarse)")) return;
+            showMessage("Enviando orden de despliegue a Cloudflare...", false);
+            try {
+                const res = await fetch('/api/admin/deploy', {
+                    method: 'POST',
+                    headers: { 'Authorization': 'Bearer ' + sessionPwd }
+                });
+                if (res.ok) {
+                    showMessage("🚀 ¡Orden recibida! Cloudflare está compilando y desplegando. Dale 2 minutos y tu bot estará actualizado mundialmente.");
+                } else {
+                    const data = await res.json();
+                    showMessage("Error al desplegar: " + data.error + ". ¿Has configurado CLOUDFLARE_DEPLOY_HOOK en Cloudflare?", true);
+                }
+            } catch (e) {
+                showMessage("Error de red enviando orden.", true);
             }
         }
 
