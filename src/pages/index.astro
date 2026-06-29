@@ -503,8 +503,8 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                             <!-- Renderizado dinámico aquí -->
                         </div>
                     </div>
-                    <div class="card-footer">
-                        Fuente: Ayuntamiento de Cádiz - 2024
+                    <div class="card-footer" id="tfoot-${msgId}">
+                        Fuente: BOJA n.º 202 (16/10/2024)
                     </div>
                 </div>
                 <span class="bubble" style="border-top-left-radius: 4px; margin-top: 4px;">Si quieres, te puedo ayudar a usar estos precios oficiales para calcular el coste aproximado de tu viaje. ¿Probamos?</span>
@@ -1846,16 +1846,21 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             html += `<div class="tariff-notes" style="margin-top: 10px; text-align: center; color: #64748b; font-style: normal;">⚠️ <strong>Recuerda:</strong> Los suplementos solo se aplican a las tarifas urbanas.</div>`;
         }
 
-        let sourceText = state.type === 'interurbana' 
-            ? 'Fuente: BOJA n.º 30 (12/02/2024)' 
-            : 'Fuente: BOJA n.º 202 (16/10/2024)';
-        let sourceHtml = `<div style="text-align: right; font-size: 0.75rem; color: #94a3b8; margin-top: 12px; font-style: italic;">${sourceText}</div>`;
+        let sourceText = 'Fuente: BOJA n.º 202 (16/10/2024)';
+        if (state.type === 'interurbana') {
+            sourceText = 'Fuente: BOJA n.º 49 (12/03/2026)';
+        }
+
+        const footerEl = document.getElementById(`tfoot-${msgId}`);
+        if (footerEl) {
+            footerEl.innerText = sourceText;
+        }
 
         // Reset animation by clearing and reflowing
         tbody.innerHTML = '';
         void tbody.offsetWidth; // Force reflow
         
-        tbody.innerHTML = `<div class="tariff-anim-layer">${html}${noteHtml}${sourceHtml}</div>`;
+        tbody.innerHTML = `<div class="tariff-anim-layer">${html}${noteHtml}</div>`;
     }
 
     // --- LEAFLET NAVEGACIÓN EN VIVO (FULLSCREEN) ---
