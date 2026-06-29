@@ -275,11 +275,13 @@ import ChatLayout from '../layouts/ChatLayout.astro';
         }
         if (data.cardType === 'RuleCard') {
             return `
-            <div class="ai-card rule-card">
+            <div class="ai-card rule-card" style="display: flex; flex-direction: column;">
                 <div class="card-header">⚖️ Información Oficial</div>
-                <div class="card-body">
+                <div class="card-body" style="flex: 1;">
                     <p>${data.content}</p>
-                    ${data.lawSource ? `<div class="law-source">📚 Fuente: ${data.lawSource}</div>` : '<div class="law-source">📚 Fuente: Ayuntamiento de Cádiz</div>'}
+                </div>
+                <div style="background-color: var(--chat-bg); color: var(--primary-color); padding: 6px 16px; font-size: 0.75rem; text-align: right; border-top: 1px solid var(--bubble-bot-border); font-weight: 500;">
+                    ${data.lawSource ? `Fuente: ${data.lawSource}` : 'Fuente: Ayuntamiento de Cádiz'}
                 </div>
             </div>`;
         }
@@ -2010,7 +2012,7 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                                     ${windStr}
                                 </div>
                             </div>
-                            <div style="background-color: var(--primary-color); color: white; padding: 4px 16px; font-size: 0.7rem; text-align: right; opacity: 0.9;">
+                            <div style="background-color: var(--chat-bg); color: var(--primary-color); padding: 6px 16px; font-size: 0.75rem; text-align: right; border-top: 1px solid var(--bubble-bot-border); font-weight: 500;">
                                 Fuente: AEMET
                             </div>
                         </div>
