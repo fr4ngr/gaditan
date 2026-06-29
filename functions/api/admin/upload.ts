@@ -89,3 +89,66 @@ export async function onRequestPost(context) {
         });
     }
 }
+
+export async function onRequestGet(context) {
+    try {
+        const { request, env } = context;
+        
+        // 1. Autenticación básica
+        const authHeader = request.headers.get('Authorization');
+        if (!env.ADMIN_PASSWORD) {
+            return new Response(JSON.stringify({ error: "ADMIN_PASSWORD no configurada en entorno" }), { status: 500 });
+        }
+        
+        if (!authHeader || authHeader !== `Bearer ${env.ADMIN_PASSWORD}`) {
+            return new Response(JSON.stringify({ error: "No autorizado. Contraseña incorrecta." }), { status: 401 });
+        }
+
+        if (!env.GITHUB_TOKEN) {
+            return new Response(JSON.stringify({ error: "GITHUB_TOKEN no configurado en entorno." }), { status: 500 });
+        }
+
+        const repo = 'fr4ngr/cadiz.taxi';
+        const path = 'src/data/taxi-knowledge.ts';
+        const apiUrl = `https://api.github.com/repos/${repo}/contents/${path}`;
+        
+        const headers = {
+            'Authorization': `Bearer ${env.GITHUB_TOKEN}`,
+            'Accept': 'application/vnd.github.v3+json',
+            'User-Agent': 'Cadiz-Taxi-Admin-Panel'
+        };
+
+        const getRes = await fetch(apiUrl, { headers });
+        if (!getRes.ok) {
+            return new Response(JSON.stringify({ error: "Fallo al obtener de GitHub." }), { status: 500 });
+        }
+
+        const getJson = await getRes.json();
+        
+        // Base64 to UTF-8
+        const binString = atob(getJson.content.replace(/\s/g, ''));
+        const bytes = new Uint8Array(binString.length);
+        for (let i = 0; i < binString.length; i++) {
+            bytes[i] = binString.charCodeAt(i);
+        }
+        const content = new TextDecoder('utf-8').decode(bytes);
+
+        // Extraer el contenido dentro de las comillas invertidas
+        const match = content.match(/export const knowledgeBase = `([\s\S]*?)`;/);
+        let text = match ? match[1] : content;
+        
+        // Quitar escapado previo
+        text = text.replace(/\\`/g, '`').replace(/\\\$/g, '$').trim();
+
+        return new Response(JSON.stringify({ content: text }), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' }
+        });
+
+    } catch (err) {
+        return new Response(JSON.stringify({ error: "Error interno: " + err.message }), { 
+            status: 500,
+            headers: { 'Content-Type': 'application/json' }
+        });
+    }
+}

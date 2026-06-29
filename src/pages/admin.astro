@@ -69,24 +69,32 @@ import '../styles/components.css';
                     <p class="text-muted">Sube un PDF oficial o pega el texto para actualizar el archivo <code>taxi-knowledge.ts</code>. Los cambios se guardarán en GitHub y la web se redesplegará automáticamente.</p>
                     
                     <form id="admin-form">
-                        <div class="form-group">
-                            <label for="admin-pwd">Contraseña de Administrador:</label>
-                            <input type="password" id="admin-pwd" required placeholder="Contraseña..." />
+                        <div class="form-group" style="flex-direction: row; gap: 10px; align-items: flex-end;">
+                            <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
+                                <label for="admin-pwd">Contraseña de Administrador:</label>
+                                <input type="password" id="admin-pwd" required placeholder="Contraseña..." />
+                            </div>
+                            <button type="button" class="btn btn-secondary" id="fetch-btn" style="height: 42px; margin: 0;">
+                                🔄 Cargar Datos Actuales
+                            </button>
                         </div>
                         
                         <div class="form-group">
                             <label for="pdf-upload">1. Extraer desde PDF (Opcional):</label>
                             <input type="file" id="pdf-upload" accept="application/pdf" />
-                            <small class="text-muted">Selecciona un PDF y su texto se extraerá en la caja de abajo.</small>
+                            <div style="display: flex; gap: 10px; align-items: center; margin-top: 5px;">
+                                <input type="checkbox" id="append-mode" checked style="width: auto;" />
+                                <label for="append-mode" style="font-weight: normal; font-size: 0.9rem;">Añadir al final (no borrar el texto que haya abajo)</label>
+                            </div>
                         </div>
                         
                         <div class="form-group">
-                            <label for="knowledge-text">2. Texto a inyectar en el bot:</label>
-                            <textarea id="knowledge-text" required placeholder="Pega aquí la normativa, precios, etc..."></textarea>
+                            <label for="knowledge-text">2. Base de Conocimiento (Texto):</label>
+                            <textarea id="knowledge-text" required placeholder="Pega aquí la normativa, o haz clic en 'Cargar Datos Actuales' para editar lo que ya existe..."></textarea>
                         </div>
 
                         <div class="info-pill mb-sm">
-                            <span>⚠️ Ten en cuenta que esto reemplazará el contenido anterior de la base de conocimiento en texto libre. Asegúrate de incluir TODO lo importante.</span>
+                            <span>💡 Consejo: Dale a "Cargar Datos Actuales" primero. Luego, si subes un PDF con la casilla marcada, el texto se añadirá al final. Así no perderás nada.</span>
                         </div>
                         
                         <button type="submit" class="btn btn-primary" id="submit-btn">
@@ -108,7 +116,10 @@ import '../styles/components.css';
                 if (!file) return;
                 
                 const textArea = document.getElementById('knowledge-text');
-                textArea.value = "Extrayendo texto del PDF... Por favor espera.";
+                const appendMode = document.getElementById('append-mode').checked;
+                const originalText = appendMode && textArea.value ? textArea.value + "\n\n--- NUEVO DOCUMENTO ---\n\n" : "";
+                
+                textArea.value = originalText + "Extrayendo texto del PDF... Por favor espera.";
                 
                 try {
                     const arrayBuffer = await file.arrayBuffer();
@@ -120,13 +131,52 @@ import '../styles/components.css';
                         const page = await pdf.getPage(i);
                         const textContent = await page.getTextContent();
                         const pageText = textContent.items.map(item => item.str).join(" ");
-                        fullText += pageText + "\\n\\n";
+                        fullText += pageText + "\n\n";
                     }
                     
-                    textArea.value = fullText.trim();
+                    textArea.value = originalText + fullText.trim();
                 } catch (err) {
-                    textArea.value = "Error al extraer PDF: " + err.message;
+                    textArea.value = originalText + "\nError al extraer PDF: " + err.message;
                     console.error(err);
+                }
+            });
+
+            // --- Lógica de Carga de Datos ---
+            document.getElementById('fetch-btn').addEventListener('click', async () => {
+                const pwd = document.getElementById('admin-pwd').value;
+                const resultMsg = document.getElementById('result-msg');
+                const textArea = document.getElementById('knowledge-text');
+                
+                if (!pwd) {
+                    resultMsg.style.color = 'var(--ds-danger)';
+                    resultMsg.innerText = "Por favor, introduce la contraseña primero.";
+                    return;
+                }
+
+                resultMsg.style.color = 'var(--ds-text-muted)';
+                resultMsg.innerText = "Cargando datos actuales desde GitHub...";
+                
+                try {
+                    const res = await fetch('/api/admin/upload', {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': 'Bearer ' + pwd
+                        }
+                    });
+                    
+                    const data = await res.json();
+                    if (res.ok) {
+                        textArea.value = data.content;
+                        resultMsg.style.color = 'var(--ds-success)';
+                        resultMsg.innerText = "¡Datos cargados correctamente!";
+                        setTimeout(() => resultMsg.innerText = '', 3000);
+                    } else {
+                        resultMsg.style.color = 'var(--ds-danger)';
+                        resultMsg.innerText = "Error: " + (data.error || 'Desconocido');
+                    }
+                } catch (err) {
+                    resultMsg.style.color = 'var(--ds-danger)';
+                    resultMsg.innerText = "Error de red: " + err.message;
                 }
             });
 
