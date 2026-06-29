@@ -1969,6 +1969,12 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                     if (currentTempNum < 15) thermColor = '#06b6d4'; // turquoise (cold)
                     else if (currentTempNum > 27) thermColor = '#ef4444'; // red (hot)
 
+                    let weatherIcon = '🌤️';
+                    const desc = (wData.current.skyDesc || '').toLowerCase();
+                    if (desc.includes('lluvia') || desc.includes('chubasco')) weatherIcon = '🌧️';
+                    else if (desc.includes('nuboso') || desc.includes('cubierto')) weatherIcon = '☁️';
+                    else if (desc.includes('despejado')) weatherIcon = '☀️';
+
                     let windStr = '';
                     if (wData.current.windSpeed && wData.current.windSpeed !== 'N/A') {
                         windStr = `<div style="display:flex; align-items:center; justify-content:flex-end; gap:4px;">
