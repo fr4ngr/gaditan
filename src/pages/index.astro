@@ -122,62 +122,94 @@ import ChatLayout from '../layouts/ChatLayout.astro';
     @keyframes slideIn {
         from { opacity: 0; transform: translateY(10px); }
         to { opacity: 1; transform: translateY(0); }
-    /* Estilos responsivos de la tarjeta del clima */
-    .weather-card-grid {
-        padding: 16px;
+    }
+    /* Estilos Google-like de la tarjeta del clima */
+    .wg-card {
+        margin: 12px 0;
+        border-radius: 16px;
+        background: var(--chat-bg);
+        border: 1px solid var(--bubble-bot-border);
+        overflow: hidden;
+    }
+    .wg-header {
+        background-color: var(--primary-color);
+        color: white;
+        padding: 10px 16px;
         display: flex;
-        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+        font-weight: 500;
+        font-size: 0.95rem;
+    }
+    .wg-body {
+        padding: 16px;
+    }
+    .wg-status {
+        font-weight: 600;
+        font-size: 1rem;
+        color: var(--text-primary);
+        margin-bottom: 12px;
+        text-transform: capitalize;
+    }
+    .wg-main-row {
+        display: flex;
         align-items: center;
         gap: 16px;
     }
-    .weather-icon-temp {
-        display: flex;
-        align-items: center;
-        gap: 12px;
+    .wg-icon {
+        font-size: 3.5rem;
+        line-height: 1;
+        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
     }
-    .weather-temp-text {
-        font-size: 1.5rem;
-        font-weight: 700;
+    .wg-temp-container {
+        display: flex;
+        align-items: flex-start;
+    }
+    .wg-temp {
+        font-size: 3.2rem;
+        font-weight: 400;
+        line-height: 1;
         color: var(--text-primary);
-        line-height: 1;
+        letter-spacing: -1px;
     }
-    .weather-icon-symbol {
-        font-size: 3rem;
-        line-height: 1;
-    }
-    .weather-wind-text {
-        font-size: 0.85rem;
-        font-weight: 600;
-        color: var(--text-secondary);
-    }
-    .weather-right-col {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-        font-size: 0.75rem;
+    .wg-unit {
+        font-size: 1.1rem;
         font-weight: 500;
         color: var(--text-secondary);
-        text-align: right;
+        margin-top: 4px;
     }
-    
-    @media (max-width: 375px) {
-        .weather-card-grid {
-            padding: 12px 10px;
-            gap: 8px;
-        }
-        .weather-icon-temp {
-            gap: 8px;
-        }
-        .weather-icon-symbol {
-            font-size: 2.5rem;
-        }
-        .weather-temp-text {
-            font-size: 1.3rem;
-        }
-        .weather-right-col {
-            font-size: 0.7rem;
-            gap: 4px;
-        }
+    .wg-details {
+        margin-top: 16px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        border-top: 1px solid var(--bubble-bot-border);
+        padding-top: 16px;
+    }
+    .wg-detail-item {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+    .wg-detail-label {
+        font-size: 0.7rem;
+        color: var(--text-secondary);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .wg-detail-value {
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: var(--text-primary);
+    }
+    .wg-footer {
+        background-color: var(--chat-bg);
+        color: var(--text-secondary);
+        padding: 8px 16px;
+        font-size: 0.75rem;
+        text-align: right;
+        border-top: 1px solid var(--bubble-bot-border);
     }
 </style>
 
@@ -2022,9 +2054,6 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             if (wRes.ok) {
                 const wData = await wRes.json();
                 if (!wData.error) {
-                    let maxTimeText = wData.daily.tempMaxTime && wData.daily.tempMaxTime !== 'N/A' ? ` | ${wData.daily.tempMaxTime.replace(':00', '')}` : '';
-                    let minTimeText = wData.daily.tempMinTime && wData.daily.tempMinTime !== 'N/A' ? ` | ${wData.daily.tempMinTime.replace(':00', '')}` : '';
-
                     let weatherIcon = '🌤️';
                     const desc = (wData.current.skyDesc || '').toLowerCase();
                     if (desc.includes('lluvia') || desc.includes('chubasco')) weatherIcon = '🌧️';
@@ -2033,46 +2062,54 @@ import ChatLayout from '../layouts/ChatLayout.astro';
 
                     let windStr = '';
                     if (wData.current.windSpeed && wData.current.windSpeed !== 'N/A') {
-                        windStr = `<div class="weather-wind-text">${wData.current.windSpeed} KM/H</div>`;
+                        windStr = `${wData.current.windSpeed} km/h`;
+                    } else {
+                        windStr = '--';
                     }
 
                     const now = new Date();
                     const fetchTimeStr = now.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: '2-digit' }) + ' ' + now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }) + ' h';
 
+                    let maxTimeSuffix = wData.daily.tempMaxTime && wData.daily.tempMaxTime !== 'N/A' ? ` a las ${wData.daily.tempMaxTime.replace(':00', '')}` : '';
+                    let minTimeSuffix = wData.daily.tempMinTime && wData.daily.tempMinTime !== 'N/A' ? ` a las ${wData.daily.tempMinTime.replace(':00', '')}` : '';
+
                     weatherHtml = `
-                        <div class="ai-card" style="margin-top: 12px; margin-bottom: 12px; border-radius: 12px; overflow: hidden; border: 1px solid var(--bubble-bot-border);">
-                            <div style="background-color: var(--primary-color); color: white; padding: 10px 16px; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600; font-size: 1rem;">
+                        <div class="wg-card">
+                            <div class="wg-header">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
                                 <span>El clima en Cádiz</span>
                             </div>
-                            <div style="padding: 12px 16px 0 16px; font-weight: 800; font-size: 0.95rem; text-transform: uppercase; text-align: center; color: var(--text-primary); letter-spacing: 0.5px;">
-                                HOY ${wData.current.skyDesc}
-                            </div>
-                            <div class="card-body weather-card-grid" style="padding-top: 8px;">
+                            <div class="wg-body">
+                                <div class="wg-status">Hoy, ${wData.current.skyDesc.toLowerCase()}</div>
                                 
-                                <!-- Left Column -->
-                                <div class="weather-icon-temp">
-                                    <div class="weather-icon-symbol">${weatherIcon}</div>
-                                    <div style="display: flex; flex-direction: column; gap: 4px;">
-                                        <div class="weather-temp-text">${wData.current.temp}° C</div>
-                                        ${windStr}
+                                <div class="wg-main-row">
+                                    <div class="wg-icon">${weatherIcon}</div>
+                                    <div class="wg-temp-container">
+                                        <span class="wg-temp">${wData.current.temp}</span>
+                                        <span class="wg-unit">°C</span>
                                     </div>
                                 </div>
-                                
-                                <!-- Right Column -->
-                                <div class="weather-right-col">
-                                    <div>
-                                        <span>MAX ${wData.daily.tempMax}ºC<span style="font-weight:normal; opacity:0.8;">${maxTimeText}</span></span>
+
+                                <div class="wg-details">
+                                    <div class="wg-detail-item">
+                                        <span class="wg-detail-label">Viento</span>
+                                        <span class="wg-detail-value">${windStr}</span>
                                     </div>
-                                    <div>
-                                        <span>MIN ${wData.daily.tempMin}ºC<span style="font-weight:normal; opacity:0.8;">${minTimeText}</span></span>
+                                    <div class="wg-detail-item">
+                                        <span class="wg-detail-label">Índice UV</span>
+                                        <span class="wg-detail-value">${wData.daily.uvMax}</span>
                                     </div>
-                                    <div>
-                                        <span>ÍNDICE UV: ${wData.daily.uvMax}</span>
+                                    <div class="wg-detail-item">
+                                        <span class="wg-detail-label">Máxima</span>
+                                        <span class="wg-detail-value">${wData.daily.tempMax}°C${maxTimeSuffix}</span>
+                                    </div>
+                                    <div class="wg-detail-item">
+                                        <span class="wg-detail-label">Mínima</span>
+                                        <span class="wg-detail-value">${wData.daily.tempMin}°C${minTimeSuffix}</span>
                                     </div>
                                 </div>
                             </div>
-                            <div style="background-color: #e5e7eb; color: var(--text-primary); padding: 6px 16px; font-size: 0.8rem; text-align: center; border-top: 1px solid var(--bubble-bot-border); font-weight: 500;">
+                            <div class="wg-footer">
                                 Fuente: AEMET - ${fetchTimeStr}
                             </div>
                         </div>
