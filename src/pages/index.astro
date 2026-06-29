@@ -1952,14 +1952,58 @@ import ChatLayout from '../layouts/ChatLayout.astro';
     });
 
     // --- INICIALIZACIÓN (MOMENTO 0) ---
-    setTimeout(() => {
+    setTimeout(async () => {
         const initialBlocks = ['🚕 Pedir taxi', '💶 Tarifas', '📍 Mapa paradas', '⭐ Destinos favoritos', '✈️ Traslados a aeropuertos', '🧮 Calculadora', '📅 Reservas', '❓ Preguntas frecuentes', '🎲 Juegos didácticos'];
         const buttonsHtml = initialBlocks.map(block => {
             return `<button class="suggested-btn" onclick="window.sendToAI('${block}')">${block}</button>`;
         }).join('');
         
+        let weatherHtml = '';
+        try {
+            const wRes = await fetch('/api/weather');
+            if (wRes.ok) {
+                const wData = await wRes.json();
+                if (!wData.error) {
+                    let tidesStr = '';
+                    if (wData.tides && wData.tides.length > 0) {
+                        const tidesItems = wData.tides.map((t: any) => `<span>${t.type === 'pleamar' ? '🌊' : '🏖️'} ${t.type === 'pleamar' ? 'Pleamar' : 'Bajamar'}: ${t.time} (${t.height}m)</span>`).join('<br>');
+                        tidesStr = `<div style="margin-top:8px; padding-top:8px; border-top:1px solid var(--bubble-bot-border); font-size:0.85em; color:var(--text-secondary); line-height: 1.4;"><strong>Mareas hoy:</strong><br>${tidesItems}</div>`;
+                    }
+
+                    let weatherIcon = '🌤️';
+                    const desc = (wData.current.skyDesc || '').toLowerCase();
+                    if (desc.includes('lluvia') || desc.includes('chubasco')) weatherIcon = '🌧️';
+                    else if (desc.includes('nuboso') || desc.includes('cubierto')) weatherIcon = '☁️';
+                    else if (desc.includes('despejado')) weatherIcon = '☀️';
+
+                    weatherHtml = `
+                        <div class="ai-card weather-card" style="margin-top: 12px; margin-bottom: 12px; border-left: 4px solid #0ea5e9;">
+                            <div class="card-header" style="display:flex; align-items:center; gap:8px;">
+                                <span style="font-size:1.2rem">${weatherIcon}</span>
+                                <span>Cádiz Ahora</span>
+                            </div>
+                            <div class="card-body">
+                                <div style="display:flex; justify-content:space-between; align-items:center;">
+                                    <div style="font-size:2.2rem; font-weight:700; color:var(--primary-color);">${wData.current.temp}°C</div>
+                                    <div style="text-align:right; font-size:0.85rem; color:var(--text-secondary);">
+                                        <div>Máx: ${wData.daily.tempMax}° | Mín: ${wData.daily.tempMin}°</div>
+                                        <div>Índice UV: ${wData.daily.uvMax}</div>
+                                    </div>
+                                </div>
+                                <div style="font-size:0.95rem; font-weight:500; margin-top:4px;">${wData.current.skyDesc}</div>
+                                ${tidesStr}
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+        } catch (e) {
+            console.error('Weather fetch error:', e);
+        }
+        
         addMessage('bot', `
             <span class="bubble">¡Hola! 👋 Soy tu asistente virtual de Cádiz.<br><br>Tengo acceso a fuentes oficiales en diferentes áreas para ayudarte con cualquier duda sobre la ciudad de Cádiz. Parece que estás buscando información sobre taxis.<br><br>Cuéntame, ¿qué necesitas saber exactamente?</span>
+            ${weatherHtml}
             <div class="suggested-blocks-container" style="margin-top: 8px;">${buttonsHtml}</div>
         `);
     }, 500);
