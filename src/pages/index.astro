@@ -1964,40 +1964,48 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             if (wRes.ok) {
                 const wData = await wRes.json();
                 if (!wData.error) {
-                    let tidesStr = '';
-                    if (wData.tides && wData.tides.length > 0) {
-                        const tidesItems = wData.tides.map((t: any) => `<span>${t.type === 'pleamar' ? '🌊' : '🏖️'} ${t.type === 'pleamar' ? 'Pleamar' : 'Bajamar'}: ${t.time} (${t.height}m)</span>`).join('<br>');
-                        tidesStr = `<div style="margin-top:8px; padding-top:8px; border-top:1px solid var(--bubble-bot-border); font-size:0.85em; color:var(--text-secondary); line-height: 1.4;"><strong>Mareas hoy:</strong><br>${tidesItems}</div>`;
-                    }
-
-                    let weatherIcon = '🌤️';
-                    const desc = (wData.current.skyDesc || '').toLowerCase();
-                    if (desc.includes('lluvia') || desc.includes('chubasco')) weatherIcon = '🌧️';
-                    else if (desc.includes('nuboso') || desc.includes('cubierto')) weatherIcon = '☁️';
-                    else if (desc.includes('despejado')) weatherIcon = '☀️';
+                    let currentTempNum = parseFloat(wData.current.temp);
+                    let thermColor = '#f97316'; // orange (mild)
+                    if (currentTempNum < 15) thermColor = '#06b6d4'; // turquoise (cold)
+                    else if (currentTempNum > 27) thermColor = '#ef4444'; // red (hot)
 
                     let windStr = '';
                     if (wData.current.windSpeed && wData.current.windSpeed !== 'N/A') {
-                        windStr = `<div>💨 Viento: ${wData.current.windSpeed} km/h (${wData.current.windDir})</div>`;
+                        windStr = `<div style="display:flex; align-items:center; justify-content:flex-end; gap:4px;">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+                                        <span>${wData.current.windSpeed} km/h</span>
+                                   </div>`;
                     }
 
                     weatherHtml = `
-                        <div class="ai-card rule-card" style="margin-top: 12px; margin-bottom: 12px;">
-                            <div class="card-header" style="display:flex; align-items:center; gap:8px;">
-                                <span>⚖️ Información Oficial</span>
+                        <div class="ai-card" style="margin-top: 12px; margin-bottom: 12px; border-radius: 12px; overflow: hidden; border: 1px solid var(--bubble-bot-border);">
+                            <div style="background-color: var(--primary-color); color: white; padding: 10px 16px; display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 0.95rem;">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
+                                <span>El clima en Cádiz hoy</span>
                             </div>
-                            <div class="card-body">
-                                <div style="display:flex; justify-content:space-between; align-items:center;">
-                                    <div style="font-size:2.2rem; font-weight:700; color:var(--primary-color);">${wData.current.temp}°C</div>
-                                    <div style="text-align:right; font-size:0.85rem; color:var(--text-secondary);">
-                                        <div>Máx: ${wData.daily.tempMax}° | Mín: ${wData.daily.tempMin}°</div>
-                                        <div>Índice UV: ${wData.daily.uvMax}</div>
-                                        ${windStr}
+                            <div class="card-body" style="padding: 16px; display: flex; justify-content: space-between; align-items: center;">
+                                <div style="display: flex; flex-direction: column; justify-content: center;">
+                                    <div style="display: flex; align-items: center; gap: 8px;">
+                                        <span style="font-size: 2.2rem; line-height: 1;">${weatherIcon}</span>
+                                        <span style="font-size: 2.5rem; font-weight: 700; color: var(--text-primary); line-height: 1;">${wData.current.temp}°</span>
                                     </div>
+                                    <div style="font-size: 0.95rem; font-weight: 500; color: var(--text-secondary); margin-top: 8px; text-transform: capitalize;">${wData.current.skyDesc}</div>
                                 </div>
-                                <div style="font-size:0.95rem; font-weight:500; margin-top:4px;">${weatherIcon} ${wData.current.skyDesc}</div>
-                                ${tidesStr}
-                                <div class="law-source">📚 Fuente: AEMET</div>
+                                
+                                <div style="text-align: right; font-size: 0.85rem; color: var(--text-secondary); display: flex; flex-direction: column; gap: 6px;">
+                                    <div style="display: flex; align-items: center; justify-content: flex-end; gap: 4px;">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="${thermColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/><path d="M11.5 6v6"/></svg>
+                                        <span>Máx: ${wData.daily.tempMax}° | Mín: ${wData.daily.tempMin}°</span>
+                                    </div>
+                                    <div style="display: flex; align-items: center; justify-content: flex-end; gap: 4px;">
+                                        <span>☀️</span>
+                                        <span>Índice UV: ${wData.daily.uvMax}</span>
+                                    </div>
+                                    ${windStr}
+                                </div>
+                            </div>
+                            <div style="background-color: var(--primary-color); color: white; padding: 4px 16px; font-size: 0.7rem; text-align: right; opacity: 0.9;">
+                                Fuente: AEMET
                             </div>
                         </div>
                     `;
