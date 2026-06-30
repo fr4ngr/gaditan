@@ -9,12 +9,7 @@ import '../styles/components.css';
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin - Cádiz Taxi</title>
-    <!-- PDF.js para extraer texto de PDFs en el cliente -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-    <script>
-        // @ts-ignore
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-    </script>
+    <!-- PDF Extraction & Gemini API (Backend) -->
     <style>
         body {
             background: var(--ds-bg-light);
@@ -424,8 +419,8 @@ import '../styles/components.css';
                             </div>
 
                             <div class="form-group mt-sm">
-                                <label>Cargar información desde un PDF (Opcional):</label>
-                                <input type="file" id="doc-pdf-upload" accept="application/pdf" />
+                                <label for="doc-pdf-upload" style="font-size: 0.9rem; font-weight: 500; color: var(--ds-primary);">O subir archivo (PDF, DOCX, JPG, PNG) para extraer con IA:</label>
+                                <input type="file" id="doc-pdf-upload" accept=".pdf, .png, .jpg, .jpeg, .docx" />
                                 <div style="display: flex; gap: 10px; align-items: center; margin-top: 5px;">
                                     <input type="checkbox" id="doc-append-mode" checked style="width: auto;" />
                                     <label for="doc-append-mode" style="font-weight: normal; font-size: 0.9rem;">Añadir al texto existente (no borrar)</label>
@@ -1049,7 +1044,7 @@ import '../styles/components.css';
             `;
         };
 
-        // --- PDF Extraction Helper ---
+        // --- AI Extraction Helper ---
         async function extractPdfToTextarea(fileInputId, textAreaId, appendCheckboxId) {
             const fileInput = document.getElementById(fileInputId);
             
@@ -1069,25 +1064,35 @@ import '../styles/components.css';
                 
                 const dateStr = new Date().toLocaleString('es-ES');
                 const originalText = appendMode && textArea.value ? textArea.value + `\n\n--- NUEVO DOCUMENTO AÑADIDO: ${dateStr} ---\n\n` : `--- DOCUMENTO CREADO: ${dateStr} ---\n\n`;
-                showMessage("Extrayendo PDF... no cierres la ventana.", false);
+                
+                showMessage("La Inteligencia Artificial está leyendo el archivo... (aprox 10-15s)", false);
                 
                 try {
-                    const arrayBuffer = await file.arrayBuffer();
-                    // @ts-ignore
-                    const pdf = await pdfjsLib.getDocument({data: arrayBuffer}).promise;
-                    let fullText = "";
-                    
-                    for (let i = 1; i <= pdf.numPages; i++) {
-                        const page = await pdf.getPage(i);
-                        const textContent = await page.getTextContent();
-                        const pageText = textContent.items.map(item => item.str).join(" ");
-                        fullText += pageText + "\n\n";
+                    const formData = new FormData();
+                    formData.append('file', file);
+
+                    const res = await fetch('/api/admin/extract', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': 'Bearer ' + sessionPwd
+                        },
+                        body: formData
+                    });
+
+                    if (!res.ok) {
+                        const errData = await res.json().catch(() => ({}));
+                        throw new Error(errData.error || `HTTP ${res.status}`);
                     }
-                    
-                    textArea.value = originalText + fullText.trim();
-                    showMessage("✅ PDF extraído y listo para guardar.");
+
+                    const data = await res.json();
+                    if (data.success) {
+                        textArea.value = originalText + data.text.trim();
+                        showMessage("✅ Archivo procesado perfectamente por la IA.");
+                    } else {
+                        throw new Error(data.error || "Error desconocido");
+                    }
                 } catch (err) {
-                    showMessage("Error al extraer PDF: " + err.message, true);
+                    showMessage("Error en extracción IA: " + err.message, true);
                 }
             });
         }
