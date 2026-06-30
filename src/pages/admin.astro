@@ -144,8 +144,7 @@ import '../styles/components.css';
         <div id="dashboard-section" style="display: none;">
             <div class="tabs">
                 <button class="tab-btn active" onclick="switchTab('estado')">Estado del Servicio</button>
-                <button class="tab-btn" onclick="switchTab('ver-cerebros')">Mis Cerebros</button>
-                <button class="tab-btn" onclick="switchTab('crear-cerebro')">+ Nuevo Cerebro</button>
+                <button class="tab-btn" onclick="switchTab('cerebros')">Mis Cerebros</button>
                 <button class="tab-btn" onclick="switchTab('personalidad')">🤖 Personalidad</button>
                 <button class="tab-btn" onclick="switchTab('simulador')">🧪 Simulador</button>
             </div>
@@ -169,64 +168,71 @@ import '../styles/components.css';
                         </div>
                     </div>
 
-                    <!-- TAB 2: Ver Cerebros -->
-                    <div id="tab-ver-cerebros" class="tab-content">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <h3 class="text-title">Tus Cerebros Activos</h3>
-                            <button class="btn btn-secondary" style="margin: 0; padding: 5px 15px;" onclick="loadBrainsList()">🔄 Refrescar</button>
+                    <!-- TAB 2: Gestor Jerárquico de Cerebros -->
+                    <div id="tab-cerebros" class="tab-content">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <h3 class="text-title" id="cerebros-title">Materias de Conocimiento</h3>
+                            <div style="display: flex; gap: 10px;">
+                                <button class="btn btn-secondary" style="margin: 0; padding: 5px 15px;" id="btn-back-materias" onclick="showMaterias()" style="display:none;">⬅️ Volver</button>
+                                <button class="btn btn-primary" style="margin: 0; padding: 5px 15px;" id="btn-new-materia" onclick="promptNewMateria()">➕ Nueva Materia</button>
+                            </div>
                         </div>
-                        <p class="text-muted">Estas son las áreas de conocimiento que la IA consulta actualmente.</p>
+                        <p class="text-muted" id="cerebros-subtitle">Gestiona las áreas de conocimiento. La IA sabrá diferenciar entre la información oficial y la comercial.</p>
                         
-                        <div class="brain-list" id="brains-list-container">
+                        <!-- Vista 1: Lista de Materias -->
+                        <div class="brain-list" id="materias-list">
                             <div class="text-center text-muted">Cargando...</div>
                         </div>
 
-                        <!-- Editor Modal/Section -->
-                        <div id="brain-editor" style="display: none; margin-top: 30px; border-top: 1px solid var(--bubble-bot-border); padding-top: 20px;">
-                            <h3 class="text-title text-primary" id="editor-title">Editando: ...</h3>
+                        <!-- Vista 2: Dentro de una Materia (Subcerebros A y B) -->
+                        <div id="materia-view" style="display: none; display: flex; flex-direction: column; gap: 20px;">
+                            <!-- Zona A: Oficial -->
+                            <div style="border: 1px solid var(--bubble-bot-border); border-radius: 8px; background: white; padding: 15px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 10px;">
+                                    <h4 style="margin: 0; color: var(--ds-primary);">🏛️ A: Información Oficial / Pública</h4>
+                                    <button class="btn btn-secondary" style="margin:0; padding:3px 10px; font-size:0.8rem;" onclick="showDocumentEditor('A_oficial')">+ Añadir Documento Oficial</button>
+                                </div>
+                                <div id="list-A_oficial" class="brain-list"></div>
+                            </div>
                             
+                            <!-- Zona B: Comercial -->
+                            <div style="border: 1px solid #ffeeba; border-radius: 8px; background: #fffcf5; padding: 15px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ffeeba; padding-bottom: 10px; margin-bottom: 10px;">
+                                    <h4 style="margin: 0; color: #856404;">💰 B: Información Comercial / Patrocinada</h4>
+                                    <button class="btn btn-secondary" style="margin:0; padding:3px 10px; font-size:0.8rem;" onclick="showDocumentEditor('B_comercial')">+ Añadir Documento Comercial</button>
+                                </div>
+                                <div id="list-B_comercial" class="brain-list"></div>
+                            </div>
+                        </div>
+
+                        <!-- Editor de Documento (Crear / Editar) -->
+                        <div id="brain-editor" style="display: none; margin-top: 30px; border-top: 1px solid var(--bubble-bot-border); padding-top: 20px;">
+                            <h3 class="text-title text-primary" id="editor-title">Documento</h3>
+                            
+                            <div class="form-group">
+                                <label>Nombre del archivo (sin espacios, ej: "ordenanza_2026"):</label>
+                                <input type="text" id="doc-filename" placeholder="nombre_archivo" />
+                            </div>
+
                             <div class="form-group mt-sm">
-                                <label>Extraer desde PDF (Opcional):</label>
-                                <input type="file" id="edit-pdf-upload" accept="application/pdf" />
+                                <label>Cargar información desde un PDF (Opcional):</label>
+                                <input type="file" id="doc-pdf-upload" accept="application/pdf" />
                                 <div style="display: flex; gap: 10px; align-items: center; margin-top: 5px;">
-                                    <input type="checkbox" id="edit-append-mode" checked style="width: auto;" />
-                                    <label for="edit-append-mode" style="font-weight: normal; font-size: 0.9rem;">Añadir al final (no borrar el texto actual)</label>
+                                    <input type="checkbox" id="doc-append-mode" checked style="width: auto;" />
+                                    <label for="doc-append-mode" style="font-weight: normal; font-size: 0.9rem;">Añadir al texto existente (no borrar)</label>
                                 </div>
                             </div>
                             
-                        <div class="form-group" style="display: none;">
-                            <label>Contenido del Cerebro (Markdown):</label>
-                            <textarea id="edit-knowledge-text" required></textarea>
-                        </div>
+                            <div class="form-group" style="display: none;">
+                                <label>Contenido del Texto (Markdown):</label>
+                                <textarea id="doc-content" required></textarea>
+                            </div>
                             
                             <div style="display: flex; gap: 10px;">
-                                <button class="btn btn-primary" onclick="saveEditedBrain()">💾 Guardar Cambios</button>
-                                <button class="btn btn-secondary" onclick="document.getElementById('brain-editor').style.display='none'">Cancelar</button>
+                                <button class="btn btn-primary" onclick="saveDocument()">💾 Guardar Documento</button>
+                                <button class="btn btn-secondary" onclick="hideDocumentEditor()">Cancelar</button>
                             </div>
                         </div>
-                    </div>
-
-                    <!-- TAB 3: Crear Cerebro -->
-                    <div id="tab-crear-cerebro" class="tab-content">
-                        <h3 class="text-title">Añadir Nueva Área de Conocimiento</h3>
-                        <p class="text-muted">Crea un archivo nuevo. Una vez guardado, el sistema se redesplegará e inyectará este nuevo cerebro en el chat.</p>
-                        
-                        <div class="form-group">
-                            <label>Nombre del Cerebro (sin espacios ni símbolos raros, ej: "restaurantes"):</label>
-                            <input type="text" id="new-brain-name" placeholder="historia_cadiz" required />
-                        </div>
-
-                        <div class="form-group mt-sm">
-                            <label>Extraer desde PDF (Opcional):</label>
-                            <input type="file" id="new-pdf-upload" accept="application/pdf" />
-                        </div>
-                        
-                        <div class="form-group" style="display: none;">
-                            <label>Contenido del Cerebro (Markdown):</label>
-                            <textarea id="new-knowledge-text" required placeholder="Pega aquí la información o súbela desde un PDF..."></textarea>
-                        </div>
-                        
-                        <button class="btn btn-primary" onclick="createNewBrain()">➕ Crear Cerebro</button>
                     </div>
 
                     <!-- TAB 4: Personalidad -->
@@ -302,7 +308,7 @@ import '../styles/components.css';
             event.target.classList.add('active');
             document.getElementById('tab-' + tabId).classList.add('active');
 
-            if (tabId === 'ver-cerebros') loadBrainsList();
+            if (tabId === 'cerebros') showMaterias();
             if (tabId === 'personalidad') loadSystemPrompt();
         }
 
@@ -386,30 +392,38 @@ import '../styles/components.css';
             }
         }
 
-        // --- Brains List Tab ---
-        async function loadBrainsList() {
-            const container = document.getElementById('brains-list-container');
-            container.innerHTML = "Cargando...";
+        // --- Gestor Jerárquico (Materias -> A/B -> Documentos) ---
+        let currentMateria = null;
+        let currentSubtipo = null; // 'A_oficial' or 'B_comercial'
+        let currentDocSha = null;
+
+        window.showMaterias = async function() {
+            currentMateria = null;
+            document.getElementById('materia-view').style.display = 'none';
             document.getElementById('brain-editor').style.display = 'none';
+            document.getElementById('btn-back-materias').style.display = 'none';
+            document.getElementById('btn-new-materia').style.display = 'block';
+            document.getElementById('cerebros-title').innerText = 'Materias de Conocimiento';
+            document.getElementById('cerebros-subtitle').innerText = 'Gestiona las áreas de conocimiento. La IA sabrá diferenciar entre la información oficial y la comercial.';
+            
+            const container = document.getElementById('materias-list');
+            container.style.display = 'flex';
+            container.innerHTML = "Cargando materias...";
 
             try {
-                const res = await fetch('/api/admin/brains', {
-                    headers: { 'Authorization': 'Bearer ' + sessionPwd }
-                });
+                const res = await fetch('/api/admin/brains?action=list&path=', { headers: { 'Authorization': 'Bearer ' + sessionPwd } });
                 const data = await res.json();
                 
                 if (res.ok) {
-                    if (data.length === 0) {
-                        container.innerHTML = "<p>No hay cerebros. ¡Crea uno!</p>";
+                    const materias = data.filter(d => d.type === 'dir');
+                    if (materias.length === 0) {
+                        container.innerHTML = "<p class='text-muted'>No hay ninguna materia. ¡Crea la primera!</p>";
                         return;
                     }
-                    container.innerHTML = data.map(b => `
-                        <div class="brain-item">
-                            <span style="font-weight:bold;">🧠 ${b.name}</span>
-                            <div style="display:flex; gap:8px;">
-                                <button class="btn btn-secondary" style="margin:0; padding:5px 10px;" onclick="editBrain('${b.name}')">✏️ Editar</button>
-                                <button class="btn btn-danger" style="margin:0; padding:5px 10px; background:var(--ds-danger); color:white; border:none; border-radius:20px; cursor:pointer;" onclick="deleteBrain('${b.name}', '${b.sha}')">🗑️</button>
-                            </div>
+                    container.innerHTML = materias.map(m => `
+                        <div class="brain-item" style="cursor: pointer;" onclick="openMateria('${m.name}')">
+                            <span style="font-weight:bold; font-size: 1.1rem;">📂 ${m.name}</span>
+                            <span style="color: var(--ds-primary);">Abrir ➡️</span>
                         </div>
                     `).join('');
                 } else {
@@ -418,93 +432,154 @@ import '../styles/components.css';
             } catch (e) {
                 container.innerHTML = "Error de red.";
             }
+        };
+
+        window.promptNewMateria = function() {
+            const name = prompt("Introduce el nombre de la nueva materia (sin espacios, ej: Transporte):");
+            if (name) {
+                const cleanName = name.trim().replace(/[^a-zA-Z0-9_-]/g, '');
+                if (cleanName) {
+                    openMateria(cleanName); // Opening a non-existent materia will show it empty
+                    showMessage("Materia creada. Añade un documento para que se guarde en GitHub.");
+                }
+            }
+        };
+
+        window.openMateria = async function(materiaName) {
+            currentMateria = materiaName;
+            document.getElementById('materias-list').style.display = 'none';
+            document.getElementById('brain-editor').style.display = 'none';
+            document.getElementById('btn-back-materias').style.display = 'block';
+            document.getElementById('btn-new-materia').style.display = 'none';
+            document.getElementById('cerebros-title').innerText = `Materia: ${materiaName}`;
+            document.getElementById('cerebros-subtitle').innerText = 'Añade documentos oficiales (Leyes, Paradas) y comerciales (Restaurantes, Hoteles).';
+            
+            const view = document.getElementById('materia-view');
+            view.style.display = 'flex';
+
+            await fetchList(materiaName, 'A_oficial', 'list-A_oficial');
+            await fetchList(materiaName, 'B_comercial', 'list-B_comercial');
+        };
+
+        async function fetchList(materia, tipo, containerId) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = "<span class='text-muted'>Cargando...</span>";
+            try {
+                const res = await fetch(`/api/admin/brains?action=list&path=${materia}/${tipo}`, { headers: { 'Authorization': 'Bearer ' + sessionPwd } });
+                const data = await res.json();
+                
+                if (res.ok) {
+                    const files = data.filter(f => f.type === 'file' && f.name.endsWith('.md'));
+                    if (files.length === 0) {
+                        container.innerHTML = "<span class='text-muted' style='font-size: 0.9rem;'>No hay documentos aquí todavía.</span>";
+                        return;
+                    }
+                    container.innerHTML = files.map(f => `
+                        <div class="brain-item" style="padding: 10px; margin-bottom: 5px;">
+                            <span>📄 ${f.name}</span>
+                            <div style="display:flex; gap:8px;">
+                                <button class="btn btn-secondary" style="margin:0; padding:2px 8px; font-size: 0.8rem;" onclick="editDocument('${tipo}', '${f.name.replace('.md', '')}')">Editar</button>
+                                <button class="btn btn-danger" style="margin:0; padding:2px 8px; font-size: 0.8rem; background:var(--ds-danger); color:white; border:none; border-radius:4px;" onclick="deleteDocument('${tipo}', '${f.name}', '${f.sha}')">Borrar</button>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    if (res.status === 404) {
+                        container.innerHTML = "<span class='text-muted' style='font-size: 0.9rem;'>Vacío (la carpeta se creará al añadir algo)</span>";
+                    } else {
+                        container.innerHTML = "Error: " + data.error;
+                    }
+                }
+            } catch (e) {
+                container.innerHTML = "Error de red.";
+            }
         }
 
-        window.editBrain = async function(name) {
+        window.showDocumentEditor = function(tipo) {
+            currentSubtipo = tipo;
+            currentDocSha = null;
             document.getElementById('brain-editor').style.display = 'block';
-            document.getElementById('editor-title').innerText = `Editando: ${name}`;
-            document.getElementById('edit-knowledge-text').value = 'Cargando contenido desde GitHub...';
-            currentEditingBrain = name;
+            document.getElementById('editor-title').innerText = `Nuevo Documento (${tipo})`;
+            document.getElementById('doc-filename').value = '';
+            document.getElementById('doc-filename').disabled = false;
+            document.getElementById('doc-content').value = '';
+            document.getElementById('doc-pdf-upload').value = '';
+        };
 
+        window.hideDocumentEditor = function() {
+            document.getElementById('brain-editor').style.display = 'none';
+        };
+
+        window.editDocument = async function(tipo, filename) {
+            currentSubtipo = tipo;
+            document.getElementById('brain-editor').style.display = 'block';
+            document.getElementById('editor-title').innerText = `Editando: ${filename}`;
+            document.getElementById('doc-filename').value = filename;
+            document.getElementById('doc-filename').disabled = true; // prevent rename for now
+            document.getElementById('doc-content').value = 'Cargando...';
+            document.getElementById('doc-pdf-upload').value = '';
+
+            const path = `${currentMateria}/${tipo}/${filename}`;
             try {
-                const res = await fetch(`/api/admin/brains?file=${name}`, {
-                    headers: { 'Authorization': 'Bearer ' + sessionPwd }
-                });
+                const res = await fetch(`/api/admin/brains?action=get&path=${path}`, { headers: { 'Authorization': 'Bearer ' + sessionPwd } });
                 const data = await res.json();
                 if (res.ok) {
-                    document.getElementById('edit-knowledge-text').value = data.content;
-                    currentEditingSha = data.sha;
+                    document.getElementById('doc-content').value = data.content;
+                    currentDocSha = data.sha;
                 } else {
-                    document.getElementById('edit-knowledge-text').value = "Error al cargar: " + data.error;
+                    document.getElementById('doc-content').value = "Error al cargar: " + data.error;
                 }
             } catch(e) {
-                document.getElementById('edit-knowledge-text').value = "Error de red.";
+                document.getElementById('doc-content').value = "Error de red.";
             }
         };
 
-        window.saveEditedBrain = async function() {
-            const text = document.getElementById('edit-knowledge-text').value;
-            showMessage("Guardando en GitHub...", false);
-            try {
-                const res = await fetch('/api/admin/brains', {
-                    method: 'POST',
-                    headers: { 'Authorization': 'Bearer ' + sessionPwd, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ filename: currentEditingBrain, content: text })
-                });
-                if (res.ok) {
-                    showMessage("¡Guardado exitosamente! El bot se actualizará en unos minutos.");
-                    document.getElementById('brain-editor').style.display = 'none';
-                } else {
-                    const data = await res.json();
-                    showMessage("Error: " + data.error, true);
-                }
-            } catch (e) {
-                showMessage("Error de red", true);
-            }
-        };
+        window.saveDocument = async function() {
+            let filename = document.getElementById('doc-filename').value.trim().replace(/[^a-zA-Z0-9_-]/g, '');
+            const content = document.getElementById('doc-content').value;
 
-        window.deleteBrain = async function(name, sha) {
-            if(!confirm(`¿Seguro que quieres borrar el cerebro "${name}"?`)) return;
-            showMessage(`Borrando ${name}...`, false);
-            try {
-                const res = await fetch('/api/admin/brains', {
-                    method: 'DELETE',
-                    headers: { 'Authorization': 'Bearer ' + sessionPwd, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ filename: name, sha: sha })
-                });
-                if (res.ok) {
-                    showMessage("Cerebro eliminado correctamente.");
-                    loadBrainsList();
-                } else {
-                    const data = await res.json();
-                    showMessage("Error: " + data.error, true);
-                }
-            } catch (e) {
-                showMessage("Error de red", true);
-            }
-        };
-
-        // --- Create Tab ---
-        window.createNewBrain = async function() {
-            const nameInput = document.getElementById('new-brain-name').value.trim().replace(/[^a-zA-Z0-9_-]/g, '');
-            const text = document.getElementById('new-knowledge-text').value;
-
-            if (!nameInput || !text) {
+            if (!filename || !content) {
                 showMessage("El nombre y el contenido son obligatorios.", true);
                 return;
             }
 
-            showMessage("Creando en GitHub...", false);
+            const path = `${currentMateria}/${currentSubtipo}/${filename}`;
+            showMessage("Guardando en GitHub...", false);
+
             try {
                 const res = await fetch('/api/admin/brains', {
                     method: 'POST',
                     headers: { 'Authorization': 'Bearer ' + sessionPwd, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ filename: nameInput, content: text })
+                    body: JSON.stringify({ path: path, content: content })
                 });
                 if (res.ok) {
-                    showMessage(`¡Cerebro "${nameInput}" creado! El bot se actualizará en unos minutos.`);
-                    document.getElementById('new-brain-name').value = '';
-                    document.getElementById('new-knowledge-text').value = '';
+                    showMessage("¡Documento guardado! El bot se actualizará.");
+                    hideDocumentEditor();
+                    openMateria(currentMateria); // refresh lists
+                } else {
+                    const data = await res.json();
+                    showMessage("Error: " + data.error, true);
+                }
+            } catch (e) {
+                showMessage("Error de red", true);
+            }
+        };
+
+        window.deleteDocument = async function(tipo, filenameWithExt, sha) {
+            if(!confirm(`¿Seguro que quieres borrar ${filenameWithExt}?`)) return;
+            const filename = filenameWithExt.replace('.md', '');
+            const path = `${currentMateria}/${tipo}/${filename}`;
+            
+            showMessage(`Borrando...`, false);
+            try {
+                const res = await fetch('/api/admin/brains', {
+                    method: 'DELETE',
+                    headers: { 'Authorization': 'Bearer ' + sessionPwd, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ path: path, sha: sha })
+                });
+                if (res.ok) {
+                    showMessage("Documento eliminado.");
+                    openMateria(currentMateria); // refresh
                 } else {
                     const data = await res.json();
                     showMessage("Error: " + data.error, true);
@@ -670,8 +745,7 @@ import '../styles/components.css';
             });
         }
 
-        extractPdfToTextarea('edit-pdf-upload', 'edit-knowledge-text', 'edit-append-mode');
-        extractPdfToTextarea('new-pdf-upload', 'new-knowledge-text', null);
+        extractPdfToTextarea('doc-pdf-upload', 'doc-content', 'doc-append-mode');
     </script>
 </body>
 </html>

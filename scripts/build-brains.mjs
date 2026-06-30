@@ -9,14 +9,30 @@ const brainsDir = path.join(__dirname, '../src/data/brains');
 const outputFile = path.join(__dirname, '../functions/api/compiled-brains.js');
 
 try {
-    const files = fs.readdirSync(brainsDir);
-    const brains = {};
-
-    for (const file of files) {
-        if (file.endsWith('.md')) {
-            const name = file.replace('.md', '');
-            const content = fs.readFileSync(path.join(brainsDir, file), 'utf-8');
-            brains[name] = content;
+    const brains = [];
+    
+    if (fs.existsSync(brainsDir)) {
+        const materias = fs.readdirSync(brainsDir, { withFileTypes: true }).filter(d => d.isDirectory());
+        
+        for (const materia of materias) {
+            const materiaPath = path.join(brainsDir, materia.name);
+            const tipos = fs.readdirSync(materiaPath, { withFileTypes: true }).filter(d => d.isDirectory());
+            
+            for (const tipo of tipos) {
+                const tipoPath = path.join(materiaPath, tipo.name);
+                const files = fs.readdirSync(tipoPath, { withFileTypes: true }).filter(f => f.isFile() && f.name.endsWith('.md'));
+                
+                for (const file of files) {
+                    const filePath = path.join(tipoPath, file.name);
+                    const content = fs.readFileSync(filePath, 'utf-8');
+                    brains.push({
+                        materia: materia.name,
+                        tipo: tipo.name,
+                        fileName: file.name.replace('.md', ''),
+                        content: content
+                    });
+                }
+            }
         }
     }
 
