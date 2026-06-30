@@ -222,10 +222,14 @@ import '../styles/components.css';
                                 <h3 class="text-title">Radar</h3>
                                 <p class="text-muted">Descubre las tendencias de conversación de los usuarios.</p>
                             </div>
-                            <div style="display: flex; gap: 10px;">
-                                <button class="btn btn-secondary" id="init-db-btn">1. Inicializar Base de Datos</button>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <input type="month" id="analytics-month" class="form-control" style="width: auto; padding: 5px 10px;" onchange="loadAnalytics()">
                                 <button class="btn btn-primary" id="refresh-analytics-btn">Actualizar Datos</button>
                             </div>
+                        </div>
+
+                        <div style="text-align: right; margin-bottom: 10px;">
+                            <button class="btn btn-secondary" style="font-size: 0.75rem; padding: 2px 8px;" id="init-db-btn">Inicializar BD (Solo Primera Vez)</button>
                         </div>
 
                         <div class="status-grid" style="margin-bottom: 2rem;">
@@ -445,9 +449,14 @@ import '../styles/components.css';
         // --- Status & Deploy ---
         async function checkStatus(btn) {
             const grid = document.getElementById('status-grid');
-            grid.innerHTML = "<div class='text-center w-100'>Cargando estado...</div>";
             if (btn) { btn.disabled = true; btn.innerHTML = '🔄 Comprobando...'; }
+            
+            grid.style.opacity = '0.5';
+            
             try {
+                // Pequeño retardo visual para que se note la comprobación
+                await new Promise(r => setTimeout(r, 600));
+
                 const res = await fetch('/api/admin/status', {
                     headers: { 'Authorization': 'Bearer ' + sessionPwd }
                 });
@@ -495,6 +504,7 @@ import '../styles/components.css';
             } catch (e) {
                 grid.innerHTML = "<div class='text-danger'>Error al conectar con la API de estado.</div>";
             } finally {
+                grid.style.opacity = '1';
                 if (btn) { btn.disabled = false; btn.innerHTML = '🔄 Comprobar ahora'; }
             }
         }
@@ -916,8 +926,19 @@ import '../styles/components.css';
         });
 
         async function loadAnalytics() {
+            const btn = document.getElementById('refresh-analytics-btn');
+            const originalText = btn.textContent;
+            btn.textContent = 'Actualizando...';
+            btn.disabled = true;
+
+            const monthInput = document.getElementById('analytics-month').value; // e.g. "2026-06"
+            let url = '/api/admin/analytics';
+            if (monthInput) {
+                url += `?month=${monthInput}`;
+            }
+
             try {
-                const res = await fetch('/api/admin/analytics', {
+                const res = await fetch(url, {
                     headers: { 'Authorization': `Bearer ${localStorage.getItem('admin_pwd')}` }
                 });
                 
@@ -934,8 +955,11 @@ import '../styles/components.css';
                 }
 
                 if (data.success) {
-                    // Update KPI counters
-                    document.getElementById('analytics-today').textContent = data.data.todayMessages;
+                    if (monthInput) {
+                        document.getElementById('analytics-today').textContent = 'N/A';
+                    } else {
+                        document.getElementById('analytics-today').textContent = data.data.todayMessages;
+                    }
                     document.getElementById('analytics-total').textContent = data.data.totalMessages;
 
                     // Update Categories Bar Chart (HTML based)
@@ -991,6 +1015,10 @@ import '../styles/components.css';
                 }
             } catch (err) {
                 console.error("Error cargando analíticas:", err);
+            } finally {
+                const btn = document.getElementById('refresh-analytics-btn');
+                btn.textContent = 'Actualizar Datos';
+                btn.disabled = false;
             }
         }
     </script>

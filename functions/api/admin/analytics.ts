@@ -12,31 +12,50 @@ export async function onRequestGet(context) {
             return new Response(JSON.stringify({ error: "No DB binding" }), { status: 400 });
         }
 
-        // Obtener KPIs principales
-        const totalRowsReq = await env.DB.prepare("SELECT COUNT(*) as count FROM chat_logs").first();
+        const url = new URL(request.url);
+        const monthFilter = url.searchParams.get('month');
+
+        let whereClause = "";
+        let params = [];
+        if (monthFilter && /^\d{4}-\d{2}$/.test(monthFilter)) {
+            whereClause = "WHERE timestamp LIKE ?";
+            params = [`${monthFilter}%`];
+        }
+
+        // Obtener mensajes totales (o filtrados por mes)
+        let stmtTotal = env.DB.prepare(`SELECT COUNT(*) as count FROM chat_logs ${whereClause}`);
+        if (params.length > 0) stmtTotal = stmtTotal.bind(...params);
+        const totalRowsReq = await stmtTotal.first();
         const totalMessages = totalRowsReq ? totalRowsReq.count : 0;
 
-        // Obtener mensajes de las últimas 24 horas
-        const todayRowsReq = await env.DB.prepare("SELECT COUNT(*) as count FROM chat_logs WHERE timestamp >= datetime('now', '-1 day')").first();
+        // Obtener mensajes de las últimas 24 horas (ignorado si hay filtro de mes, o se podría mantener global)
+        let stmtToday = env.DB.prepare("SELECT COUNT(*) as count FROM chat_logs WHERE timestamp >= datetime('now', '-1 day')");
+        const todayRowsReq = await stmtToday.first();
         const todayMessages = todayRowsReq ? todayRowsReq.count : 0;
 
         // Obtener el Top 10 Categorías
-        const categoriesReq = await env.DB.prepare(`
+        let stmtCategories = env.DB.prepare(`
             SELECT intent_category, COUNT(*) as count 
             FROM chat_logs 
+            ${whereClause}
             GROUP BY intent_category 
             ORDER BY count DESC 
             LIMIT 10
-        `).all();
+        `);
+        if (params.length > 0) stmtCategories = stmtCategories.bind(...params);
+        const categoriesReq = await stmtCategories.all();
         const topCategories = categoriesReq.results || [];
 
         // Obtener últimos 50 mensajes para la lupa
-        const recentMessagesReq = await env.DB.prepare(`
+        let stmtRecent = env.DB.prepare(`
             SELECT timestamp, user_message, intent_category, bot_response
             FROM chat_logs 
+            ${whereClause}
             ORDER BY timestamp DESC 
             LIMIT 50
-        `).all();
+        `);
+        if (params.length > 0) stmtRecent = stmtRecent.bind(...params);
+        const recentMessagesReq = await stmtRecent.all();
         const recentMessages = recentMessagesReq.results || [];
 
         return new Response(JSON.stringify({ 

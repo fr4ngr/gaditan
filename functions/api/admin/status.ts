@@ -12,7 +12,7 @@ export async function onRequestGet(context) {
         aemet: !!env.AEMET_API_KEY,
         deployHook: !!env.CLOUDFLARE_DEPLOY_HOOK,
         maps: !!env.MAPS_API_KEY,
-        db: !!env.DB_CONNECTION,
+        db: !!env.DB,
         whatsapp: !!env.WHATSAPP_API_KEY,
         adminPwd: !!env.ADMIN_PASSWORD
     };
