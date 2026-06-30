@@ -17,25 +17,53 @@ export async function onRequestPost(context) {
         // Inicializar Gemini usando la clave secreta del entorno (Cloudflare)
         const ai = new GoogleGenAI({ apiKey: env.GEMINI_API_KEY });
 
-        const cerebrosXml = brains.map(b => `
+        // ENRUTADOR DUAL-BRAIN
+        const routerInstruction = `Eres un enrutador inteligente para Cádiz. Analiza la conversación y decide qué tipo de conocimiento necesita para responder al usuario:
+- "A_oficial": Si pregunta sobre transporte público, autobuses, normativas, leyes, tarifas, ordenanzas, precios de taxi, reglas municipales o cosas oficiales.
+- "B_ventas": Si pregunta por turismo, hoteles, restaurantes, ocio, qué ver, playas, compras, eventos o necesita recomendaciones comerciales.
+- "AMBOS": Si la pregunta mezcla conceptos oficiales y turísticos.
+Devuelve ÚNICAMENTE UNA de las 3 palabras: A_oficial, B_ventas, o AMBOS. Sin formato ni texto adicional.`;
+
+        let ruta = "AMBOS";
+        try {
+            const routerResponse = await ai.models.generateContent({
+                model: 'gemini-2.5-flash',
+                contents: body.history && body.history.length > 0 ? body.history : [{ role: 'user', parts: [{ text: userMessage }] }],
+                config: { systemInstruction: routerInstruction, temperature: 0.0, maxOutputTokens: 5 }
+            });
+            const rText = routerResponse.text.trim().toUpperCase();
+            if (rText.includes("A_OFICIAL")) ruta = "A_oficial";
+            else if (rText.includes("B_VENTAS")) ruta = "B_ventas";
+        } catch(e) {
+            console.error("Router error:", e);
+        }
+
+        let cerebrosFiltrados = brains;
+        if (ruta === "A_oficial") {
+             cerebrosFiltrados = brains.filter(b => b.tipo === "A_oficial");
+        } else if (ruta === "B_ventas") {
+             cerebrosFiltrados = brains.filter(b => b.tipo === "B_ventas");
+        }
+
+        const cerebrosXml = cerebrosFiltrados.map(b => `
 <cerebro materia="${b.materia}" tipo="${b.tipo}" documento="${b.fileName}">
 ${b.content}
 </cerebro>
 `).join('');
 
-        const systemInstruction = (systemPrompt || "Eres un asistente.").replace('{{CEREBROS_INJECTION_POINT}}', cerebrosXml);
+        const systemInstruction = (systemPrompt || "Eres un asistente.").replace('{{CEREBROS_INJECTION_POINT}}', `<cerebros_activos ruta="${ruta}">\n${cerebrosXml}\n</cerebros_activos>`);
 
         const schema = {
             type: Type.OBJECT,
             properties: {
                 cardType: {
                     type: Type.STRING,
-                    enum: ['TextCard', 'TariffCard', 'PriceCard', 'RuleCard', 'ContactCard', 'MapCard', 'NavigationCard', 'ReservationCard'],
-                    description: "El tipo de tarjeta visual a mostrar."
+                    enum: ['TextCard', 'TariffCard', 'PriceCard', 'RuleCard', 'ContactCard', 'MapCard', 'NavigationCard', 'ReservationCard', 'AffiliateCard'],
+                    description: "El tipo de tarjeta visual a mostrar. Usa MapCard si piden paradas o ubicaciones (la UI pintará el mapa automáticamente)."
                 },
                 content: {
                     type: Type.STRING,
-                    description: "El mensaje principal del asistente. Usa un tono directo y servicial, y evita usar emojis a menos que sean estrictamente funcionales. ¡NUNCA incluyas el número de teléfono literal en una ContactCard!"
+                    description: "Mensaje del asistente. OBLIGATORIO: Párrafos cortos (1-2 líneas), uso de HTML/Markdown con <b>negritas</b>. PROHIBIDO escribir muros de texto. PROHIBIDO pedir perdón por no mostrar mapas o links. ¡NUNCA incluyas el número literal si usas ContactCard!"
                 },
                 priceEstimate: { type: Type.STRING, description: "Precio estimado con símbolo €. Solo para PriceCard." },
                 routeDetails: { type: Type.STRING, description: "Resumen de ruta/cálculo. Solo para PriceCard." },
@@ -44,6 +72,10 @@ ${b.content}
                 stopName: { type: Type.STRING, description: "Nombre oficial de parada. Solo para MapCard/NavigationCard." },
                 lat: { type: Type.STRING, description: "Latitud exacta. Solo para MapCard/NavigationCard." },
                 lon: { type: Type.STRING, description: "Longitud exacta. Solo para MapCard/NavigationCard." },
+                affiliateTitle: { type: Type.STRING, description: "Título del producto/servicio. Solo para AffiliateCard." },
+                affiliateUrl: { type: Type.STRING, description: "URL de reserva o compra. Solo para AffiliateCard." },
+                affiliatePrice: { type: Type.STRING, description: "Precio o descuento sugerido. Solo para AffiliateCard." },
+                affiliateImage: { type: Type.STRING, description: "URL de la imagen del producto. Solo para AffiliateCard." },
                 intentCategory: {
                     type: Type.STRING,
                     description: "Categoría de la intención del usuario. OBLIGATORIO.",

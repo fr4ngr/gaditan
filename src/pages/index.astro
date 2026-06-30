@@ -361,6 +361,25 @@ import ChatLayout from '../layouts/ChatLayout.astro';
 
     // --- GENERATIVE UI ENGINE (TARJETAS) ---
     function renderCard(data: any, msgId: string): string {
+        if (data.cardType === 'AffiliateCard') {
+            return `
+            <div class="card affiliate-card mt-sm flex-col">
+                <div class="card-header" style="background-color: #ff9800; color: white;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+                    <span>Recomendación Especial</span>
+                </div>
+                ${data.affiliateImage ? `<img src="${data.affiliateImage}" alt="${data.affiliateTitle || 'Imagen'}" style="width: 100%; height: 150px; object-fit: cover;">` : ''}
+                <div class="card-body" style="flex: 1;">
+                    <h4 style="margin-top: 0; color: var(--primary-color);">${data.affiliateTitle || 'Sugerencia'}</h4>
+                    <p class="text-muted" style="margin:0">${data.content}</p>
+                    ${data.affiliatePrice ? `<div style="font-weight: bold; font-size: 1.2rem; margin-top: 10px; color: #20873c;">${data.affiliatePrice}</div>` : ''}
+                </div>
+                <div style="padding: 0 16px 16px 16px; display: flex; gap: 8px; flex-direction: column;">
+                    ${data.affiliateUrl ? `<a href="${data.affiliateUrl}" target="_blank" class="btn" style="background: #ff9800; color: white; display: block; text-align: center; text-decoration: none;">🛒 Ver Oferta</a>` : ''}
+                    <button class="btn btn-primary" style="display: block; width: 100%;" onclick="window.sendToAI('Quiero pedir un taxi para ir allí ahora mismo')">🚕 Pedir Taxi hacia allí</button>
+                </div>
+            </div>`;
+        }
         if (data.cardType === 'PriceCard') {
             return `
             <div class="card price-card mt-sm">
