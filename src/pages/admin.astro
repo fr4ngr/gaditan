@@ -19,15 +19,13 @@ import '../styles/components.css';
         body {
             background: var(--ds-bg-light);
             padding: 2rem 1rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
             font-family: system-ui, -apple-system, sans-serif;
             margin: 0;
         }
         .admin-container {
             max-width: 800px;
             width: 100%;
+            margin: 0 auto;
         }
         .form-group {
             display: flex;
@@ -290,14 +288,16 @@ import '../styles/components.css';
 
                     <!-- TAB 1: Estado -->
                     <div id="tab-estado" class="tab-content active">
-                        <div class="header-actions" style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div class="header-actions" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px;">
                             <div>
                                 <h3 class="text-title">Estado del Sistema</h3>
                                 <p class="text-muted">Verifica que todas las conexiones necesarias estén operativas.</p>
                             </div>
-                            <button class="btn btn-primary" style="background: var(--ds-primary); border: none;" onclick="forceDeploy(this)">🚀 Forzar Actualización del Bot</button>
+                            <div style="display: flex; flex-direction: column; gap: 10px; align-items: flex-end; min-width: 200px;">
+                                <button class="btn btn-secondary" style="font-size: 0.85rem; padding: 8px 12px;" onclick="checkStatus(this)">🔄 Comprobar ahora</button>
+                                <button class="btn btn-primary" style="font-size: 0.85rem; padding: 8px 12px; border: none;" onclick="forceDeploy(this)">🚀 Forzar Actualización</button>
+                            </div>
                         </div>
-                        <button class="btn btn-secondary" onclick="checkStatus(this)">🔄 Comprobar ahora</button>
                         <div class="status-grid" id="status-grid">
                             <!-- Injected by JS -->
                         </div>
@@ -379,6 +379,7 @@ import '../styles/components.css';
                             </div>
                             <div style="display: flex; gap: 10px;">
                                 <button class="btn btn-secondary" style="margin: 0; padding: 5px 15px; display: none;" id="btn-back-materias" onclick="showMaterias()">← Volver</button>
+                                <button class="btn btn-danger" style="margin: 0; padding: 5px 15px; display: none; background: var(--ds-danger); color: white; border: none;" id="btn-delete-materia" onclick="deleteMateria()">🗑️ Borrar Materia</button>
                                 <button class="btn btn-primary" style="margin: 0; padding: 5px 15px;" id="btn-new-materia" onclick="promptNewMateria()">➕ Nueva Materia</button>
                             </div>
                         </div>
@@ -428,7 +429,7 @@ import '../styles/components.css';
                                 </div>
                             </div>
                             
-                            <div class="form-group" style="display: none;">
+                            <div class="form-group mt-sm">
                                 <label>Contenido del Texto (Markdown):</label>
                                 <textarea id="doc-content" required></textarea>
                             </div>
@@ -663,13 +664,21 @@ import '../styles/components.css';
             }
         };
 
-        window.promptNewMateria = function() {
+        window.promptNewMateria = async function() {
             const name = prompt("Introduce el nombre de la nueva materia (sin espacios, ej: Transporte):");
             if (name) {
                 const cleanName = name.trim().replace(/[^a-zA-Z0-9_-]/g, '');
                 if (cleanName) {
-                    openMateria(cleanName); // Opening a non-existent materia will show it empty
-                    showMessage("Materia creada. Añade un documento para que se guarde en GitHub.");
+                    showMessage("Creando materia...", false);
+                    try {
+                        // Create dummy _meta.md to force GitHub to save the folders
+                        await fetch('/api/admin/brains', { method: 'POST', headers: { 'Authorization': 'Bearer ' + sessionPwd, 'Content-Type': 'application/json' }, body: JSON.stringify({ path: `${cleanName}/A_oficial/_meta`, content: 'Materia inicializada' }) });
+                        await fetch('/api/admin/brains', { method: 'POST', headers: { 'Authorization': 'Bearer ' + sessionPwd, 'Content-Type': 'application/json' }, body: JSON.stringify({ path: `${cleanName}/B_comercial/_meta`, content: 'Materia inicializada' }) });
+                        openMateria(cleanName);
+                        showMessage("Materia creada con éxito.");
+                    } catch(e) {
+                        showMessage("Error de red al crear materia.", true);
+                    }
                 }
             }
         };
@@ -679,6 +688,8 @@ import '../styles/components.css';
             document.getElementById('materias-list').style.display = 'none';
             document.getElementById('brain-editor').style.display = 'none';
             document.getElementById('btn-back-materias').style.display = 'block';
+            document.getElementById('btn-delete-materia').style.display = 'block';
+            document.getElementById('btn-delete-materia').innerHTML = '🗑️ Borrar Materia';
             document.getElementById('btn-new-materia').style.display = 'none';
             document.getElementById('cerebros-title').innerText = `Materia: ${materiaName}`;
             document.getElementById('cerebros-subtitle').innerText = 'Añade documentos de fuentes primarias (Leyes, Paradas) y secundarias (Recomendaciones, Eventos).';
@@ -698,7 +709,7 @@ import '../styles/components.css';
                 const data = await res.json();
                 
                 if (res.ok) {
-                    const files = data.filter(f => f.type === 'file' && f.name.endsWith('.md'));
+                    const files = data.filter(f => f.type === 'file' && f.name.endsWith('.md') && f.name !== '_meta.md');
                     if (files.length === 0) {
                         container.innerHTML = "<span class='text-muted' style='font-size: 0.9rem;'>No hay documentos aquí todavía.</span>";
                         return;
@@ -825,6 +836,60 @@ import '../styles/components.css';
                 showMessage("Error de red", true);
             }
         };
+
+        let isDeletingMateria = false;
+
+        window.deleteMateria = async function() {
+            if (isDeletingMateria) return;
+            const filesA = document.getElementById('list-A_oficial').querySelectorAll('.brain-item').length;
+            const filesB = document.getElementById('list-B_comercial').querySelectorAll('.brain-item').length;
+            const hasFiles = filesA > 0 || filesB > 0;
+            
+            if (hasFiles) {
+                if(!confirm(`⚠️ ATENCIÓN ⚠️\nEsta materia tiene ${filesA + filesB} documento(s).\nSi la borras, perderás la información. ¿Estás seguro?`)) return;
+                const btn = document.getElementById('btn-delete-materia');
+                btn.innerHTML = 'Espera 5s...';
+                isDeletingMateria = true;
+                setTimeout(() => {
+                    btn.innerHTML = '🗑️ Confirmar Borrado';
+                    isDeletingMateria = false;
+                    btn.onclick = async () => {
+                        await executeDeleteMateria();
+                    }
+                }, 5000);
+            } else {
+                if(!confirm(`¿Seguro que quieres borrar la materia vacía?`)) return;
+                await executeDeleteMateria();
+            }
+        };
+
+        async function executeDeleteMateria() {
+            showMessage(`Borrando materia ${currentMateria}... Puede tardar unos segundos.`, false);
+            try {
+                let filesToDelete = [];
+                const resA = await fetch(`/api/admin/brains?action=list&path=${currentMateria}/A_oficial`, { headers: { 'Authorization': 'Bearer ' + sessionPwd } });
+                if(resA.ok) { const files = await resA.json(); files.forEach(f => filesToDelete.push({path: `${currentMateria}/A_oficial/${f.name.replace('.md', '')}`, sha: f.sha})); }
+                
+                const resB = await fetch(`/api/admin/brains?action=list&path=${currentMateria}/B_comercial`, { headers: { 'Authorization': 'Bearer ' + sessionPwd } });
+                if(resB.ok) { const files = await resB.json(); files.forEach(f => filesToDelete.push({path: `${currentMateria}/B_comercial/${f.name.replace('.md', '')}`, sha: f.sha})); }
+
+                for(let file of filesToDelete) {
+                    await fetch('/api/admin/brains', {
+                        method: 'DELETE',
+                        headers: { 'Authorization': 'Bearer ' + sessionPwd, 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ path: file.path, sha: file.sha })
+                    });
+                }
+                
+                showMessage("Materia borrada por completo.");
+                const btn = document.getElementById('btn-delete-materia');
+                btn.onclick = window.deleteMateria; // restore onclick handler
+                btn.style.display = 'none';
+                showMaterias();
+            } catch (e) {
+                showMessage("Error al borrar la materia.", true);
+            }
+        }
 
         // --- Personalidad Tab ---
         window.loadSystemPrompt = async function() {
@@ -1022,9 +1087,9 @@ import '../styles/components.css';
             btn.disabled = true;
 
             const monthInput = document.getElementById('analytics-month').value; // e.g. "2026-06"
-            let url = '/api/admin/analytics';
+            let url = `/api/admin/analytics?t=${new Date().getTime()}`;
             if (monthInput) {
-                url += `?month=${monthInput}`;
+                url += `&month=${monthInput}`;
             }
 
             try {
