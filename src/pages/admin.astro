@@ -57,11 +57,55 @@ import '../styles/components.css';
             margin-top: 10px;
             color: var(--ds-primary);
         }
+        /* Toast Notifications */
+        #toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 9999;
+        }
+        .toast {
+            background: white;
+            color: #1e293b;
+            padding: 12px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideIn 0.3s ease-out forwards;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        .toast.success { border-left: 4px solid var(--ds-success); }
+        .toast.error { border-left: 4px solid var(--ds-danger); }
+        .toast.info { border-left: 4px solid var(--ds-primary); }
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+
         /* Tabs */
         .tabs {
             display: flex;
             gap: 10px;
             margin-bottom: 20px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+        }
+        .tabs::-webkit-scrollbar {
+            height: 6px;
+        }
+        .tabs::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 10px;
         }
         .tab-btn {
             padding: 10px 20px;
@@ -72,6 +116,7 @@ import '../styles/components.css';
             cursor: pointer;
             font-weight: 600;
             transition: all 0.2s;
+            white-space: nowrap;
         }
         .tab-btn.active {
             background: var(--ds-primary);
@@ -121,6 +166,7 @@ import '../styles/components.css';
     </style>
 </head>
 <body>
+    <div id="toast-container"></div>
     <div class="admin-container">
         <!-- Login Section -->
         <div class="card" id="login-section">
@@ -143,8 +189,8 @@ import '../styles/components.css';
         <!-- Dashboard Section -->
         <div id="dashboard-section" style="display: none;">
             <div class="tabs">
-                <button class="tab-btn active" onclick="switchTab('estado')">Estado del Servicio</button>
-                <button class="tab-btn" onclick="switchTab('analytics')">Radar (Analíticas)</button>
+                <button class="tab-btn active" onclick="switchTab('estado')">Panel de Control</button>
+                <button class="tab-btn" onclick="switchTab('analytics')">Radar</button>
                 <button class="tab-btn" onclick="switchTab('cerebros')">Mis Cerebros</button>
                 <button class="tab-btn" onclick="switchTab('personalidad')">🤖 Personalidad</button>
                 <button class="tab-btn" onclick="switchTab('simulador')">🧪 Simulador</button>
@@ -152,7 +198,7 @@ import '../styles/components.css';
 
             <div class="card">
                 <div class="card-body">
-                    <div id="msg-global" style="text-align: center; font-weight: bold; margin-bottom: 15px;"></div>
+
 
                     <!-- TAB 1: Estado -->
                     <div id="tab-estado" class="tab-content active">
@@ -161,9 +207,9 @@ import '../styles/components.css';
                                 <h3 class="text-title">Estado del Sistema</h3>
                                 <p class="text-muted">Verifica que todas las conexiones necesarias estén operativas.</p>
                             </div>
-                            <button class="btn btn-primary" style="background: var(--ds-primary); border: none;" onclick="forceDeploy()">🚀 Forzar Actualización del Bot</button>
+                            <button class="btn btn-primary" style="background: var(--ds-primary); border: none;" onclick="forceDeploy(this)">🚀 Forzar Actualización del Bot</button>
                         </div>
-                        <button class="btn btn-secondary" onclick="checkStatus()">🔄 Comprobar ahora</button>
+                        <button class="btn btn-secondary" onclick="checkStatus(this)">🔄 Comprobar ahora</button>
                         <div class="status-grid" id="status-grid">
                             <!-- Injected by JS -->
                         </div>
@@ -173,8 +219,8 @@ import '../styles/components.css';
                     <div id="tab-analytics" class="tab-content">
                         <div class="header-actions" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                             <div>
-                                <h3 class="text-title">Radar de Dinero (Analíticas)</h3>
-                                <p class="text-muted">Descubre de qué hablan los turistas para captar patrocinadores.</p>
+                                <h3 class="text-title">Radar</h3>
+                                <p class="text-muted">Descubre las tendencias de conversación de los usuarios.</p>
                             </div>
                             <div style="display: flex; gap: 10px;">
                                 <button class="btn btn-secondary" id="init-db-btn">1. Inicializar Base de Datos</button>
@@ -242,7 +288,7 @@ import '../styles/components.css';
                                 <button class="btn btn-primary" style="margin: 0; padding: 5px 15px;" id="btn-new-materia" onclick="promptNewMateria()">➕ Nueva Materia</button>
                             </div>
                         </div>
-                        <p class="text-muted" id="cerebros-subtitle">Gestiona las áreas de conocimiento. La IA sabrá diferenciar entre la información oficial y la comercial.</p>
+                        <p class="text-muted" id="cerebros-subtitle">Gestiona las áreas de conocimiento. La IA sabrá cruzar la información de ambas fuentes.</p>
                         
                         <!-- Vista 1: Lista de Materias -->
                         <div class="brain-list" id="materias-list">
@@ -254,8 +300,8 @@ import '../styles/components.css';
                             <!-- Zona A: Oficial -->
                             <div style="border: 1px solid var(--bubble-bot-border); border-radius: 8px; background: white; padding: 15px;">
                                 <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 10px;">
-                                    <h4 style="margin: 0; color: var(--ds-primary);">🏛️ A: Información Oficial / Pública</h4>
-                                    <button class="btn btn-secondary" style="margin:0; padding:3px 10px; font-size:0.8rem;" onclick="showDocumentEditor('A_oficial')">+ Añadir Documento Oficial</button>
+                                    <h4 style="margin: 0; color: var(--ds-primary);">🏛️ Bloque A (Fuentes Primarias)</h4>
+                                    <button class="btn btn-secondary" style="margin:0; padding:3px 10px; font-size:0.8rem;" onclick="showDocumentEditor('A_oficial')">+ Añadir Documento Primario</button>
                                 </div>
                                 <div id="list-A_oficial" class="brain-list"></div>
                             </div>
@@ -263,8 +309,8 @@ import '../styles/components.css';
                             <!-- Zona B: Comercial -->
                             <div style="border: 1px solid #ffeeba; border-radius: 8px; background: #fffcf5; padding: 15px;">
                                 <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ffeeba; padding-bottom: 10px; margin-bottom: 10px;">
-                                    <h4 style="margin: 0; color: #856404;">💰 B: Información Comercial / Patrocinada</h4>
-                                    <button class="btn btn-secondary" style="margin:0; padding:3px 10px; font-size:0.8rem;" onclick="showDocumentEditor('B_comercial')">+ Añadir Documento Comercial</button>
+                                    <h4 style="margin: 0; color: #856404;">📋 Bloque B (Fuentes Secundarias)</h4>
+                                    <button class="btn btn-secondary" style="margin:0; padding:3px 10px; font-size:0.8rem;" onclick="showDocumentEditor('B_comercial')">+ Añadir Documento Secundario</button>
                                 </div>
                                 <div id="list-B_comercial" class="brain-list"></div>
                             </div>
@@ -294,7 +340,7 @@ import '../styles/components.css';
                             </div>
                             
                             <div style="display: flex; gap: 10px;">
-                                <button class="btn btn-primary" onclick="saveDocument()">💾 Guardar Documento</button>
+                                <button class="btn btn-primary" onclick="saveDocument(this)">💾 Guardar Documento</button>
                                 <button class="btn btn-secondary" onclick="hideDocumentEditor()">Cancelar</button>
                             </div>
                         </div>
@@ -378,17 +424,29 @@ import '../styles/components.css';
             if (tabId === 'personalidad') loadSystemPrompt();
         }
 
-        function showMessage(msg, isError = false) {
-            const div = document.getElementById('msg-global');
-            div.innerText = msg;
-            div.style.color = isError ? 'var(--ds-danger)' : 'var(--ds-success)';
-            setTimeout(() => div.innerText = '', 5000);
+        function showMessage(msg, type = 'info', duration = 4000) {
+            if(type === true) type = 'error';
+            if(type === false) type = 'success';
+            const container = document.getElementById('toast-container');
+            if(!container) return;
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            let icon = 'ℹ️';
+            if (type === 'success') icon = '✅';
+            if (type === 'error') icon = '❌';
+            toast.innerHTML = `<span>${icon}</span><span>${msg}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.animation = 'fadeOut 0.3s ease-out forwards';
+                setTimeout(() => toast.remove(), 300);
+            }, duration);
         }
 
         // --- Status & Deploy ---
-        async function checkStatus() {
+        async function checkStatus(btn) {
             const grid = document.getElementById('status-grid');
             grid.innerHTML = "<div class='text-center w-100'>Cargando estado...</div>";
+            if (btn) { btn.disabled = true; btn.innerHTML = '🔄 Comprobando...'; }
             try {
                 const res = await fetch('/api/admin/status', {
                     headers: { 'Authorization': 'Bearer ' + sessionPwd }
@@ -436,12 +494,15 @@ import '../styles/components.css';
                 }
             } catch (e) {
                 grid.innerHTML = "<div class='text-danger'>Error al conectar con la API de estado.</div>";
+            } finally {
+                if (btn) { btn.disabled = false; btn.innerHTML = '🔄 Comprobar ahora'; }
             }
         }
 
-        window.forceDeploy = async function() {
+        window.forceDeploy = async function(btn) {
             if(!confirm("¿Forzar una actualización en todo el mundo ahora? (Tardará 1-2 minutos en completarse)")) return;
-            showMessage("Enviando orden de despliegue a Cloudflare...", false);
+            showMessage("Enviando orden de despliegue a Cloudflare...", 'info');
+            if (btn) { btn.disabled = true; btn.innerHTML = '🚀 Desplegando...'; }
             try {
                 const res = await fetch('/api/admin/deploy', {
                     method: 'POST',
@@ -454,7 +515,9 @@ import '../styles/components.css';
                     showMessage("Error al desplegar: " + data.error + ". ¿Has configurado CLOUDFLARE_DEPLOY_HOOK en Cloudflare?", true);
                 }
             } catch (e) {
-                showMessage("Error de red enviando orden.", true);
+                showMessage("Error de red enviando orden.", 'error');
+            } finally {
+                if (btn) { btn.disabled = false; btn.innerHTML = '🚀 Forzar Actualización del Bot'; }
             }
         }
 
@@ -470,7 +533,7 @@ import '../styles/components.css';
             document.getElementById('btn-back-materias').style.display = 'none';
             document.getElementById('btn-new-materia').style.display = 'block';
             document.getElementById('cerebros-title').innerText = 'Materias de Conocimiento';
-            document.getElementById('cerebros-subtitle').innerText = 'Gestiona las áreas de conocimiento. La IA sabrá diferenciar entre la información oficial y la comercial.';
+            document.getElementById('cerebros-subtitle').innerText = 'Gestiona las áreas de conocimiento. La IA sabrá cruzar la información de ambas fuentes.';
             
             const container = document.getElementById('materias-list');
             container.style.display = 'flex';
@@ -518,7 +581,7 @@ import '../styles/components.css';
             document.getElementById('btn-back-materias').style.display = 'block';
             document.getElementById('btn-new-materia').style.display = 'none';
             document.getElementById('cerebros-title').innerText = `Materia: ${materiaName}`;
-            document.getElementById('cerebros-subtitle').innerText = 'Añade documentos oficiales (Leyes, Paradas) y comerciales (Restaurantes, Hoteles).';
+            document.getElementById('cerebros-subtitle').innerText = 'Añade documentos de fuentes primarias (Leyes, Paradas) y secundarias (Recomendaciones, Eventos).';
             
             const view = document.getElementById('materia-view');
             view.style.display = 'flex';
@@ -600,7 +663,7 @@ import '../styles/components.css';
             }
         };
 
-        window.saveDocument = async function() {
+        window.saveDocument = async function(btnElement) {
             let filename = document.getElementById('doc-filename').value.trim().replace(/[^a-zA-Z0-9_-]/g, '');
             const content = document.getElementById('doc-content').value;
 
@@ -611,6 +674,10 @@ import '../styles/components.css';
 
             const path = `${currentMateria}/${currentSubtipo}/${filename}`;
             showMessage("Guardando en GitHub...", false);
+
+            if (btnElement) {
+                btnElement.disabled = true;
+            }
 
             try {
                 const res = await fetch('/api/admin/brains', {
@@ -628,6 +695,10 @@ import '../styles/components.css';
                 }
             } catch (e) {
                 showMessage("Error de red", true);
+            } finally {
+                if (btnElement) {
+                    btnElement.disabled = false;
+                }
             }
         };
 
@@ -827,13 +898,13 @@ import '../styles/components.css';
                 const data = await res.json();
                 
                 if (data.success) {
-                    alert('Base de datos inicializada correctamente. Ya puedes recopilar datos.');
+                    showMessage('Base de datos inicializada correctamente. Ya puedes recopilar datos.', 'success');
                     loadAnalytics();
                 } else {
-                    alert('Error: ' + data.error);
+                    showMessage('Error: ' + data.error, 'error');
                 }
             } catch (err) {
-                alert('Error de red: ' + err.message);
+                showMessage('Error de red: ' + err.message, 'error');
             } finally {
                 btn.textContent = originalText;
                 btn.disabled = false;
