@@ -755,6 +755,11 @@ import '../styles/components.css';
             document.getElementById('doc-filename').disabled = false;
             document.getElementById('doc-content').value = '';
             document.getElementById('doc-pdf-upload').value = '';
+            
+            // Auto-scroll al editor para que el usuario sepa que se abrió
+            setTimeout(() => {
+                document.getElementById('brain-editor').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 50);
         };
 
         window.hideDocumentEditor = function() {
