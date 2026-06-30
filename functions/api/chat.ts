@@ -58,20 +58,26 @@ ${b.content}
             properties: {
                 cardType: {
                     type: Type.STRING,
-                    enum: ['TextCard', 'TariffCard', 'PriceCard', 'RuleCard', 'ContactCard', 'MapCard', 'NavigationCard', 'ReservationCard', 'AffiliateCard'],
-                    description: "El tipo de tarjeta visual a mostrar. Usa MapCard si piden paradas o ubicaciones (la UI pintará el mapa automáticamente)."
+                    enum: ['TextCard', 'TariffCard', 'PriceCard', 'RuleCard', 'ContactCard', 'MapCard', 'NavigationCard', 'ReservationCard', 'AffiliateCard', 'GalleryCard'],
+                    description: "El tipo de tarjeta visual a mostrar. Usa MapCard para mostrar cualquier ubicación en el mapa interactivo. Usa GalleryCard para mostrar fotos."
                 },
                 content: {
                     type: Type.STRING,
-                    description: "Mensaje del asistente. OBLIGATORIO: Párrafos cortos (1-2 líneas), uso de HTML/Markdown con <b>negritas</b>. PROHIBIDO escribir muros de texto. PROHIBIDO pedir perdón por no mostrar mapas o links. ¡NUNCA incluyas el número literal si usas ContactCard!"
+                    description: "Mensaje del asistente. OBLIGATORIO: Párrafos cortos (1-2 líneas), uso de HTML/Markdown con <b>negritas</b>. PROHIBIDO escribir muros de texto. PROHIBIDO pedir perdón por no mostrar mapas o fotos. ¡NUNCA incluyas el número literal si usas ContactCard!"
                 },
                 priceEstimate: { type: Type.STRING, description: "Precio estimado con símbolo €. Solo para PriceCard." },
                 routeDetails: { type: Type.STRING, description: "Resumen de ruta/cálculo. Solo para PriceCard." },
                 lawSource: { type: Type.STRING, description: "Normativa exacta. Solo para RuleCard." },
-                phoneNumber: { type: Type.STRING, description: "Número oficial. Solo para ContactCard." },
-                stopName: { type: Type.STRING, description: "Nombre oficial de parada. Solo para MapCard/NavigationCard." },
+                contactName: { type: Type.STRING, description: "Nombre del negocio o entidad. Solo para ContactCard." },
+                phoneNumber: { type: Type.STRING, description: "Número de teléfono oficial. Solo para ContactCard." },
+                whatsappNumber: { type: Type.STRING, description: "Número de WhatsApp. Solo para ContactCard." },
+                locationTitle: { type: Type.STRING, description: "Nombre del lugar (ej. 'Playa Victoria', 'Parada Hospital'). Solo para MapCard/NavigationCard." },
                 lat: { type: Type.STRING, description: "Latitud exacta. Solo para MapCard/NavigationCard." },
                 lon: { type: Type.STRING, description: "Longitud exacta. Solo para MapCard/NavigationCard." },
+                imageUrls: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Lista de URLs de imágenes. Solo para GalleryCard." },
+                reservationEmail: { type: Type.STRING, description: "Email de destino para la reserva. Solo para ReservationCard." },
+                reservationSubject: { type: Type.STRING, description: "Asunto del email. Solo para ReservationCard." },
+                reservationTitle: { type: Type.STRING, description: "Título del servicio a reservar. Solo para ReservationCard." },
                 affiliateTitle: { type: Type.STRING, description: "Título del producto/servicio. Solo para AffiliateCard." },
                 affiliateUrl: { type: Type.STRING, description: "URL de reserva o compra. Solo para AffiliateCard." },
                 affiliatePrice: { type: Type.STRING, description: "Precio o descuento sugerido. Solo para AffiliateCard." },
