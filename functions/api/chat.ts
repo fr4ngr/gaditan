@@ -17,9 +17,9 @@ export async function onRequestPost(context) {
         // Inicializar Gemini usando la clave secreta del entorno (Cloudflare)
         const ai = new GoogleGenAI({ apiKey: env.GEMINI_API_KEY });
 
-        const cerebrosXml = Object.entries(brains).map(([name, content]) => `
-<cerebro nombre="${name}">
-${content}
+        const cerebrosXml = brains.map(b => `
+<cerebro materia="${b.materia}" tipo="${b.tipo}" documento="${b.fileName}">
+${b.content}
 </cerebro>
 `).join('');
 
@@ -44,6 +44,11 @@ ${content}
                 stopName: { type: Type.STRING, description: "Nombre oficial de parada. Solo para MapCard/NavigationCard." },
                 lat: { type: Type.STRING, description: "Latitud exacta. Solo para MapCard/NavigationCard." },
                 lon: { type: Type.STRING, description: "Longitud exacta. Solo para MapCard/NavigationCard." },
+                intentCategory: {
+                    type: Type.STRING,
+                    description: "Categoría de la intención del usuario. OBLIGATORIO.",
+                    enum: ["Gastronomia", "Transporte y movilidad", "Alojamiento", "Clima", "Playas", "Zonas verdes", "Bahía", "Deporte", "Belleza", "Eventos-Agenda", "Compras", "Kids", "Mascotas", "Caravana", "Inclusivo", "Love", "Social-Sostenible", "Iglesias", "Catedral", "La Caleta", "Historia", "Arte", "Crucerista", "Flamencos", "Ocio", "Otros"]
+                },
                 suggestedBlocks: {
                     type: Type.ARRAY,
                     items: {
@@ -52,7 +57,7 @@ ${content}
                     description: "1 a 3 bloques sugeridos para guiar al usuario hacia la conversión."
                 }
             },
-            required: ['cardType', 'content', 'suggestedBlocks']
+            required: ['cardType', 'content', 'suggestedBlocks', 'intentCategory']
         };
 
         const historyContents = body.history && body.history.length > 0 ? body.history : [{ role: 'user', parts: [{ text: userMessage }] }];
@@ -177,7 +182,24 @@ ${content}
             parsedData = JSON.parse(cleanText);
         } catch(e) {
             // Si el modelo alucinó texto plano
-            parsedData = { cardType: 'TextCard', content: responseText, suggestedBlocks: ['🚕 Ver tarifas'] };
+            parsedData = { cardType: 'TextCard', content: responseText, suggestedBlocks: ['🚕 Ver tarifas'], intentCategory: 'Otros' };
+        }
+
+        // ----------------------------------------------------
+        // LOG CONVERSATION TO D1 DATABASE IN BACKGROUND
+        // ----------------------------------------------------
+        if (env.DB) {
+            context.waitUntil((async () => {
+                try {
+                    const intentCat = parsedData.intentCategory || 'Otros';
+                    const botRespText = parsedData.content || 'Sin respuesta';
+                    await env.DB.prepare(
+                        "INSERT INTO chat_logs (user_message, bot_response, intent_category) VALUES (?, ?, ?)"
+                    ).bind(userMessage, botRespText, intentCat).run();
+                } catch (dbError) {
+                    console.error("D1 Insert Error:", dbError);
+                }
+            })());
         }
 
         return new Response(JSON.stringify(parsedData), {

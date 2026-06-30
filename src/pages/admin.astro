@@ -144,6 +144,7 @@ import '../styles/components.css';
         <div id="dashboard-section" style="display: none;">
             <div class="tabs">
                 <button class="tab-btn active" onclick="switchTab('estado')">Estado del Servicio</button>
+                <button class="tab-btn" onclick="switchTab('analytics')">Radar (Analíticas)</button>
                 <button class="tab-btn" onclick="switchTab('cerebros')">Mis Cerebros</button>
                 <button class="tab-btn" onclick="switchTab('personalidad')">🤖 Personalidad</button>
                 <button class="tab-btn" onclick="switchTab('simulador')">🧪 Simulador</button>
@@ -308,6 +309,7 @@ import '../styles/components.css';
             event.target.classList.add('active');
             document.getElementById('tab-' + tabId).classList.add('active');
 
+            if (tabId === 'analytics') loadAnalytics();
             if (tabId === 'cerebros') showMaterias();
             if (tabId === 'personalidad') loadSystemPrompt();
         }
@@ -746,6 +748,116 @@ import '../styles/components.css';
         }
 
         extractPdfToTextarea('doc-pdf-upload', 'doc-content', 'doc-append-mode');
+        // Event Listeners for Analytics
+        document.getElementById('init-db-btn').addEventListener('click', async () => {
+            const btn = document.getElementById('init-db-btn');
+            const originalText = btn.textContent;
+            btn.textContent = 'Inicializando...';
+            btn.disabled = true;
+
+            try {
+                const res = await fetch('/api/admin/db-init', {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('admin_pwd')}` }
+                });
+                const data = await res.json();
+                
+                if (data.success) {
+                    alert('Base de datos inicializada correctamente. Ya puedes recopilar datos.');
+                    loadAnalytics();
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (err) {
+                alert('Error de red: ' + err.message);
+            } finally {
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }
+        });
+
+        document.getElementById('refresh-analytics-btn').addEventListener('click', () => {
+            loadAnalytics();
+        });
+
+        async function loadAnalytics() {
+            try {
+                const res = await fetch('/api/admin/analytics', {
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('admin_pwd')}` }
+                });
+                
+                if (res.status === 401) {
+                    logout();
+                    return;
+                }
+
+                const data = await res.json();
+                
+                if (data.error) {
+                    document.getElementById('analytics-categories').innerHTML = `<div style="color: #ef4444; padding: 1rem; background: #fee2e2; border-radius: 4px;">${data.error}</div>`;
+                    return;
+                }
+
+                if (data.success) {
+                    // Update KPI counters
+                    document.getElementById('analytics-today').textContent = data.data.todayMessages;
+                    document.getElementById('analytics-total').textContent = data.data.totalMessages;
+
+                    // Update Categories Bar Chart (HTML based)
+                    const catContainer = document.getElementById('analytics-categories');
+                    if (data.data.topCategories.length === 0) {
+                        catContainer.innerHTML = '<p style="color: #64748b; font-size: 0.9rem;">No hay datos todavía.</p>';
+                    } else {
+                        const maxCount = Math.max(...data.data.topCategories.map(c => c.count));
+                        let catHtml = '<div style="display: flex; flex-direction: column; gap: 0.75rem;">';
+                        
+                        data.data.topCategories.forEach(cat => {
+                            const percentage = Math.max(5, Math.round((cat.count / maxCount) * 100)); // Min 5% width for visibility
+                            catHtml += `
+                                <div>
+                                    <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 0.25rem;">
+                                        <span style="font-weight: 500; color: #1e293b;">${cat.intent_category || 'Sin categorizar'}</span>
+                                        <span style="color: #64748b; font-weight: bold;">${cat.count}</span>
+                                    </div>
+                                    <div style="width: 100%; background: #f1f5f9; border-radius: 4px; height: 8px; overflow: hidden;">
+                                        <div style="width: ${percentage}%; background: #3b82f6; height: 100%; border-radius: 4px;"></div>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        catHtml += '</div>';
+                        catContainer.innerHTML = catHtml;
+                    }
+
+                    // Update Recent Messages Table
+                    const msgContainer = document.getElementById('analytics-messages');
+                    if (data.data.recentMessages.length === 0) {
+                        msgContainer.innerHTML = '<tr><td colspan="3" style="padding: 1rem; text-align: center; color: #64748b;">No hay mensajes todavía.</td></tr>';
+                    } else {
+                        let msgsHtml = '';
+                        data.data.recentMessages.forEach(msg => {
+                            const date = new Date(msg.timestamp).toLocaleString('es-ES', { day: '2-digit', month: '2-digit', hour: '2-digit', minute:'2-digit' });
+                            msgsHtml += `
+                                <tr style="border-bottom: 1px solid #f1f5f9;">
+                                    <td style="padding: 0.75rem; color: #64748b; font-size: 0.8rem; vertical-align: top;">${date}</td>
+                                    <td style="padding: 0.75rem; vertical-align: top;">
+                                        <span style="background: #e0f2fe; color: #0369a1; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 500;">
+                                            ${msg.intent_category || '-'}
+                                        </span>
+                                    </td>
+                                    <td style="padding: 0.75rem; color: #1e293b; vertical-align: top;">
+                                        <strong>"${msg.user_message}"</strong>
+                                    </td>
+                                </tr>
+                            `;
+                        });
+                        msgContainer.innerHTML = msgsHtml;
+                    }
+                }
+            } catch (err) {
+                console.error("Error cargando analíticas:", err);
+            }
+        }
     </script>
 </body>
 </html>
