@@ -170,7 +170,7 @@ import '../styles/components.css';
                     </div>
 
                     <!-- TAB ANALYTICAS -->
-                    <div id="tab-analytics" class="tab-content" style="display: none;">
+                    <div id="tab-analytics" class="tab-content">
                         <div class="header-actions" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                             <div>
                                 <h3 class="text-title">Radar de Dinero (Analíticas)</h3>
@@ -427,10 +427,10 @@ import '../styles/components.css';
                             <div style="font-weight: 600;">Centralita (WhatsApp)</div>
                             <div style="font-size: 0.8rem; color: var(--ds-text-secondary); text-align: center;">Próximamente (Embudo)</div>
                         </div>
-                        <div class="status-item" style="opacity: 0.6; background: #f8f9fa;">
-                            <div class="status-icon">⏳</div>
+                        <div class="status-item" style="${data.db ? '' : 'opacity: 0.6; background: #f8f9fa;'}">
+                            <div class="status-icon">${data.db ? '✅' : '⏳'}</div>
                             <div style="font-weight: 600;">Analíticas (D1)</div>
-                            <div style="font-size: 0.8rem; color: var(--ds-text-secondary); text-align: center;">Próximamente (Tendencias)</div>
+                            <div style="font-size: 0.8rem; color: var(--ds-text-secondary); text-align: center;">${data.db ? 'Conectada y recopilando datos' : 'Requiere binding en Cloudflare'}</div>
                         </div>
                     `;
                 }
