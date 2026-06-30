@@ -554,13 +554,18 @@ import ChatLayout from '../layouts/ChatLayout.astro';
     }
 
     // --- CONEXIÓN CON EL CEREBRO DE IA ---
-    async function sendMessageToAI(text: string) {
+    async function sendMessageToAI(text: string, isHiddenInit: boolean = false) {
         if (!text.trim()) return;
         
         // 1. Pintar mensaje del usuario y guardarlo en historial
-        addMessage('user', `<span class="bubble">${text}</span>`);
+        if (!isHiddenInit) {
+            addMessage('user', `<span class="bubble">${text}</span>`);
+        }
         chatHistory.push({ role: 'user', parts: [{ text }] });
-        inputField.value = '';
+        
+        if (!isHiddenInit) {
+            inputField.value = '';
+        }
 
         // 2. Mostrar "Pensando..."
         const typingId = showTypingIndicator();
@@ -2132,11 +2137,6 @@ import ChatLayout from '../layouts/ChatLayout.astro';
 
     // --- INICIALIZACIÓN (MOMENTO 0) ---
     setTimeout(() => {
-        const initialBlocks = ['🚕 Pedir taxi', '💶 Tarifas', '📍 Mapa paradas', '⭐ Destinos favoritos', '✈️ Traslados a aeropuertos', '🧮 Calculadora', '📅 Reservas', '❓ Preguntas frecuentes', '🎲 Juegos didácticos'];
-        const buttonsHtml = initialBlocks.map(block => {
-            return `<button class="suggested-btn" onclick="window.sendToAI('${block}')">${block}</button>`;
-        }).join('');
-        
         const skeletonHtml = `
             <div id="weather-widget-container" class="wg-card" style="opacity: 0.8;">
                 <div class="wg-header">
@@ -2150,11 +2150,8 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             </div>
         `;
 
-        addMessage('bot', `
-            <span class="bubble">¡Hola! Soy tu asistente virtual de Cádiz.<br><br>Tengo acceso a fuentes oficiales en diferentes áreas para ayudarte con cualquier duda sobre la ciudad de Cádiz. Parece que estás buscando información sobre taxis.<br><br>Cuéntame, ¿qué necesitas saber exactamente?</span>
-            ${skeletonHtml}
-            <div class="suggested-blocks-container" style="margin-top: 8px;">${buttonsHtml}</div>
-        `, false);
+        addMessage('bot', skeletonHtml, false);
+        sendMessageToAI('¡Hola! Acabo de entrar a la web. Preséntate brevemente de forma muy natural y dime en qué puedes ayudarme. Añade sugerencias de inicio.', true);
         // Llamada asíncrona a la API del clima con reintentos
         const fetchWeatherWithRetry = (retriesLeft = 3, delay = 2000) => {
             fetch('/api/weather?t=' + new Date().getTime())
