@@ -169,6 +169,70 @@ import '../styles/components.css';
                         </div>
                     </div>
 
+                    <!-- TAB ANALYTICAS -->
+                    <div id="tab-analytics" class="tab-content" style="display: none;">
+                        <div class="header-actions" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                            <div>
+                                <h3 class="text-title">Radar de Dinero (Analíticas)</h3>
+                                <p class="text-muted">Descubre de qué hablan los turistas para captar patrocinadores.</p>
+                            </div>
+                            <div style="display: flex; gap: 10px;">
+                                <button class="btn btn-secondary" id="init-db-btn">1. Inicializar Base de Datos</button>
+                                <button class="btn btn-primary" id="refresh-analytics-btn">Actualizar Datos</button>
+                            </div>
+                        </div>
+
+                        <div class="status-grid" style="margin-bottom: 2rem;">
+                            <div class="status-card">
+                                <div class="status-header">
+                                    <h3>Mensajes Hoy</h3>
+                                    <div class="status-indicator status-ok"></div>
+                                </div>
+                                <div class="status-details">
+                                    <span style="font-size: 2rem; font-weight: bold; color: var(--ds-primary);" id="analytics-today">0</span>
+                                </div>
+                            </div>
+                            <div class="status-card">
+                                <div class="status-header">
+                                    <h3>Mensajes Totales</h3>
+                                    <div class="status-indicator status-ok"></div>
+                                </div>
+                                <div class="status-details">
+                                    <span style="font-size: 2rem; font-weight: bold; color: #1e293b;" id="analytics-total">0</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem;">
+                            <!-- Top Categorías -->
+                            <div class="card" style="background: white; padding: 1.5rem; border-radius: 8px; border: 1px solid #e2e8f0;">
+                                <h3 style="margin-top: 0; color: #1e293b; border-bottom: 2px solid #f1f5f9; padding-bottom: 0.5rem;">Top Categorías</h3>
+                                <div id="analytics-categories" style="margin-top: 1rem;">
+                                    <p style="color: #64748b; font-size: 0.9rem;">Cargando datos...</p>
+                                </div>
+                            </div>
+
+                            <!-- Últimos Mensajes -->
+                            <div class="card" style="background: white; padding: 1.5rem; border-radius: 8px; border: 1px solid #e2e8f0;">
+                                <h3 style="margin-top: 0; color: #1e293b; border-bottom: 2px solid #f1f5f9; padding-bottom: 0.5rem;">Últimas Preguntas</h3>
+                                <div style="overflow-x: auto; margin-top: 1rem;">
+                                    <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+                                        <thead>
+                                            <tr style="background: #f8fafc; text-align: left;">
+                                                <th style="padding: 0.75rem; border-bottom: 1px solid #e2e8f0; width: 120px;">Fecha</th>
+                                                <th style="padding: 0.75rem; border-bottom: 1px solid #e2e8f0; width: 120px;">Categoría</th>
+                                                <th style="padding: 0.75rem; border-bottom: 1px solid #e2e8f0;">Mensaje del Usuario</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="analytics-messages">
+                                            <tr><td colspan="3" style="padding: 1rem; text-align: center; color: #64748b;">Cargando datos...</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- TAB 2: Gestor Jerárquico de Cerebros -->
                     <div id="tab-cerebros" class="tab-content">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
