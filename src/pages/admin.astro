@@ -421,11 +421,12 @@ import '../styles/components.css';
                             <div class="form-group mt-sm">
                                 <label>O subir archivo (PDF, DOCX, JPG, PNG) para extraer con IA:</label>
                                 <div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
-                                    <div id="ai-upload-container" style="display: flex; gap: 10px; align-items: center; width: 100%;">
+                                    <div id="ai-upload-container" style="display: flex; gap: 10px; align-items: center; width: 100%; flex-wrap: wrap;">
                                         <input type="file" id="doc-pdf-upload" accept=".pdf,.png,.jpg,.jpeg,.docx" class="form-control" style="flex: 1; max-width: 300px;" />
+                                        <button type="button" class="btn btn-secondary" style="margin: 0; padding: 6px 15px; border-color: var(--ds-primary); color: var(--ds-primary); background: white;" id="btn-process-ai">🤖 Procesar con IA</button>
                                         <div style="display: flex; align-items: center; gap: 5px;">
-                                            <input type="checkbox" id="doc-pdf-append" checked />
-                                            <label for="doc-pdf-append" style="font-size: 0.85rem; margin-bottom: 0;">Añadir al texto existente (no borrar)</label>
+                                            <input type="checkbox" id="doc-pdf-append" />
+                                            <label for="doc-pdf-append" style="font-size: 0.85rem; margin-bottom: 0;">Añadir al final (no borrar)</label>
                                         </div>
                                     </div>
                                     <div id="ai-loading-indicator" style="display: none; width: 100%; padding: 15px; border: 1px solid var(--ds-primary); border-radius: 8px; background: rgba(59, 130, 246, 0.05); align-items: center; gap: 15px;">
@@ -439,6 +440,35 @@ import '../styles/components.css';
                                         <div style="font-weight: 600; color: var(--ds-danger); font-size: 0.95rem;">❌ Error en la extracción</div>
                                         <div id="ai-error-text" style="font-size: 0.85rem; margin-top: 5px;"></div>
                                         <button type="button" class="btn btn-primary" style="margin-top: 10px; padding: 5px 15px; font-size: 0.85rem;" onclick="document.getElementById('ai-error-indicator').style.display='none'; document.getElementById('ai-upload-container').style.display='flex';">Reintentar</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style="background: rgba(0,0,0,0.02); padding: 15px; border-radius: 8px; border: 1px solid var(--bubble-bot-border); margin-bottom: 15px;">
+                                <h4 style="margin-top: 0; margin-bottom: 10px; font-size: 1rem; color: var(--ds-text-primary);">Metadatos del Documento</h4>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                                    <div class="form-group">
+                                        <label>Nombre Público / Título:</label>
+                                        <input type="text" id="doc-meta-nombre" placeholder="Ej: Ordenanza Municipal del Taxi" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Fecha de Publicación:</label>
+                                        <input type="text" id="doc-meta-fecha" placeholder="Ej: 21/07/2020" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Publicado en:</label>
+                                        <select id="doc-meta-fuente">
+                                            <option value="">(Ninguno)</option>
+                                            <option value="BOP">BOP (Boletín Oficial Provincial)</option>
+                                            <option value="BOJA">BOJA (Boletín Oficial Junta Andalucía)</option>
+                                            <option value="BOE">BOE (Boletín Oficial del Estado)</option>
+                                            <option value="Ayuntamiento">Ayuntamiento (Web/Otro)</option>
+                                            <option value="Otro">Otro</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>¿Qué Regula?</label>
+                                        <input type="text" id="doc-meta-regula" placeholder="Ej: Tarifas interurbanas y festivos" />
                                     </div>
                                 </div>
                             </div>
@@ -775,6 +805,10 @@ import '../styles/components.css';
             document.getElementById('doc-filename').disabled = false;
             document.getElementById('doc-content').value = '';
             document.getElementById('doc-pdf-upload').value = '';
+            document.getElementById('doc-meta-nombre').value = '';
+            document.getElementById('doc-meta-fecha').value = '';
+            document.getElementById('doc-meta-fuente').value = '';
+            document.getElementById('doc-meta-regula').value = '';
             
             // Auto-scroll al editor para que el usuario sepa que se abrió
             setTimeout(() => {
@@ -800,8 +834,40 @@ import '../styles/components.css';
                 const res = await fetch(`/api/admin/brains?action=get&path=${path}`, { headers: { 'Authorization': 'Bearer ' + sessionPwd } });
                 const data = await res.json();
                 if (res.ok) {
-                    document.getElementById('doc-content').value = data.content;
                     currentDocSha = data.sha;
+                    let rawContent = data.content;
+                    
+                    // Reset fields
+                    document.getElementById('doc-meta-nombre').value = '';
+                    document.getElementById('doc-meta-fecha').value = '';
+                    document.getElementById('doc-meta-fuente').value = '';
+                    document.getElementById('doc-meta-regula').value = '';
+                    
+                    // Parse YAML frontmatter if exists
+                    if (rawContent.startsWith('---')) {
+                        const endOfYaml = rawContent.indexOf('---', 3);
+                        if (endOfYaml > -1) {
+                            const yamlBlock = rawContent.substring(3, endOfYaml).trim();
+                            rawContent = rawContent.substring(endOfYaml + 3).trimStart();
+                            
+                            // Simple parsing for this specific format
+                            const lines = yamlBlock.split('\n');
+                            lines.forEach(line => {
+                                const colonIdx = line.indexOf(':');
+                                if (colonIdx > -1) {
+                                    const key = line.substring(0, colonIdx).trim();
+                                    const val = line.substring(colonIdx + 1).trim().replace(/^["']|["']$/g, ''); // remove quotes
+                                    
+                                    if (key === 'nombre') document.getElementById('doc-meta-nombre').value = val;
+                                    if (key === 'fecha') document.getElementById('doc-meta-fecha').value = val;
+                                    if (key === 'fuente') document.getElementById('doc-meta-fuente').value = val;
+                                    if (key === 'regula') document.getElementById('doc-meta-regula').value = val;
+                                }
+                            });
+                        }
+                    }
+                    
+                    document.getElementById('doc-content').value = rawContent;
                 } else {
                     document.getElementById('doc-content').value = "Error al cargar: " + data.error;
                 }
@@ -812,9 +878,27 @@ import '../styles/components.css';
 
         window.saveDocument = async function(btnElement) {
             let filename = document.getElementById('doc-filename').value.trim().replace(/[^a-zA-Z0-9_-]/g, '');
-            const content = document.getElementById('doc-content').value;
+            const rawContent = document.getElementById('doc-content').value;
+            
+            const metaNombre = document.getElementById('doc-meta-nombre').value.trim();
+            const metaFecha = document.getElementById('doc-meta-fecha').value.trim();
+            const metaFuente = document.getElementById('doc-meta-fuente').value.trim();
+            const metaRegula = document.getElementById('doc-meta-regula').value.trim();
+            
+            let finalContent = rawContent;
+            
+            // Build YAML frontmatter if any metadata exists
+            if (metaNombre || metaFecha || metaFuente || metaRegula) {
+                let yaml = '---\n';
+                if (metaNombre) yaml += `nombre: "${metaNombre.replace(/"/g, '\\"')}"\n`;
+                if (metaFecha) yaml += `fecha: "${metaFecha.replace(/"/g, '\\"')}"\n`;
+                if (metaFuente) yaml += `fuente: "${metaFuente.replace(/"/g, '\\"')}"\n`;
+                if (metaRegula) yaml += `regula: "${metaRegula.replace(/"/g, '\\"')}"\n`;
+                yaml += '---\n\n';
+                finalContent = yaml + rawContent;
+            }
 
-            if (!filename || !content) {
+            if (!filename || !rawContent) {
                 showMessage("El nombre y el contenido son obligatorios.", true);
                 return;
             }
@@ -830,7 +914,7 @@ import '../styles/components.css';
                 const res = await fetch('/api/admin/brains', {
                     method: 'POST',
                     headers: { 'Authorization': 'Bearer ' + sessionPwd, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ path: path, content: content })
+                    body: JSON.stringify({ path: path, content: finalContent })
                 });
                 if (res.ok) {
                     showMessage("¡Documento guardado! El bot se actualizará.");
@@ -1074,110 +1158,157 @@ import '../styles/components.css';
         };
 
         // --- AI Extraction Helper ---
-        async function extractPdfToTextarea(fileInputId, textAreaId, appendCheckboxId) {
-            const fileInput = document.getElementById(fileInputId);
-            
-            fileInput.addEventListener('change', async (e) => {
-                const textArea = document.getElementById(textAreaId);
-                const appendModeCheckbox = document.getElementById(appendCheckboxId);
-                const appendMode = appendModeCheckbox ? appendModeCheckbox.checked : false;
-                
-                const file = e.target.files[0];
-                if (!file) return;
+        function setupAiExtractor() {
+            const fileInput = document.getElementById('doc-pdf-upload');
+            const processBtn = document.getElementById('btn-process-ai');
+            if (processBtn && !processBtn.hasAttribute('data-bound')) {
+                processBtn.setAttribute('data-bound', 'true');
+                processBtn.addEventListener('click', async () => {
+                    const textArea = document.getElementById('doc-content');
+                    const appendModeCheckbox = document.getElementById('doc-pdf-append');
+                    const appendMode = appendModeCheckbox ? appendModeCheckbox.checked : false;
+                    
+                    if (!fileInput.files || fileInput.files.length === 0) {
+                        showMessage("Por favor, selecciona un archivo primero.", true);
+                        return;
+                    }
+                    const file = fileInput.files[0];
 
-                const filenameInput = document.getElementById('doc-filename');
-                if (filenameInput && (!filenameInput.value || filenameInput.value === '')) {
-                    const cleanName = file.name.replace(/\.[^/.]+$/, "").replace(/[^a-zA-Z0-9_-]/g, '_');
-                    filenameInput.value = cleanName;
-                }
-                
-                const dateStr = new Date().toLocaleString('es-ES');
-                const originalText = appendMode && textArea.value ? textArea.value + `\n\n--- NUEVO DOCUMENTO AÑADIDO: ${dateStr} ---\n\n` : `--- DOCUMENTO CREADO: ${dateStr} ---\n\n`;
-                
-                // UI Indicators
-                document.getElementById('ai-upload-container').style.display = 'none';
-                document.getElementById('ai-error-indicator').style.display = 'none';
-                document.getElementById('ai-loading-indicator').style.display = 'flex';
-                const statusText = document.getElementById('ai-loading-text');
-                
-                statusText.innerText = "Empaquetando documento (Paso 1/2)...";
-                
-                try {
-                    const reader = new FileReader();
-                    reader.onload = async function(event) {
-                        try {
-                            const dataUrl = event.target.result;
-                            const base64Data = dataUrl.split(',')[1];
-                            const mimeType = file.type || 'application/pdf';
+                    const filenameInput = document.getElementById('doc-filename');
+                    if (filenameInput && (!filenameInput.value || filenameInput.value === '')) {
+                        const cleanName = file.name.replace(/\.[^/.]+$/, "").replace(/[^a-zA-Z0-9_-]/g, '_');
+                        filenameInput.value = cleanName;
+                    }
+                    
+                    const dateStr = new Date().toLocaleString('es-ES');
+                    const originalText = appendMode && textArea.value ? textArea.value + `\n\n--- NUEVO DOCUMENTO AÑADIDO: ${dateStr} ---\n\n` : ``;
+                    
+                    // UI Indicators
+                    document.getElementById('ai-upload-container').style.display = 'none';
+                    document.getElementById('ai-error-indicator').style.display = 'none';
+                    document.getElementById('ai-loading-indicator').style.display = 'flex';
+                    const statusText = document.getElementById('ai-loading-text');
+                    
+                    statusText.innerText = "Empaquetando documento (Paso 1/2)...";
+                    
+                    try {
+                        const reader = new FileReader();
+                        reader.onload = async function(event) {
+                            try {
+                                const dataUrl = event.target.result;
+                                const base64Data = dataUrl.split(',')[1];
+                                const mimeType = file.type || 'application/pdf';
 
-                            statusText.innerText = "Enviando a los servidores de Gemini (Paso 2/2). Esto puede tardar varios minutos si el archivo es grande...";
+                                statusText.innerText = "Enviando a los servidores de Gemini (Paso 2/2). Esto puede tardar varios minutos si el archivo es grande...";
 
-                            // 1. Obtener clave de la IA de forma segura
-                            const keyRes = await fetch('/api/admin/keys', {
-                                headers: { 'Authorization': 'Bearer ' + sessionPwd }
-                            });
-                            if (!keyRes.ok) throw new Error("Fallo al autenticar la clave de la IA. Comprueba tu conexión.");
-                            const { key } = await keyRes.json();
+                                // 1. Obtener clave de la IA de forma segura
+                                const keyRes = await fetch('/api/admin/keys', {
+                                    headers: { 'Authorization': 'Bearer ' + sessionPwd }
+                                });
+                                if (!keyRes.ok) throw new Error("Fallo al autenticar la clave de la IA. Comprueba tu conexión.");
+                                const { key } = await keyRes.json();
 
-                            // 2. Llamada directa a Gemini desde el navegador para evitar el timeout de 30s de Cloudflare
-                            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`;
-                            const prompt = "Eres un transcriptor experto. Convierte este documento a texto limpio en formato Markdown. Si ves tablas, tarifas o precios, organízalos matemáticamente utilizando la sintaxis de tablas de Markdown (filas y columnas). No inventes información, transcribe exactamente lo que ves, pero estructurado para que una IA lo pueda leer fácilmente. Devuelve ÚNICAMENTE el código Markdown, sin introducciones ni saludos.";
-                            
-                            const payload = {
-                                contents: [{
-                                    parts: [
-                                        { inlineData: { mimeType: mimeType, data: base64Data } },
-                                        { text: prompt }
-                                    ]
-                                }]
-                            };
+                                // 2. Llamada directa a Gemini desde el navegador para evitar el timeout de 30s de Cloudflare
+                                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`;
+                                const prompt = `Eres un transcriptor y analista experto. Tu tarea es analizar este documento oficial y extraer su información y texto en formato JSON estructurado.
 
-                            const res = await fetch(url, {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify(payload)
-                            });
+REGLAS:
+1. El campo "markdown" debe contener todo el texto extraído del documento en formato Markdown. Organiza tablas y listas correctamente.
+2. Extrae o deduce el nombre oficial del documento en el campo "nombre".
+3. Extrae la fecha de publicación (o de firma) en el campo "fecha_publicacion".
+4. Identifica la fuente de publicación. Debe ser EXCLUSIVAMENTE uno de estos valores: "BOP", "BOJA", "BOE", "Ayuntamiento" o "Otro". Ponlo en el campo "publicado_en".
+5. Resume en una sola frase corta lo que regula este documento en el campo "regula".
 
-                            if (!res.ok) {
-                                const errData = await res.json().catch(() => ({}));
-                                throw new Error(errData.error?.message || `HTTP ${res.status}`);
-                            }
-
-                            const data = await res.json();
-                            if (data.candidates && data.candidates.length > 0) {
-                                const extractedText = data.candidates[0].content.parts[0].text;
-                                textArea.value = originalText + extractedText.trim();
+Devuelve ÚNICAMENTE un objeto JSON válido, sin delimitadores de código markdown \`\`\`json.
+Esquema requerido:
+{
+  "nombre": "...",
+  "fecha_publicacion": "...",
+  "publicado_en": "...",
+  "regula": "...",
+  "markdown": "..."
+}`;
                                 
-                                // Ocultar loader
+                                const payload = {
+                                    contents: [{
+                                        parts: [
+                                            { inlineData: { mimeType: mimeType, data: base64Data } },
+                                            { text: prompt }
+                                        ]
+                                    }],
+                                    generationConfig: {
+                                        responseMimeType: "application/json"
+                                    }
+                                };
+
+                                const res = await fetch(url, {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify(payload)
+                                });
+
+                                if (!res.ok) {
+                                    const errData = await res.json().catch(() => ({}));
+                                    throw new Error(errData.error?.message || `HTTP ${res.status}`);
+                                }
+
+                                const data = await res.json();
+                                if (data.candidates && data.candidates.length > 0) {
+                                    const extractedText = data.candidates[0].content.parts[0].text;
+                                    
+                                    try {
+                                        const parsedJson = JSON.parse(extractedText);
+                                        
+                                        // Auto-fill fields
+                                        if (parsedJson.nombre) document.getElementById('doc-meta-nombre').value = parsedJson.nombre;
+                                        if (parsedJson.fecha_publicacion) document.getElementById('doc-meta-fecha').value = parsedJson.fecha_publicacion;
+                                        if (parsedJson.publicado_en) {
+                                            const options = Array.from(document.getElementById('doc-meta-fuente').options).map(o => o.value);
+                                            if (options.includes(parsedJson.publicado_en)) {
+                                                document.getElementById('doc-meta-fuente').value = parsedJson.publicado_en;
+                                            } else {
+                                                document.getElementById('doc-meta-fuente').value = 'Otro';
+                                            }
+                                        }
+                                        if (parsedJson.regula) document.getElementById('doc-meta-regula').value = parsedJson.regula;
+                                        
+                                        textArea.value = originalText + (parsedJson.markdown ? parsedJson.markdown.trim() : "");
+                                    } catch (e) {
+                                        console.warn("Fallo al parsear JSON, pegando texto bruto", e);
+                                        textArea.value = originalText + extractedText.trim();
+                                    }
+                                    
+                                    // Ocultar loader
+                                    document.getElementById('ai-loading-indicator').style.display = 'none';
+                                    document.getElementById('ai-upload-container').style.display = 'flex';
+                                    fileInput.value = '';
+                                    
+                                    showMessage("✅ Archivo procesado. Metadatos y texto extraídos.");
+                                } else {
+                                    throw new Error("La IA no devolvió ningún texto. Puede que el archivo esté vacío o sea un escaneo no reconocible.");
+                                }
+                            } catch (err) {
                                 document.getElementById('ai-loading-indicator').style.display = 'none';
-                                document.getElementById('ai-upload-container').style.display = 'flex';
-                                fileInput.value = '';
-                                
-                                showMessage("✅ Archivo procesado perfectamente por la IA.");
-                            } else {
-                                throw new Error("La IA no devolvió ningún texto. Puede que el archivo esté vacío o sea un escaneo no reconocible.");
+                                document.getElementById('ai-error-indicator').style.display = 'block';
+                                document.getElementById('ai-error-text').innerText = err.message;
                             }
-                        } catch (err) {
+                        };
+                        reader.onerror = function() {
                             document.getElementById('ai-loading-indicator').style.display = 'none';
                             document.getElementById('ai-error-indicator').style.display = 'block';
-                            document.getElementById('ai-error-text').innerText = err.message;
-                        }
-                    };
-                    reader.onerror = function() {
+                            document.getElementById('ai-error-text').innerText = "Error al leer el archivo desde tu dispositivo.";
+                        };
+                        reader.readAsDataURL(file);
+                    } catch (err) {
                         document.getElementById('ai-loading-indicator').style.display = 'none';
                         document.getElementById('ai-error-indicator').style.display = 'block';
-                        document.getElementById('ai-error-text').innerText = "Error al leer el archivo desde tu dispositivo.";
-                    };
-                    reader.readAsDataURL(file);
-                } catch (err) {
-                    document.getElementById('ai-loading-indicator').style.display = 'none';
-                    document.getElementById('ai-error-indicator').style.display = 'block';
-                    document.getElementById('ai-error-text').innerText = "Error preparando archivo: " + err.message;
-                }
-            });
+                        document.getElementById('ai-error-text').innerText = "Error preparando archivo: " + err.message;
+                    }
+                });
+            }
         }
+        setupAiExtractor();
 
-        extractPdfToTextarea('doc-pdf-upload', 'doc-content', 'doc-append-mode');
         // Event Listeners for Analytics
         document.getElementById('init-db-btn').addEventListener('click', async () => {
             const btn = document.getElementById('init-db-btn');
