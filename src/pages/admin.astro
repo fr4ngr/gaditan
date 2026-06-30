@@ -490,12 +490,24 @@ import '../styles/components.css';
                         <h3 class="text-title">El "Alma" del Bot (System Prompt)</h3>
                         <p class="text-muted">Modifica la forma de ser, el tono y las reglas inquebrantables de la IA.</p>
                         
-                        <div class="form-group">
-                            <label>System Prompt (Markdown):</label>
-                            <textarea id="system-prompt-text" style="display: block; min-height: 400px; font-family: monospace; font-size: 13px;" required></textarea>
+                        <p class="text-muted" id="system-prompt-date" style="font-weight: bold; color: var(--ds-primary);"></p>
+                        
+                        <div class="form-group" style="background: rgba(0,0,0,0.02); padding: 15px; border-radius: 8px; border: 1px solid var(--bubble-bot-border); margin-bottom: 20px;">
+                            <label style="font-size: 1.1rem; color: var(--ds-primary); margin-bottom: 10px; display: block;">🏛️ Contexto Base (Misión Principal)</label>
+                            <p class="text-muted" style="font-size: 0.85rem; margin-top: -5px; margin-bottom: 10px;">Esta es la identidad fundamental del asistente.</p>
+                            <textarea id="base-context-text" style="display: block; min-height: 120px; font-size: 14px;" required></textarea>
                         </div>
                         
-                        <button class="btn btn-primary" onclick="saveSystemPrompt()">💾 Guardar Personalidad</button>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                            <h4 style="margin: 0; color: var(--ds-text-primary);">⚖️ Leyes Inquebrantables</h4>
+                            <button class="btn btn-secondary" style="margin: 0; padding: 5px 15px; background: white; border-color: var(--ds-primary); color: var(--ds-primary);" onclick="addRuleCard()">+ Añadir Ley</button>
+                        </div>
+                        
+                        <div id="rules-container" style="display: flex; flex-direction: column; gap: 15px; margin-bottom: 20px;">
+                            <!-- Dinámicamente llenado con addRuleCard() -->
+                        </div>
+                        
+                        <button class="btn btn-primary" style="width: 100%; padding: 12px; font-size: 1.1rem;" onclick="saveSystemPrompt()">💾 Guardar Personalidad y Leyes</button>
                     </div>
 
                     <!-- TAB 5: Simulador -->
@@ -1036,33 +1048,222 @@ import '../styles/components.css';
             }
         }
 
-        // --- Personalidad Tab ---
+        // --- Personalidad Tab (Dynamic Rules) ---
+        let currentRules = [];
+
+        window.renderRuleCards = function() {
+            const container = document.getElementById('rules-container');
+            container.innerHTML = '';
+            
+            if (currentRules.length === 0) {
+                container.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--ds-gray); font-style: italic;">No hay leyes específicas. Añade una para empezar.</div>';
+                return;
+            }
+
+            currentRules.forEach((rule, index) => {
+                const card = document.createElement('div');
+                card.style.border = '1px solid var(--bubble-bot-border)';
+                card.style.borderRadius = '8px';
+                card.style.padding = '15px';
+                card.style.background = 'white';
+                card.style.display = 'flex';
+                card.style.flexDirection = 'column';
+                card.style.gap = '10px';
+                
+                const header = document.createElement('div');
+                header.style.display = 'flex';
+                header.style.justifyContent = 'space-between';
+                header.style.alignItems = 'center';
+                
+                const titleWrapper = document.createElement('div');
+                titleWrapper.style.display = 'flex';
+                titleWrapper.style.alignItems = 'center';
+                titleWrapper.style.gap = '10px';
+                titleWrapper.style.flex = '1';
+                
+                const indexBadge = document.createElement('span');
+                indexBadge.innerText = `Regla ${index + 1}`;
+                indexBadge.style.background = 'var(--ds-primary)';
+                indexBadge.style.color = 'white';
+                indexBadge.style.padding = '3px 8px';
+                indexBadge.style.borderRadius = '12px';
+                indexBadge.style.fontSize = '0.8rem';
+                indexBadge.style.fontWeight = 'bold';
+                
+                const titleInput = document.createElement('input');
+                titleInput.type = 'text';
+                titleInput.value = rule.title;
+                titleInput.placeholder = 'Ej: El Tono';
+                titleInput.style.flex = '1';
+                titleInput.style.margin = '0';
+                titleInput.style.fontWeight = 'bold';
+                titleInput.style.border = 'none';
+                titleInput.style.borderBottom = '1px dashed var(--ds-gray)';
+                titleInput.style.borderRadius = '0';
+                titleInput.style.padding = '2px 5px';
+                titleInput.style.background = 'transparent';
+                titleInput.onchange = (e) => { currentRules[index].title = e.target.value; };
+                
+                titleWrapper.appendChild(indexBadge);
+                titleWrapper.appendChild(titleInput);
+                
+                const controls = document.createElement('div');
+                controls.style.display = 'flex';
+                controls.style.gap = '5px';
+                
+                const btnUp = document.createElement('button');
+                btnUp.className = 'btn btn-secondary';
+                btnUp.style.margin = '0';
+                btnUp.style.padding = '2px 8px';
+                btnUp.innerText = '↑';
+                btnUp.disabled = index === 0;
+                btnUp.onclick = () => window.moveRuleUp(index);
+                
+                const btnDown = document.createElement('button');
+                btnDown.className = 'btn btn-secondary';
+                btnDown.style.margin = '0';
+                btnDown.style.padding = '2px 8px';
+                btnDown.innerText = '↓';
+                btnDown.disabled = index === currentRules.length - 1;
+                btnDown.onclick = () => window.moveRuleDown(index);
+                
+                const btnDel = document.createElement('button');
+                btnDel.className = 'btn btn-danger';
+                btnDel.style.margin = '0';
+                btnDel.style.padding = '2px 8px';
+                btnDel.innerText = '🗑️';
+                btnDel.onclick = () => window.deleteRuleCard(index);
+                
+                controls.appendChild(btnUp);
+                controls.appendChild(btnDown);
+                controls.appendChild(btnDel);
+                
+                header.appendChild(titleWrapper);
+                header.appendChild(controls);
+                
+                const contentTextarea = document.createElement('textarea');
+                contentTextarea.value = rule.content;
+                contentTextarea.style.minHeight = '80px';
+                contentTextarea.style.fontSize = '0.9rem';
+                contentTextarea.style.fontFamily = 'monospace';
+                contentTextarea.placeholder = 'Instrucciones para esta regla...';
+                contentTextarea.onchange = (e) => { currentRules[index].content = e.target.value; };
+                
+                card.appendChild(header);
+                card.appendChild(contentTextarea);
+                
+                container.appendChild(card);
+            });
+        };
+
+        window.addRuleCard = function() {
+            currentRules.push({ title: 'Nueva Regla', content: '' });
+            window.renderRuleCards();
+            // Scroll to bottom
+            setTimeout(() => {
+                const container = document.getElementById('rules-container');
+                if(container.lastChild) container.lastChild.scrollIntoView({behavior: 'smooth', block: 'nearest'});
+            }, 100);
+        };
+
+        window.moveRuleUp = function(index) {
+            if (index > 0) {
+                const temp = currentRules[index];
+                currentRules[index] = currentRules[index - 1];
+                currentRules[index - 1] = temp;
+                window.renderRuleCards();
+            }
+        };
+
+        window.moveRuleDown = function(index) {
+            if (index < currentRules.length - 1) {
+                const temp = currentRules[index];
+                currentRules[index] = currentRules[index + 1];
+                currentRules[index + 1] = temp;
+                window.renderRuleCards();
+            }
+        };
+
+        window.deleteRuleCard = function(index) {
+            if(confirm('¿Eliminar esta regla?')) {
+                currentRules.splice(index, 1);
+                window.renderRuleCards();
+            }
+        };
+
         window.loadSystemPrompt = async function() {
-            document.getElementById('system-prompt-text').value = 'Cargando personalidad desde GitHub...';
+            document.getElementById('base-context-text').value = 'Cargando personalidad desde GitHub...';
+            document.getElementById('system-prompt-date').innerText = '';
+            currentRules = [];
+            window.renderRuleCards();
+            
             try {
                 const res = await fetch(`/api/admin/system`, { headers: { 'Authorization': 'Bearer ' + sessionPwd } });
                 const data = await res.json();
                 if (res.ok) {
-                    document.getElementById('system-prompt-text').value = data.content;
+                    const rawContent = data.content;
+                    
+                    // Parse Date Header
+                    const dateMatch = rawContent.match(/^> \[!NOTE\]\n> \*\*Leyes aplicadas desde:\*\* (.*)\n\n/);
+                    let cleanContent = rawContent;
+                    if (dateMatch) {
+                        document.getElementById('system-prompt-date').innerText = `Última modificación: ${dateMatch[1]}`;
+                        cleanContent = rawContent.replace(dateMatch[0], '');
+                    }
+                    
+                    // Parse Rules vs Base Context
+                    // Split by "### REGLA X: Title"
+                    const ruleRegex = /### REGLA \d+:\s*(.*)\n([\s\S]*?)(?=### REGLA \d+:|$)/g;
+                    
+                    // Find first rule index to separate base context
+                    const firstRuleMatch = /### REGLA 1:/.exec(cleanContent);
+                    if (firstRuleMatch) {
+                        document.getElementById('base-context-text').value = cleanContent.substring(0, firstRuleMatch.index).trim();
+                        
+                        let match;
+                        while ((match = ruleRegex.exec(cleanContent)) !== null) {
+                            currentRules.push({
+                                title: match[1].trim(),
+                                content: match[2].trim()
+                            });
+                        }
+                    } else {
+                        // Legacy or no rules yet
+                        document.getElementById('base-context-text').value = cleanContent.trim();
+                    }
+                    window.renderRuleCards();
+                    
                 } else {
-                    document.getElementById('system-prompt-text').value = "Error al cargar: " + data.error;
+                    document.getElementById('base-context-text').value = "Error al cargar: " + data.error;
                 }
             } catch(e) {
-                document.getElementById('system-prompt-text').value = "Error de red.";
+                document.getElementById('base-context-text').value = "Error de red.";
             }
         };
 
         window.saveSystemPrompt = async function() {
-            const text = document.getElementById('system-prompt-text').value;
+            const baseContext = document.getElementById('base-context-text').value.trim();
+            
+            // Reconstruct markdown
+            let finalMarkdown = baseContext;
+            if (finalMarkdown && currentRules.length > 0) finalMarkdown += '\n\n';
+            
+            currentRules.forEach((rule, index) => {
+                finalMarkdown += `### REGLA ${index + 1}: ${rule.title}\n${rule.content}\n\n`;
+            });
+            
+            finalMarkdown = finalMarkdown.trim();
+
             showMessage("Guardando nueva personalidad en GitHub...", false);
             try {
                 const res = await fetch('/api/admin/system', {
                     method: 'POST',
                     headers: { 'Authorization': 'Bearer ' + sessionPwd, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ content: text })
+                    body: JSON.stringify({ content: finalMarkdown })
                 });
                 if (res.ok) {
                     showMessage("¡Personalidad actualizada! El bot usará esta configuración en unos minutos.");
+                    window.loadSystemPrompt(); // reload to get new timestamp
                 } else {
                     const data = await res.json();
                     showMessage("Error: " + data.error, true);
