@@ -533,10 +533,14 @@ import '../styles/components.css';
             if (type === 'error') icon = '❌';
             toast.innerHTML = `<span>${icon}</span><span>${msg}</span>`;
             container.appendChild(toast);
+            
+            // Si es un error grave, lo dejamos más tiempo para que lo lea
+            const finalDuration = type === 'error' ? 15000 : duration;
+            
             setTimeout(() => {
                 toast.style.animation = 'fadeOut 0.3s ease-out forwards';
                 setTimeout(() => toast.remove(), 300);
-            }, duration);
+            }, finalDuration);
         }
 
         // --- Status & Deploy ---
@@ -1084,26 +1088,44 @@ import '../styles/components.css';
                             const base64Data = dataUrl.split(',')[1];
                             const mimeType = file.type || 'application/pdf';
 
-                            const res = await fetch('/api/admin/extract', {
+                            // 1. Obtener clave de la IA de forma segura
+                            const keyRes = await fetch('/api/admin/keys', {
+                                headers: { 'Authorization': 'Bearer ' + sessionPwd }
+                            });
+                            if (!keyRes.ok) throw new Error("Fallo al autenticar la clave de la IA.");
+                            const { key } = await keyRes.json();
+
+                            // 2. Llamada directa a Gemini desde el navegador para evitar el timeout de 30s de Cloudflare
+                            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`;
+                            const prompt = "Eres un transcriptor experto. Convierte este documento a texto limpio en formato Markdown. Si ves tablas, tarifas o precios, organízalos matemáticamente utilizando la sintaxis de tablas de Markdown (filas y columnas). No inventes información, transcribe exactamente lo que ves, pero estructurado para que una IA lo pueda leer fácilmente. Devuelve ÚNICAMENTE el código Markdown, sin introducciones ni saludos.";
+                            
+                            const payload = {
+                                contents: [{
+                                    parts: [
+                                        { inlineData: { mimeType: mimeType, data: base64Data } },
+                                        { text: prompt }
+                                    ]
+                                }]
+                            };
+
+                            const res = await fetch(url, {
                                 method: 'POST',
-                                headers: {
-                                    'Authorization': 'Bearer ' + sessionPwd,
-                                    'Content-Type': 'application/json'
-                                },
-                                body: JSON.stringify({ base64Data, mimeType })
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify(payload)
                             });
 
                             if (!res.ok) {
                                 const errData = await res.json().catch(() => ({}));
-                                throw new Error(errData.error || `HTTP ${res.status}`);
+                                throw new Error(errData.error?.message || `HTTP ${res.status}`);
                             }
 
                             const data = await res.json();
-                            if (data.success) {
-                                textArea.value = originalText + data.text.trim();
+                            if (data.candidates && data.candidates.length > 0) {
+                                const extractedText = data.candidates[0].content.parts[0].text;
+                                textArea.value = originalText + extractedText.trim();
                                 showMessage("✅ Archivo procesado perfectamente por la IA.");
                             } else {
-                                throw new Error(data.error || "Error desconocido");
+                                throw new Error("La IA no devolvió ningún texto.");
                             }
                         } catch (err) {
                             showMessage("Error en extracción IA: " + err.message, true);
