@@ -188,6 +188,8 @@ import '../styles/components.css';
             input, textarea, select {
                 font-size: 16px !important;
                 padding: 14px 12px !important;
+                width: 100% !important;
+                box-sizing: border-box !important;
             }
             
             /* Ensure buttons are finger-friendly */
@@ -229,6 +231,25 @@ import '../styles/components.css';
             .status-grid {
                 grid-template-columns: 1fr;
             }
+            .status-item {
+                flex-direction: row !important;
+                align-items: center !important;
+                justify-content: flex-start !important;
+                text-align: left !important;
+                padding: 10px 15px !important;
+            }
+            .status-item > div:nth-child(2) {
+                flex-grow: 1;
+            }
+            .status-item > div:nth-child(3) {
+                text-align: right !important;
+            }
+            
+            /* Radar grid */
+            .radar-grid {
+                grid-template-columns: 1fr !important;
+                gap: 1rem !important;
+            }
         }
     </style>
 </head>
@@ -269,7 +290,7 @@ import '../styles/components.css';
 
                     <!-- TAB 1: Estado -->
                     <div id="tab-estado" class="tab-content active">
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div class="header-actions" style="display: flex; justify-content: space-between; align-items: flex-start;">
                             <div>
                                 <h3 class="text-title">Estado del Sistema</h3>
                                 <p class="text-muted">Verifica que todas las conexiones necesarias estén operativas.</p>
@@ -320,7 +341,7 @@ import '../styles/components.css';
                             </div>
                         </div>
 
-                        <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem;">
+                        <div class="radar-grid" style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem;">
                             <!-- Top Categorías -->
                             <div class="card" style="background: white; padding: 1.5rem; border-radius: 8px; border: 1px solid #e2e8f0;">
                                 <h3 style="margin-top: 0; color: #1e293b; border-bottom: 2px solid #f1f5f9; padding-bottom: 0.5rem;">Top Categorías</h3>
