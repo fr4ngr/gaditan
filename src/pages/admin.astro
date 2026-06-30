@@ -1052,12 +1052,20 @@ import '../styles/components.css';
         // --- PDF Extraction Helper ---
         async function extractPdfToTextarea(fileInputId, textAreaId, appendCheckboxId) {
             const fileInput = document.getElementById(fileInputId);
-            const textArea = document.getElementById(textAreaId);
-            const appendMode = document.getElementById(appendCheckboxId) ? document.getElementById(appendCheckboxId).checked : false;
             
             fileInput.addEventListener('change', async (e) => {
+                const textArea = document.getElementById(textAreaId);
+                const appendModeCheckbox = document.getElementById(appendCheckboxId);
+                const appendMode = appendModeCheckbox ? appendModeCheckbox.checked : false;
+                
                 const file = e.target.files[0];
                 if (!file) return;
+
+                const filenameInput = document.getElementById('doc-filename');
+                if (filenameInput && (!filenameInput.value || filenameInput.value === '')) {
+                    const cleanName = file.name.replace(/\.[^/.]+$/, "").replace(/[^a-zA-Z0-9_-]/g, '_');
+                    filenameInput.value = cleanName;
+                }
                 
                 const dateStr = new Date().toLocaleString('es-ES');
                 const originalText = appendMode && textArea.value ? textArea.value + `\n\n--- NUEVO DOCUMENTO AÑADIDO: ${dateStr} ---\n\n` : `--- DOCUMENTO CREADO: ${dateStr} ---\n\n`;
