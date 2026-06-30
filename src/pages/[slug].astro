@@ -1,0 +1,52 @@
+---
+import fs from 'fs';
+import path from 'path';
+import ChatLayout from '../layouts/ChatLayout.astro';
+
+export async function getStaticPaths() {
+  const jsonPath = path.resolve('./src/data/landing-pages.json');
+  const data = JSON.parse(fs.readFileSync(jsonPath, 'utf-8'));
+
+  return data.map((page: any) => ({
+    params: { slug: page.slug },
+    props: { page },
+  }));
+}
+
+const { page } = Astro.props;
+---
+
+<ChatLayout title={page.title}>
+    <meta name="description" content={page.description} slot="head" />
+    <meta name="keywords" content={page.keywords} slot="head" />
+    <script type="application/ld+json" slot="head" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": page.h1,
+      "description": page.description,
+      "url": `https://cadizchat.com/${page.slug}`
+    })} />
+    
+    <!-- Hero Section SEO Visible -->
+    <div style="padding: 16px; background: var(--header-bg); border-bottom: 1px solid var(--header-border); text-align: center;">
+        <h1 style="font-size: 1.5rem; margin: 0 0 8px 0; color: var(--primary-color);">${page.h1}</h1>
+        <p style="margin: 0; font-size: 0.9rem; color: var(--text-secondary);">${page.description}</p>
+    </div>
+
+    <!-- El contenedor de mensajes está vacío inicialmente, se llena con JS -->
+    <div id="chat-messages-container" style="display: contents;">
+        <!-- Los mensajes se inyectarán aquí -->
+    </div>
+    
+    <!-- Script para inicializar el chat con el contexto de la Landing Page -->
+    <script define:vars={{ relatedStop: page.relatedStop, h1Title: page.h1 }}>
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                if (window.sendToAI) {
+                    const prePrompt = `Hola, vengo buscando información sobre: ${h1Title}. Preséntate brevemente y ofréceme la información más relevante sobre este lugar, con sugerencias (chips).`;
+                    window.sendToAI(prePrompt, true);
+                }
+            }, 500); 
+        });
+    </script>
+</ChatLayout>

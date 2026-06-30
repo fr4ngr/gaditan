@@ -393,10 +393,7 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                     ${data.routeDetails ? `<div class="route-details text-muted text-center" style="font-size: 0.9rem;">${data.routeDetails}</div>` : ''}
                 </div>
                 <div class="card-footer">
-                    Cálculo basado en tarifas oficiales
-                </div>
-                <div style="padding: 0 16px 16px 16px;">
-                    <button class="btn btn-primary" onclick="window.sendToAI('Quiero pedir un taxi ahora')">🚕 Llamar Taxi Ahora</button>
+                    <button class="btn btn-primary" onclick="window.sendToAI('Quiero ver opciones disponibles')">🔍 Ver opciones</button>
                 </div>
             </div>`;
         }
@@ -405,7 +402,7 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             <div class="card rule-card mt-sm flex-col">
                 <div class="card-header primary">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                    <span>Normativa del Taxi</span>
+                    <span>Normativa</span>
                 </div>
                 <div class="card-body" style="flex: 1;">
                     <p class="text-muted" style="margin:0">${data.content}</p>
@@ -416,8 +413,8 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             </div>`;
         }
         if (data.cardType === 'ContactCard') {
-            const contactName = data.contactName || "RadioTaxi Cádiz";
-            const phone = data.phoneNumber || "956212121";
+            const contactName = data.contactName || "Contacto Directo";
+            const callNumber = data.callNumber || "956212121";
             const whatsapp = data.whatsappNumber || "34956212121";
             return `
             <div class="flex-col gap-sm" style="width: 100%; max-width: 100%; align-self: flex-start; margin-bottom: 0.5rem;">
@@ -427,8 +424,8 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                         <div style="display: flex; align-items: center; justify-content: space-between;">
                             <span class="text-title">${contactName}</span>
                             <div style="display: flex; gap: 8px;">
-                                <a href="tel:${phone.replace(/\\s+/g, '')}" class="btn btn-success btn-rect" style="width: auto; padding: 8px 12px; margin: 0;"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M6.62 10.79c1.44 2.83 3.76 5.15 6.59 6.59l2.2-2.2c.28-.28.67-.36 1.02-.25 1.12.37 2.32.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg> <span class="btn-text">Llamar</span></a>
-                                <a href="https://wa.me/${whatsapp.replace(/\\s+/g, '').replace('+', '')}" class="btn btn-rect" target="_blank" rel="noopener noreferrer" style="background: #25D366; color: white; width: auto; padding: 8px 12px; margin: 0; transition: opacity 0.2s;" onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.6 2.326zM7.994 14.521a6.6 6.6 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.56 6.56 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592m3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.73.73 0 0 0-.529.247c-.182.198-.691.677-.691 1.654s.71 1.916.81 2.049c.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232"/></svg> <span class="btn-text">WhatsApp</span></a>
+                                <a href="tel:${callNumber.replace(/\s+/g, '')}" class="btn btn-success btn-rect" style="width: auto; padding: 8px 12px; margin: 0;"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M6.62 10.79c1.44 2.83 3.76 5.15 6.59 6.59l2.2-2.2c.28-.28.67-.36 1.02-.25 1.12.37 2.32.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg> <span class="btn-text">Llamar</span></a>
+                                <a href="https://wa.me/${whatsapp.replace(/\s+/g, '').replace('+', '')}" class="btn btn-rect" target="_blank" rel="noopener noreferrer" style="background: #25D366; color: white; width: auto; padding: 8px 12px; margin: 0; transition: opacity 0.2s;" onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.6 2.326zM7.994 14.521a6.6 6.6 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.56 6.56 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592m3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.73.73 0 0 0-.529.247c-.182.198-.691.677-.691 1.654s.71 1.916.81 2.049c.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232"/></svg> <span class="btn-text">WhatsApp</span></a>
                             </div>
                         </div>
                     </div>
@@ -436,10 +433,10 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             </div>`;
         }
         if (data.cardType === 'ReservationCard') {
-            const email = data.reservationEmail || "reservas@cadiz.taxi";
+            const email = data.reservationEmail || "info@cadizchat.com";
             const subject = encodeURIComponent(data.reservationSubject || "Reserva de Servicio");
             const title = data.reservationTitle || "Reservar Ahora";
-            const body = encodeURIComponent("Hola, me gustaría hacer una reserva.\\n\\nMis datos:\\n- Fecha y Hora:\\n- Nombre:\\n- Detalles adicionales:\\n");
+            const body = encodeURIComponent("Hola, me gustaría hacer una reserva.\n\nMis datos:\n- Fecha y Hora:\n- Nombre:\n- Detalles adicionales:\n");
             
             return `
             <div class="flex-col gap-sm" style="width: 100%; max-width: 100%; align-self: flex-start; margin-bottom: 0.5rem;">
@@ -491,19 +488,25 @@ import ChatLayout from '../layouts/ChatLayout.astro';
         }
         
         if (data.cardType === 'GalleryCard') {
-            let imagesHtml = '';
-            if (data.imageUrls && data.imageUrls.length > 0) {
-                imagesHtml = data.imageUrls.map((url: string) => `<img src="${url}" style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px; margin-bottom: 8px;">`).join('');
+            let html = '';
+            if (data.imageUrls && Array.isArray(data.imageUrls) && data.imageUrls.length > 0) {
+                const imagesHtml = data.imageUrls.map((url: string) => `
+                    <div style="flex: 0 0 85%; scroll-snap-align: center; border-radius: 8px; overflow: hidden; border: 1px solid var(--border-color);">
+                        <img src="${url}" alt="Galería" style="width: 100%; height: 200px; object-fit: cover; display: block;" loading="lazy" />
+                    </div>
+                `).join('');
+                html = `
+                    <div class="card-wrapper" style="animation: slideIn 0.3s ease-out; margin-top: 8px;">
+                        <div style="display: flex; flex-direction: row; overflow-x: auto; scroll-snap-type: x mandatory; gap: 8px; padding-bottom: 4px;">
+                            ${imagesHtml}
+                        </div>
+                    </div>
+                `;
             }
             return `
             <div class="flex-col gap-sm" style="width: 100%; max-width: 100%; align-self: flex-start; margin-bottom: 0.5rem;">
                 <span class="bubble" style="border-bottom-left-radius: 4px;">${data.content}</span>
-                ${imagesHtml ? `
-                <div class="card mt-sm" style="background: transparent; border: none; box-shadow: none; padding: 0;">
-                    <div style="display: flex; flex-direction: column; gap: 8px;">
-                        ${imagesHtml}
-                    </div>
-                </div>` : ''}
+                ${html}
             </div>`;
         }
 
@@ -869,20 +872,8 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                         const timeText = masCercana.duration ? `(${Math.ceil(masCercana.duration / 60)} min ${poiType === 'airport' ? 'en coche' : 'a pie'})` : '';
                         
                         // Añadir un mensaje al chat
-                        const chatOutput = document.getElementById('chat-output');
-                        if (chatOutput) {
-                            const poiNameDisplay = poiType === 'airport' ? 'aeropuerto' : 'parada de taxi';
-                            const bubbleHtml = `
-                            <div class="message bot" style="animation: slideUp 0.3s ease;">
-                                <div class="message-content">
-                                    <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%; max-width: 100%; align-self: flex-start;">
-                                        <span class="bubble">¡Listo! Tu ${poiNameDisplay} oficial más cercan${poiType === 'airport' ? 'o' : 'a'} es <strong>${masCercana.name}</strong>, ${distText} ${timeText}. Te lo he marcado en el mapa.</span>
-                                    </div>
-                                </div>
-                            </div>`;
-                            chatOutput.insertAdjacentHTML('beforeend', bubbleHtml);
-                            chatOutput.scrollTop = chatOutput.scrollHeight;
-                        }
+                        // Enviar destino a la IA para que lo gestione
+                        window.sendToAI(`He seleccionado la ubicación: ${masCercana.name}. Dame información sobre este lugar o guíame.`);
                         
                         // Mostrar el mapa
                         map.setView([masCercana.lat, masCercana.lon], poiType === 'airport' ? 10 : 16);
@@ -1181,7 +1172,7 @@ import ChatLayout from '../layouts/ChatLayout.astro';
         if (uiContainer) {
             const titleEl = document.getElementById('map-info-title');
             const descEl = document.getElementById('map-info-desc');
-            const labelEl = document.getElementById('map-info-label');
+            const labelEl = document.getElementById('map-stop-label');
             if (titleEl) titleEl.innerText = title;
             if (descEl) {
                 if (type === 'airport') {
@@ -1236,7 +1227,7 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             const floatingStats = document.getElementById('map-floating-route-stats');
             const routeTime = document.getElementById('route-time');
             const routeDistance = document.getElementById('route-distance');
-            const labelEl = document.getElementById('map-info-label');
+            const labelEl = document.getElementById('map-stop-label');
             const instEl = document.getElementById('route-instruction');
 
             if (actions) actions.style.display = 'none';

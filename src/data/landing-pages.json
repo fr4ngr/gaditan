@@ -1,34 +1,26 @@
 [
     {
-        "slug": "estacion-de-tren",
-        "title": "Taxi Estación de Tren Cádiz",
-        "h1": "Pide un Taxi desde o hacia la Estación de Tren de Cádiz",
-        "description": "Calcula el precio y reserva tu taxi en la Estación de Tren de Cádiz al instante. Información de paradas, suplementos y tarifas oficiales.",
-        "relatedStop": "Estación",
-        "keywords": "taxi estacion de tren cadiz, parada de taxi renfe cadiz, precio taxi estacion tren"
+        "slug": "que-ver-en-cadiz",
+        "title": "Qué Ver en Cádiz - Guía Turística",
+        "h1": "Los Mejores Sitios que Ver en Cádiz",
+        "description": "Descubre los monumentos, plazas y lugares imprescindibles de la ciudad más antigua de Occidente.",
+        "relatedStop": "Centro",
+        "keywords": "que ver en cadiz, turismo cadiz, monumentos cadiz"
     },
     {
-        "slug": "hospital-puerta-del-mar",
-        "title": "Taxi Hospital Puerta del Mar Cádiz",
-        "h1": "Parada de Taxi en el Hospital Puerta del Mar",
-        "description": "Información sobre taxis en el Hospital Puerta del Mar. Calcula cuánto cuesta ir al hospital en taxi de forma rápida.",
-        "relatedStop": "Residencia",
-        "keywords": "taxi hospital puerta del mar, parada taxi hospital cadiz, precio taxi hospital"
+        "slug": "donde-comer-barato",
+        "title": "Dónde Comer Barato en Cádiz",
+        "h1": "Restaurantes y Tapas Baratas en Cádiz",
+        "description": "Encuentra los mejores sitios para disfrutar de la gastronomía gaditana (pescaíto frito, tapas) al mejor precio.",
+        "relatedStop": "Mercado",
+        "keywords": "donde comer barato cadiz, tapas cadiz, restaurantes economicos"
     },
     {
-        "slug": "aeropuerto-de-jerez",
-        "title": "Taxi Cádiz al Aeropuerto de Jerez",
-        "h1": "Traslados en Taxi de Cádiz al Aeropuerto de Jerez (XRY)",
-        "description": "Reserva tu taxi desde Cádiz ciudad hasta el Aeropuerto de Jerez. Consulta la tarifa interurbana oficial y viaja sin sorpresas.",
-        "relatedStop": "ALL_AIRPORTS",
-        "keywords": "taxi cadiz aeropuerto jerez, precio taxi cadiz aeropuerto jerez, traslado jerez"
-    },
-    {
-        "slug": "playa-la-victoria",
-        "title": "Taxi Playa de la Victoria Cádiz",
-        "h1": "Taxis en la Playa de la Victoria",
-        "description": "Disfruta del verano en Cádiz. Pide tu taxi para ir a la Playa de la Victoria o volver al centro. Paradas más cercanas y precio.",
+        "slug": "playas-cadiz",
+        "title": "Las Mejores Playas de Cádiz",
+        "h1": "Guía de Playas de Cádiz",
+        "description": "Conoce el estado, ubicación y servicios de La Victoria, La Caleta, Cortadura y Santa María del Mar.",
         "relatedStop": "Helios",
-        "keywords": "taxi playa victoria, parada taxi estadio, precio taxi playa cadiz"
+        "keywords": "playas cadiz, la caleta, playa victoria, estado playas"
     }
 ]
