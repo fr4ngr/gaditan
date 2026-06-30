@@ -419,11 +419,27 @@ import '../styles/components.css';
                             </div>
 
                             <div class="form-group mt-sm">
-                                <label for="doc-pdf-upload" style="font-size: 0.9rem; font-weight: 500; color: var(--ds-primary);">O subir archivo (PDF, DOCX, JPG, PNG) para extraer con IA:</label>
-                                <input type="file" id="doc-pdf-upload" accept=".pdf, .png, .jpg, .jpeg, .docx" />
-                                <div style="display: flex; gap: 10px; align-items: center; margin-top: 5px;">
-                                    <input type="checkbox" id="doc-append-mode" checked style="width: auto;" />
-                                    <label for="doc-append-mode" style="font-weight: normal; font-size: 0.9rem;">Añadir al texto existente (no borrar)</label>
+                                <label>O subir archivo (PDF, DOCX, JPG, PNG) para extraer con IA:</label>
+                                <div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
+                                    <div id="ai-upload-container" style="display: flex; gap: 10px; align-items: center; width: 100%;">
+                                        <input type="file" id="doc-pdf-upload" accept=".pdf,.png,.jpg,.jpeg,.docx" class="form-control" style="flex: 1; max-width: 300px;" />
+                                        <div style="display: flex; align-items: center; gap: 5px;">
+                                            <input type="checkbox" id="doc-pdf-append" checked />
+                                            <label for="doc-pdf-append" style="font-size: 0.85rem; margin-bottom: 0;">Añadir al texto existente (no borrar)</label>
+                                        </div>
+                                    </div>
+                                    <div id="ai-loading-indicator" style="display: none; width: 100%; padding: 15px; border: 1px solid var(--ds-primary); border-radius: 8px; background: rgba(59, 130, 246, 0.05); align-items: center; gap: 15px;">
+                                        <div class="spinner" style="width: 24px; height: 24px; border: 3px solid rgba(59,130,246,0.3); border-top-color: var(--ds-primary); border-radius: 50%; animation: spin 1s linear infinite;"></div>
+                                        <div style="flex: 1;">
+                                            <div style="font-weight: 600; color: var(--ds-primary); font-size: 0.95rem;">La Inteligencia Artificial está procesando el archivo...</div>
+                                            <div id="ai-loading-text" style="font-size: 0.85rem; color: var(--ds-gray);">Preparando documento (no cierre la pestaña, puede tardar varios minutos dependiendo del tamaño).</div>
+                                        </div>
+                                    </div>
+                                    <div id="ai-error-indicator" style="display: none; width: 100%; padding: 15px; border: 1px solid var(--ds-danger); border-radius: 8px; background: rgba(239, 68, 68, 0.05);">
+                                        <div style="font-weight: 600; color: var(--ds-danger); font-size: 0.95rem;">❌ Error en la extracción</div>
+                                        <div id="ai-error-text" style="font-size: 0.85rem; margin-top: 5px;"></div>
+                                        <button type="button" class="btn btn-primary" style="margin-top: 10px; padding: 5px 15px; font-size: 0.85rem;" onclick="document.getElementById('ai-error-indicator').style.display='none'; document.getElementById('ai-upload-container').style.display='flex';">Reintentar</button>
+                                    </div>
                                 </div>
                             </div>
                             
@@ -730,7 +746,7 @@ import '../styles/components.css';
                         return;
                     }
                     container.innerHTML = files.map(f => `
-                        <div class="card" style="padding: 12px; margin-bottom: 8px; border-radius: 6px; box-shadow: none; display: flex; flex-direction: row; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; background: rgba(255,255,255,0.6);">
+                        <div class="card" style="padding: 12px; margin-bottom: 8px; border-radius: 6px; box-shadow: none; display: flex; flex-direction: row; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; background: rgba(255, 255, 255, 0.98);">
                             <span style="font-weight: 500; font-size: 0.95rem; color: var(--ds-text-primary);">📄 ${f.name}</span>
                             <div style="display:flex; gap:8px;">
                                 <button class="btn btn-secondary" style="margin:0; padding:4px 10px; font-size: 0.8rem; background: white;" onclick="editDocument('${tipo}', '${f.name.replace('.md', '')}')">Editar</button>
@@ -1078,7 +1094,13 @@ import '../styles/components.css';
                 const dateStr = new Date().toLocaleString('es-ES');
                 const originalText = appendMode && textArea.value ? textArea.value + `\n\n--- NUEVO DOCUMENTO AÑADIDO: ${dateStr} ---\n\n` : `--- DOCUMENTO CREADO: ${dateStr} ---\n\n`;
                 
-                showMessage("La Inteligencia Artificial está leyendo el archivo... (aprox 10-15s)", false);
+                // UI Indicators
+                document.getElementById('ai-upload-container').style.display = 'none';
+                document.getElementById('ai-error-indicator').style.display = 'none';
+                document.getElementById('ai-loading-indicator').style.display = 'flex';
+                const statusText = document.getElementById('ai-loading-text');
+                
+                statusText.innerText = "Empaquetando documento (Paso 1/2)...";
                 
                 try {
                     const reader = new FileReader();
@@ -1088,11 +1110,13 @@ import '../styles/components.css';
                             const base64Data = dataUrl.split(',')[1];
                             const mimeType = file.type || 'application/pdf';
 
+                            statusText.innerText = "Enviando a los servidores de Gemini (Paso 2/2). Esto puede tardar varios minutos si el archivo es grande...";
+
                             // 1. Obtener clave de la IA de forma segura
                             const keyRes = await fetch('/api/admin/keys', {
                                 headers: { 'Authorization': 'Bearer ' + sessionPwd }
                             });
-                            if (!keyRes.ok) throw new Error("Fallo al autenticar la clave de la IA.");
+                            if (!keyRes.ok) throw new Error("Fallo al autenticar la clave de la IA. Comprueba tu conexión.");
                             const { key } = await keyRes.json();
 
                             // 2. Llamada directa a Gemini desde el navegador para evitar el timeout de 30s de Cloudflare
@@ -1123,20 +1147,32 @@ import '../styles/components.css';
                             if (data.candidates && data.candidates.length > 0) {
                                 const extractedText = data.candidates[0].content.parts[0].text;
                                 textArea.value = originalText + extractedText.trim();
+                                
+                                // Ocultar loader
+                                document.getElementById('ai-loading-indicator').style.display = 'none';
+                                document.getElementById('ai-upload-container').style.display = 'flex';
+                                fileInput.value = '';
+                                
                                 showMessage("✅ Archivo procesado perfectamente por la IA.");
                             } else {
-                                throw new Error("La IA no devolvió ningún texto.");
+                                throw new Error("La IA no devolvió ningún texto. Puede que el archivo esté vacío o sea un escaneo no reconocible.");
                             }
                         } catch (err) {
-                            showMessage("Error en extracción IA: " + err.message, true);
+                            document.getElementById('ai-loading-indicator').style.display = 'none';
+                            document.getElementById('ai-error-indicator').style.display = 'block';
+                            document.getElementById('ai-error-text').innerText = err.message;
                         }
                     };
                     reader.onerror = function() {
-                        showMessage("Error al leer el archivo en el navegador.", true);
+                        document.getElementById('ai-loading-indicator').style.display = 'none';
+                        document.getElementById('ai-error-indicator').style.display = 'block';
+                        document.getElementById('ai-error-text').innerText = "Error al leer el archivo desde tu dispositivo.";
                     };
                     reader.readAsDataURL(file);
                 } catch (err) {
-                    showMessage("Error preparando archivo: " + err.message, true);
+                    document.getElementById('ai-loading-indicator').style.display = 'none';
+                    document.getElementById('ai-error-indicator').style.display = 'block';
+                    document.getElementById('ai-error-text').innerText = "Error preparando archivo: " + err.message;
                 }
             });
         }
