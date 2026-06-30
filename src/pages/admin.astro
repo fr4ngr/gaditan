@@ -394,23 +394,23 @@ import '../styles/components.css';
                         </div>
 
                         <!-- Vista 2: Dentro de una Materia (Subcerebros A y B) -->
-                        <div id="materia-view" style="display: none; display: flex; flex-direction: column; gap: 20px;">
+                        <div id="materia-view" style="display: none; flex-direction: column; gap: 20px;">
                             <!-- Zona A: Oficial -->
-                            <div style="border: 1px solid var(--bubble-bot-border); border-radius: 8px; background: white; padding: 15px;">
-                                <div class="zone-header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 10px;">
-                                    <h4 style="margin: 0; color: var(--ds-primary);">🏛️ Bloque A (Fuentes Primarias)</h4>
-                                    <button class="btn btn-secondary" style="margin:0; padding:3px 10px; font-size:0.8rem;" onclick="showDocumentEditor('A_oficial')">+ Añadir Documento Primario</button>
+                            <div class="card" style="border-left: 5px solid var(--ds-primary);">
+                                <div class="card-header" style="background: rgba(59, 130, 246, 0.05); display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--bubble-bot-border); padding: 12px 16px;">
+                                    <h4 style="margin: 0; color: var(--ds-primary); font-size: 1.1rem;">🏛️ Bloque A (Fuentes Primarias)</h4>
+                                    <button class="btn btn-secondary" style="margin:0; padding:5px 12px; font-size:0.85rem;" onclick="showDocumentEditor('A_oficial')">+ Añadir Documento</button>
                                 </div>
-                                <div id="list-A_oficial" class="brain-list"></div>
+                                <div class="card-body" id="list-A_oficial" style="padding: 15px; display: flex; flex-direction: column; gap: 10px; background: var(--ds-bg-white);"></div>
                             </div>
                             
                             <!-- Zona B: Comercial -->
-                            <div style="border: 1px solid #ffeeba; border-radius: 8px; background: #fffcf5; padding: 15px;">
-                                <div class="zone-header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ffeeba; padding-bottom: 10px; margin-bottom: 10px;">
-                                    <h4 style="margin: 0; color: #856404;">📋 Bloque B (Fuentes Secundarias)</h4>
-                                    <button class="btn btn-secondary" style="margin:0; padding:3px 10px; font-size:0.8rem;" onclick="showDocumentEditor('B_comercial')">+ Añadir Documento Secundario</button>
+                            <div class="card" style="border-left: 5px solid var(--ds-warning-text); background: var(--ds-warning-bg); border-color: rgba(133, 100, 4, 0.2);">
+                                <div class="card-header" style="background: transparent; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(133, 100, 4, 0.2); padding: 12px 16px;">
+                                    <h4 style="margin: 0; color: var(--ds-warning-text); font-size: 1.1rem;">📋 Bloque B (Fuentes Secundarias)</h4>
+                                    <button class="btn btn-secondary" style="margin:0; padding:5px 12px; font-size:0.85rem; border-color: var(--ds-warning-text); color: var(--ds-warning-text); background: white;" onclick="showDocumentEditor('B_comercial')">+ Añadir Documento</button>
                                 </div>
-                                <div id="list-B_comercial" class="brain-list"></div>
+                                <div class="card-body" id="list-B_comercial" style="padding: 15px; display: flex; flex-direction: column; gap: 10px; background: transparent;"></div>
                             </div>
                         </div>
 
@@ -654,9 +654,18 @@ import '../styles/components.css';
                         return;
                     }
                     container.innerHTML = materias.map(m => `
-                        <div class="brain-item" style="cursor: pointer;" onclick="openMateria('${m.name}')">
-                            <span style="font-weight:bold; font-size: 1.1rem;">📂 ${m.name}</span>
-                            <span style="color: var(--ds-primary);">Abrir ➡️</span>
+                        <div class="card" style="padding: 15px; margin-bottom: 15px; display: flex; flex-direction: row; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                            <div style="display: flex; align-items: center; gap: 15px;">
+                                <span style="font-size: 2.2rem;">🧠</span>
+                                <div>
+                                    <h4 style="margin: 0; color: var(--ds-text-primary); font-size: 1.15rem;">${m.name}</h4>
+                                    <span class="text-muted" style="font-size: 0.85rem;">Materia de conocimiento</span>
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 8px;">
+                                <button class="btn btn-secondary" style="margin: 0; padding: 6px 12px; font-size: 0.85rem;" onclick="openMateria('${m.name}')">✏️ Editar / Abrir</button>
+                                <button class="btn btn-danger" style="margin: 0; padding: 6px 12px; font-size: 0.85rem; background: var(--ds-danger); color: white; border: none;" onclick="deleteMateriaFromList('${m.name}')">🗑️ Eliminar</button>
+                            </div>
                         </div>
                     `).join('');
                 } else {
@@ -718,11 +727,11 @@ import '../styles/components.css';
                         return;
                     }
                     container.innerHTML = files.map(f => `
-                        <div class="brain-item" style="padding: 10px; margin-bottom: 5px;">
-                            <span>📄 ${f.name}</span>
+                        <div class="card" style="padding: 12px; margin-bottom: 8px; border-radius: 6px; box-shadow: none; display: flex; flex-direction: row; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; background: rgba(255,255,255,0.6);">
+                            <span style="font-weight: 500; font-size: 0.95rem; color: var(--ds-text-primary);">📄 ${f.name}</span>
                             <div style="display:flex; gap:8px;">
-                                <button class="btn btn-secondary" style="margin:0; padding:2px 8px; font-size: 0.8rem;" onclick="editDocument('${tipo}', '${f.name.replace('.md', '')}')">Editar</button>
-                                <button class="btn btn-danger" style="margin:0; padding:2px 8px; font-size: 0.8rem; background:var(--ds-danger); color:white; border:none; border-radius:4px;" onclick="deleteDocument('${tipo}', '${f.name}', '${f.sha}')">Borrar</button>
+                                <button class="btn btn-secondary" style="margin:0; padding:4px 10px; font-size: 0.8rem; background: white;" onclick="editDocument('${tipo}', '${f.name.replace('.md', '')}')">Editar</button>
+                                <button class="btn btn-danger" style="margin:0; padding:4px 10px; font-size: 0.8rem; background:var(--ds-danger); color:white; border:none; border-radius:4px;" onclick="deleteDocument('${tipo}', '${f.name}', '${f.sha}')">Borrar</button>
                             </div>
                         </div>
                     `).join('');
@@ -886,11 +895,36 @@ import '../styles/components.css';
                 
                 showMessage("Materia borrada por completo.");
                 const btn = document.getElementById('btn-delete-materia');
-                btn.onclick = window.deleteMateria; // restore onclick handler
-                btn.style.display = 'none';
+                if(btn) {
+                    btn.onclick = window.deleteMateria; // restore onclick handler
+                    btn.style.display = 'none';
+                }
                 showMaterias();
             } catch (e) {
                 showMessage("Error al borrar la materia.", true);
+            }
+        }
+
+        window.deleteMateriaFromList = async function(materiaName) {
+            showMessage(`Analizando ${materiaName}...`, false);
+            let filesCount = 0;
+            try {
+                const resA = await fetch(`/api/admin/brains?action=list&path=${materiaName}/A_oficial`, { headers: { 'Authorization': 'Bearer ' + sessionPwd } });
+                if(resA.ok) { const data = await resA.json(); filesCount += data.filter(f => f.type === 'file' && f.name !== '_meta.md').length; }
+                
+                const resB = await fetch(`/api/admin/brains?action=list&path=${materiaName}/B_comercial`, { headers: { 'Authorization': 'Bearer ' + sessionPwd } });
+                if(resB.ok) { const data = await resB.json(); filesCount += data.filter(f => f.type === 'file' && f.name !== '_meta.md').length; }
+                
+                if (filesCount > 0) {
+                    if(!confirm(`⚠️ ATENCIÓN ⚠️\nLa materia '${materiaName}' tiene ${filesCount} documento(s) dentro.\nSi la borras perderás la información. ¿Estás seguro de continuar?`)) return;
+                } else {
+                    if(!confirm(`¿Seguro que quieres borrar la materia '${materiaName}'?`)) return;
+                }
+                
+                currentMateria = materiaName;
+                await executeDeleteMateria();
+            } catch(e) {
+                showMessage("Error comprobando documentos", true);
             }
         }
 
