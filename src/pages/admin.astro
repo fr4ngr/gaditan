@@ -1077,31 +1077,44 @@ import '../styles/components.css';
                 showMessage("La Inteligencia Artificial está leyendo el archivo... (aprox 10-15s)", false);
                 
                 try {
-                    const formData = new FormData();
-                    formData.append('file', file);
+                    const reader = new FileReader();
+                    reader.onload = async function(event) {
+                        try {
+                            const dataUrl = event.target.result;
+                            const base64Data = dataUrl.split(',')[1];
+                            const mimeType = file.type || 'application/pdf';
 
-                    const res = await fetch('/api/admin/extract', {
-                        method: 'POST',
-                        headers: {
-                            'Authorization': 'Bearer ' + sessionPwd
-                        },
-                        body: formData
-                    });
+                            const res = await fetch('/api/admin/extract', {
+                                method: 'POST',
+                                headers: {
+                                    'Authorization': 'Bearer ' + sessionPwd,
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({ base64Data, mimeType })
+                            });
 
-                    if (!res.ok) {
-                        const errData = await res.json().catch(() => ({}));
-                        throw new Error(errData.error || `HTTP ${res.status}`);
-                    }
+                            if (!res.ok) {
+                                const errData = await res.json().catch(() => ({}));
+                                throw new Error(errData.error || `HTTP ${res.status}`);
+                            }
 
-                    const data = await res.json();
-                    if (data.success) {
-                        textArea.value = originalText + data.text.trim();
-                        showMessage("✅ Archivo procesado perfectamente por la IA.");
-                    } else {
-                        throw new Error(data.error || "Error desconocido");
-                    }
+                            const data = await res.json();
+                            if (data.success) {
+                                textArea.value = originalText + data.text.trim();
+                                showMessage("✅ Archivo procesado perfectamente por la IA.");
+                            } else {
+                                throw new Error(data.error || "Error desconocido");
+                            }
+                        } catch (err) {
+                            showMessage("Error en extracción IA: " + err.message, true);
+                        }
+                    };
+                    reader.onerror = function() {
+                        showMessage("Error al leer el archivo en el navegador.", true);
+                    };
+                    reader.readAsDataURL(file);
                 } catch (err) {
-                    showMessage("Error en extracción IA: " + err.message, true);
+                    showMessage("Error preparando archivo: " + err.message, true);
                 }
             });
         }

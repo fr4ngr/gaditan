@@ -1,15 +1,5 @@
 import { GoogleGenAI } from '@google/genai';
 
-function arrayBufferToBase64(buffer: ArrayBuffer) {
-    let binary = '';
-    const bytes = new Uint8Array(buffer);
-    const len = bytes.byteLength;
-    for (let i = 0; i < len; i++) {
-        binary += String.fromCharCode(bytes[i]);
-    }
-    return btoa(binary);
-}
-
 export async function onRequestPost(context) {
     const { request, env } = context;
 
@@ -24,20 +14,16 @@ export async function onRequestPost(context) {
     }
 
     try {
-        const formData = await request.formData();
-        const file = formData.get('file');
+        const body = await request.json();
+        const { base64Data, mimeType } = body;
 
-        if (!file || !(file instanceof File)) {
-            return new Response(JSON.stringify({ error: "No file provided or invalid format." }), { status: 400 });
+        if (!base64Data || !mimeType) {
+            return new Response(JSON.stringify({ error: "No file data provided." }), { status: 400 });
         }
 
         if (!env.GEMINI_API_KEY) {
             return new Response(JSON.stringify({ error: "GEMINI_API_KEY is missing." }), { status: 500 });
         }
-
-        const buffer = await file.arrayBuffer();
-        const base64Data = arrayBufferToBase64(buffer);
-        const mimeType = file.type || 'application/pdf'; // fallback
 
         const ai = new GoogleGenAI({ apiKey: env.GEMINI_API_KEY });
 
