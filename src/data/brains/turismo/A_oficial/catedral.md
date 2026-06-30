@@ -24,5 +24,4 @@ Es uno de los grandes atractivos de la visita. Su acceso no es por escaleras tra
 3. "https://images.unsplash.com/photo-1621644722883-8583482436d5?auto=format&fit=crop&q=80&w=800" (Detalles arquitectónicos)
 
 ## Consejos para sugerir (Cerebro B / Sugerencias)
-- Si el usuario muestra interés en la Catedral, ofrécele una **"Visita Guiada al Centro Histórico"** o recomiéndale sitios para comer cerca (ej. el Barrio del Pópulo).
-- Sugerencias de chips: "Horarios y precios", "Cómo llegar (Mapa)", "Ver fotos", "Visitas guiadas".
+
