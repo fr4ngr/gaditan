@@ -220,7 +220,7 @@ ${b.content}
             parsedData = JSON.parse(cleanText);
         } catch(e) {
             // Si el modelo alucinó texto plano
-            parsedData = { cardType: 'TextCard', content: responseText, suggestedBlocks: ['🚕 Ver tarifas'], intentCategory: 'Otros' };
+            parsedData = { cardType: 'TextCard', content: responseText, suggestedBlocks: ['¿Qué más puedo ver?'], intentCategory: 'Otros' };
         }
 
         // ----------------------------------------------------
