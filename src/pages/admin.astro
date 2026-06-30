@@ -265,7 +265,7 @@ import '../styles/components.css';
                         <input type="password" id="admin-pwd" required placeholder="Contraseña..." />
                     </div>
                     <button type="submit" class="btn btn-primary" style="width: 100%">Entrar</button>
-                    <div id="login-error" style="color: var(--ds-danger); margin-top: 10px; text-align: center;"></div>
+                    <div id="login-error" style="margin-top: 10px; text-align: center; font-weight: 500;"></div>
                 </form>
             </div>
         </div>
@@ -487,20 +487,24 @@ import '../styles/components.css';
             const pwd = document.getElementById('admin-pwd').value;
             const errDiv = document.getElementById('login-error');
             
-            errDiv.innerText = "Comprobando...";
+            errDiv.style.color = "var(--ds-primary)";
+            errDiv.innerText = "Comprobando credenciales...";
             try {
                 const res = await fetch('/api/admin/status', {
                     headers: { 'Authorization': 'Bearer ' + pwd }
                 });
                 if (res.ok) {
                     sessionPwd = pwd;
+                    localStorage.setItem('admin_pwd', pwd); // save for analytics
                     document.getElementById('login-section').style.display = 'none';
                     document.getElementById('dashboard-section').style.display = 'block';
                     checkStatus();
                 } else {
+                    errDiv.style.color = "var(--ds-danger)";
                     errDiv.innerText = "Contraseña incorrecta.";
                 }
             } catch (e) {
+                errDiv.style.color = "var(--ds-danger)";
                 errDiv.innerText = "Error de red.";
             }
         });
