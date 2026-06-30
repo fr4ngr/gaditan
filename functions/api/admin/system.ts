@@ -61,6 +61,18 @@ export async function onRequestPost(context) {
             return new Response(JSON.stringify({ error: "Faltan datos" }), { status: 400 });
         }
 
+        const dateStr = new Date().toLocaleString('es-ES', { timeZone: 'Europe/Madrid' });
+        const dateHeader = `> [!NOTE]\n> **Leyes aplicadas desde:** ${dateStr}\n\n`;
+        
+        let finalContent = content;
+        // Check if there's already a date header block
+        const dateHeaderRegex = /^> \[!NOTE\]\n> \*\*Leyes aplicadas desde:\*\*.*\n\n/;
+        if (dateHeaderRegex.test(finalContent)) {
+            finalContent = finalContent.replace(dateHeaderRegex, dateHeader);
+        } else {
+            finalContent = dateHeader + finalContent;
+        }
+
         const getRes = await fetch(`https://api.github.com/repos/${repo}/contents/src/data/system-prompt.md`, { headers });
         let sha = null;
         if (getRes.ok) {
@@ -70,7 +82,7 @@ export async function onRequestPost(context) {
 
         const putBody = {
             message: `chore: update system prompt`,
-            content: encodeUtf8Base64(content),
+            content: encodeUtf8Base64(finalContent),
             branch: 'main'
         };
         if (sha) putBody.sha = sha;
