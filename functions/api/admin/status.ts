@@ -10,6 +10,10 @@ export async function onRequestGet(context) {
         gemini: !!env.GEMINI_API_KEY,
         github: !!env.GITHUB_TOKEN,
         aemet: !!env.AEMET_API_KEY,
+        deployHook: !!env.CLOUDFLARE_DEPLOY_HOOK,
+        maps: !!env.MAPS_API_KEY,
+        db: !!env.DB_CONNECTION,
+        whatsapp: !!env.WHATSAPP_API_KEY,
         adminPwd: !!env.ADMIN_PASSWORD
     };
 

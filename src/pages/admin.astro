@@ -327,15 +327,38 @@ import '../styles/components.css';
                     grid.innerHTML = `
                         <div class="status-item">
                             <div class="status-icon">${data.gemini ? '✅' : '❌'}</div>
-                            <div style="font-weight: 600;">Gemini API</div>
+                            <div style="font-weight: 600;">Cerebro Base (Gemini)</div>
+                            <div style="font-size: 0.8rem; color: var(--ds-text-secondary); text-align: center;">Motor de IA activo</div>
                         </div>
                         <div class="status-item">
                             <div class="status-icon">${data.github ? '✅' : '❌'}</div>
-                            <div style="font-weight: 600;">GitHub Token</div>
+                            <div style="font-weight: 600;">Memoria (GitHub)</div>
+                            <div style="font-size: 0.8rem; color: var(--ds-text-secondary); text-align: center;">Acceso a archivos de sistema</div>
                         </div>
                         <div class="status-item">
                             <div class="status-icon">${data.aemet ? '✅' : '❌'}</div>
-                            <div style="font-weight: 600;">AEMET API</div>
+                            <div style="font-weight: 600;">Clima (AEMET)</div>
+                            <div style="font-size: 0.8rem; color: var(--ds-text-secondary); text-align: center;">Datos meteorológicos</div>
+                        </div>
+                        <div class="status-item">
+                            <div class="status-icon">${data.deployHook ? '✅' : '⚠️'}</div>
+                            <div style="font-weight: 600;">Despliegue Rápido</div>
+                            <div style="font-size: 0.8rem; color: var(--ds-text-secondary); text-align: center;">Botón de Forzar Actualización</div>
+                        </div>
+                        <div class="status-item" style="opacity: 0.6; background: #f8f9fa;">
+                            <div class="status-icon">⏳</div>
+                            <div style="font-weight: 600;">Mapas y Distancias</div>
+                            <div style="font-size: 0.8rem; color: var(--ds-text-secondary); text-align: center;">Próximamente (Fase 4)</div>
+                        </div>
+                        <div class="status-item" style="opacity: 0.6; background: #f8f9fa;">
+                            <div class="status-icon">⏳</div>
+                            <div style="font-weight: 600;">Centralita (WhatsApp)</div>
+                            <div style="font-size: 0.8rem; color: var(--ds-text-secondary); text-align: center;">Próximamente (Embudo)</div>
+                        </div>
+                        <div class="status-item" style="opacity: 0.6; background: #f8f9fa;">
+                            <div class="status-icon">⏳</div>
+                            <div style="font-weight: 600;">Analíticas (D1)</div>
+                            <div style="font-size: 0.8rem; color: var(--ds-text-secondary); text-align: center;">Próximamente (Tendencias)</div>
                         </div>
                     `;
                 }
