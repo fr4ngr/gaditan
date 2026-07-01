@@ -396,6 +396,11 @@ import themeData from '../data/theme.json';
                         </div>
                         <p class="text-muted" id="cerebros-subtitle">Gestiona las áreas de conocimiento. La IA sabrá cruzar la información de ambas fuentes.</p>
                         
+                        <!-- RAG DEPENDENCY GRAPH -->
+                        <div class="card mb-md" id="rag-graph-container" style="display: none; padding: 15px; border-radius: 8px; background: var(--ds-bg-light); border: 1px solid var(--bubble-bot-border);">
+                            <h4 style="margin-top: 0; margin-bottom: 15px; font-size: 1rem; color: var(--ds-primary);">📊 Mapa de Activación (Gráfico RAG)</h4>
+                            <div id="rag-graph-bars" style="display: flex; flex-direction: column; gap: 8px;"></div>
+                        </div>
                         <!-- Vista 1: Lista de Materias -->
                         <div class="brain-list" id="materias-list">
                             <div class="text-center text-muted">Cargando...</div>
@@ -491,9 +496,14 @@ import themeData from '../data/theme.json';
                                 <textarea id="doc-content" required></textarea>
                             </div>
                             
-                            <div style="display: flex; gap: 10px;">
+                            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                                 <button class="btn btn-primary" onclick="saveDocument(this)">💾 Guardar Documento</button>
                                 <button class="btn btn-secondary" onclick="hideDocumentEditor()">Cancelar</button>
+                                <button class="btn btn-secondary" onclick="loadDocumentHistory()">🕒 Ver Historial</button>
+                            </div>
+                            <div id="doc-history-container" style="display: none; margin-top: 15px; padding: 10px; background: var(--ds-bg-light); border-radius: 8px;">
+                                <strong>Historial de Versiones (Click para restaurar en el editor)</strong>
+                                <ul id="doc-history-list" style="list-style: none; padding: 0; margin-top: 10px;"></ul>
                             </div>
                         </div>
                     </div>
@@ -1276,6 +1286,41 @@ import themeData from '../data/theme.json';
             } catch (e) {
                 container.innerHTML = "Error de red.";
             }
+
+            // Load RAG Graph
+            loadRagGraph();
+        };
+
+        window.loadRagGraph = async function() {
+            const container = document.getElementById('rag-graph-container');
+            const bars = document.getElementById('rag-graph-bars');
+            if(!container) return;
+            
+            try {
+                const res = await fetch('/api/admin/analytics', { headers: { 'Authorization': 'Bearer ' + sessionPwd } });
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.topCategories && data.topCategories.length > 0) {
+                        container.style.display = 'block';
+                        const maxCount = Math.max(...data.topCategories.map(c => c.count));
+                        bars.innerHTML = data.topCategories.map(c => {
+                            const pct = Math.round((c.count / maxCount) * 100);
+                            return `
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <div style="width: 120px; font-size: 0.85rem; font-weight: 500; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">${c.intent_category}</div>
+                                <div style="flex-grow: 1; background: #e2e8f0; height: 12px; border-radius: 6px; overflow: hidden;">
+                                    <div style="width: ${pct}%; height: 100%; background: var(--ds-primary);"></div>
+                                </div>
+                                <div style="width: 40px; font-size: 0.8rem; text-align: right; color: var(--ds-text-secondary);">${c.count}</div>
+                            </div>`;
+                        }).join('');
+                    } else {
+                        container.style.display = 'none';
+                    }
+                }
+            } catch(e) {
+                console.error("RAG Graph error", e);
+            }
         };
 
         window.promptNewMateria = async function() {
@@ -1483,6 +1528,59 @@ import themeData from '../data/theme.json';
                 if (btnElement) {
                     btnElement.disabled = false;
                 }
+            }
+        };
+
+        window.loadDocumentHistory = async function() {
+            let filename = document.getElementById('doc-filename').value.trim().replace(/[^a-zA-Z0-9_-]/g, '');
+            if (!filename) return showMessage("Guarda el documento primero antes de ver el historial.", true);
+            const path = `${currentMateria}/${currentSubtipo}/${filename}`;
+            const container = document.getElementById('doc-history-container');
+            const list = document.getElementById('doc-history-list');
+            
+            container.style.display = 'block';
+            list.innerHTML = '<li>Cargando historial...</li>';
+            
+            try {
+                const res = await fetch(`/api/admin/brains-history?action=list&path=${path}`, { headers: { 'Authorization': 'Bearer ' + sessionPwd } });
+                if (res.ok) {
+                    const commits = await res.json();
+                    if (commits.length === 0) {
+                        list.innerHTML = '<li>No hay historial previo.</li>';
+                    } else {
+                        list.innerHTML = commits.map(c => 
+                            `<li style="margin-bottom:8px; padding:8px; background:var(--ds-bg-color); border:1px solid var(--ds-border-color); border-radius:4px; cursor:pointer;" onclick="restoreDocumentVersion('${path}', '${c.sha}')">
+                                <strong>${new Date(c.date).toLocaleString()}</strong><br/>
+                                <small>${c.message} (${c.author})</small>
+                            </li>`
+                        ).join('');
+                    }
+                } else {
+                    list.innerHTML = '<li>Error al cargar historial.</li>';
+                }
+            } catch(e) {
+                list.innerHTML = '<li>Error de red.</li>';
+            }
+        };
+
+        window.restoreDocumentVersion = async function(path, sha) {
+            showMessage("Recuperando versión...", false);
+            try {
+                const res = await fetch(`/api/admin/brains-history?action=get&path=${path}&ref=${sha}`, { headers: { 'Authorization': 'Bearer ' + sessionPwd } });
+                if (res.ok) {
+                    const data = await res.json();
+                    let rawContent = data.content;
+                    if (rawContent.startsWith('---')) {
+                        const endYaml = rawContent.indexOf('---', 3);
+                        if (endYaml !== -1) {
+                            rawContent = rawContent.substring(endYaml + 3).trim();
+                        }
+                    }
+                    document.getElementById('doc-content').value = rawContent;
+                    showMessage("Contenido restaurado en el editor. ¡Asegúrate de pulsar Guardar!");
+                }
+            } catch(e) {
+                showMessage("Error al recuperar.", true);
             }
         };
 
