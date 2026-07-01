@@ -259,7 +259,7 @@ ${b.content}
                 try {
                     const intentCat = parsedData.intentCategory || 'Otros';
                     const botRespText = parsedData.content || 'Sin respuesta';
-                    const brainsInjected = activeBrains.length > 0 ? activeBrains.map(b => b.path).join(', ') : '';
+                    const brainsInjected = cerebrosFiltrados.length > 0 ? cerebrosFiltrados.map(b => b.nombre).join(', ') : '';
                     
                     await env.DB.prepare(
                         "INSERT INTO chat_logs (user_message, bot_response, intent_category, latency_ms, tokens_used, brains_injected) VALUES (?, ?, ?, ?, ?, ?)"
