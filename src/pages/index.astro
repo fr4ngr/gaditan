@@ -361,6 +361,9 @@ import ChatLayout from '../layouts/ChatLayout.astro';
 
     // --- GENERATIVE UI ENGINE (TARJETAS) ---
     function renderCard(data: any, msgId: string): string {
+        if (data.content) {
+            data.content = data.content.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\*(.*?)\*/g, '<i>$1</i>').replace(/\n/g, '<br>');
+        }
         const title = data.title || '';
         const subtitle = data.subtitle || '';
         const badge = data.badge ? `<div style="font-size: 0.75rem; text-transform: uppercase; font-weight: bold; color: var(--primary-color); letter-spacing: 0.5px; margin-bottom: 4px;">${data.badge}</div>` : '';
@@ -1977,7 +1980,7 @@ import ChatLayout from '../layouts/ChatLayout.astro';
         `;
 
         addMessage('bot', skeletonHtml, false);
-        sendMessageToAI('¡Hola! Acabo de entrar a la web. Preséntate brevemente de forma muy natural y dime en qué puedes ayudarme. Añade sugerencias de inicio.', true);
+        sendMessageToAI('¡Hola! Acabo de entrar a la web. Preséntate brevemente de forma muy natural y dime en qué puedes ayudarme. NO añadas sugerencias ni listas en tu mensaje de texto, usa EXCLUSIVAMENTE los bloques de sugerencia de la interfaz.', true);
         // Llamada asíncrona a la API del clima con reintentos
         const fetchWeatherWithRetry = (retriesLeft = 3, delay = 2000) => {
             fetch('/api/weather?t=' + new Date().getTime())
