@@ -278,6 +278,7 @@ import '../styles/components.css';
                 <button class="tab-btn" onclick="switchTab('cerebros')">Mis Cerebros</button>
                 <button class="tab-btn" onclick="switchTab('personalidad')">🤖 Personalidad</button>
                 <button class="tab-btn" onclick="switchTab('simulador')">🧪 Simulador</button>
+                <button class="tab-btn" onclick="switchTab('ui')">🎨 Plantillas UI</button>
             </div>
 
             <div class="card">
@@ -527,6 +528,150 @@ import '../styles/components.css';
                             </div>
                         </div>
                         <button class="btn btn-secondary mt-sm" onclick="clearSimChat()">🧹 Limpiar Chat</button>
+                    </div>
+
+                    <!-- TAB 6: UI Showroom -->
+                    <div id="tab-ui" class="tab-content">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                            <h2 style="margin: 0; color: var(--ds-text-primary);">🎨 UI & Componentes</h2>
+                            <span style="font-size: 0.85rem; color: var(--ds-text-secondary); background: #e2e8f0; padding: 4px 10px; border-radius: 12px;">Showroom</span>
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px;">
+                            
+                            <!-- HeroCard -->
+                            <div style="display: flex; flex-direction: column; gap: 8px;">
+                                <div style="font-size: 0.8rem; font-weight: bold; color: var(--ds-text-secondary); text-transform: uppercase;">HeroCard (Monumentos, Playas)</div>
+                                <div class="card" style="overflow: hidden; border-radius: 12px; border: 1px solid var(--bubble-bot-border); background: white;">
+                                    <div style="width: 100%; height: 140px; background: linear-gradient(45deg, #f1f5f9, #e2e8f0); display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 2.5rem; border-bottom: 1px solid var(--bubble-bot-border);">🖼️</div>
+                                    <div class="card-body" style="padding: 16px;">
+                                        <div style="font-size: 0.75rem; text-transform: uppercase; font-weight: bold; color: var(--ds-primary); letter-spacing: 0.5px; margin-bottom: 4px;">🏛️ Historia</div>
+                                        <h3 style="margin:0 0 8px 0; color:var(--ds-text-primary); font-size: 1.1rem;">Catedral de Cádiz</h3>
+                                        <p style="margin:0; font-size: 0.9rem; color: #64748b;">La joya de la corona gaditana con su icónica cúpula dorada.</p>
+                                        <button class="btn btn-primary btn-rect" style="width:100%; margin-top:12px; font-size: 0.9rem; padding: 8px;">Más información</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- ListCard -->
+                            <div style="display: flex; flex-direction: column; gap: 8px;">
+                                <div style="font-size: 0.8rem; font-weight: bold; color: var(--ds-text-secondary); text-transform: uppercase;">ListCard (Top 10, Rutas)</div>
+                                <div class="card" style="border-radius: 12px; border: 1px solid var(--bubble-bot-border); background: white;">
+                                    <div class="card-body" style="padding: 16px;">
+                                        <div style="font-size: 0.75rem; text-transform: uppercase; font-weight: bold; color: var(--ds-primary); letter-spacing: 0.5px; margin-bottom: 4px;">🍽️ Gastronomía</div>
+                                        <h3 style="margin:0 0 12px 0; color:var(--ds-text-primary); font-size: 1.1rem;">Ruta de la Tapa</h3>
+                                        <div style="display:flex; flex-direction:column;">
+                                            <div style="display:flex; align-items:center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--bubble-bot-border);">
+                                                <div style="font-size:1.5rem; width:30px; text-align:center; flex-shrink:0;">🦐</div>
+                                                <div style="flex:1;">
+                                                    <div style="font-weight:600; font-size: 0.95rem; color:var(--ds-text-primary);">Tortillita de Camarones</div>
+                                                </div>
+                                            </div>
+                                            <div style="display:flex; align-items:center; gap: 12px; padding: 10px 0;">
+                                                <div style="font-size:1.5rem; width:30px; text-align:center; flex-shrink:0;">🐟</div>
+                                                <div style="flex:1;">
+                                                    <div style="font-weight:600; font-size: 0.95rem; color:var(--ds-text-primary);">Cazón en Adobo</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- BusinessCard -->
+                            <div style="display: flex; flex-direction: column; gap: 8px;">
+                                <div style="font-size: 0.8rem; font-weight: bold; color: var(--ds-text-secondary); text-transform: uppercase;">BusinessCard (Restaurantes)</div>
+                                <div class="card" style="border-radius: 12px; border: 1px solid var(--bubble-bot-border); background: white;">
+                                    <div class="card-body" style="padding: 16px;">
+                                        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom: 12px;">
+                                            <h4 style="margin:0; font-size: 1.1rem; color:var(--ds-text-primary);">Restaurante El Faro</h4>
+                                            <div style="background:var(--ds-success); color:white; padding:4px 8px; border-radius:12px; font-size:0.75rem; font-weight:bold;">Abierto</div>
+                                        </div>
+                                        <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px; font-size:0.9rem;">
+                                            <span>📍</span> <span style="color:var(--ds-text-secondary);">Calle San Félix, 15</span>
+                                        </div>
+                                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-top:12px;">
+                                            <button class="btn btn-secondary" style="font-size: 0.8rem; padding: 6px;">📞 Llamar</button>
+                                            <button class="btn btn-primary" style="font-size: 0.8rem; padding: 6px;">🌐 Web</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- ProductCard -->
+                            <div style="display: flex; flex-direction: column; gap: 8px;">
+                                <div style="font-size: 0.8rem; font-weight: bold; color: var(--ds-text-secondary); text-transform: uppercase;">ProductCard (Ofertas)</div>
+                                <div class="card" style="overflow: hidden; border-radius: 12px; border: 1px solid var(--bubble-bot-border); background: white; display: flex; flex-direction: row; align-items: center;">
+                                    <div style="width: 100px; height: 100px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 1.5rem; border-right: 1px solid var(--bubble-bot-border);">📦</div>
+                                    <div class="card-body" style="flex:1; padding: 12px;">
+                                        <div style="font-size: 0.7rem; text-transform: uppercase; font-weight: bold; color: var(--ds-primary); margin-bottom: 2px;">🎟️ Ticket</div>
+                                        <h4 style="margin:0 0 4px 0; color:var(--ds-text-primary); font-size: 1rem;">Torre Tavira</h4>
+                                        <div style="display:flex; align-items:baseline; gap:8px;">
+                                            <span style="font-size:1.2rem; font-weight:bold; color:var(--ds-text-primary);">7,00€</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            
+                            <!-- ArticleCard -->
+                            <div style="display: flex; flex-direction: column; gap: 8px;">
+                                <div style="font-size: 0.8rem; font-weight: bold; color: var(--ds-text-secondary); text-transform: uppercase;">ArticleCard (Noticias, Blogs)</div>
+                                <div class="card" style="border-radius: 12px; border: 1px solid var(--bubble-bot-border); background: white;">
+                                    <div class="card-body" style="padding: 16px;">
+                                        <div style="font-size: 0.75rem; text-transform: uppercase; font-weight: bold; color: var(--ds-primary); margin-bottom: 4px;">📰 Noticia</div>
+                                        <h3 style="margin:0 0 8px 0; color:var(--ds-text-primary); font-size: 1.1rem;">Carnaval de Cádiz 2027</h3>
+                                        <p style="margin:0 0 12px 0; font-size: 0.9rem; color: #64748b;">Fechas oficiales y programación para el próximo carnaval.</p>
+                                        <button class="btn btn-primary" style="font-size: 0.8rem; padding: 6px;">Leer más</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- AlertCard -->
+                            <div style="display: flex; flex-direction: column; gap: 8px;">
+                                <div style="font-size: 0.8rem; font-weight: bold; color: var(--ds-text-secondary); text-transform: uppercase;">AlertCard (Emergencias)</div>
+                                <div class="card" style="border-radius: 12px; border: 1px solid #fca5a5; background: #fef2f2;">
+                                    <div class="card-body" style="padding: 16px;">
+                                        <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+                                            <span style="font-size:1.5rem;">⚠️</span>
+                                            <h3 style="margin:0; color:#991b1b; font-size: 1.1rem;">Alerta Viento</h3>
+                                        </div>
+                                        <p style="margin:0; font-size: 0.9rem; color: #7f1d1d;">Levante fuerte en el Estrecho y bahía de Cádiz.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- ProfileCard -->
+                            <div style="display: flex; flex-direction: column; gap: 8px;">
+                                <div style="font-size: 0.8rem; font-weight: bold; color: var(--ds-text-secondary); text-transform: uppercase;">ProfileCard (Guías, Personal)</div>
+                                <div class="card" style="border-radius: 12px; border: 1px solid var(--bubble-bot-border); background: white; text-align: center;">
+                                    <div class="card-body" style="padding: 16px;">
+                                        <div style="width: 80px; height: 80px; border-radius: 50%; background: #f1f5f9; display: flex; align-items: center; justify-content: center; font-size: 2rem; margin: 0 auto 12px auto; border: 2px solid var(--ds-primary);">👤</div>
+                                        <h3 style="margin:0 0 4px 0; color:var(--ds-text-primary); font-size: 1.1rem;">Paco "El Guía"</h3>
+                                        <p style="margin:0 0 12px 0; font-size: 0.85rem; color: #64748b;">Guía Oficial de Turismo</p>
+                                        <div style="display:flex; justify-content:center; gap:12px;">
+                                            <button class="btn btn-secondary" style="font-size: 0.8rem; padding: 6px;">📞 Contactar</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- GalleryCard -->
+                            <div style="display: flex; flex-direction: column; gap: 8px;">
+                                <div style="font-size: 0.8rem; font-weight: bold; color: var(--ds-text-secondary); text-transform: uppercase;">GalleryCard (Carrusel)</div>
+                                <div class="card-wrapper" style="margin-top: 8px;">
+                                    <div style="display: flex; flex-direction: row; overflow-x: auto; scroll-snap-type: x mandatory; gap: 8px; padding-bottom: 4px;">
+                                        <div style="flex: 0 0 85%; scroll-snap-align: center; border-radius: 8px; overflow: hidden; border: 1px solid var(--bubble-bot-border); background: linear-gradient(45deg, #f1f5f9, #e2e8f0); display: flex; align-items: center; justify-content: center; height: 120px;">
+                                            <span style="font-size: 1.5rem; opacity: 0.5;">📸 1</span>
+                                        </div>
+                                        <div style="flex: 0 0 85%; scroll-snap-align: center; border-radius: 8px; overflow: hidden; border: 1px solid var(--bubble-bot-border); background: linear-gradient(45deg, #f1f5f9, #e2e8f0); display: flex; align-items: center; justify-content: center; height: 120px;">
+                                            <span style="font-size: 1.5rem; opacity: 0.5;">📸 2</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
                     </div>
 
                 </div>
