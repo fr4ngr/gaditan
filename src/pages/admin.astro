@@ -11,16 +11,16 @@ import themeData from '../data/theme.json';
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin - Cádiz Taxi</title>
     <!-- GLOBAL THEME INJECTION -->
-    <style is:inline define:vars={{ primary: themeData.primary, radius: themeData.radius }}>
+    <style is:inline set:html={`
         :root {
-            --ds-primary: var(--primary) !important;
-            --primary-color: var(--primary) !important;
-            --bubble-user-bg: var(--primary) !important;
+            --ds-primary: ${themeData.primary} !important;
+            --primary-color: ${themeData.primary} !important;
+            --bubble-user-bg: ${themeData.primary} !important;
         }
         .card, .card-wrapper > div > div {
-            border-radius: var(--radius) !important;
+            border-radius: ${themeData.radius} !important;
         }
-    </style>
+    `}></style>
     <!-- PDF Extraction & Gemini API (Backend) -->
     <style>
         body {
