@@ -1,6 +1,7 @@
 ---
 import '../styles/chat.css';
 import '../styles/components.css';
+import themeData from '../data/theme.json';
 ---
 
 <!doctype html>
@@ -9,6 +10,17 @@ import '../styles/components.css';
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin - Cádiz Taxi</title>
+    <!-- GLOBAL THEME INJECTION -->
+    <style is:inline define:vars={{ primary: themeData.primary, radius: themeData.radius }}>
+        :root {
+            --ds-primary: var(--primary) !important;
+            --primary-color: var(--primary) !important;
+            --bubble-user-bg: var(--primary) !important;
+        }
+        .card, .card-wrapper > div > div {
+            border-radius: var(--radius) !important;
+        }
+    </style>
     <!-- PDF Extraction & Gemini API (Backend) -->
     <style>
         body {
@@ -534,6 +546,22 @@ import '../styles/components.css';
                     <div id="tab-ui" class="tab-content">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                             <h2 style="margin: 0; color: var(--ds-text-primary);">🎨 UI & Componentes</h2>
+                        </div>
+                        
+                        <!-- GLOBAL THEME MANAGER -->
+                        <div style="background: white; border: 1px solid var(--bubble-bot-border); border-radius: 12px; padding: 20px; margin-bottom: 30px;">
+                            <h3 style="margin: 0 0 16px 0; color: var(--ds-primary);">🌐 Gestor de Tema Global</h3>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 24px;">
+                                <div class="form-group">
+                                    <label>Color Principal (Corporativo)</label>
+                                    <input type="color" id="theme-primary-color" value="#3b82f6" style="width: 100%; height: 50px; border: none; border-radius: 8px; cursor: pointer; padding: 0;" oninput="previewTheme()">
+                                </div>
+                                <div class="form-group">
+                                    <label>Redondeo de Elementos (<span id="theme-radius-label">12px</span>)</label>
+                                    <input type="range" id="theme-border-radius" min="0" max="24" step="2" value="12" style="width: 100%; margin-top: 15px;" oninput="previewTheme()">
+                                </div>
+                            </div>
+                            <button class="btn btn-primary mt-sm" style="width:100%; margin-top:20px;" onclick="saveGlobalTheme()">💾 Guardar y Desplegar Tema</button>
                         </div>
                         
                         <!-- LIVE SIMULATOR -->
@@ -1089,6 +1117,7 @@ import '../styles/components.css';
             if (tabId === 'analytics') loadAnalytics();
             if (tabId === 'cerebros') showMaterias();
             if (tabId === 'personalidad') loadSystemPrompt();
+            if (tabId === 'ui') initThemeManager();
         }
 
         function showMessage(msg, type = 'info', duration = 4000) {
@@ -1868,6 +1897,76 @@ import '../styles/components.css';
                     <strong>Bot:</strong> ¡Hola! Hazme preguntas para probar mi conocimiento.
                 </div>
             `;
+        };
+
+        // --- Theme Manager Helper ---
+        window.previewTheme = function() {
+            const color = document.getElementById('theme-primary-color').value;
+            const radius = document.getElementById('theme-border-radius').value + 'px';
+            document.getElementById('theme-radius-label').textContent = radius;
+            document.documentElement.style.setProperty('--ds-primary', color, 'important');
+            document.documentElement.style.setProperty('--primary-color', color, 'important');
+            document.documentElement.style.setProperty('--bubble-user-bg', color, 'important');
+            
+            const styleId = 'live-theme-style';
+            let styleEl = document.getElementById(styleId);
+            if (!styleEl) {
+                styleEl = document.createElement('style');
+                styleEl.id = styleId;
+                document.head.appendChild(styleEl);
+            }
+            styleEl.innerHTML = `
+                :root {
+                    --ds-primary: ${color} !important;
+                    --primary-color: ${color} !important;
+                    --bubble-user-bg: ${color} !important;
+                }
+                .card, .card-wrapper > div > div {
+                    border-radius: ${radius} !important;
+                }
+                .btn-primary, .btn-secondary, .btn-rect {
+                    border-radius: ${radius === '0px' ? '0px' : (parseInt(radius) / 2) + 'px'} !important;
+                }
+            `;
+        };
+
+        window.saveGlobalTheme = async function() {
+            const color = document.getElementById('theme-primary-color').value;
+            const radius = document.getElementById('theme-border-radius').value + 'px';
+            
+            showMessage("Guardando tema global en GitHub...", false);
+            try {
+                const res = await fetch('/api/admin/theme', {
+                    method: 'POST',
+                    headers: { 'Authorization': 'Bearer ' + sessionPwd, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ content: JSON.stringify({primary: color, radius: radius}) })
+                });
+                if (res.ok) {
+                    showMessage("¡Tema global actualizado! Cloudflare aplicará el cambio en ~2 minutos.");
+                } else {
+                    const data = await res.json();
+                    showMessage("Error: " + (data.error || "Desconocido"), true);
+                }
+            } catch(e) {
+                showMessage("Error de red.", true);
+            }
+        };
+
+        window.initThemeManager = async function() {
+            try {
+                const res = await fetch('/api/admin/theme', { headers: { 'Authorization': 'Bearer ' + sessionPwd }});
+                if (res.ok) {
+                    const data = await res.json();
+                    const theme = JSON.parse(data.content);
+                    if(theme.primary) document.getElementById('theme-primary-color').value = theme.primary;
+                    if(theme.radius) {
+                        document.getElementById('theme-border-radius').value = parseInt(theme.radius) || 0;
+                        document.getElementById('theme-radius-label').textContent = theme.radius;
+                    }
+                }
+            } catch(e) {
+                console.error("No se pudo cargar el theme", e);
+            }
         };
 
         // --- AI Extraction Helper ---

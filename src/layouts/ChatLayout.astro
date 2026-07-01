@@ -8,6 +8,7 @@ interface Props {
 }
 
 const { title, description } = Astro.props;
+import themeData from '../data/theme.json';
 ---
 
 <!doctype html>
@@ -20,6 +21,18 @@ const { title, description } = Astro.props;
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
 		<slot name="head" />
+		
+        <!-- GLOBAL THEME INJECTION -->
+        <style is:inline define:vars={{ primary: themeData.primary, radius: themeData.radius }}>
+            :root {
+                --ds-primary: var(--primary) !important;
+                --primary-color: var(--primary) !important;
+                --bubble-user-bg: var(--primary) !important;
+            }
+            .card, .card-wrapper > div > div {
+                border-radius: var(--radius) !important;
+            }
+        </style>
 		
 		<!-- Leaflet CSS & JS -->
 		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
