@@ -230,9 +230,17 @@ ${b.content}
         try {
             // Limpiar posibles bloques markdown de código si la primera llamada (sin schema) devolvió texto
             let cleanText = responseText.replace(/```json/gi, '').replace(/```/g, '').trim();
+            
+            // AUTO-HEALING: Extracción inteligente del bloque JSON si el modelo alucinó texto extra
+            const firstBrace = cleanText.indexOf('{');
+            const lastBrace = cleanText.lastIndexOf('}');
+            if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
+                cleanText = cleanText.substring(firstBrace, lastBrace + 1);
+            }
+            
             parsedData = JSON.parse(cleanText);
         } catch(e) {
-            // Si el modelo alucinó texto plano
+            // Si el modelo alucinó texto plano irremediable
             parsedData = { cardType: 'TextCard', content: responseText, suggestedBlocks: ['¿Qué más puedo ver?'], intentCategory: 'Otros' };
         }
 
