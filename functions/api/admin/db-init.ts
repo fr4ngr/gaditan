@@ -28,6 +28,21 @@ export async function onRequestPost(context) {
 
         await env.DB.prepare(createTableQuery).run();
 
+        // Intentar añadir las nuevas columnas para observabilidad (ignorará errores si ya existen)
+        const alterQueries = [
+            "ALTER TABLE chat_logs ADD COLUMN latency_ms INTEGER;",
+            "ALTER TABLE chat_logs ADD COLUMN tokens_used INTEGER;",
+            "ALTER TABLE chat_logs ADD COLUMN brains_injected TEXT;"
+        ];
+
+        for (const query of alterQueries) {
+            try {
+                await env.DB.prepare(query).run();
+            } catch (e) {
+                // Column probably already exists, ignore
+            }
+        }
+
         return new Response(JSON.stringify({ success: true, message: "Tabla chat_logs creada o verificada correctamente." }), {
             status: 200,
             headers: { 'Content-Type': 'application/json' }

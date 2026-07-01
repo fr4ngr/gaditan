@@ -132,6 +132,9 @@ ${b.content}
 
         let responseText = '';
         let currentModel = 'gemini-2.5-flash';
+        let latencyMs = 0;
+        let tokensUsed = 0;
+        const startTime = Date.now();
         
         try {
             // PRIMERA LLAMADA: Con tools, pero SIN responseMimeType ni schema (porque son incompatibles)
@@ -216,6 +219,10 @@ ${b.content}
             }
             
             responseText = response.text;
+            latencyMs = Date.now() - startTime;
+            if (response.usageMetadata) {
+                tokensUsed = response.usageMetadata.totalTokenCount || 0;
+            }
             
         } catch (error: any) {
             console.error("Error with model:", error);
@@ -252,9 +259,11 @@ ${b.content}
                 try {
                     const intentCat = parsedData.intentCategory || 'Otros';
                     const botRespText = parsedData.content || 'Sin respuesta';
+                    const brainsInjected = activeBrains.length > 0 ? activeBrains.map(b => b.path).join(', ') : '';
+                    
                     await env.DB.prepare(
-                        "INSERT INTO chat_logs (user_message, bot_response, intent_category) VALUES (?, ?, ?)"
-                    ).bind(userMessage, botRespText, intentCat).run();
+                        "INSERT INTO chat_logs (user_message, bot_response, intent_category, latency_ms, tokens_used, brains_injected) VALUES (?, ?, ?, ?, ?, ?)"
+                    ).bind(userMessage, botRespText, intentCat, latencyMs, tokensUsed, brainsInjected).run();
                 } catch (dbError) {
                     console.error("D1 Insert Error:", dbError);
                 }

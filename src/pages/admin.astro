@@ -2331,7 +2331,23 @@ Esquema requerido:
                                         </span>
                                     </td>
                                     <td style="padding: 0.75rem; color: #1e293b; vertical-align: top;">
-                                        <strong>"${msg.user_message}"</strong>
+                                        <div style="margin-bottom: 8px;">
+                                            <strong>👤 Turista:</strong> "${msg.user_message}"
+                                        </div>
+                                        <div style="margin-bottom: 12px; color: #334155; font-size: 0.9rem;">
+                                            <strong>🤖 IA:</strong> ${msg.bot_response ? msg.bot_response.substring(0, 150) + (msg.bot_response.length > 150 ? '...' : '') : '...'}
+                                        </div>
+                                        <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 5px;">
+                                            <span style="background: #f1f5f9; color: #475569; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem; border: 1px solid #cbd5e1;">
+                                                ⏱️ ${msg.latency_ms ? msg.latency_ms + 'ms' : 'N/A'}
+                                            </span>
+                                            <span style="background: #f1f5f9; color: #475569; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem; border: 1px solid #cbd5e1;">
+                                                🪙 ${msg.tokens_used ? msg.tokens_used + ' tokens' : 'N/A'}
+                                            </span>
+                                            <span style="background: #f1f5f9; color: #475569; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem; border: 1px solid #cbd5e1; max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${msg.brains_injected || 'Ninguno'}">
+                                                🧠 RAG: ${msg.brains_injected || 'Ninguno'}
+                                            </span>
+                                        </div>
                                     </td>
                                 </tr>
                             `;

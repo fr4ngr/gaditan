@@ -48,7 +48,7 @@ export async function onRequestGet(context) {
 
         // Obtener últimos 50 mensajes para la lupa
         let stmtRecent = env.DB.prepare(`
-            SELECT timestamp, user_message, intent_category, bot_response
+            SELECT timestamp, user_message, intent_category, bot_response, latency_ms, tokens_used, brains_injected
             FROM chat_logs 
             ${whereClause}
             ORDER BY timestamp DESC 
