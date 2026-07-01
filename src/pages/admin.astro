@@ -1142,13 +1142,11 @@ import themeData from '../data/theme.json';
             event.target.classList.add('active');
             document.getElementById('tab-' + tabId).classList.add('active');
             
-            // UX: Modo Full-Width para el Radar
+            // UX: Modo Full-Width para el Radar y Cerebros
             const container = document.querySelector('.admin-container');
+            container.style.maxWidth = '1200px';
             if (tabId === 'analytics') {
-                container.style.maxWidth = '1200px';
                 loadAnalytics();
-            } else {
-                container.style.maxWidth = '800px';
             }
 
             if (tabId === 'cerebros') showMaterias();
