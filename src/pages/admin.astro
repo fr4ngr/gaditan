@@ -327,9 +327,7 @@ import themeData from '../data/theme.json';
                             </div>
                         </div>
 
-                        <div style="text-align: right; margin-bottom: 10px;">
-                            <button class="btn btn-secondary" style="font-size: 0.75rem; padding: 2px 8px;" id="init-db-btn">Inicializar BD (Solo Primera Vez)</button>
-                        </div>
+
 
                         <div class="status-grid" style="margin-bottom: 2rem;">
                             <div class="status-card">
@@ -1125,6 +1123,11 @@ import themeData from '../data/theme.json';
                     document.getElementById('login-section').style.display = 'none';
                     document.getElementById('dashboard-section').style.display = 'block';
                     checkStatus();
+                    // Silently initialize DB to ensure analytics columns are up to date
+                    fetch('/api/admin/db-init', {
+                        method: 'POST',
+                        headers: { 'Authorization': 'Bearer ' + pwd }
+                    }).catch(console.error);
                 } else {
                     errDiv.style.color = "var(--ds-danger)";
                     errDiv.innerText = "Contraseña incorrecta.";
@@ -2287,33 +2290,6 @@ Esquema requerido:
         setupAiExtractor();
 
         // Event Listeners for Analytics
-        document.getElementById('init-db-btn').addEventListener('click', async () => {
-            const btn = document.getElementById('init-db-btn');
-            const originalText = btn.textContent;
-            btn.textContent = 'Inicializando...';
-            btn.disabled = true;
-
-            try {
-                const res = await fetch('/api/admin/db-init', {
-                    method: 'POST',
-                    headers: { 'Authorization': `Bearer ${localStorage.getItem('admin_pwd')}` }
-                });
-                const data = await res.json();
-                
-                if (data.success) {
-                    showMessage('Base de datos inicializada correctamente. Ya puedes recopilar datos.', 'success');
-                    loadAnalytics();
-                } else {
-                    showMessage('Error: ' + data.error, 'error');
-                }
-            } catch (err) {
-                showMessage('Error de red: ' + err.message, 'error');
-            } finally {
-                btn.textContent = originalText;
-                btn.disabled = false;
-            }
-        });
-
         document.getElementById('refresh-analytics-btn').addEventListener('click', () => {
             loadAnalytics();
         });
@@ -2348,9 +2324,6 @@ Esquema requerido:
                 }
 
                 if (data.success) {
-                    // Si ha cargado con éxito, significa que la BD ya está inicializada
-                    document.getElementById('init-db-btn').style.display = 'none';
-
                     if (monthInput) {
                         document.getElementById('analytics-today').textContent = 'N/A';
                     } else {
