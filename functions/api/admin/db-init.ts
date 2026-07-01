@@ -22,7 +22,12 @@ export async function onRequestPost(context) {
                 timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
                 user_message TEXT,
                 bot_response TEXT,
-                intent_category TEXT
+                intent_category TEXT,
+                latency_ms INTEGER,
+                tokens_used INTEGER,
+                brains_injected TEXT,
+                input_type TEXT DEFAULT 'typed',
+                ab_variant TEXT DEFAULT 'A'
             );
         `;
 
@@ -33,7 +38,8 @@ export async function onRequestPost(context) {
             "ALTER TABLE chat_logs ADD COLUMN latency_ms INTEGER;",
             "ALTER TABLE chat_logs ADD COLUMN tokens_used INTEGER;",
             "ALTER TABLE chat_logs ADD COLUMN brains_injected TEXT;",
-            "ALTER TABLE chat_logs ADD COLUMN input_type TEXT DEFAULT 'typed';"
+            "ALTER TABLE chat_logs ADD COLUMN input_type TEXT DEFAULT 'typed';",
+            "ALTER TABLE chat_logs ADD COLUMN ab_variant TEXT DEFAULT 'A';"
         ];
 
         for (const query of alterQueries) {

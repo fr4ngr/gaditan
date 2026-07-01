@@ -46,9 +46,24 @@ export async function onRequestGet(context) {
         const categoriesReq = await stmtCategories.all();
         const topCategories = categoriesReq.results || [];
 
+        // Obtener métricas de A/B Testing
+        let stmtAB = env.DB.prepare(`
+            SELECT 
+                ab_variant,
+                COUNT(*) as total_requests,
+                SUM(CASE WHEN input_type = 'click' THEN 1 ELSE 0 END) as total_clicks,
+                AVG(tokens_used) as avg_tokens
+            FROM chat_logs
+            ${whereClause}
+            GROUP BY ab_variant
+        `);
+        if (params.length > 0) stmtAB = stmtAB.bind(...params);
+        const abMetricsReq = await stmtAB.all();
+        const abMetrics = abMetricsReq.results || [];
+
         // Obtener últimos 50 mensajes para la lupa
         let stmtRecent = env.DB.prepare(`
-            SELECT timestamp, user_message, intent_category, bot_response, latency_ms, tokens_used, brains_injected, input_type
+            SELECT timestamp, user_message, intent_category, bot_response, latency_ms, tokens_used, brains_injected, input_type, ab_variant
             FROM chat_logs 
             ${whereClause}
             ORDER BY timestamp DESC 
@@ -64,6 +79,7 @@ export async function onRequestGet(context) {
                 totalMessages,
                 todayMessages,
                 topCategories,
+                abMetrics,
                 recentMessages
             }
         }), {

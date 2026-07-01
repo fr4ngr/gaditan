@@ -41,11 +41,34 @@ function encodeUtf8Base64(str) {
 export async function onRequestGet(context) {
     try {
         const { repo, headers } = await authAndGetRepo(context);
-        const getRes = await fetch(`https://api.github.com/repos/${repo}/contents/src/data/system-prompt.md`, { headers });
-        if (!getRes.ok) throw new Error("Fallo al obtener el archivo system-prompt.md");
-        const getJson = await getRes.json();
-        const content = decodeBase64Utf8(getJson.content);
-        return new Response(JSON.stringify({ content, sha: getJson.sha }), { status: 200, headers: { 'Content-Type': 'application/json' }});
+        
+        // Fetch A
+        let contentA = "";
+        try {
+            const resA = await fetch(`https://api.github.com/repos/${repo}/contents/src/data/system-prompt-a.md`, { headers });
+            if (resA.ok) contentA = decodeBase64Utf8((await resA.json()).content);
+            else {
+                // fallback to old system-prompt.md
+                const resOld = await fetch(`https://api.github.com/repos/${repo}/contents/src/data/system-prompt.md`, { headers });
+                if (resOld.ok) contentA = decodeBase64Utf8((await resOld.json()).content);
+            }
+        } catch(e) {}
+
+        // Fetch B
+        let contentB = "";
+        try {
+            const resB = await fetch(`https://api.github.com/repos/${repo}/contents/src/data/system-prompt-b.md`, { headers });
+            if (resB.ok) contentB = decodeBase64Utf8((await resB.json()).content);
+        } catch(e) {}
+
+        // Fetch Config
+        let config = { active: false, trafficA: 50 };
+        try {
+            const resC = await fetch(`https://api.github.com/repos/${repo}/contents/src/data/ab-config.json`, { headers });
+            if (resC.ok) config = JSON.parse(decodeBase64Utf8((await resC.json()).content));
+        } catch(e) {}
+
+        return new Response(JSON.stringify({ contentA, contentB, config }), { status: 200, headers: { 'Content-Type': 'application/json' }});
     } catch (err) {
         return new Response(JSON.stringify({ error: err.message }), { status: err.message === "No autorizado." ? 401 : 500 });
     }
@@ -55,45 +78,70 @@ export async function onRequestPost(context) {
     try {
         const { repo, headers } = await authAndGetRepo(context);
         const body = await context.request.json();
-        const content = body.content;
+        const { contentA, contentB, config } = body;
         
-        if (!content) {
-            return new Response(JSON.stringify({ error: "Faltan datos" }), { status: 400 });
-        }
+        if (contentA === undefined) return new Response(JSON.stringify({ error: "Faltan datos" }), { status: 400 });
 
         const dateStr = new Date().toLocaleString('es-ES', { timeZone: 'Europe/Madrid' });
         const dateHeader = `> [!NOTE]\n> **Leyes aplicadas desde:** ${dateStr}\n\n`;
         
-        let finalContent = content;
-        // Check if there's already a date header block
-        const dateHeaderRegex = /^> \[!NOTE\]\n> \*\*Leyes aplicadas desde:\*\*.*\n\n/;
-        if (dateHeaderRegex.test(finalContent)) {
-            finalContent = finalContent.replace(dateHeaderRegex, dateHeader);
-        } else {
-            finalContent = dateHeader + finalContent;
-        }
-
-        const getRes = await fetch(`https://api.github.com/repos/${repo}/contents/src/data/system-prompt.md`, { headers });
-        let sha = null;
-        if (getRes.ok) {
-            const getJson = await getRes.json();
-            sha = getJson.sha;
-        }
-
-        const putBody = {
-            message: `chore: update system prompt`,
-            content: encodeUtf8Base64(finalContent),
-            branch: 'main'
+        const formatContent = (c) => {
+            if (!c) return "";
+            const dateHeaderRegex = /^> \[!NOTE\]\n> \*\*Leyes aplicadas desde:\*\*.*\n\n/;
+            return dateHeaderRegex.test(c) ? c.replace(dateHeaderRegex, dateHeader) : dateHeader + c;
         };
-        if (sha) putBody.sha = sha;
 
-        const putRes = await fetch(`https://api.github.com/repos/${repo}/contents/src/data/system-prompt.md`, {
-            method: 'PUT',
+        const finalA = formatContent(contentA);
+        const finalB = formatContent(contentB);
+        const finalConfig = JSON.stringify(config || { active: false, trafficA: 50 }, null, 2);
+
+        // 1. Get branch ref
+        const refRes = await fetch(`https://api.github.com/repos/${repo}/git/refs/heads/main`, { headers });
+        if (!refRes.ok) throw new Error("No se pudo obtener ref main");
+        const refData = await refRes.json();
+        const commitSha = refData.object.sha;
+
+        // 2. Get commit
+        const commitRes = await fetch(`https://api.github.com/repos/${repo}/git/commits/${commitSha}`, { headers });
+        const commitData = await commitRes.json();
+        const baseTreeSha = commitData.tree.sha;
+
+        // 3. Create Tree
+        const treeRes = await fetch(`https://api.github.com/repos/${repo}/git/trees`, {
+            method: 'POST',
             headers,
-            body: JSON.stringify(putBody)
+            body: JSON.stringify({
+                base_tree: baseTreeSha,
+                tree: [
+                    { path: 'src/data/system-prompt-a.md', mode: '100644', type: 'blob', content: finalA },
+                    { path: 'src/data/system-prompt-b.md', mode: '100644', type: 'blob', content: finalB },
+                    { path: 'src/data/ab-config.json', mode: '100644', type: 'blob', content: finalConfig }
+                ]
+            })
         });
+        if (!treeRes.ok) throw new Error("No se pudo crear el tree");
+        const treeData = await treeRes.json();
 
-        if (!putRes.ok) throw new Error("Fallo al guardar en GitHub: " + await putRes.text());
+        // 4. Create Commit
+        const createCommitRes = await fetch(`https://api.github.com/repos/${repo}/git/commits`, {
+            method: 'POST',
+            headers,
+            body: JSON.stringify({
+                message: 'chore(admin): update system prompts A/B via Admin Panel',
+                tree: treeData.sha,
+                parents: [commitSha]
+            })
+        });
+        if (!createCommitRes.ok) throw new Error("No se pudo crear commit");
+        const createCommitData = await createCommitRes.json();
+
+        // 5. Update Ref
+        const updateRefRes = await fetch(`https://api.github.com/repos/${repo}/git/refs/heads/main`, {
+            method: 'PATCH',
+            headers,
+            body: JSON.stringify({ sha: createCommitData.sha })
+        });
+        if (!updateRefRes.ok) throw new Error("No se pudo actualizar main");
 
         return new Response(JSON.stringify({ message: "Guardado con éxito" }), { status: 200, headers: { 'Content-Type': 'application/json' }});
     } catch (err) {

@@ -36,13 +36,29 @@ try {
         }
     }
 
-    const systemPromptPath = path.join(__dirname, '../src/data/system-prompt.md');
-    let systemPrompt = "";
-    if (fs.existsSync(systemPromptPath)) {
-        systemPrompt = fs.readFileSync(systemPromptPath, 'utf-8');
+    const promptAPath = path.join(__dirname, '../src/data/system-prompt-a.md');
+    const promptBPath = path.join(__dirname, '../src/data/system-prompt-b.md');
+    const oldPromptPath = path.join(__dirname, '../src/data/system-prompt.md');
+    const configPath = path.join(__dirname, '../src/data/ab-config.json');
+
+    let systemPromptA = "";
+    if (fs.existsSync(promptAPath)) systemPromptA = fs.readFileSync(promptAPath, 'utf-8');
+    else if (fs.existsSync(oldPromptPath)) systemPromptA = fs.readFileSync(oldPromptPath, 'utf-8'); // fallback
+
+    let systemPromptB = "";
+    if (fs.existsSync(promptBPath)) systemPromptB = fs.readFileSync(promptBPath, 'utf-8');
+
+    let abConfig = { active: false, trafficA: 50 };
+    if (fs.existsSync(configPath)) {
+        try { abConfig = JSON.parse(fs.readFileSync(configPath, 'utf-8')); } catch(e){}
     }
 
-    const compiledContent = `// ARCHIVO AUTOGENERADO DURANTE EL BUILD\nexport const brains = ${JSON.stringify(brains, null, 2)};\nexport const systemPrompt = ${JSON.stringify(systemPrompt)};\n`;
+    const compiledContent = `// ARCHIVO AUTOGENERADO DURANTE EL BUILD
+export const brains = ${JSON.stringify(brains, null, 2)};
+export const systemPromptA = ${JSON.stringify(systemPromptA)};
+export const systemPromptB = ${JSON.stringify(systemPromptB)};
+export const abConfig = ${JSON.stringify(abConfig, null, 2)};
+`;
     fs.writeFileSync(outputFile, compiledContent, 'utf-8');
     console.log('✅ Cerebros y System Prompt compilados exitosamente en functions/api/compiled-brains.js');
 } catch (error) {

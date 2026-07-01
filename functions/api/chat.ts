@@ -1,11 +1,33 @@
 import { GoogleGenAI, Type } from '@google/genai';
-import { brains, systemPrompt } from './compiled-brains';
+import { brains, systemPromptA, systemPromptB, abConfig } from './compiled-brains';
+
+function hashCode(str) {
+    let hash = 0;
+    for (let i = 0, len = str.length; i < len; i++) {
+        let chr = str.charCodeAt(i);
+        hash = (hash << 5) - hash + chr;
+        hash |= 0;
+    }
+    return Math.abs(hash);
+}
 
 export async function onRequestPost(context) {
     try {
         const { request, env } = context;
         const body = await request.json();
         const userMessage = body.message;
+        const sessionId = body.sessionId || 'anonymous';
+        
+        // A/B Testing Assignment
+        let activeVariant = 'A';
+        let activeSystemPrompt = systemPromptA;
+        if (abConfig && abConfig.active) {
+            const hashVal = hashCode(sessionId) % 100;
+            if (hashVal >= abConfig.trafficA) {
+                activeVariant = 'B';
+                activeSystemPrompt = systemPromptB || systemPromptA;
+            }
+        }
         
         if (!env.GEMINI_API_KEY) {
             return new Response(JSON.stringify({ error: "Missing key. Available env keys: " + Object.keys(env).join(", ") }), { 
@@ -51,7 +73,7 @@ ${b.content}
 </cerebro>
 `).join('');
 
-        const systemInstruction = (systemPrompt || "Eres un asistente.").replace('{{CEREBROS_INJECTION_POINT}}', `<cerebros_activos ruta="${ruta}">\n${cerebrosXml}\n</cerebros_activos>`);
+        const systemInstruction = (activeSystemPrompt || "Eres un asistente.").replace('{{CEREBROS_INJECTION_POINT}}', `<cerebros_activos ruta="${ruta}">\n${cerebrosXml}\n</cerebros_activos>`);
 
         const schema = {
             type: Type.OBJECT,
@@ -263,8 +285,8 @@ ${b.content}
                     const brainsInjected = cerebrosFiltrados.length > 0 ? cerebrosFiltrados.map(b => b.nombre).join(', ') : '';
                     
                     await env.DB.prepare(
-                        "INSERT INTO chat_logs (user_message, bot_response, intent_category, latency_ms, tokens_used, brains_injected, input_type) VALUES (?, ?, ?, ?, ?, ?, ?)"
-                    ).bind(userMessage, botRespText, intentCat, latencyMs, tokensUsed, brainsInjected, inputType).run();
+                        "INSERT INTO chat_logs (user_message, bot_response, intent_category, latency_ms, tokens_used, brains_injected, input_type, ab_variant) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+                    ).bind(userMessage, botRespText, intentCat, latencyMs, tokensUsed, brainsInjected, inputType, activeVariant).run();
                 } catch (dbError) {
                     console.error("D1 Insert Error:", dbError);
                 }

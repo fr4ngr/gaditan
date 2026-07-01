@@ -353,11 +353,21 @@ import themeData from '../data/theme.json';
                         </div>
 
                         <div class="radar-grid" style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem;">
-                            <!-- Top Categorías -->
-                            <div class="card" style="background: white; padding: 1.5rem; border-radius: 8px; border: 1px solid #e2e8f0;">
-                                <h3 style="margin-top: 0; color: #1e293b; border-bottom: 2px solid #f1f5f9; padding-bottom: 0.5rem;">Top Categorías</h3>
-                                <div id="analytics-categories" style="margin-top: 1rem;">
-                                    <p style="color: #64748b; font-size: 0.9rem;">Cargando datos...</p>
+                            <div style="display: flex; flex-direction: column; gap: 2rem;">
+                                <!-- A/B Metrics -->
+                                <div class="card" style="background: white; padding: 1.5rem; border-radius: 8px; border: 1px solid #e2e8f0;">
+                                    <h3 style="margin-top: 0; color: #1e293b; border-bottom: 2px solid #f1f5f9; padding-bottom: 0.5rem;">A/B Testing (Rendimiento)</h3>
+                                    <div id="analytics-ab-metrics" style="margin-top: 1rem; display: flex; flex-direction: column; gap: 1rem;">
+                                        <p style="color: #64748b; font-size: 0.9rem;">Cargando datos...</p>
+                                    </div>
+                                </div>
+
+                                <!-- Top Categorías -->
+                                <div class="card" style="background: white; padding: 1.5rem; border-radius: 8px; border: 1px solid #e2e8f0;">
+                                    <h3 style="margin-top: 0; color: #1e293b; border-bottom: 2px solid #f1f5f9; padding-bottom: 0.5rem;">Top Categorías</h3>
+                                    <div id="analytics-categories" style="margin-top: 1rem;">
+                                        <p style="color: #64748b; font-size: 0.9rem;">Cargando datos...</p>
+                                    </div>
                                 </div>
                             </div>
 
@@ -499,10 +509,29 @@ import themeData from '../data/theme.json';
 
                     <!-- TAB 4: Personalidad -->
                     <div id="tab-personalidad" class="tab-content">
-                        <h3 class="text-title">El "Alma" del Bot (System Prompt)</h3>
-                        <p class="text-muted">Modifica la forma de ser, el tono y las reglas inquebrantables de la IA.</p>
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <h3 class="text-title">El "Alma" del Bot (System Prompt)</h3>
+                                <p class="text-muted">Modifica la forma de ser, el tono y las reglas inquebrantables de la IA.</p>
+                            </div>
+                            <div style="background: var(--ds-bg-light); padding: 15px; border-radius: 8px; text-align: right; border: 1px solid var(--bubble-bot-border);">
+                                <label style="font-weight: bold; display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                                    <input type="checkbox" id="ab-active-cb" onchange="toggleAB()" style="width: 18px; height: 18px; accent-color: var(--ds-primary);">
+                                    Habilitar A/B Testing
+                                </label>
+                                <div id="ab-settings-panel" style="display: none; margin-top: 10px; font-size: 0.9rem;">
+                                    Tráfico a Variante A: <input type="number" id="ab-traffic-input" min="1" max="99" value="50" style="width: 50px; padding: 2px;">%
+                                </div>
+                            </div>
+                        </div>
                         
-                        <p class="text-muted" id="system-prompt-date" style="font-weight: bold; color: var(--ds-primary);"></p>
+                        <div style="display: flex; gap: 10px; margin-top: 10px; margin-bottom: 20px;">
+                            <select id="ab-variant-selector" class="form-control" style="width: auto; font-weight: bold;" onchange="switchVariant(this.value)">
+                                <option value="A">Edición: Variante A (Control)</option>
+                                <option value="B">Edición: Variante B (Experimento)</option>
+                            </select>
+                            <span class="text-muted" id="system-prompt-date" style="font-weight: bold; color: var(--ds-primary); align-self: center;"></span>
+                        </div>
                         
                         <div class="form-group" style="background: rgba(0,0,0,0.02); padding: 15px; border-radius: 8px; border: 1px solid var(--bubble-bot-border); margin-bottom: 20px;">
                             <label style="font-size: 1.1rem; color: var(--ds-primary); margin-bottom: 10px; display: block;">🏛️ Contexto Base (Misión Principal)</label>
@@ -1827,48 +1856,80 @@ import themeData from '../data/theme.json';
             }
         };
 
+        let variantA = { baseContext: '', rules: [] };
+        let variantB = { baseContext: '', rules: [] };
+        let abConfig = { active: false, trafficA: 50 };
+        let currentEditing = 'A';
+
+        function parsePrompt(rawContent) {
+            let baseCtx = '';
+            let rules = [];
+            const dateMatch = rawContent.match(/^> \[!NOTE\]\n> \*\*Leyes aplicadas desde:\*\* (.*)\n\n/);
+            let cleanContent = rawContent;
+            if (dateMatch) {
+                document.getElementById('system-prompt-date').innerText = `Última modificación: ${dateMatch[1]}`;
+                cleanContent = rawContent.replace(dateMatch[0], '');
+            }
+            const ruleRegex = /### REGLA \d+:\s*(.*)\n([\s\S]*?)(?=### REGLA \d+:|$)/g;
+            const firstRuleMatch = /### REGLA 1:/.exec(cleanContent);
+            if (firstRuleMatch) {
+                baseCtx = cleanContent.substring(0, firstRuleMatch.index).trim();
+                let match;
+                while ((match = ruleRegex.exec(cleanContent)) !== null) {
+                    rules.push({ title: match[1].trim(), content: match[2].trim() });
+                }
+            } else {
+                baseCtx = cleanContent.trim();
+            }
+            return { baseContext: baseCtx, rules };
+        }
+
+        window.switchVariant = function(variant) {
+            // Save current view to memory
+            if (currentEditing === 'A') {
+                variantA.baseContext = document.getElementById('base-context-text').value;
+                variantA.rules = [...currentRules];
+            } else {
+                variantB.baseContext = document.getElementById('base-context-text').value;
+                variantB.rules = [...currentRules];
+            }
+
+            // Load selected view
+            currentEditing = variant;
+            document.getElementById('ab-variant-selector').value = variant;
+            if (variant === 'A') {
+                document.getElementById('base-context-text').value = variantA.baseContext;
+                currentRules = [...variantA.rules];
+            } else {
+                document.getElementById('base-context-text').value = variantB.baseContext;
+                currentRules = [...variantB.rules];
+            }
+            window.renderRuleCards();
+        };
+
+        window.toggleAB = function() {
+            abConfig.active = document.getElementById('ab-active-cb').checked;
+            document.getElementById('ab-settings-panel').style.display = abConfig.active ? 'block' : 'none';
+        };
+
         window.loadSystemPrompt = async function() {
             document.getElementById('base-context-text').value = 'Cargando personalidad desde GitHub...';
             document.getElementById('system-prompt-date').innerText = '';
-            currentRules = [];
-            window.renderRuleCards();
             
             try {
                 const res = await fetch(`/api/admin/system`, { headers: { 'Authorization': 'Bearer ' + sessionPwd } });
                 const data = await res.json();
                 if (res.ok) {
-                    const rawContent = data.content;
-                    
-                    // Parse Date Header
-                    const dateMatch = rawContent.match(/^> \[!NOTE\]\n> \*\*Leyes aplicadas desde:\*\* (.*)\n\n/);
-                    let cleanContent = rawContent;
-                    if (dateMatch) {
-                        document.getElementById('system-prompt-date').innerText = `Última modificación: ${dateMatch[1]}`;
-                        cleanContent = rawContent.replace(dateMatch[0], '');
-                    }
-                    
-                    // Parse Rules vs Base Context
-                    // Split by "### REGLA X: Title"
-                    const ruleRegex = /### REGLA \d+:\s*(.*)\n([\s\S]*?)(?=### REGLA \d+:|$)/g;
-                    
-                    // Find first rule index to separate base context
-                    const firstRuleMatch = /### REGLA 1:/.exec(cleanContent);
-                    if (firstRuleMatch) {
-                        document.getElementById('base-context-text').value = cleanContent.substring(0, firstRuleMatch.index).trim();
-                        
-                        let match;
-                        while ((match = ruleRegex.exec(cleanContent)) !== null) {
-                            currentRules.push({
-                                title: match[1].trim(),
-                                content: match[2].trim()
-                            });
-                        }
-                    } else {
-                        // Legacy or no rules yet
-                        document.getElementById('base-context-text').value = cleanContent.trim();
-                    }
-                    window.renderRuleCards();
-                    
+                    variantA = parsePrompt(data.contentA || '');
+                    variantB = parsePrompt(data.contentB || '');
+                    abConfig = data.config || { active: false, trafficA: 50 };
+
+                    document.getElementById('ab-active-cb').checked = abConfig.active;
+                    document.getElementById('ab-traffic-input').value = abConfig.trafficA;
+                    window.toggleAB();
+
+                    currentEditing = 'B'; // trigger switch to A properly
+                    window.switchVariant('A');
                 } else {
                     document.getElementById('base-context-text').value = "Error al cargar: " + data.error;
                 }
@@ -1877,29 +1938,34 @@ import themeData from '../data/theme.json';
             }
         };
 
-        window.saveSystemPrompt = async function() {
-            const baseContext = document.getElementById('base-context-text').value.trim();
-            
-            // Reconstruct markdown
-            let finalMarkdown = baseContext;
-            if (finalMarkdown && currentRules.length > 0) finalMarkdown += '\n\n';
-            
-            currentRules.forEach((rule, index) => {
-                finalMarkdown += `### REGLA ${index + 1}: ${rule.title}\n${rule.content}\n\n`;
-            });
-            
-            finalMarkdown = finalMarkdown.trim();
+        function buildMarkdown(v) {
+            let md = v.baseContext.trim();
+            if (md && v.rules.length > 0) md += '\n\n';
+            v.rules.forEach((rule, idx) => { md += `### REGLA ${idx + 1}: ${rule.title}\n${rule.content}\n\n`; });
+            return md.trim();
+        }
 
-            showMessage("Guardando nueva personalidad en GitHub...", false);
+        window.saveSystemPrompt = async function() {
+            // Force save current view to memory
+            window.switchVariant(currentEditing);
+            
+            abConfig.trafficA = parseInt(document.getElementById('ab-traffic-input').value) || 50;
+            
+            const payload = {
+                contentA: buildMarkdown(variantA),
+                contentB: buildMarkdown(variantB),
+                config: abConfig
+            };
+
+            showMessage("Guardando A/B y Personalidad en GitHub...", false);
             try {
                 const res = await fetch('/api/admin/system', {
                     method: 'POST',
                     headers: { 'Authorization': 'Bearer ' + sessionPwd, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ content: finalMarkdown })
+                    body: JSON.stringify(payload)
                 });
                 if (res.ok) {
-                    showMessage("¡Personalidad actualizada! El bot usará esta configuración en unos minutos.");
-                    window.loadSystemPrompt(); // reload to get new timestamp
+                    showMessage("¡Personalidad actualizada! El bot usará esta configuración en 45s.");
                 } else {
                     const data = await res.json();
                     showMessage("Error: " + data.error, true);
@@ -1929,10 +1995,16 @@ import themeData from '../data/theme.json';
             appendSimBubble('System', '...', true);
             
             try {
+                let sessionId = localStorage.getItem('cadiz_chat_session_admin');
+                if (!sessionId) {
+                    sessionId = 'admin_session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                    localStorage.setItem('cadiz_chat_session_admin', sessionId);
+                }
+
                 const res = await fetch('/api/chat', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: msg, history: historyForApi, inputType: inputType })
+                    body: JSON.stringify({ message: msg, history: historyForApi, inputType: inputType, sessionId })
                 });
                 const data = await res.json();
                 
@@ -2314,6 +2386,36 @@ Esquema requerido:
                         catContainer.innerHTML = catHtml;
                     }
 
+                    // Update A/B Metrics
+                    const abContainer = document.getElementById('analytics-ab-metrics');
+                    if (!data.data.abMetrics || data.data.abMetrics.length === 0) {
+                        abContainer.innerHTML = '<p style="color: #64748b; font-size: 0.9rem;">No hay datos de A/B Testing todavía.</p>';
+                    } else {
+                        let abHtml = '';
+                        data.data.abMetrics.forEach(metric => {
+                            const cvr = metric.total_requests > 0 ? ((metric.total_clicks / metric.total_requests) * 100).toFixed(1) : 0;
+                            const avgT = Math.round(metric.avg_tokens || 0);
+                            const variantColor = metric.ab_variant === 'A' ? '#64748b' : '#3b82f6';
+                            const variantName = metric.ab_variant === 'A' ? 'A (Control)' : 'B (Experimento)';
+                            
+                            abHtml += `
+                                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1rem;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                        <h4 style="margin: 0; color: ${variantColor};">Variante ${variantName}</h4>
+                                        <span style="background: white; padding: 2px 8px; border-radius: 12px; font-size: 0.8rem; border: 1px solid #cbd5e1; font-weight: bold;">
+                                            ${metric.total_requests} reqs
+                                        </span>
+                                    </div>
+                                    <div style="display: flex; gap: 1rem; font-size: 0.85rem; color: #475569;">
+                                        <div><strong>CTR (Clics):</strong> ${cvr}%</div>
+                                        <div><strong>Avg Tokens:</strong> ${avgT}</div>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        abContainer.innerHTML = abHtml;
+                    }
+
                     // Update Recent Messages Table
                     const msgContainer = document.getElementById('analytics-messages');
                     if (data.data.recentMessages.length === 0) {
@@ -2325,6 +2427,18 @@ Esquema requerido:
                             
                             let inputIcon = '⌨️'; // default typed
                             let inputTitle = 'Escrito por el usuario';
+                            if (msg.input_type === 'click') {
+                                inputIcon = '🖱️';
+                                inputTitle = 'Clic en sugerencia';
+                            } else if (msg.input_type === 'voice') {
+                                inputIcon = '🎤';
+                                inputTitle = 'Mensaje de voz';
+                            } else if (msg.input_type === 'system') {
+                                inputIcon = '⚙️';
+                                inputTitle = 'Mensaje de sistema';
+                            }
+
+                            const abBadge = msg.ab_variant ? `<span style="background: ${msg.ab_variant === 'A' ? '#f1f5f9' : '#dbeafe'}; color: ${msg.ab_variant === 'A' ? '#64748b' : '#2563eb'}; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: bold; border: 1px solid ${msg.ab_variant === 'A' ? '#cbd5e1' : '#bfdbfe'};" title="Variante A/B">Var ${msg.ab_variant}</span>` : '';
                             if (msg.input_type === 'click') {
                                 inputIcon = '🖱️';
                                 inputTitle = 'Clic en sugerencia';
@@ -2354,6 +2468,7 @@ Esquema requerido:
                                         <strong>🤖 IA:</strong> ${msg.bot_response ? msg.bot_response.substring(0, 150) + (msg.bot_response.length > 150 ? '...' : '') : '...'}
                                     </div>
                                     <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 0.5rem;">
+                                        ${abBadge}
                                         <span style="background: #f1f5f9; color: #475569; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem; border: 1px solid #cbd5e1;">
                                             ⏱️ ${msg.latency_ms ? msg.latency_ms + 'ms' : 'N/A'}
                                         </span>

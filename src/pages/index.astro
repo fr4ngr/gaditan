@@ -599,12 +599,19 @@ import ChatLayout from '../layouts/ChatLayout.astro';
         // 2. Mostrar "Pensando..."
         const typingId = showTypingIndicator();
 
+        // 3. Obtener o crear sessionId
+        let sessionId = localStorage.getItem('cadiz_chat_session');
+        if (!sessionId) {
+            sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            localStorage.setItem('cadiz_chat_session', sessionId);
+        }
+
         try {
-            // 3. Llamar al API Endpoint de Astro (SSR)
+            // 4. Llamar al API Endpoint de Astro (SSR)
             const response = await fetch('/api/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: text, history: chatHistory, inputType: isHiddenInit ? 'system' : inputType })
+                body: JSON.stringify({ message: text, history: chatHistory, inputType: isHiddenInit ? 'system' : inputType, sessionId })
             });
 
             const data = await response.json();
