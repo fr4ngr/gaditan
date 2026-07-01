@@ -58,30 +58,43 @@ ${b.content}
             properties: {
                 cardType: {
                     type: Type.STRING,
-                    enum: ['TextCard', 'TariffCard', 'PriceCard', 'RuleCard', 'ContactCard', 'MapCard', 'NavigationCard', 'ReservationCard', 'AffiliateCard', 'GalleryCard'],
-                    description: "El tipo de tarjeta visual a mostrar. Usa MapCard para mostrar cualquier ubicación en el mapa interactivo. Usa GalleryCard para mostrar fotos."
+                    enum: ['TextCard', 'MapCard', 'NavigationCard', 'GalleryCard', 'HeroCard', 'ListCard', 'BusinessCard', 'ArticleCard', 'AlertCard', 'ProductCard', 'ProfileCard'],
+                    description: "El tipo de tarjeta visual a mostrar."
                 },
                 content: {
                     type: Type.STRING,
-                    description: "Mensaje del asistente. OBLIGATORIO: Párrafos cortos (1-2 líneas), uso de HTML/Markdown con <b>negritas</b>. PROHIBIDO escribir muros de texto. PROHIBIDO pedir perdón por no mostrar mapas o fotos. ¡NUNCA incluyas el número literal si usas ContactCard!"
+                    description: "Mensaje principal del asistente."
                 },
-                priceEstimate: { type: Type.STRING, description: "Precio estimado con símbolo €. Solo para PriceCard." },
-                routeDetails: { type: Type.STRING, description: "Resumen de ruta/cálculo. Solo para PriceCard." },
-                lawSource: { type: Type.STRING, description: "Normativa exacta. Solo para RuleCard." },
-                contactName: { type: Type.STRING, description: "Nombre del negocio o entidad. Solo para ContactCard." },
-                phoneNumber: { type: Type.STRING, description: "Número de teléfono oficial. Solo para ContactCard." },
-                whatsappNumber: { type: Type.STRING, description: "Número de WhatsApp. Solo para ContactCard." },
-                locationTitle: { type: Type.STRING, description: "Nombre del lugar (ej. 'Playa Victoria', 'Parada Hospital'). Solo para MapCard/NavigationCard." },
-                lat: { type: Type.STRING, description: "Latitud exacta. Solo para MapCard/NavigationCard." },
-                lon: { type: Type.STRING, description: "Longitud exacta. Solo para MapCard/NavigationCard." },
-                imageUrls: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Lista de URLs de imágenes. Solo para GalleryCard." },
-                reservationEmail: { type: Type.STRING, description: "Email de destino para la reserva. Solo para ReservationCard." },
-                reservationSubject: { type: Type.STRING, description: "Asunto del email. Solo para ReservationCard." },
-                reservationTitle: { type: Type.STRING, description: "Título del servicio a reservar. Solo para ReservationCard." },
-                affiliateTitle: { type: Type.STRING, description: "Título del producto/servicio. Solo para AffiliateCard." },
-                affiliateUrl: { type: Type.STRING, description: "URL de reserva o compra. Solo para AffiliateCard." },
-                affiliatePrice: { type: Type.STRING, description: "Precio o descuento sugerido. Solo para AffiliateCard." },
-                affiliateImage: { type: Type.STRING, description: "URL de la imagen del producto. Solo para AffiliateCard." },
+                badge: { type: Type.STRING, description: "Etiqueta superior (ej. '🏛️ Historia', '⚠️ Alerta')." },
+                title: { type: Type.STRING, description: "Título principal de la tarjeta." },
+                subtitle: { type: Type.STRING, description: "Subtítulo o texto secundario corto." },
+                imageUrl: { type: Type.STRING, description: "URL de una imagen principal (para HeroCard, ProductCard, ProfileCard)." },
+                imageUrls: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Lista de URLs de imágenes (para GalleryCard)." },
+                listItems: { 
+                    type: Type.ARRAY, 
+                    items: { 
+                        type: Type.OBJECT, 
+                        properties: { 
+                            title: { type: Type.STRING }, 
+                            subtitle: { type: Type.STRING },
+                            icon: { type: Type.STRING }
+                        },
+                        required: ["title"]
+                    }, 
+                    description: "Elementos de una lista (para ListCard)." 
+                },
+                lat: { type: Type.STRING, description: "Latitud exacta (MapCard, NavigationCard)." },
+                lon: { type: Type.STRING, description: "Longitud exacta (MapCard, NavigationCard)." },
+                locationTitle: { type: Type.STRING, description: "Nombre del lugar (MapCard, NavigationCard)." },
+                price: { type: Type.STRING, description: "Precio actual (ProductCard, BusinessCard)." },
+                oldPrice: { type: Type.STRING, description: "Precio anterior tachado (ProductCard)." },
+                contactName: { type: Type.STRING, description: "Nombre del contacto (BusinessCard, ProfileCard)." },
+                phoneNumber: { type: Type.STRING, description: "Teléfono (BusinessCard, ProfileCard)." },
+                whatsappNumber: { type: Type.STRING, description: "WhatsApp (BusinessCard, ProfileCard)." },
+                email: { type: Type.STRING, description: "Email (BusinessCard, ProfileCard)." },
+                website: { type: Type.STRING, description: "URL de la página web (BusinessCard)." },
+                buttonText: { type: Type.STRING, description: "Texto del botón principal." },
+                buttonAction: { type: Type.STRING, description: "Comando o prompt interno a enviar cuando se hace clic en el botón." },
                 intentCategory: {
                     type: Type.STRING,
                     description: "Categoría de la intención del usuario. OBLIGATORIO.",

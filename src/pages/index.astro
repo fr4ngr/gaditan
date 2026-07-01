@@ -361,121 +361,177 @@ import ChatLayout from '../layouts/ChatLayout.astro';
 
     // --- GENERATIVE UI ENGINE (TARJETAS) ---
     function renderCard(data: any, msgId: string): string {
-        if (data.cardType === 'AffiliateCard') {
-            return `
-            <div class="card affiliate-card mt-sm flex-col">
-                <div class="card-header" style="background-color: #ff9800; color: white;">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
-                    <span>Recomendación Especial</span>
-                </div>
-                ${data.affiliateImage ? `<img src="${data.affiliateImage}" alt="${data.affiliateTitle || 'Imagen'}" style="width: 100%; height: 150px; object-fit: cover;">` : ''}
-                <div class="card-body" style="flex: 1;">
-                    <h4 style="margin-top: 0; color: var(--primary-color);">${data.affiliateTitle || 'Sugerencia'}</h4>
-                    <p class="text-muted" style="margin:0">${data.content}</p>
-                    ${data.affiliatePrice ? `<div style="font-weight: bold; font-size: 1.2rem; margin-top: 10px; color: #20873c;">${data.affiliatePrice}</div>` : ''}
-                </div>
-                <div style="padding: 0 16px 16px 16px; display: flex; gap: 8px; flex-direction: column;">
-                    ${data.affiliateUrl ? `<a href="${data.affiliateUrl}" target="_blank" class="btn" style="background: #ff9800; color: white; display: block; text-align: center; text-decoration: none;">🛒 Ver Oferta</a>` : ''}
-                    <button class="btn btn-primary" style="display: block; width: 100%;" onclick="window.sendToAI('Quiero ir a ${data.affiliateTitle || 'allí'}')">📍 Ir a la ubicación</button>
-                </div>
-            </div>`;
+        const title = data.title || '';
+        const subtitle = data.subtitle || '';
+        const badge = data.badge ? `<div style="font-size: 0.75rem; text-transform: uppercase; font-weight: bold; color: var(--primary-color); letter-spacing: 0.5px; margin-bottom: 4px;">${data.badge}</div>` : '';
+        const img = data.imageUrl ? `<img src="${data.imageUrl}" alt="${title}" style="width: 100%; height: 180px; object-fit: cover;">` : '';
+        
+        let buttonHtml = '';
+        if (data.buttonText) {
+            const action = data.buttonAction ? `onclick="window.sendToAI('${data.buttonAction.replace(/'/g, "\\'")}')"` : '';
+            const url = data.buttonUrl ? `href="${data.buttonUrl}" target="_blank"` : '';
+            if (url) {
+                buttonHtml = `<a ${url} class="btn btn-primary btn-rect" style="display:block; text-align:center; text-decoration:none; margin-top:12px;">${data.buttonText}</a>`;
+            } else {
+                buttonHtml = `<button class="btn btn-primary btn-rect" style="width:100%; margin-top:12px;" ${action}>${data.buttonText}</button>`;
+            }
         }
-        if (data.cardType === 'PriceCard') {
-            return `
-            <div class="card price-card mt-sm">
-                <div class="card-header primary">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="20" x="4" y="2" rx="2"/><path d="M8 6h.01M16 6h.01M12 6h.01M8 10h.01M16 10h.01M12 10h.01M8 14h.01M16 14h.01M12 14h.01M8 18h.01M16 18h.01M12 18h.01"/></svg>
-                    <span>Estimación de Precio</span>
-                </div>
-                <div class="card-body">
-                    <p class="text-muted" style="margin:0">${data.content}</p>
-                    ${data.priceEstimate ? `<div class="price-estimate text-title" style="font-size: 1.5rem; text-align: center;">${data.priceEstimate}</div>` : ''}
-                    ${data.routeDetails ? `<div class="route-details text-muted text-center" style="font-size: 0.9rem;">${data.routeDetails}</div>` : ''}
-                </div>
-                <div class="card-footer">
-                    <button class="btn btn-primary" onclick="window.sendToAI('Quiero ver opciones disponibles')">🔍 Ver opciones</button>
-                </div>
-            </div>`;
-        }
-        if (data.cardType === 'RuleCard') {
-            return `
-            <div class="card rule-card mt-sm flex-col">
-                <div class="card-header primary">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                    <span>Normativa</span>
-                </div>
-                <div class="card-body" style="flex: 1;">
-                    <p class="text-muted" style="margin:0">${data.content}</p>
-                </div>
-                <div class="card-footer">
-                    ${data.lawSource ? `Fuente: ${data.lawSource}` : 'Fuente: Ayuntamiento de Cádiz'}
-                </div>
-            </div>`;
-        }
-        if (data.cardType === 'ContactCard') {
-            const contactName = data.contactName || "Contacto Directo";
-            const callNumber = data.callNumber || "956212121";
-            const whatsapp = data.whatsappNumber || "34956212121";
+
+        if (data.cardType === 'HeroCard') {
             return `
             <div class="flex-col gap-sm" style="width: 100%; max-width: 100%; align-self: flex-start; margin-bottom: 0.5rem;">
                 <span class="bubble" style="border-bottom-left-radius: 4px;">${data.content}</span>
-                <div class="card mt-sm">
+                <div class="card mt-sm" style="overflow: hidden; border-radius: 12px; border: 1px solid var(--border-color);">
+                    ${img}
                     <div class="card-body">
-                        <div style="display: flex; align-items: center; justify-content: space-between;">
-                            <span class="text-title">${contactName}</span>
-                            <div style="display: flex; gap: 8px;">
-                                <a href="tel:${callNumber.replace(/\s+/g, '')}" class="btn btn-success btn-rect" style="width: auto; padding: 8px 12px; margin: 0;"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M6.62 10.79c1.44 2.83 3.76 5.15 6.59 6.59l2.2-2.2c.28-.28.67-.36 1.02-.25 1.12.37 2.32.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg> <span class="btn-text">Llamar</span></a>
-                                <a href="https://wa.me/${whatsapp.replace(/\s+/g, '').replace('+', '')}" class="btn btn-rect" target="_blank" rel="noopener noreferrer" style="background: #25D366; color: white; width: auto; padding: 8px 12px; margin: 0; transition: opacity 0.2s;" onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.6 2.326zM7.994 14.521a6.6 6.6 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.56 6.56 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592m3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.73.73 0 0 0-.529.247c-.182.198-.691.677-.691 1.654s.71 1.916.81 2.049c.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232"/></svg> <span class="btn-text">WhatsApp</span></a>
-                            </div>
+                        ${badge}
+                        <h3 style="margin:0 0 8px 0; color:var(--text-color);">${title}</h3>
+                        ${subtitle ? `<p class="text-muted" style="margin:0">${subtitle}</p>` : ''}
+                        ${buttonHtml}
+                    </div>
+                </div>
+            </div>`;
+        }
+
+        if (data.cardType === 'ListCard') {
+            let listHtml = '';
+            if (data.listItems && Array.isArray(data.listItems)) {
+                listHtml = data.listItems.map((item: any, i: number) => `
+                    <div style="display:flex; align-items:center; gap: 12px; padding: 12px 0; border-bottom: ${i < data.listItems.length - 1 ? '1px solid var(--border-color)' : 'none'};">
+                        <div style="font-size:1.5rem; width:40px; text-align:center; flex-shrink:0;">${item.icon || '📌'}</div>
+                        <div style="flex:1;">
+                            <div style="font-weight:600; color:var(--text-color);">${item.title}</div>
+                            ${item.subtitle ? `<div style="font-size:0.85rem; color:var(--text-muted); margin-top:2px;">${item.subtitle}</div>` : ''}
                         </div>
                     </div>
-                </div>
-            </div>`;
-        }
-        if (data.cardType === 'ReservationCard') {
-            const email = data.reservationEmail || "info@cadizchat.com";
-            const subject = encodeURIComponent(data.reservationSubject || "Reserva de Servicio");
-            const title = data.reservationTitle || "Reservar Ahora";
-            const body = encodeURIComponent("Hola, me gustaría hacer una reserva.\n\nMis datos:\n- Fecha y Hora:\n- Nombre:\n- Detalles adicionales:\n");
-            
+                `).join('');
+            }
             return `
             <div class="flex-col gap-sm" style="width: 100%; max-width: 100%; align-self: flex-start; margin-bottom: 0.5rem;">
                 <span class="bubble" style="border-bottom-left-radius: 4px;">${data.content}</span>
                 <div class="card mt-sm">
-                    <div class="card-body flex-col text-center" style="align-items: center;">
-                        <span style="font-size: 2rem;">📅</span>
-                        <h3 class="text-title text-primary">${title}</h3>
-                        <p class="text-muted" style="margin: 0; font-size: 0.9rem;">Haz tu reserva con antelación enviándonos un email con los detalles.</p>
-                        <a href="mailto:${email}?subject=${subject}&body=${body}" class="btn btn-primary mt-sm">✉️ Enviar Email de Reserva</a>
+                    <div class="card-body">
+                        ${badge}
+                        <h3 style="margin:0 0 12px 0; color:var(--text-color);">${title}</h3>
+                        <div style="display:flex; flex-direction:column;">
+                            ${listHtml}
+                        </div>
+                        ${buttonHtml}
                     </div>
                 </div>
             </div>`;
         }
-        if (data.cardType === 'MapCard') {
-            const mapIcon = `📍`;
-            const title = data.locationTitle || 'Ubicación';
 
-            if (data.lat && data.lon) {
-                return `
-                <div class="flex-col gap-sm" style="width: 100%; max-width: 100%; align-self: flex-start;">
-                    <span class="bubble">${data.content}</span>
-                    <button class="btn btn-primary" onclick="window.openFullscreenMap('${data.lat}', '${data.lon}', '${msgId}')">
-                        <div class="icon-circle">${mapIcon}</div> Ver ${title} en mapa
-                    </button>
-                </div>`;
-            }
-
-            return `<span class="bubble">${data.content}</span>`;
-        }
-        if (data.cardType === 'NavigationCard') {
+        if (data.cardType === 'BusinessCard') {
             return `
+            <div class="flex-col gap-sm" style="width: 100%; max-width: 100%; align-self: flex-start; margin-bottom: 0.5rem;">
+                <span class="bubble" style="border-bottom-left-radius: 4px;">${data.content}</span>
+                <div class="card mt-sm">
+                    <div class="card-body">
+                        ${badge}
+                        <h3 style="margin:0 0 4px 0; color:var(--text-color);">${data.contactName || title}</h3>
+                        ${subtitle ? `<p class="text-muted" style="margin:0 0 12px 0">${subtitle}</p>` : ''}
+                        <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top: 12px;">
+                            ${data.phoneNumber ? `<a href="tel:${data.phoneNumber.replace(/\s+/g, '')}" class="btn btn-success" style="flex:1; padding:8px; text-align:center; text-decoration:none;">📞 Llamar</a>` : ''}
+                            ${data.whatsappNumber ? `<a href="https://wa.me/${data.whatsappNumber.replace(/\s+/g, '').replace('+', '')}" class="btn" style="flex:1; background:#25D366; color:white; padding:8px; text-align:center; text-decoration:none;">💬 WhatsApp</a>` : ''}
+                            ${data.website ? `<a href="${data.website}" target="_blank" class="btn btn-primary" style="flex:1; padding:8px; text-align:center; text-decoration:none;">🌐 Web</a>` : ''}
+                        </div>
+                        ${buttonHtml}
+                    </div>
+                </div>
+            </div>`;
+        }
+
+        if (data.cardType === 'ArticleCard') {
+            return `
+            <div class="flex-col gap-sm" style="width: 100%; max-width: 100%; align-self: flex-start; margin-bottom: 0.5rem;">
+                <span class="bubble" style="border-bottom-left-radius: 4px;">${data.content}</span>
+                <div class="card mt-sm" style="border-left: 4px solid var(--primary-color);">
+                    <div class="card-body">
+                        ${badge}
+                        <h4 style="margin:0 0 8px 0; color:var(--text-color);">${title}</h4>
+                        <p class="text-muted" style="margin:0; font-size: 0.95rem; line-height: 1.5;">${subtitle}</p>
+                        ${buttonHtml}
+                    </div>
+                </div>
+            </div>`;
+        }
+
+        if (data.cardType === 'AlertCard') {
+            return `
+            <div class="flex-col gap-sm" style="width: 100%; max-width: 100%; align-self: flex-start; margin-bottom: 0.5rem;">
+                <span class="bubble" style="border-bottom-left-radius: 4px;">${data.content}</span>
+                <div class="card mt-sm" style="background-color: #fff3cd; border: 1px solid #ffeeba;">
+                    <div class="card-body">
+                        <div style="color: #856404; font-weight: bold; margin-bottom: 4px;">${badge || '⚠️ Aviso'}</div>
+                        <h3 style="margin:0 0 8px 0; color: #856404;">${title}</h3>
+                        <p style="margin:0; color: #856404; font-size: 0.9rem;">${subtitle}</p>
+                        ${buttonHtml}
+                    </div>
+                </div>
+            </div>`;
+        }
+
+        if (data.cardType === 'ProductCard') {
+            return `
+            <div class="flex-col gap-sm" style="width: 100%; max-width: 100%; align-self: flex-start; margin-bottom: 0.5rem;">
+                <span class="bubble" style="border-bottom-left-radius: 4px;">${data.content}</span>
+                <div class="card mt-sm" style="overflow: hidden; display: flex; flex-direction: row; align-items: center;">
+                    ${data.imageUrl ? `<img src="${data.imageUrl}" alt="${title}" style="width: 100px; height: 100px; object-fit: cover;">` : ''}
+                    <div class="card-body" style="flex:1;">
+                        ${badge}
+                        <h4 style="margin:0 0 4px 0; color:var(--text-color);">${title}</h4>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            ${data.price ? `<span style="font-weight:bold; color:var(--primary-color); font-size:1.1rem;">${data.price}</span>` : ''}
+                            ${data.oldPrice ? `<span style="text-decoration:line-through; color:var(--text-muted); font-size:0.9rem;">${data.oldPrice}</span>` : ''}
+                        </div>
+                        ${buttonHtml}
+                    </div>
+                </div>
+            </div>`;
+        }
+
+        if (data.cardType === 'ProfileCard') {
+            return `
+            <div class="flex-col gap-sm" style="width: 100%; max-width: 100%; align-self: flex-start; margin-bottom: 0.5rem;">
+                <span class="bubble" style="border-bottom-left-radius: 4px;">${data.content}</span>
+                <div class="card mt-sm">
+                    <div class="card-body" style="display:flex; align-items:center; gap: 16px;">
+                        ${data.imageUrl ? `<img src="${data.imageUrl}" alt="${data.contactName || title}" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary-color);">` : '<div style="width:60px; height:60px; border-radius:50%; background:var(--primary-color); color:white; display:flex; align-items:center; justify-content:center; font-size:1.5rem;">👤</div>'}
+                        <div style="flex:1;">
+                            ${badge}
+                            <h3 style="margin:0 0 4px 0; color:var(--text-color);">${data.contactName || title}</h3>
+                            ${subtitle ? `<p class="text-muted" style="margin:0; font-size:0.9rem;">${subtitle}</p>` : ''}
+                        </div>
+                    </div>
+                    ${buttonHtml ? `<div style="padding: 0 16px 16px 16px;">${buttonHtml}</div>` : ''}
+                </div>
+            </div>`;
+        }
+
+        if (data.cardType === 'MapCard') {
+            const mapIcon = \`📍\`;
+            if (data.lat && data.lon) {
+                return \`
+                <div class="flex-col gap-sm" style="width: 100%; max-width: 100%; align-self: flex-start;">
+                    <span class="bubble">\${data.content}</span>
+                    <button class="btn btn-primary" onclick="window.openFullscreenMap('\${data.lat}', '\${data.lon}', '\${msgId}')">
+                        <div class="icon-circle">\${mapIcon}</div> Ver \${data.locationTitle || title || 'ubicación'} en mapa
+                    </button>
+                </div>\`;
+            }
+            return \`<span class="bubble">\${data.content}</span>\`;
+        }
+
+        if (data.cardType === 'NavigationCard') {
+            return \`
             <div class="flex-col gap-sm" style="width: 100%; max-width: 85%; align-self: flex-start;">
-                <span class="bubble">${data.content}</span>
-                ${data.lat && data.lon ? `
+                <span class="bubble">\${data.content}</span>
+                \${data.lat && data.lon ? \`
                 <div class="card card-lg mt-sm">
                     <div class="card-body">
-                        <div class="text-title text-center">📍 Destino: ${data.locationTitle || 'Ubicación'}</div>
-                        <button class="btn btn-primary btn-rect mt-sm" style="margin:0" onclick="window.startLiveNavigation('${data.lat}', '${data.lon}', '${data.locationTitle || 'Destino'}')">
+                        <div class="text-title text-center">📍 Destino: \${data.locationTitle || title || 'Ubicación'}</div>
+                        <button class="btn btn-primary btn-rect mt-sm" style="margin:0" onclick="window.startLiveNavigation('\${data.lat}', '\${data.lon}', '\${data.locationTitle || title || 'Destino'}')">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M12 2L4.5 20.29L5.21 21L12 18L18.79 21L19.5 20.29L12 2Z" fill="currentColor"/>
                             </svg>
@@ -483,77 +539,35 @@ import ChatLayout from '../layouts/ChatLayout.astro';
                         </button>
                     </div>
                 </div>
-                ` : ''}
-            </div>`;
+                \` : ''}
+            </div>\`;
         }
         
         if (data.cardType === 'GalleryCard') {
             let html = '';
             if (data.imageUrls && Array.isArray(data.imageUrls) && data.imageUrls.length > 0) {
-                const imagesHtml = data.imageUrls.map((url: string) => `
+                const imagesHtml = data.imageUrls.map((url: string) => \`
                     <div style="flex: 0 0 85%; scroll-snap-align: center; border-radius: 8px; overflow: hidden; border: 1px solid var(--border-color);">
-                        <img src="${url}" alt="Galería" style="width: 100%; height: 200px; object-fit: cover; display: block;" loading="lazy" />
+                        <img src="\${url}" alt="Galería" style="width: 100%; height: 200px; object-fit: cover; display: block;" loading="lazy" />
                     </div>
-                `).join('');
-                html = `
+                \`).join('');
+                html = \`
                     <div class="card-wrapper" style="animation: slideIn 0.3s ease-out; margin-top: 8px;">
                         <div style="display: flex; flex-direction: row; overflow-x: auto; scroll-snap-type: x mandatory; gap: 8px; padding-bottom: 4px;">
-                            ${imagesHtml}
+                            \${imagesHtml}
                         </div>
                     </div>
-                `;
+                \`;
             }
-            return `
+            return \`
             <div class="flex-col gap-sm" style="width: 100%; max-width: 100%; align-self: flex-start; margin-bottom: 0.5rem;">
-                <span class="bubble" style="border-bottom-left-radius: 4px;">${data.content}</span>
-                ${html}
-            </div>`;
+                <span class="bubble" style="border-bottom-left-radius: 4px;">\${data.content}</span>
+                \${html}
+            </div>\`;
         }
 
-        if (data.cardType === 'TextCard') {
-            return `<span class="bubble">${data.content}</span>`;
-        }
-
-        if (data.cardType === 'TariffCard') {
-            return `
-            <div class="flex-col gap-sm" style="width: 100%; max-width: 100%; align-self: flex-start; margin-bottom: 0.5rem;">
-                <span class="bubble" style="border-bottom-left-radius: 4px;">${data.content}</span>
-                <div class="card tariff-card-container mt-sm">
-                    <div class="card-header primary">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h12"/><path d="M4 14h9"/><path d="M19 6a7.7 7.7 0 0 0-5.2-2A7.9 7.9 0 0 0 6 12c0 4.4 3.5 8 7.8 8 2 0 3.8-.8 5.2-2"/></svg>
-                        <span>Precios del Taxi en Cádiz</span>
-                    </div>
-                    <div class="tariff-card flex-col" id="tariff-widget-${msgId}" style="border: none; border-radius: 0; box-shadow: none; margin-top: 0;">
-                        <!-- Fila 1: Pestañas Principales -->
-                        <div class="tariff-tabs-row1">
-                            <button class="t-tab active" onclick="window.changeTariffTab('${msgId}', 'urbana')">Urbana</button>
-                            <button class="t-tab" onclick="window.changeTariffTab('${msgId}', 'interurbana')">Interurbana</button>
-                            <button class="t-tab" onclick="window.changeTariffTab('${msgId}', 'suplementos')">Suplementos</button>
-                        </div>
-                        
-                        <!-- Fila 2: Sub-pestañas de Tiempo (Solo Urbana/Interurbana) -->
-                        <div class="tariff-tabs-row2" id="row2-${msgId}">
-                            <button class="t-subtab active" onclick="window.changeTariffTime('${msgId}', 'dia')">Día</button>
-                            <button class="t-subtab" onclick="window.changeTariffTime('${msgId}', 'noche')">Noche</button>
-                            <button class="t-subtab" onclick="window.changeTariffTime('${msgId}', 'finde')">Finde</button>
-                            <button class="t-subtab" onclick="window.changeTariffTime('${msgId}', 'festivo')">Festivo</button>
-                        </div>
-
-                        <!-- Fila 3: Tabla de Precios -->
-                        <div class="tariff-body" id="tbody-${msgId}">
-                            <!-- Renderizado dinámico aquí -->
-                        </div>
-                    </div>
-                    <div class="card-footer" id="tfoot-${msgId}">
-                        Fuente: BOJA n.º 202 (16/10/2024)
-                    </div>
-                </div>
-                <span class="bubble" style="border-top-left-radius: 4px; margin-top: 4px;">Si quieres, te puedo ayudar a usar estos precios oficiales para calcular el coste aproximado de tu viaje. ¿Probamos?</span>
-            </div>`;
-        }
-
-        // Fallback para desconocidos
-        return `<span class="bubble">${data.content}</span>`;
+        // TextCard y Fallback para desconocidos
+        return \`<span class="bubble">\${data.content}</span>\`;
     }
 
     // --- CONEXIÓN CON EL CEREBRO DE IA ---
@@ -619,26 +633,7 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             
             addMessage('bot', finalHtml);
 
-            // Inicializar Widget de Tarifas si corresponde
-            if (data.cardType === 'TariffCard') {
-                setTimeout(() => {
-                    if (window.changeTariffTab) {
-                        // Determinar periodo actual
-                        const now = new Date();
-                        const day = now.getDay(); // 0=Dom, 1=Lun, ..., 6=Sab
-                        const hour = now.getHours();
-                        let currentTime = 'dia';
 
-                        if (day === 0 || day === 6) {
-                            currentTime = 'finde';
-                        } else if (hour >= 21 || hour < 7) {
-                            currentTime = 'noche';
-                        }
-                        
-                        window.changeTariffTab(msgId, 'urbana', currentTime);
-                    }
-                }, 10);
-            }
 
             // 5. Instanciar el mapa en línea o activar navegación
             if (data.cardType === 'NavigationCard' && data.lat && data.lon) {
@@ -1744,175 +1739,6 @@ import ChatLayout from '../layouts/ChatLayout.astro';
     // Estado del widget por msgId
     const widgetState: Record<string, { type: string, time: string }> = {};
 
-    window.changeTariffTab = (msgId: string, type: string, forceTime?: string) => {
-        if (!widgetState[msgId]) widgetState[msgId] = { type: 'urbana', time: 'dia' };
-        widgetState[msgId].type = type;
-        if (forceTime) widgetState[msgId].time = forceTime;
-
-        const widget = document.getElementById(`tariff-widget-${msgId}`);
-        if (!widget) return;
-
-        // Actualizar visual de pestañas Fila 1
-        widget.querySelectorAll('.t-tab').forEach(btn => btn.classList.remove('active'));
-        const activeTab = widget.querySelector(`.t-tab[onclick*="'${type}'"]`);
-        if (activeTab) activeTab.classList.add('active');
-
-        // Mostrar u ocultar Fila 2
-        const row2 = document.getElementById(`row2-${msgId}`);
-        if (row2) {
-            row2.style.display = (type === 'suplementos') ? 'none' : 'flex';
-            
-            // Actualizar visual de pestañas Fila 2 con el tiempo actual
-            const currentTime = widgetState[msgId].time;
-            row2.querySelectorAll('.t-subtab').forEach(btn => btn.classList.remove('active'));
-            const activeSubtab = row2.querySelector(`.t-subtab[onclick*="'${currentTime}'"]`);
-            if (activeSubtab) activeSubtab.classList.add('active');
-        }
-
-        renderTariffTable(msgId);
-    };
-
-    window.changeTariffTime = (msgId: string, time: string) => {
-        if (!widgetState[msgId]) widgetState[msgId] = { type: 'urbana', time: 'dia' };
-        widgetState[msgId].time = time;
-
-        const widget = document.getElementById(`tariff-widget-${msgId}`);
-        if (!widget) return;
-
-        // Actualizar visual de pestañas Fila 2
-        widget.querySelectorAll('.t-subtab').forEach(btn => btn.classList.remove('active'));
-        const activeSubtab = widget.querySelector(`.t-subtab[onclick*="'${time}'"]`);
-        if (activeSubtab) activeSubtab.classList.add('active');
-
-        renderTariffTable(msgId);
-    };
-
-    function renderTariffTable(msgId: string) {
-        const tbody = document.getElementById(`tbody-${msgId}`);
-        if (!tbody) return;
-
-        const state = widgetState[msgId];
-        let items: any[] = [];
-        let noteHtml = '';
-
-        if (state.type === 'suplementos') {
-            items = TARIFF_DATA.suplementos;
-            // La nota general de advertencia se añade más abajo, y las exenciones van en los acordeones 'ℹ️'
-        } else {
-            items = TARIFF_DATA[state.type][state.time];
-            const getInfoPill = (text: string) => `
-                <div style="margin-top: 8px; background: #fff3cd; padding: 10px; border-radius: 8px; color: #856404; border: 1px solid #ffeeba; display: flex; align-items: flex-start; gap: 8px;">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 2px;"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
-                    <span style="flex: 1; line-height: 1.4;">
-                        ${text}
-                    </span>
-                </div>`;
-
-            if (state.type === 'urbana' && state.time === 'dia') {
-                noteHtml = getInfoPill('Laborables de 07:00 a 21:00h.');
-            } else if (state.type === 'urbana' && state.time === 'noche') {
-                noteHtml = getInfoPill('Laborables de 21:00 a 07:00h.');
-            } else if (state.type === 'interurbana' && state.time === 'dia') {
-                noteHtml = getInfoPill('Laborables de 06:00 a 22:00h.');
-            } else if (state.type === 'interurbana' && state.time === 'noche') {
-                noteHtml = getInfoPill('Laborables de 22:00 a 06:00h.');
-            }
-
-            if (state.time === 'festivo') {
-                const now = new Date();
-                const dd = String(now.getDate()).padStart(2, '0');
-                const mm = String(now.getMonth() + 1).padStart(2, '0');
-                const yyyy = now.getFullYear();
-                const todayStr = `${dd}/${mm}/${yyyy}`;
-                
-                const fullMonths = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-                const niceDate = `${now.getDate()} de ${fullMonths[now.getMonth()]}`;
-                
-                const holidayName = HOLIDAYS[todayStr];
-                const todayMidnight = new Date(yyyy, now.getMonth(), now.getDate()).getTime();
-                
-                const festivosListHtml = Object.entries(HOLIDAYS).map(([date, name]) => {
-                    const [d, m, y] = date.split('/');
-                    const hDate = new Date(Number(y), Number(m)-1, Number(d));
-                    
-                    if (hDate.getTime() >= todayMidnight) {
-                        const hDay = hDate.getDate();
-                        const hMonth = fullMonths[hDate.getMonth()];
-                        const hYear = hDate.getFullYear();
-                        return `<li style="margin-bottom: 4px;"><b>${hDay} de ${hMonth} ${hYear}</b>: ${name}</li>`;
-                    }
-                    return '';
-                }).filter(Boolean).join('');
-
-                noteHtml += `
-                <details style="margin-top: 8px; background: #fff3cd; padding: 10px; border-radius: 8px; color: #856404; border: 1px solid #ffeeba; cursor: pointer;">
-                    <summary style="font-weight: normal; outline: none; list-style: none; display: flex; align-items: flex-start; gap: 8px;">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 2px;"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
-                        <span style="flex: 1; line-height: 1.4;">
-                            Hoy ${holidayName ? `<b>SÍ</b> es festivo en Cádiz (${holidayName}).` : `<b>NO</b> es festivo en Cádiz.`}
-                        </span>
-                    </summary>
-                    <div style="margin-top: 12px; padding-top: 12px; border-top: 1px dashed #e6dbb9;">
-                        <strong style="font-size: 0.85rem;">Próximos festivos:</strong>
-                        <ul style="margin: 6px 0 0 0; padding-left: 20px; font-size: 0.85rem; text-align: left; line-height: 1.4;">
-                            ${festivosListHtml || '<li>No hay más festivos previstos.</li>'}
-                        </ul>
-                    </div>
-                </details>`;
-            }
-        }
-
-        let html = items.map((item, idx) => {
-            let infoBtn = '';
-            let infoDetails = '';
-            
-            if (item.info) {
-                const infoId = `info-${msgId}-${idx}`;
-                infoBtn = `<span class="tariff-info-btn" onclick="document.getElementById('${infoId}').style.display = document.getElementById('${infoId}').style.display === 'none' ? 'block' : 'none'" style="display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--primary-color); opacity: 0.6; transition: opacity 0.2s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.6"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></span>`;
-                infoDetails = `<div id="${infoId}" class="tariff-item-details" style="display: none; font-size: 0.85rem; color: #64748b; margin-top: 8px; padding-top: 8px; border-top: 1px dashed #e2e8f0; font-weight: normal; line-height: 1.4;">${item.info}</div>`;
-            }
-
-            return `
-            <div class="tariff-item-wrapper">
-                <div class="tariff-item">
-                    <span class="tariff-name">${item.name}</span>
-                    <div class="tariff-price-group">
-                        <span class="tariff-price">${item.price}</span>
-                        ${infoBtn}
-                    </div>
-                </div>
-                ${infoDetails}
-            </div>
-            `;
-        }).join('');
-
-        if (state.type === 'suplementos') {
-            html += `
-            <div style="margin-top: 10px; background: #fff3cd; padding: 10px; border-radius: 8px; color: #856404; border: 1px solid #ffeeba; display: flex; align-items: flex-start; gap: 8px;">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 2px;"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
-                <span style="flex: 1; line-height: 1.4;">
-                    <strong>Recuerda:</strong> los suplementos solo se aplican a las tarifas urbanas.
-                </span>
-            </div>`;
-        }
-
-        let sourceText = 'Fuente: BOJA n.º 202 (16/10/2024)';
-        if (state.type === 'interurbana') {
-            sourceText = 'Fuente: BOJA n.º 49 (12/03/2026)';
-        }
-
-        const footerEl = document.getElementById(`tfoot-${msgId}`);
-        if (footerEl) {
-            footerEl.innerText = sourceText;
-        }
-
-        // Reset animation by clearing and reflowing
-        tbody.innerHTML = '';
-        void tbody.offsetWidth; // Force reflow
-        
-        tbody.innerHTML = `<div class="tariff-anim-layer">${html}${noteHtml}</div>`;
-    }
-
     // --- LEAFLET NAVEGACIÓN EN VIVO (FULLSCREEN) ---
     let liveMap: any = null;
     let liveRoutingControl: any = null;
@@ -2237,8 +2063,8 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             initInlineMap: (lat: string, lon: string, msgId: string) => void;
             startLiveNavigation: (lat: string, lon: string, name: string) => void;
             exitLiveNavigation: () => void;
-            changeTariffTab: (msgId: string, type: string) => void;
-            changeTariffTime: (msgId: string, time: string) => void;
+
+
             L: any;
         }
     }
