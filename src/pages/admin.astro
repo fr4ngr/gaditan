@@ -2281,6 +2281,9 @@ Esquema requerido:
                 }
 
                 if (data.success) {
+                    // Si ha cargado con éxito, significa que la BD ya está inicializada
+                    document.getElementById('init-db-btn').style.display = 'none';
+
                     if (monthInput) {
                         document.getElementById('analytics-today').textContent = 'N/A';
                     } else {
