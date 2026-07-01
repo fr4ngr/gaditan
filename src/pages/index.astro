@@ -383,7 +383,7 @@ import ChatLayout from '../layouts/ChatLayout.astro';
         if (data.cardType === 'HeroCard') {
             return `
             <div class="flex-col gap-sm" style="width: 100%; max-width: 100%; align-self: flex-start; margin-bottom: 0.5rem;">
-                <span class="bubble" style="border-bottom-left-radius: 4px;">${data.content}</span>
+                ${data.content ? `<span class="bubble" style="border-bottom-left-radius: 4px;">${data.content}</span>` : ''}
                 <div class="card mt-sm" style="overflow: hidden; border-radius: 12px; border: 1px solid var(--border-color);">
                     ${img}
                     <div class="card-body">
@@ -411,7 +411,7 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             }
             return `
             <div class="flex-col gap-sm" style="width: 100%; max-width: 100%; align-self: flex-start; margin-bottom: 0.5rem;">
-                <span class="bubble" style="border-bottom-left-radius: 4px;">${data.content}</span>
+                ${data.content ? `<span class="bubble" style="border-bottom-left-radius: 4px;">${data.content}</span>` : ''}
                 <div class="card mt-sm">
                     <div class="card-body">
                         ${badge}
@@ -428,7 +428,7 @@ import ChatLayout from '../layouts/ChatLayout.astro';
         if (data.cardType === 'BusinessCard') {
             return `
             <div class="flex-col gap-sm" style="width: 100%; max-width: 100%; align-self: flex-start; margin-bottom: 0.5rem;">
-                <span class="bubble" style="border-bottom-left-radius: 4px;">${data.content}</span>
+                ${data.content ? `<span class="bubble" style="border-bottom-left-radius: 4px;">${data.content}</span>` : ''}
                 <div class="card mt-sm">
                     <div class="card-body">
                         ${badge}
@@ -448,7 +448,7 @@ import ChatLayout from '../layouts/ChatLayout.astro';
         if (data.cardType === 'ArticleCard') {
             return `
             <div class="flex-col gap-sm" style="width: 100%; max-width: 100%; align-self: flex-start; margin-bottom: 0.5rem;">
-                <span class="bubble" style="border-bottom-left-radius: 4px;">${data.content}</span>
+                ${data.content ? `<span class="bubble" style="border-bottom-left-radius: 4px;">${data.content}</span>` : ''}
                 <div class="card mt-sm" style="border-left: 4px solid var(--primary-color);">
                     <div class="card-body">
                         ${badge}
@@ -463,7 +463,7 @@ import ChatLayout from '../layouts/ChatLayout.astro';
         if (data.cardType === 'AlertCard') {
             return `
             <div class="flex-col gap-sm" style="width: 100%; max-width: 100%; align-self: flex-start; margin-bottom: 0.5rem;">
-                <span class="bubble" style="border-bottom-left-radius: 4px;">${data.content}</span>
+                ${data.content ? `<span class="bubble" style="border-bottom-left-radius: 4px;">${data.content}</span>` : ''}
                 <div class="card mt-sm" style="background-color: #fff3cd; border: 1px solid #ffeeba;">
                     <div class="card-body">
                         <div style="color: #856404; font-weight: bold; margin-bottom: 4px;">${badge || '⚠️ Aviso'}</div>
@@ -478,7 +478,7 @@ import ChatLayout from '../layouts/ChatLayout.astro';
         if (data.cardType === 'ProductCard') {
             return `
             <div class="flex-col gap-sm" style="width: 100%; max-width: 100%; align-self: flex-start; margin-bottom: 0.5rem;">
-                <span class="bubble" style="border-bottom-left-radius: 4px;">${data.content}</span>
+                ${data.content ? `<span class="bubble" style="border-bottom-left-radius: 4px;">${data.content}</span>` : ''}
                 <div class="card mt-sm" style="overflow: hidden; display: flex; flex-direction: row; align-items: center;">
                     ${data.imageUrl ? `<img src="${data.imageUrl}" alt="${title}" style="width: 100px; height: 100px; object-fit: cover;">` : '<div style="width: 100px; height: 100px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 1.5rem; border-right: 1px solid var(--border-color);">📦</div>'}
                     <div class="card-body" style="flex:1;">
@@ -497,7 +497,7 @@ import ChatLayout from '../layouts/ChatLayout.astro';
         if (data.cardType === 'ProfileCard') {
             return `
             <div class="flex-col gap-sm" style="width: 100%; max-width: 100%; align-self: flex-start; margin-bottom: 0.5rem;">
-                <span class="bubble" style="border-bottom-left-radius: 4px;">${data.content}</span>
+                ${data.content ? `<span class="bubble" style="border-bottom-left-radius: 4px;">${data.content}</span>` : ''}
                 <div class="card mt-sm">
                     <div class="card-body" style="display:flex; align-items:center; gap: 16px;">
                         ${data.imageUrl ? `<img src="${data.imageUrl}" alt="${data.contactName || title}" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary-color);">` : '<div style="width:60px; height:60px; border-radius:50%; background:var(--primary-color); color:white; display:flex; align-items:center; justify-content:center; font-size:1.5rem;">👤</div>'}
@@ -517,19 +517,19 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             if (data.lat && data.lon) {
                 return `
                 <div class="flex-col gap-sm" style="width: 100%; max-width: 100%; align-self: flex-start;">
-                    <span class="bubble">${data.content}</span>
+                    ${data.content ? `<span class="bubble">${data.content}</span>` : ''}
                     <button class="btn btn-primary" onclick="window.openFullscreenMap('${data.lat}', '${data.lon}', '${msgId}')">
                         <div class="icon-circle">${mapIcon}</div> Ver ${data.locationTitle || title || 'ubicación'} en mapa
                     </button>
                 </div>`;
             }
-            return `<span class="bubble">${data.content}</span>`;
+            return data.content ? `<span class="bubble">${data.content}</span>` : '';
         }
 
         if (data.cardType === 'NavigationCard') {
             return `
             <div class="flex-col gap-sm" style="width: 100%; max-width: 85%; align-self: flex-start;">
-                <span class="bubble">${data.content}</span>
+                ${data.content ? `<span class="bubble">${data.content}</span>` : ''}
                 ${data.lat && data.lon ? `
                 <div class="card card-lg mt-sm">
                     <div class="card-body">
@@ -573,13 +573,13 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             `;
             return `
             <div class="flex-col gap-sm" style="width: 100%; max-width: 100%; align-self: flex-start; margin-bottom: 0.5rem;">
-                <span class="bubble">${data.content}</span>
+                ${data.content ? `<span class="bubble">${data.content}</span>` : ''}
                 ${html}
             </div>`;
         }
 
         // TextCard y Fallback para desconocidos
-        return `<span class="bubble">${data.content}</span>`;
+        return data.content ? `<span class="bubble">${data.content}</span>` : '';
     }
 
     // --- CONEXIÓN CON EL CEREBRO DE IA ---

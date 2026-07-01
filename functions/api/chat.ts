@@ -258,20 +258,53 @@ ${b.content}
 
         let parsedData;
         try {
-            // Limpiar posibles bloques markdown de código si la primera llamada (sin schema) devolvió texto
             let cleanText = responseText.replace(/```json/gi, '').replace(/```/g, '').trim();
             
-            // AUTO-HEALING: Extracción inteligente del bloque JSON si el modelo alucinó texto extra
-            const firstBrace = cleanText.indexOf('{');
-            const lastBrace = cleanText.lastIndexOf('}');
-            if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
-                cleanText = cleanText.substring(firstBrace, lastBrace + 1);
+            // AUTO-HEALING: Extraer el primer bloque JSON válido (balanceo de llaves)
+            let startIdx = cleanText.indexOf('{');
+            let jsonExtracted = null;
+            if (startIdx !== -1) {
+                let braceCount = 0;
+                let inString = false;
+                let escapeNext = false;
+                
+                for (let i = startIdx; i < cleanText.length; i++) {
+                    const char = cleanText[i];
+                    if (!escapeNext && char === '"') {
+                        inString = !inString;
+                    }
+                    if (char === '\\' && inString) {
+                        escapeNext = true;
+                    } else {
+                        escapeNext = false;
+                    }
+
+                    if (!inString) {
+                        if (char === '{') braceCount++;
+                        else if (char === '}') braceCount--;
+                    }
+                    
+                    if (braceCount === 0 && !inString) {
+                        try {
+                            jsonExtracted = JSON.parse(cleanText.substring(startIdx, i + 1));
+                            break;
+                        } catch(e) {
+                            // Ignorar y seguir intentando si falla por alguna razón
+                        }
+                    }
+                }
             }
             
-            parsedData = JSON.parse(cleanText);
+            if (jsonExtracted) {
+                parsedData = jsonExtracted;
+            } else {
+                parsedData = JSON.parse(cleanText); // Intentar parsear todo si no se encontró un bloque claro
+            }
         } catch(e) {
-            // Si el modelo alucinó texto plano irremediable
-            parsedData = { cardType: 'TextCard', content: responseText, suggestedBlocks: ['¿Qué más puedo ver?'], intentCategory: 'Otros' };
+            // Si todo falla, limpiar las partes que parezcan JSON para no mostrarlas en crudo
+            let fallbackText = responseText.replace(/\{"cardType.*?\}/gs, '').trim();
+            if (!fallbackText) fallbackText = "Ha ocurrido un error entendiendo el formato de la respuesta.";
+            parsedData = { cardType: 'TextCard', content: fallbackText, suggestedBlocks: ['¿Qué más puedo ver?'], intentCategory: 'Otros' };
         }
 
         // ----------------------------------------------------
