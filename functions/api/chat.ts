@@ -112,6 +112,7 @@ ${b.content}
         };
 
         const historyContents = body.history && body.history.length > 0 ? body.history : [{ role: 'user', parts: [{ text: userMessage }] }];
+        const inputType = body.inputType || 'typed';
 
         const beachTool = {
             functionDeclarations: [{
@@ -262,8 +263,8 @@ ${b.content}
                     const brainsInjected = cerebrosFiltrados.length > 0 ? cerebrosFiltrados.map(b => b.nombre).join(', ') : '';
                     
                     await env.DB.prepare(
-                        "INSERT INTO chat_logs (user_message, bot_response, intent_category, latency_ms, tokens_used, brains_injected) VALUES (?, ?, ?, ?, ?, ?)"
-                    ).bind(userMessage, botRespText, intentCat, latencyMs, tokensUsed, brainsInjected).run();
+                        "INSERT INTO chat_logs (user_message, bot_response, intent_category, latency_ms, tokens_used, brains_injected, input_type) VALUES (?, ?, ?, ?, ?, ?, ?)"
+                    ).bind(userMessage, botRespText, intentCat, latencyMs, tokensUsed, brainsInjected, inputType).run();
                 } catch (dbError) {
                     console.error("D1 Insert Error:", dbError);
                 }

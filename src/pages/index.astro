@@ -583,7 +583,7 @@ import ChatLayout from '../layouts/ChatLayout.astro';
     }
 
     // --- CONEXIÓN CON EL CEREBRO DE IA ---
-    async function sendMessageToAI(text: string, isHiddenInit: boolean = false) {
+    async function sendMessageToAI(text: string, isHiddenInit: boolean = false, inputType: string = 'typed') {
         if (!text.trim()) return;
         
         // 1. Pintar mensaje del usuario y guardarlo en historial
@@ -604,7 +604,7 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             const response = await fetch('/api/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: text, history: chatHistory })
+                body: JSON.stringify({ message: text, history: chatHistory, inputType: isHiddenInit ? 'system' : inputType })
             });
 
             const data = await response.json();
@@ -638,7 +638,7 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             // Renderizar Suggested Blocks (Botones)
             if (data.suggestedBlocks && data.suggestedBlocks.length > 0) {
                 const buttonsHtml = data.suggestedBlocks.map((block: string) => {
-                    return `<button class="suggested-btn" onclick="window.sendToAI('${block}')">${block}</button>`;
+                    return `<button class="suggested-btn" onclick="window.sendToAI('${block}', false, 'click')">${block}</button>`;
                 }).join('');
                 finalHtml += `<div class="suggested-blocks-container">${buttonsHtml}</div>`;
             }

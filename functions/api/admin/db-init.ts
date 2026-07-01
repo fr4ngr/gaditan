@@ -32,7 +32,8 @@ export async function onRequestPost(context) {
         const alterQueries = [
             "ALTER TABLE chat_logs ADD COLUMN latency_ms INTEGER;",
             "ALTER TABLE chat_logs ADD COLUMN tokens_used INTEGER;",
-            "ALTER TABLE chat_logs ADD COLUMN brains_injected TEXT;"
+            "ALTER TABLE chat_logs ADD COLUMN brains_injected TEXT;",
+            "ALTER TABLE chat_logs ADD COLUMN input_type TEXT DEFAULT 'typed';"
         ];
 
         for (const query of alterQueries) {
