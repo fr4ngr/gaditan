@@ -534,9 +534,53 @@ import '../styles/components.css';
                     <div id="tab-ui" class="tab-content">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                             <h2 style="margin: 0; color: var(--ds-text-primary);">🎨 UI & Componentes</h2>
-                            <span style="font-size: 0.85rem; color: var(--ds-text-secondary); background: #e2e8f0; padding: 4px 10px; border-radius: 12px;">Showroom</span>
                         </div>
                         
+                        <!-- LIVE SIMULATOR -->
+                        <div style="background: white; border: 1px solid var(--bubble-bot-border); border-radius: 12px; padding: 20px; margin-bottom: 30px;">
+                            <h3 style="margin: 0 0 16px 0; color: var(--ds-primary);">🛠️ Simulador en Vivo</h3>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px;">
+                                <!-- Form Area -->
+                                <div>
+                                    <div class="form-group">
+                                        <label>Tipo de Tarjeta</label>
+                                        <select id="sim-card-type" onchange="updateSimFormFields()" style="padding: 10px; border: 1px solid var(--bubble-bot-border); border-radius: 6px; width: 100%; font-size: 16px;">
+                                            <option value="HeroCard">HeroCard</option>
+                                            <option value="ListCard">ListCard</option>
+                                            <option value="BusinessCard">BusinessCard</option>
+                                            <option value="ProductCard">ProductCard</option>
+                                            <option value="ProfileCard">ProfileCard</option>
+                                            <option value="ArticleCard">ArticleCard</option>
+                                            <option value="AlertCard">AlertCard</option>
+                                            <option value="GalleryCard">GalleryCard</option>
+                                            <option value="TextCard">TextCard (Sólo texto)</option>
+                                        </select>
+                                    </div>
+                                    <div id="sim-dynamic-fields" style="display:flex; flex-direction:column; gap:12px; margin-top:16px;">
+                                        <!-- Inyectado por JS -->
+                                    </div>
+                                    <button class="btn btn-secondary mt-sm" style="width:100%; margin-top:20px;" onclick="generateSimPrompt()">🪄 Generar Prompt JSON</button>
+                                </div>
+                                <!-- Preview Area -->
+                                <div style="display: flex; flex-direction: column; gap: 8px;">
+                                    <div style="font-size: 0.8rem; font-weight: bold; color: var(--ds-text-secondary); text-transform: uppercase;">Vista Previa</div>
+                                    <div id="sim-preview-area" style="background: #f8fafc; padding: 16px; border-radius: 12px; border: 1px dashed #cbd5e1; min-height: 200px; display: flex; flex-direction: column; justify-content: center;">
+                                        <!-- Renderizado por JS -->
+                                        <div style="text-align:center; color:#94a3b8; font-size:0.9rem;">Cargando vista previa...</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="sim-prompt-area" style="display:none; margin-top:20px;">
+                                <div style="font-size: 0.8rem; font-weight: bold; color: var(--ds-text-secondary); text-transform: uppercase; margin-bottom: 8px;">Código para Cerebros</div>
+                                <div style="position: relative;">
+                                    <textarea id="sim-prompt-output" readonly style="width: 100%; min-height: 150px; font-family: monospace; font-size: 0.85rem; background: #1e293b; color: #e2e8f0; padding: 12px; border-radius: 8px; box-sizing: border-box;"></textarea>
+                                    <button onclick="navigator.clipboard.writeText(document.getElementById('sim-prompt-output').value); showToast('Copiado al portapapeles', 'success');" style="position: absolute; top: 10px; right: 10px; background: var(--ds-primary); color: white; border: none; border-radius: 4px; padding: 6px 12px; cursor: pointer; font-size: 0.8rem;">Copiar</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr style="border: 0; border-top: 1px solid var(--bubble-bot-border); margin: 30px 0;">
+                        <div style="font-size: 0.85rem; color: var(--ds-text-secondary); background: #e2e8f0; padding: 4px 10px; border-radius: 12px; display: inline-block; margin-bottom: 20px;">Catálogo Estático</div>
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px;">
                             
                             <!-- HeroCard -->
@@ -683,6 +727,329 @@ import '../styles/components.css';
         let sessionPwd = '';
         let currentEditingBrain = '';
         let currentEditingSha = '';
+
+        // --- SIMULADOR UI ---
+        function renderSimCard(data) {
+            if (data.content) {
+                data.content = data.content.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\*(.*?)\*/g, '<i>$1</i>').replace(/\n/g, '<br>');
+            }
+            const title = data.title || '';
+            const subtitle = data.subtitle || '';
+            const badge = data.badge ? `<div style="font-size: 0.75rem; text-transform: uppercase; font-weight: bold; color: var(--ds-primary); letter-spacing: 0.5px; margin-bottom: 4px;">${data.badge}</div>` : '';
+            const img = data.imageUrl ? `<img src="${data.imageUrl}" alt="${title}" style="width: 100%; height: 180px; object-fit: cover;">` : '<div style="width: 100%; height: 180px; background: linear-gradient(45deg, #f1f5f9, #e2e8f0); display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 2.5rem; border-bottom: 1px solid var(--bubble-bot-border);">🖼️</div>';
+            
+            let buttonHtml = '';
+            if (data.buttonText) {
+                buttonHtml = `<button class="btn btn-primary btn-rect" style="width:100%; margin-top:12px;">${data.buttonText}</button>`;
+            }
+
+            if (data.cardType === 'TextCard') {
+                return `<span class="bubble bubble-bot">${data.content || 'Sin texto'}</span>`;
+            }
+
+            if (data.cardType === 'HeroCard') {
+                return `
+                <div class="flex-col gap-sm" style="width: 100%; max-width: 100%; align-self: flex-start; margin-bottom: 0.5rem;">
+                    <span class="bubble bubble-bot" style="border-bottom-left-radius: 4px;">${data.content || ''}</span>
+                    <div class="card mt-sm" style="overflow: hidden; border-radius: 12px; border: 1px solid var(--bubble-bot-border);">
+                        ${img}
+                        <div class="card-body">
+                            ${badge}
+                            <h3 style="margin:0 0 8px 0; color:var(--ds-text-primary);">${title}</h3>
+                            ${subtitle ? `<p class="text-muted" style="margin:0">${subtitle}</p>` : ''}
+                            ${buttonHtml}
+                        </div>
+                    </div>
+                </div>`;
+            }
+
+            if (data.cardType === 'ListCard') {
+                let listHtml = '';
+                if (data.listItems && Array.isArray(data.listItems)) {
+                    listHtml = data.listItems.map((item, i) => `
+                        <div style="display:flex; align-items:center; gap: 12px; padding: 12px 0; border-bottom: ${i < data.listItems.length - 1 ? '1px solid var(--bubble-bot-border)' : 'none'};">
+                            <div style="font-size:1.5rem; width:40px; text-align:center; flex-shrink:0;">${item.icon || '📌'}</div>
+                            <div style="flex:1;">
+                                <div style="font-weight:600; color:var(--ds-text-primary);">${item.title}</div>
+                                ${item.subtitle ? `<div style="font-size:0.85rem; color:var(--text-muted); margin-top:2px;">${item.subtitle}</div>` : ''}
+                            </div>
+                        </div>
+                    `).join('');
+                }
+                return `
+                <div class="flex-col gap-sm" style="width: 100%; max-width: 100%; align-self: flex-start; margin-bottom: 0.5rem;">
+                    <span class="bubble bubble-bot" style="border-bottom-left-radius: 4px;">${data.content || ''}</span>
+                    <div class="card mt-sm">
+                        <div class="card-body">
+                            ${badge}
+                            <h3 style="margin:0 0 12px 0; color:var(--ds-text-primary);">${title}</h3>
+                            <div style="display:flex; flex-direction:column;">
+                                ${listHtml}
+                            </div>
+                            ${buttonHtml}
+                        </div>
+                    </div>
+                </div>`;
+            }
+
+            if (data.cardType === 'BusinessCard') {
+                return `
+                <div class="flex-col gap-sm" style="width: 100%; max-width: 100%; align-self: flex-start; margin-bottom: 0.5rem;">
+                    <span class="bubble bubble-bot" style="border-bottom-left-radius: 4px;">${data.content || ''}</span>
+                    <div class="card mt-sm">
+                        <div class="card-body">
+                            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom: 12px;">
+                                <h4 style="margin:0; color:var(--ds-text-primary); font-size:1.1rem;">${title}</h4>
+                                ${data.subtitle ? `<div style="background:var(--ds-success); color:white; padding:4px 8px; border-radius:12px; font-size:0.75rem; font-weight:bold;">${data.subtitle}</div>` : ''}
+                            </div>
+                            ${data.locationTitle ? `<div style="display:flex; align-items:center; gap:8px; margin-bottom:8px; font-size:0.9rem;"><span>📍</span> <span style="color:var(--text-muted);">${data.locationTitle}</span></div>` : ''}
+                            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-top:12px;">
+                                ${data.phoneNumber ? `<button class="btn btn-secondary" style="font-size: 0.85rem; padding: 6px;">📞 Llamar</button>` : ''}
+                                ${data.website ? `<button class="btn btn-primary" style="font-size: 0.85rem; padding: 6px;">🌐 Web</button>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+            }
+
+            if (data.cardType === 'ProductCard') {
+                return `
+                <div class="flex-col gap-sm" style="width: 100%; max-width: 100%; align-self: flex-start; margin-bottom: 0.5rem;">
+                    <span class="bubble bubble-bot" style="border-bottom-left-radius: 4px;">${data.content || ''}</span>
+                    <div class="card mt-sm" style="overflow: hidden; display: flex; flex-direction: row; align-items: center;">
+                        ${data.imageUrl ? `<img src="${data.imageUrl}" alt="${title}" style="width: 100px; height: 100px; object-fit: cover;">` : '<div style="width: 100px; height: 100px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 1.5rem; border-right: 1px solid var(--bubble-bot-border);">📦</div>'}
+                        <div class="card-body" style="flex:1;">
+                            ${badge}
+                            <h4 style="margin:0 0 4px 0; color:var(--ds-text-primary);">${title}</h4>
+                            <div style="display:flex; align-items:baseline; gap:8px;">
+                                <span style="font-size:1.2rem; font-weight:bold; color:var(--ds-text-primary);">${data.price || ''}</span>
+                                ${data.oldPrice ? `<span style="font-size:0.85rem; color:var(--text-muted); text-decoration:line-through;">${data.oldPrice}</span>` : ''}
+                            </div>
+                            ${buttonHtml}
+                        </div>
+                    </div>
+                </div>`;
+            }
+
+            if (data.cardType === 'AlertCard') {
+                return `
+                <div class="flex-col gap-sm" style="width: 100%; max-width: 100%; align-self: flex-start; margin-bottom: 0.5rem;">
+                    <span class="bubble bubble-bot">${data.content || ''}</span>
+                    <div class="card mt-sm" style="border: 1px solid #fca5a5; background: #fef2f2;">
+                        <div class="card-body">
+                            <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+                                <span style="font-size:1.5rem;">⚠️</span>
+                                <h3 style="margin:0; color:#991b1b; font-size: 1.1rem;">${title}</h3>
+                            </div>
+                            <p style="margin:0; font-size: 0.9rem; color: #7f1d1d;">${subtitle}</p>
+                            ${buttonHtml}
+                        </div>
+                    </div>
+                </div>`;
+            }
+
+            if (data.cardType === 'ProfileCard') {
+                return `
+                <div class="flex-col gap-sm" style="width: 100%; max-width: 100%; align-self: flex-start; margin-bottom: 0.5rem;">
+                    <span class="bubble bubble-bot">${data.content || ''}</span>
+                    <div class="card mt-sm" style="text-align: center;">
+                        <div class="card-body">
+                            ${data.imageUrl ? `<img src="${data.imageUrl}" alt="${title}" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin: 0 auto 12px auto; border: 2px solid var(--ds-primary);">` : `<div style="width: 80px; height: 80px; border-radius: 50%; background: #f1f5f9; display: flex; align-items: center; justify-content: center; font-size: 2rem; margin: 0 auto 12px auto; border: 2px solid var(--ds-primary);">👤</div>`}
+                            <h3 style="margin:0 0 4px 0; color:var(--ds-text-primary); font-size: 1.1rem;">${title}</h3>
+                            <p style="margin:0 0 12px 0; font-size: 0.85rem; color: #64748b;">${subtitle}</p>
+                            <div style="display:flex; justify-content:center; gap:12px;">
+                                ${data.phoneNumber ? `<button class="btn btn-secondary" style="font-size: 0.8rem; padding: 6px;">📞 Contactar</button>` : ''}
+                            </div>
+                            ${buttonHtml}
+                        </div>
+                    </div>
+                </div>`;
+            }
+
+            if (data.cardType === 'ArticleCard') {
+                return `
+                <div class="flex-col gap-sm" style="width: 100%; max-width: 100%; align-self: flex-start; margin-bottom: 0.5rem;">
+                    <span class="bubble bubble-bot">${data.content || ''}</span>
+                    <div class="card mt-sm">
+                        <div class="card-body">
+                            ${badge}
+                            <h3 style="margin:0 0 8px 0; color:var(--ds-text-primary); font-size: 1.1rem;">${title}</h3>
+                            <p style="margin:0 0 12px 0; font-size: 0.9rem; color: #64748b;">${subtitle}</p>
+                            ${buttonHtml}
+                        </div>
+                    </div>
+                </div>`;
+            }
+
+            if (data.cardType === 'GalleryCard') {
+                let imagesHtml = [1, 2].map((i) => `
+                    <div style="flex: 0 0 85%; scroll-snap-align: center; border-radius: 8px; overflow: hidden; border: 1px solid var(--bubble-bot-border); background: linear-gradient(45deg, #f1f5f9, #e2e8f0); display: flex; align-items: center; justify-content: center; height: 200px;">
+                        <span style="font-size: 2rem; opacity: 0.5;">📸</span>
+                    </div>
+                `).join('');
+                return `
+                <div class="flex-col gap-sm" style="width: 100%; max-width: 100%; align-self: flex-start; margin-bottom: 0.5rem;">
+                    <span class="bubble bubble-bot">${data.content || ''}</span>
+                    <div class="card-wrapper" style="margin-top: 8px;">
+                        <div style="display: flex; flex-direction: row; overflow-x: auto; scroll-snap-type: x mandatory; gap: 8px; padding-bottom: 4px;">
+                            ${imagesHtml}
+                        </div>
+                    </div>
+                </div>`;
+            }
+
+            return `<span class="bubble bubble-bot">${data.content || ''}</span>`;
+        }
+
+        let simData = {};
+        function updateSimFormFields() {
+            const type = document.getElementById('sim-card-type').value;
+            const container = document.getElementById('sim-dynamic-fields');
+            
+            // Campos comunes
+            let html = `
+                <div class="form-group">
+                    <label>Contenido (Chat Bubble)</label>
+                    <textarea id="sim-content" oninput="updateSimPreview()" style="min-height:80px; font-size:16px;">Aquí tienes la información que me pediste.</textarea>
+                </div>
+            `;
+            
+            if (type !== 'TextCard' && type !== 'GalleryCard') {
+                html += `
+                    <div class="form-group">
+                        <label>Título (title)</label>
+                        <input type="text" id="sim-title" value="Título de prueba" oninput="updateSimPreview()" />
+                    </div>
+                `;
+            }
+
+            if (['HeroCard', 'ListCard', 'ProductCard', 'ArticleCard'].includes(type)) {
+                html += `
+                    <div class="form-group">
+                        <label>Badge (badge)</label>
+                        <input type="text" id="sim-badge" value="🏷️ Etiqueta" oninput="updateSimPreview()" />
+                    </div>
+                `;
+            }
+
+            if (['HeroCard', 'ArticleCard', 'AlertCard', 'ProfileCard'].includes(type)) {
+                html += `
+                    <div class="form-group">
+                        <label>Subtítulo (subtitle)</label>
+                        <input type="text" id="sim-subtitle" value="Un subtítulo de ejemplo para rellenar." oninput="updateSimPreview()" />
+                    </div>
+                `;
+            }
+
+            if (['HeroCard', 'ProductCard', 'ProfileCard'].includes(type)) {
+                html += `
+                    <div class="form-group">
+                        <label>Imagen URL (imageUrl)</label>
+                        <input type="text" id="sim-imageUrl" placeholder="https://..." oninput="updateSimPreview()" />
+                    </div>
+                `;
+            }
+
+            if (type === 'ProductCard') {
+                html += `
+                    <div class="form-group">
+                        <label>Precio (price)</label>
+                        <input type="text" id="sim-price" value="15,00€" oninput="updateSimPreview()" />
+                    </div>
+                    <div class="form-group">
+                        <label>Precio Antiguo (oldPrice)</label>
+                        <input type="text" id="sim-oldPrice" placeholder="Opcional" oninput="updateSimPreview()" />
+                    </div>
+                `;
+            }
+
+            if (['BusinessCard', 'ProfileCard'].includes(type)) {
+                html += `
+                    <div class="form-group">
+                        <label>Teléfono (phoneNumber)</label>
+                        <input type="text" id="sim-phoneNumber" value="+34 600 000 000" oninput="updateSimPreview()" />
+                    </div>
+                `;
+            }
+
+            if (type === 'BusinessCard') {
+                html += `
+                    <div class="form-group">
+                        <label>Estado (subtitle)</label>
+                        <input type="text" id="sim-subtitle" value="Abierto" oninput="updateSimPreview()" />
+                    </div>
+                    <div class="form-group">
+                        <label>Dirección (locationTitle)</label>
+                        <input type="text" id="sim-locationTitle" value="Calle de prueba, 1" oninput="updateSimPreview()" />
+                    </div>
+                    <div class="form-group">
+                        <label>Web (website)</label>
+                        <input type="text" id="sim-website" placeholder="https://..." oninput="updateSimPreview()" />
+                    </div>
+                `;
+            }
+
+            if (type === 'ListCard') {
+                html += `
+                    <div style="font-size:0.8rem; color:var(--text-muted);">* En el simulador se generan 2 items fijos de prueba. En la app real, Gemini genera el array \`listItems\` dinámicamente.</div>
+                `;
+            }
+
+            if (type !== 'TextCard' && type !== 'GalleryCard' && type !== 'BusinessCard' && type !== 'ProfileCard') {
+                html += `
+                    <div class="form-group">
+                        <label>Texto de Botón (buttonText)</label>
+                        <input type="text" id="sim-buttonText" placeholder="Ej: Comprar, Ver más..." oninput="updateSimPreview()" />
+                    </div>
+                `;
+            }
+
+            container.innerHTML = html;
+            updateSimPreview();
+        }
+
+        function updateSimPreview() {
+            const type = document.getElementById('sim-card-type').value;
+            simData = { 
+                cardType: type,
+                intentCategory: 'Test'
+            };
+            
+            const fields = ['content', 'title', 'subtitle', 'badge', 'imageUrl', 'price', 'oldPrice', 'phoneNumber', 'locationTitle', 'website', 'buttonText'];
+            fields.forEach(f => {
+                const el = document.getElementById('sim-' + f);
+                if (el && el.value) simData[f] = el.value;
+            });
+
+            if (type === 'ListCard') {
+                simData.listItems = [
+                    { title: "Item 1", subtitle: "Detalle 1", icon: "⭐" },
+                    { title: "Item 2", subtitle: "Detalle 2", icon: "⭐" }
+                ];
+            }
+            if (type === 'GalleryCard') {
+                simData.imageUrls = [];
+            }
+
+            // Fallback for suggest blocks which are required in schema
+            simData.suggestedBlocks = ["¿Y ahora qué?"];
+
+            const previewArea = document.getElementById('sim-preview-area');
+            previewArea.innerHTML = renderSimCard(simData);
+        }
+
+        function generateSimPrompt() {
+            document.getElementById('sim-prompt-area').style.display = 'block';
+            const output = document.getElementById('sim-prompt-output');
+            
+            // Pretty print JSON
+            output.value = JSON.stringify(simData, null, 2);
+        }
+
+        // Initialize Simulator on load
+        setTimeout(() => {
+            if(document.getElementById('sim-card-type')) updateSimFormFields();
+        }, 500);
 
         // --- Auth & Tabs ---
         document.getElementById('login-form').addEventListener('submit', async (e) => {
