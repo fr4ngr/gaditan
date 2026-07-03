@@ -43,6 +43,151 @@ import themeData from '../data/theme.json';
 		<script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
 
         <!-- Lottie Web Player -->
+        <!-- NEW POST MODAL -->
+        <div id="new-post-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 2000; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
+            <div style="background: var(--header-bg); border: 1px solid var(--header-border); padding: 24px; border-radius: 20px; width: 90%; max-width: 400px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: flex; flex-direction: column; gap: 16px;">
+                <h3 style="margin: 0; color: var(--text-primary); font-size: 20px;">Subir al Muro</h3>
+                <textarea id="new-post-content" placeholder="¿Qué sitio de Cádiz quieres recomendar hoy?" rows="3" style="width: 100%; border-radius: 12px; padding: 12px; border: 1px solid var(--header-border); background: var(--bg-color); color: var(--text-primary); font-family: inherit; resize: vertical; box-sizing: border-box;"></textarea>
+                
+                <div style="text-align: left;">
+                    <label for="new-post-image" style="display: block; margin-bottom: 8px; color: var(--text-secondary); font-size: 14px; font-weight: 600;">Añadir Foto (Opcional)</label>
+                    <input type="file" id="new-post-image" accept="image/png, image/jpeg, image/webp" style="color: var(--text-primary); font-size: 14px;" />
+                </div>
+
+                <div style="display: flex; gap: 12px; margin-top: 8px;">
+                    <button onclick="document.getElementById('new-post-modal').style.display='none'" style="flex: 1; padding: 12px; border-radius: 12px; background: transparent; border: 1px solid var(--header-border); color: var(--text-secondary); font-weight: 600; cursor: pointer;">Cancelar</button>
+                    <button id="submit-post-btn" onclick="window.submitNewPost()" style="flex: 1; padding: 12px; border-radius: 12px; background: var(--primary-color); border: none; color: white; font-weight: 600; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px;">Publicar</button>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            window.switchTab = function(tab) {
+                const tabChat = document.getElementById('tab-chat');
+                const tabMuro = document.getElementById('tab-muro');
+                const navChat = document.getElementById('nav-tab-chat');
+                const navMuro = document.getElementById('nav-tab-muro');
+
+                if (tab === 'chat') {
+                    tabChat.style.display = 'flex';
+                    tabMuro.style.display = 'none';
+                    navChat.classList.add('active');
+                    navMuro.classList.remove('active');
+                    navChat.style.color = 'var(--primary-color)';
+                    navMuro.style.color = 'var(--text-secondary)';
+                } else if (tab === 'muro') {
+                    tabChat.style.display = 'none';
+                    tabMuro.style.display = 'flex';
+                    navMuro.classList.add('active');
+                    navChat.classList.remove('active');
+                    navMuro.style.color = 'var(--primary-color)';
+                    navChat.style.color = 'var(--text-secondary)';
+                    window.loadFeed();
+                }
+            };
+
+            window.openNewPostModal = async function() {
+                try {
+                    const res = await fetch('/api/auth/me');
+                    const data = await res.json();
+                    if (!data.user) {
+                        window.openLoginModal();
+                        return;
+                    }
+                    document.getElementById('new-post-content').value = '';
+                    document.getElementById('new-post-image').value = '';
+                    document.getElementById('new-post-modal').style.display = 'flex';
+                } catch (e) {
+                    console.error("Auth check failed", e);
+                }
+            };
+
+            window.submitNewPost = async function() {
+                const content = document.getElementById('new-post-content').value;
+                const fileInput = document.getElementById('new-post-image');
+                const file = fileInput.files?.[0];
+                const btn = document.getElementById('submit-post-btn');
+
+                if (!content && !file) {
+                    alert("Añade un texto o una foto.");
+                    return;
+                }
+
+                btn.innerText = "Subiendo...";
+                btn.disabled = true;
+
+                try {
+                    const formData = new FormData();
+                    if (content) formData.append('content', content);
+                    if (file) formData.append('image', file);
+
+                    const res = await fetch('/api/posts/create', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    if (res.ok) {
+                        document.getElementById('new-post-modal').style.display = 'none';
+                        window.loadFeed();
+                    } else {
+                        const err = await res.json();
+                        alert("Error al publicar: " + (err.error || "Desconocido"));
+                    }
+                } catch (e) {
+                    console.error("Upload error", e);
+                    alert("Error de red al publicar.");
+                } finally {
+                    btn.innerText = "Publicar";
+                    btn.disabled = false;
+                }
+            };
+
+            window.loadFeed = async function() {
+                const container = document.getElementById('feed-container');
+                try {
+                    container.innerHTML = '<div style="text-align: center; color: var(--text-secondary); margin-top: 20px;">Cargando publicaciones...</div>';
+                    const res = await fetch('/api/posts/list');
+                    const data = await res.json();
+                    
+                    if (!data.posts || data.posts.length === 0) {
+                        container.innerHTML = '<div style="text-align: center; color: var(--text-secondary); margin-top: 20px;">Aún no hay publicaciones. ¡Sé el primero!</div>';
+                        return;
+                    }
+
+                    container.innerHTML = '';
+                    data.posts.forEach(post => {
+                        const date = new Date(post.created_at).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
+                        
+                        let html = `
+                            <div style="background: var(--header-bg); border: 1px solid var(--header-border); border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+                                <div style="display: flex; align-items: center; gap: 12px;">
+                                    <img src="${post.user_avatar || 'https://ui-avatars.com/api/?name=' + (post.user_name || '?')}" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover;" alt="Avatar" />
+                                    <div>
+                                        <div style="font-weight: 600; color: var(--text-primary); font-size: 15px;">${post.user_name || 'Usuario'}</div>
+                                        <div style="font-size: 12px; color: var(--text-secondary);">${date}</div>
+                                    </div>
+                                </div>
+                        `;
+
+                        if (post.content) {
+                            html += `<div style="color: var(--text-primary); font-size: 15px; line-height: 1.4; white-space: pre-wrap;">${post.content.replace(/</g, '&lt;')}</div>`;
+                        }
+
+                        if (post.image_url) {
+                            html += `<img src="${post.image_url}" style="width: 100%; border-radius: 12px; max-height: 300px; object-fit: cover; margin-top: 4px;" alt="Post image" loading="lazy" />`;
+                        }
+
+                        html += `</div>`;
+                        
+                        const div = document.createElement('div');
+                        div.innerHTML = html;
+                        container.appendChild(div);
+                    });
+                } catch (e) {
+                    container.innerHTML = '<div style="text-align: center; color: #ef4444; margin-top: 20px;">Error al cargar el muro.</div>';
+                }
+            };
+        </script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.12.2/lottie.min.js"></script>
         
         <style>
@@ -98,8 +243,13 @@ import themeData from '../data/theme.json';
                 </div>
             </header>
 
-            <!-- CONTENEDOR DESLIZABLE (SWIPER) -->
-            <div class="swiper-container" id="main-swiper" style="flex: 1; width: 100%; min-height: 0;">
+            <!-- TABS WRAPPER -->
+            <div id="tabs-wrapper" style="flex: 1; width: 100%; min-height: 0; display: flex; flex-direction: column; position: relative;">
+                
+                <!-- TAB CHAT -->
+                <div id="tab-chat" style="flex: 1; width: 100%; min-height: 0; display: flex; flex-direction: column;">
+                    <!-- CONTENEDOR DESLIZABLE (SWIPER) -->
+                    <div class="swiper-container" id="main-swiper" style="flex: 1; width: 100%; min-height: 0;">
                 <div class="swiper-wrapper">
                     
                     <!-- PANEL 0: GUARDADOS -->
@@ -192,6 +342,32 @@ import themeData from '../data/theme.json';
                     </button>
                 </div>
             </div>
+            </div> <!-- END TAB CHAT -->
+
+            <!-- TAB MURO -->
+            <div id="tab-muro" style="display: none; flex: 1; width: 100%; min-height: 0; flex-direction: column; background: var(--bg-color); max-width: 480px; margin: 0 auto; overflow-y: auto;">
+                <div style="padding: 16px; border-bottom: 1px solid var(--header-border); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; background: var(--header-bg); z-index: 10;">
+                    <h2 style="margin: 0; font-size: 18px; color: var(--text-primary);">Muro Social</h2>
+                    <button onclick="window.openNewPostModal()" style="background: var(--primary-color); color: white; border: none; padding: 8px 16px; border-radius: 20px; font-weight: 600; cursor: pointer;">+ Nueva Foto</button>
+                </div>
+                <div id="feed-container" style="flex: 1; padding: 16px; display: flex; flex-direction: column; gap: 16px;">
+                    <div style="text-align: center; color: var(--text-secondary); margin-top: 20px;">Cargando muro...</div>
+                </div>
+            </div> <!-- END TAB MURO -->
+            
+            <!-- BOTTOM NAVIGATION -->
+            <nav id="bottom-nav" style="width: 100%; max-width: 480px; margin: 0 auto; background: var(--header-bg); border-top: 1px solid var(--header-border); display: flex; justify-content: space-around; padding: 10px 0; padding-bottom: calc(10px + env(safe-area-inset-bottom));">
+                <button onclick="window.switchTab('chat')" id="nav-tab-chat" class="nav-tab active" style="background: none; border: none; display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--primary-color); cursor: pointer; flex: 1;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z"/></svg>
+                    <span style="font-size: 11px; font-weight: 600;">Chat</span>
+                </button>
+                <button onclick="window.switchTab('muro')" id="nav-tab-muro" class="nav-tab" style="background: none; border: none; display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text-secondary); cursor: pointer; flex: 1;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+                    <span style="font-size: 11px; font-weight: 600;">Muro</span>
+                </button>
+            </nav>
+            
+            </div> <!-- END TABS WRAPPER -->
 
             <!-- Capa de Navegación en Vivo a Pantalla Completa -->
             <div id="fullscreen-nav-layer" class="fullscreen-nav closed">
