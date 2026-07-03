@@ -4,7 +4,8 @@ export async function onRequestGet(context) {
     
     if (!pathSegments) return new Response('Bad Request', { status: 400 });
 
-    const id = Array.isArray(pathSegments) ? pathSegments.join('/') : pathSegments;
+    let id = Array.isArray(pathSegments) ? pathSegments.join('/') : pathSegments;
+    id = decodeURIComponent(id);
 
     try {
         const object = await env.BUCKET.get(id);
