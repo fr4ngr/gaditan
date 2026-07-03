@@ -16,6 +16,7 @@ export async function onRequestGet(context) {
     try {
         let processed = 0;
         let errors = 0;
+        let lastError = "";
 
         for (const brain of brains) {
             // Ignoramos archivos meta vacíos
@@ -50,12 +51,13 @@ export async function onRequestGet(context) {
             } catch (err) {
                 console.error(`Error processing brain ${brain.fileName}:`, err);
                 errors++;
+                lastError = err.message || err.toString();
             }
         }
 
         return new Response(JSON.stringify({ 
             success: true, 
-            message: `Vectorización completada. Procesados: ${processed}, Errores: ${errors}` 
+            message: `Vectorización completada. Procesados: ${processed}, Errores: ${errors}. Detalles: ${lastError}` 
         }), {
             headers: { 'Content-Type': 'application/json' }
         });
