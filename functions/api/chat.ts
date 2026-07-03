@@ -39,41 +39,40 @@ export async function onRequestPost(context) {
         // Inicializar Gemini usando la clave secreta del entorno (Cloudflare)
         const ai = new GoogleGenAI({ apiKey: env.GEMINI_API_KEY });
 
-        // ENRUTADOR DUAL-BRAIN
-        const routerInstruction = `Eres un enrutador inteligente para Cádiz. Analiza la conversación y decide qué tipo de conocimiento necesita para responder al usuario:
-- "A_oficial": Si pregunta sobre transporte público, autobuses, normativas, leyes, tarifas, ordenanzas, precios de taxi, reglas municipales o cosas oficiales.
-- "B_ventas": Si pregunta por turismo, hoteles, restaurantes, ocio, qué ver, playas, compras, eventos o necesita recomendaciones comerciales.
-- "AMBOS": Si la pregunta mezcla conceptos oficiales y turísticos.
-Devuelve ÚNICAMENTE UNA de las 3 palabras: A_oficial, B_ventas, o AMBOS. Sin formato ni texto adicional.`;
-
-        let ruta = "AMBOS";
+        // ----------------------------------------------------
+        // RAG VECTOR SEARCH (Cloudflare Vectorize)
+        // ----------------------------------------------------
+        let cerebrosXml = "";
+        let cerebrosFiltrados = [];
         try {
-            const routerResponse = await ai.models.generateContent({
-                model: 'gemini-2.5-flash',
-                contents: body.history && body.history.length > 0 ? body.history : [{ role: 'user', parts: [{ text: userMessage }] }],
-                config: { systemInstruction: routerInstruction, temperature: 0.0, maxOutputTokens: 5 }
-            });
-            const rText = routerResponse.text.trim().toUpperCase();
-            if (rText.includes("A_OFICIAL")) ruta = "A_oficial";
-            else if (rText.includes("B_VENTAS")) ruta = "B_ventas";
-        } catch(e) {
-            console.error("Router error:", e);
-        }
+            // 1. Convertir la pregunta del usuario en un vector (Embedding)
+            const aiEmbedding = await env.AI.run('@cf/baai/bge-large-en-v1.5', { text: [userMessage] });
+            const vector = aiEmbedding.data[0];
 
-        let cerebrosFiltrados = brains;
-        if (ruta === "A_oficial") {
-             cerebrosFiltrados = brains.filter(b => b.tipo === "A_oficial");
-        } else if (ruta === "B_ventas") {
-             cerebrosFiltrados = brains.filter(b => b.tipo === "B_ventas");
-        }
-
-        const cerebrosXml = cerebrosFiltrados.map(b => `
-<cerebro materia="${b.materia}" tipo="${b.tipo}" documento="${b.fileName}">
+            // 2. Buscar en Vectorize los 3 textos más relevantes
+            const vecMatches = await env.VECTORIZE_INDEX.query(vector, { topK: 3 });
+            
+            if (vecMatches && vecMatches.matches && vecMatches.matches.length > 0) {
+                // 3. Extraer los IDs encontrados y buscar su contenido real en D1
+                const matchIds = vecMatches.matches.map(m => m.id);
+                const placeholders = matchIds.map(() => '?').join(',');
+                const query = `SELECT * FROM knowledge_base WHERE id IN (${placeholders})`;
+                const dbResults = await env.DB.prepare(query).bind(...matchIds).all();
+                
+                if (dbResults && dbResults.results) {
+                    cerebrosFiltrados = dbResults.results;
+                    cerebrosXml = cerebrosFiltrados.map(b => `
+<cerebro materia="${b.materia}" tipo="${b.tipo}" documento="${b.id}">
 ${b.content}
 </cerebro>
 `).join('');
+                }
+            }
+        } catch (ragError) {
+            console.error("Error en RAG Vectorize:", ragError);
+        }
 
-        const systemInstruction = (activeSystemPrompt || "Eres un asistente.").replace('{{CEREBROS_INJECTION_POINT}}', `<cerebros_activos ruta="${ruta}">\n${cerebrosXml}\n</cerebros_activos>`);
+        const systemInstruction = (activeSystemPrompt || "Eres un asistente.").replace('{{CEREBROS_INJECTION_POINT}}', `<cerebros_activos>\n${cerebrosXml}\n</cerebros_activos>`);
 
         const schema = {
             type: Type.OBJECT,
@@ -324,7 +323,7 @@ ${b.content}
                 try {
                     const intentCat = parsedData.intentCategory || 'Otros';
                     const botRespText = parsedData.content || 'Sin respuesta';
-                    const brainsInjected = cerebrosFiltrados.length > 0 ? cerebrosFiltrados.map(b => b.nombre).join(', ') : '';
+                    const brainsInjected = cerebrosFiltrados.length > 0 ? cerebrosFiltrados.map(b => b.materia || b.id).join(', ') : '';
                     
                     await env.DB.prepare(
                         "INSERT INTO chat_logs (user_message, bot_response, intent_category, latency_ms, tokens_used, brains_injected, input_type, ab_variant) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"

@@ -10,5 +10,21 @@
 	},
 	"observability": {
 		"enabled": true
-	}
+	},
+	"ai": {
+		"binding": "AI"
+	},
+	"vectorize": [
+		{
+			"binding": "VECTORIZE_INDEX",
+			"index_name": "cadiz-knowledge"
+		}
+	],
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "cadiz-taxi-db",
+			"database_id": "TO_BE_REPLACED"
+		}
+	]
 }

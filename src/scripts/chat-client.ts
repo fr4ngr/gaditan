@@ -1,0 +1,1931 @@
+
+    // --- DATOS DE PARADAS GLOBALES ---
+    const CADIZ_STOPS = [
+        { name: "Parador", desc: "Parador de Cádiz", lat: 36.5342075, lon: -6.3050849 },
+        { name: "Falla", desc: "Plaza de Falla", lat: 36.5334696, lon: -6.3021514 },
+        { name: "Mora", desc: "Glorieta Carlos Con", lat: 36.531308, lon: -6.305134 },
+        { name: "San Antonio", desc: "Plaza de San Antonio", lat: 36.534150, lon: -6.297400 },
+        { name: "Palillero", desc: "Plaza del Palillero", lat: 36.5318437, lon: -6.2964062 },
+        { name: "Plaza Tortugas", desc: "Plaza de las Tortugas", lat: 36.533451, lon: -6.293564 },
+        { name: "La Punta", desc: "Paseo Almirante Pascual Pery (Solo noches)", lat: 36.537434, lon: -6.290726 },
+        { name: "Comes", desc: "Plaza de la Hispanidad", lat: 36.535364, lon: -6.291775 },
+        { name: "Catedral", desc: "Plaza de la Catedral", lat: 36.529217, lon: -6.295707 },
+        { name: "San Juan de Dios", desc: "Plaza de San Juan de Dios", lat: 36.530537, lon: -6.291444 },
+        { name: "Estación", desc: "Entrada Oeste de la Estación de Adif", lat: 36.528159, lon: -6.287746 },
+        { name: "Caja Nacional", desc: "Junto al INSS", lat: 36.526253, lon: -6.289851 },
+        { name: "Monte Puerta Tierra", desc: "Avenida Andalucía, 34", lat: 36.520385, lon: -6.285054 },
+        { name: "Pabellón", desc: "Calle Brunete", lat: 36.520156, lon: -6.282787 },
+        { name: "Corte Inglés", desc: "Avenida de las Cortes de Cádiz", lat: 36.521661, lon: -6.276634 },
+        { name: "Bar Parada", desc: "Avenida Guadalquivir, 23", lat: 36.519283, lon: -6.277154 },
+        { name: "Hotel Barceló", desc: "Avenida Andalucía, 89", lat: 36.514442, lon: -6.281504 },
+        { name: "Camelia", desc: "Avenida Ana de Viya, 7", lat: 36.511658, lon: -6.279901 },
+        { name: "Barriada", desc: "Avenida Guadalete", lat: 36.511384, lon: -6.271984 },
+        { name: "Residencia", desc: "Avenida Cayetano del Toro, 1 (Hospital Puerta del Mar)", lat: 36.507906, lon: -6.277750 },
+        { name: "Mercadona", desc: "Avenida de la Ilustración, 1", lat: 36.507279, lon: -6.268245 },
+        { name: "Canary", desc: "Glorieta Zona Franca", lat: 36.505821, lon: -6.276564 },
+        { name: "Helios", desc: "Plaza Helios (Estadio)", lat: 36.501347, lon: -6.274249 },
+        { name: "Piscina", desc: "Complejo Deportivo Ciudad de Cádiz", lat: 36.497418, lon: -6.271457 },
+        { name: "Zona Franca", desc: "Glorieta de la Zona Franca", lat: 36.500538, lon: -6.268548 }
+    ];
+
+    const AIRPORTS = [
+        { name: "Aeropuerto de Sevilla (SVQ)", desc: "", lat: 37.423518, lon: -5.900192, approxTime: "1h 15m", approxDist: "130km" },
+        { name: "Aeropuerto de Jerez (XRY)", desc: "", lat: 36.750488, lon: -6.064420, approxTime: "35m", approxDist: "43km" },
+        { name: "Aeropuerto de Málaga (AGP)", desc: "", lat: 36.677706, lon: -4.491414, approxTime: "2h 20m", approxDist: "225km" },
+        { name: "Aeropuerto de Gibraltar (GIB)", desc: "", lat: 36.153944, lon: -5.347113, approxTime: "1h 20m", approxDist: "118km" }
+    ];
+
+    // --- ESTADO DEL CHAT ---
+    const messagesContainer = document.getElementById('messages-container');
+    const inputField = document.querySelector('.chat-input') as HTMLInputElement;
+    const sendButton = document.querySelector('.send-button');
+    let chatHistory: any[] = [];
+
+    // --- RENDERIZADO BÁSICO ---
+    function scrollToBottom() {
+        if (messagesContainer) {
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+    }
+
+    function addMessage(sender: 'user' | 'bot', htmlContent: string, shouldScroll: boolean = true) {
+        const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${sender}`;
+        
+        // Asignamos el HTML principal y el tiempo
+        messageDiv.innerHTML = `${htmlContent}<div class="message-meta"><span class="message-time">${time}</span></div>`;
+        
+        if (sender === 'bot') {
+            const rawContent = encodeURIComponent(htmlContent);
+            
+            const actionsDiv = document.createElement('div');
+            actionsDiv.className = 'msg-actions-row';
+            actionsDiv.style.display = 'flex';
+            actionsDiv.style.justifyContent = 'flex-end';
+            actionsDiv.style.gap = '8px';
+            actionsDiv.style.marginTop = '4px';
+            actionsDiv.style.marginBottom = '8px';
+            actionsDiv.style.marginRight = '8px';
+            
+            actionsDiv.innerHTML = `
+                <button class="action-btn thumb-up" onclick="window.toggleThumb(this)" aria-label="Me gusta" style="background: transparent; color: var(--text-secondary); border: none; padding: 4px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: color 0.2s, transform 0.1s;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path></svg>
+                </button>
+                <button class="action-btn thumb-down" onclick="window.toggleThumb(this)" aria-label="No me gusta" style="background: transparent; color: var(--text-secondary); border: none; padding: 4px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: color 0.2s, transform 0.1s;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-2"></path></svg>
+                </button>
+                <button class="action-btn save-msg-btn" onclick="window.saveMessage(this, '${rawContent}')" aria-label="Guardar" style="background: transparent; color: var(--text-secondary); border: none; padding: 4px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: color 0.2s, transform 0.1s;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"></path></svg>
+                </button>
+                <button class="action-btn share-btn" onclick="window.shareMessage('${rawContent}')" aria-label="Compartir" style="background: transparent; color: var(--text-secondary); border: none; padding: 4px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: color 0.2s, transform 0.1s;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+                </button>
+            `;
+            
+            // Insertar la fila de acciones antes de las píldoras (suggested-blocks-container) o al final
+            const suggestedBlocks = messageDiv.querySelector('.suggested-blocks-container');
+            const metaBlock = messageDiv.querySelector('.message-meta');
+            
+            if (suggestedBlocks) {
+                messageDiv.insertBefore(actionsDiv, suggestedBlocks);
+            } else if (metaBlock) {
+                messageDiv.insertBefore(actionsDiv, metaBlock);
+            } else {
+                messageDiv.appendChild(actionsDiv);
+            }
+        }
+        
+        messagesContainer?.appendChild(messageDiv);
+        if (shouldScroll) {
+            scrollToBottom();
+        }
+    }
+
+    function showTypingIndicator() {
+        const id = 'typing-' + Date.now();
+        const wrapper = document.createElement('div');
+        wrapper.className = 'message bot';
+        wrapper.id = id;
+        wrapper.innerHTML = `
+            <div class="bubble typing-indicator" style="padding: 0; display: flex; align-items: center; justify-content: center; width: 64px; height: 40px; overflow: hidden;">
+                <div id="lottie-${id}" style="width: 100%; height: 100%; transform: scale(1.8);"></div>
+            </div>
+        `;
+        document.getElementById('messages-container')?.appendChild(wrapper);
+        scrollToBottom();
+        
+        // Iniciar animación Lottie
+        if ((window as any).lottie) {
+            (window as any).lottie.loadAnimation({
+                container: document.getElementById(`lottie-${id}`),
+                renderer: 'svg',
+                loop: true,
+                autoplay: true,
+                path: '/lottie/loading-ball.json'
+            });
+        }
+        
+        return id;
+    }
+
+    function removeTypingIndicator(id: string) {
+        const el = document.getElementById(id);
+        if (el) el.remove();
+    }
+
+    // --- GENERATIVE UI ENGINE (TARJETAS) ---
+    function renderCard(data: any, msgId: string): string {
+        if (data.content) {
+            data.content = window.escapeHTML(data.content).replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\*(.*?)\*/g, '<i>$1</i>').replace(/\n/g, '<br>');
+        }
+        const title = data.title || '';
+        const subtitle = data.subtitle || '';
+        const badge = data.badge ? `<div style="font-size: 0.75rem; text-transform: uppercase; font-weight: bold; color: var(--primary-color); letter-spacing: 0.5px; margin-bottom: 4px;">${data.badge}</div>` : '';
+        const img = data.imageUrl ? `<img src="${data.imageUrl}" alt="${title}" style="width: 100%; height: 180px; object-fit: cover;">` : '<div style="width: 100%; height: 180px; background: linear-gradient(45deg, #f1f5f9, #e2e8f0); display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 2.5rem; border-bottom: 1px solid var(--border-color);">🖼️</div>';
+        
+        let buttonHtml = '';
+        if (data.buttonText) {
+            const action = data.buttonAction ? `onclick="window.sendToAI('${data.buttonAction.replace(/'/g, "\\'")}')"` : '';
+            const url = data.buttonUrl ? `href="${data.buttonUrl}" target="_blank"` : '';
+            if (url) {
+                buttonHtml = `<a ${url} class="btn btn-primary btn-rect" style="display:block; text-align:center; text-decoration:none; margin-top:12px;">${data.buttonText}</a>`;
+            } else {
+                buttonHtml = `<button class="btn btn-primary btn-rect" style="width:100%; margin-top:12px;" ${action}>${data.buttonText}</button>`;
+            }
+        }
+
+        if (data.cardType === 'HeroCard') {
+            return `
+            <div class="flex-col gap-sm" style="width: 100%; max-width: 100%; align-self: flex-start; margin-bottom: 0.5rem;">
+                ${data.content ? `<span class="bubble" style="border-bottom-left-radius: 4px;">${data.content}</span>` : ''}
+                <div class="card mt-sm" style="overflow: hidden; border-radius: 12px; border: 1px solid var(--border-color);">
+                    ${img}
+                    <div class="card-body">
+                        ${badge}
+                        <h3 style="margin:0 0 8px 0; color:var(--text-color);">${title}</h3>
+                        ${subtitle ? `<p class="text-muted" style="margin:0">${subtitle}</p>` : ''}
+                        ${buttonHtml}
+                    </div>
+                </div>
+            </div>`;
+        }
+
+        if (data.cardType === 'ListCard') {
+            let listHtml = '';
+            if (data.listItems && Array.isArray(data.listItems)) {
+                listHtml = data.listItems.map((item: any, i: number) => `
+                    <div style="display:flex; align-items:center; gap: 12px; padding: 12px 0; border-bottom: ${i < data.listItems.length - 1 ? '1px solid var(--border-color)' : 'none'};">
+                        <div style="font-size:1.5rem; width:40px; text-align:center; flex-shrink:0;">${item.icon || '📌'}</div>
+                        <div style="flex:1;">
+                            <div style="font-weight:600; color:var(--text-color);">${item.title}</div>
+                            ${item.subtitle ? `<div style="font-size:0.85rem; color:var(--text-muted); margin-top:2px;">${item.subtitle}</div>` : ''}
+                        </div>
+                    </div>
+                `).join('');
+            }
+            return `
+            <div class="flex-col gap-sm" style="width: 100%; max-width: 100%; align-self: flex-start; margin-bottom: 0.5rem;">
+                ${data.content ? `<span class="bubble" style="border-bottom-left-radius: 4px;">${data.content}</span>` : ''}
+                <div class="card mt-sm">
+                    <div class="card-body">
+                        ${badge}
+                        <h3 style="margin:0 0 12px 0; color:var(--text-color);">${title}</h3>
+                        <div style="display:flex; flex-direction:column;">
+                            ${listHtml}
+                        </div>
+                        ${buttonHtml}
+                    </div>
+                </div>
+            </div>`;
+        }
+
+        if (data.cardType === 'BusinessCard') {
+            return `
+            <div class="flex-col gap-sm" style="width: 100%; max-width: 100%; align-self: flex-start; margin-bottom: 0.5rem;">
+                ${data.content ? `<span class="bubble" style="border-bottom-left-radius: 4px;">${data.content}</span>` : ''}
+                <div class="card mt-sm">
+                    <div class="card-body">
+                        ${badge}
+                        <h3 style="margin:0 0 4px 0; color:var(--text-color);">${data.contactName || title}</h3>
+                        ${subtitle ? `<p class="text-muted" style="margin:0 0 12px 0">${subtitle}</p>` : ''}
+                        <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top: 12px;">
+                            ${data.phoneNumber ? `<a href="tel:${data.phoneNumber.replace(/\s+/g, '')}" class="btn btn-success" style="flex:1; padding:8px; text-align:center; text-decoration:none;">📞 Llamar</a>` : ''}
+                            ${data.whatsappNumber ? `<a href="https://wa.me/${data.whatsappNumber.replace(/\s+/g, '').replace('+', '')}" class="btn" style="flex:1; background:#25D366; color:white; padding:8px; text-align:center; text-decoration:none;">💬 WhatsApp</a>` : ''}
+                            ${data.website ? `<a href="${data.website}" target="_blank" class="btn btn-primary" style="flex:1; padding:8px; text-align:center; text-decoration:none;">🌐 Web</a>` : ''}
+                        </div>
+                        ${buttonHtml}
+                    </div>
+                </div>
+            </div>`;
+        }
+
+        if (data.cardType === 'ArticleCard') {
+            return `
+            <div class="flex-col gap-sm" style="width: 100%; max-width: 100%; align-self: flex-start; margin-bottom: 0.5rem;">
+                ${data.content ? `<span class="bubble" style="border-bottom-left-radius: 4px;">${data.content}</span>` : ''}
+                <div class="card mt-sm" style="border-left: 4px solid var(--primary-color);">
+                    <div class="card-body">
+                        ${badge}
+                        <h4 style="margin:0 0 8px 0; color:var(--text-color);">${title}</h4>
+                        <p class="text-muted" style="margin:0; font-size: 0.95rem; line-height: 1.5;">${subtitle}</p>
+                        ${buttonHtml}
+                    </div>
+                </div>
+            </div>`;
+        }
+
+        if (data.cardType === 'AlertCard') {
+            return `
+            <div class="flex-col gap-sm" style="width: 100%; max-width: 100%; align-self: flex-start; margin-bottom: 0.5rem;">
+                ${data.content ? `<span class="bubble" style="border-bottom-left-radius: 4px;">${data.content}</span>` : ''}
+                <div class="card mt-sm" style="background-color: #fff3cd; border: 1px solid #ffeeba;">
+                    <div class="card-body">
+                        <div style="color: #856404; font-weight: bold; margin-bottom: 4px;">${badge || '⚠️ Aviso'}</div>
+                        <h3 style="margin:0 0 8px 0; color: #856404;">${title}</h3>
+                        <p style="margin:0; color: #856404; font-size: 0.9rem;">${subtitle}</p>
+                        ${buttonHtml}
+                    </div>
+                </div>
+            </div>`;
+        }
+
+        if (data.cardType === 'ProductCard') {
+            return `
+            <div class="flex-col gap-sm" style="width: 100%; max-width: 100%; align-self: flex-start; margin-bottom: 0.5rem;">
+                ${data.content ? `<span class="bubble" style="border-bottom-left-radius: 4px;">${data.content}</span>` : ''}
+                <div class="card mt-sm" style="overflow: hidden; display: flex; flex-direction: row; align-items: center;">
+                    ${data.imageUrl ? `<img src="${data.imageUrl}" alt="${title}" style="width: 100px; height: 100px; object-fit: cover;">` : '<div style="width: 100px; height: 100px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 1.5rem; border-right: 1px solid var(--border-color);">📦</div>'}
+                    <div class="card-body" style="flex:1;">
+                        ${badge}
+                        <h4 style="margin:0 0 4px 0; color:var(--text-color);">${title}</h4>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            ${data.price ? `<span style="font-weight:bold; color:var(--primary-color); font-size:1.1rem;">${data.price}</span>` : ''}
+                            ${data.oldPrice ? `<span style="text-decoration:line-through; color:var(--text-muted); font-size:0.9rem;">${data.oldPrice}</span>` : ''}
+                        </div>
+                        ${buttonHtml}
+                    </div>
+                </div>
+            </div>`;
+        }
+
+        if (data.cardType === 'ProfileCard') {
+            return `
+            <div class="flex-col gap-sm" style="width: 100%; max-width: 100%; align-self: flex-start; margin-bottom: 0.5rem;">
+                ${data.content ? `<span class="bubble" style="border-bottom-left-radius: 4px;">${data.content}</span>` : ''}
+                <div class="card mt-sm">
+                    <div class="card-body" style="display:flex; align-items:center; gap: 16px;">
+                        ${data.imageUrl ? `<img src="${data.imageUrl}" alt="${data.contactName || title}" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary-color);">` : '<div style="width:60px; height:60px; border-radius:50%; background:var(--primary-color); color:white; display:flex; align-items:center; justify-content:center; font-size:1.5rem;">👤</div>'}
+                        <div style="flex:1;">
+                            ${badge}
+                            <h3 style="margin:0 0 4px 0; color:var(--text-color);">${data.contactName || title}</h3>
+                            ${subtitle ? `<p class="text-muted" style="margin:0; font-size:0.9rem;">${subtitle}</p>` : ''}
+                        </div>
+                    </div>
+                    ${buttonHtml ? `<div style="padding: 0 16px 16px 16px;">${buttonHtml}</div>` : ''}
+                </div>
+            </div>`;
+        }
+
+        if (data.cardType === 'MapCard') {
+            const mapIcon = `📍`;
+            if (data.lat && data.lon) {
+                return `
+                <div class="flex-col gap-sm" style="width: 100%; max-width: 100%; align-self: flex-start;">
+                    ${data.content ? `<span class="bubble">${data.content}</span>` : ''}
+                    <button class="btn btn-primary" onclick="window.openFullscreenMap('${data.lat}', '${data.lon}', '${msgId}')">
+                        <div class="icon-circle">${mapIcon}</div> Ver ${data.locationTitle || title || 'ubicación'} en mapa
+                    </button>
+                </div>`;
+            }
+            return data.content ? `<span class="bubble">${data.content}</span>` : '';
+        }
+
+        if (data.cardType === 'NavigationCard') {
+            return `
+            <div class="flex-col gap-sm" style="width: 100%; max-width: 85%; align-self: flex-start;">
+                ${data.content ? `<span class="bubble">${data.content}</span>` : ''}
+                ${data.lat && data.lon ? `
+                <div class="card card-lg mt-sm">
+                    <div class="card-body">
+                        <div class="text-title text-center">📍 Destino: ${data.locationTitle || title || 'Ubicación'}</div>
+                        <button class="btn btn-primary btn-rect mt-sm" style="margin:0" onclick="window.startLiveNavigation('${data.lat}', '${data.lon}', '${data.locationTitle || title || 'Destino'}')">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 2L4.5 20.29L5.21 21L12 18L18.79 21L19.5 20.29L12 2Z" fill="currentColor"/>
+                            </svg>
+                            Iniciar Navegación
+                        </button>
+                    </div>
+                </div>
+                ` : ''}
+            </div>`;
+        }
+        
+        if (data.cardType === 'GalleryCard') {
+            let html = '';
+            let imagesHtml = '';
+            if (data.imageUrls && Array.isArray(data.imageUrls) && data.imageUrls.length > 0) {
+                imagesHtml = data.imageUrls.map((url: string) => `
+                    <div style="flex: 0 0 85%; scroll-snap-align: center; border-radius: 8px; overflow: hidden; border: 1px solid var(--border-color);">
+                        <img src="${url}" alt="Galería" style="width: 100%; height: 200px; object-fit: cover; display: block;" loading="lazy" />
+                    </div>
+                `).join('');
+            } else {
+                // Placeholder if no images
+                imagesHtml = [1, 2].map((i) => `
+                    <div style="flex: 0 0 85%; scroll-snap-align: center; border-radius: 8px; overflow: hidden; border: 1px solid var(--border-color); background: linear-gradient(45deg, #f1f5f9, #e2e8f0); display: flex; align-items: center; justify-content: center; height: 200px;">
+                        <span style="font-size: 2rem; opacity: 0.5;">📸</span>
+                    </div>
+                `).join('');
+            }
+
+            html = `
+                <div class="card-wrapper" style="animation: slideIn 0.3s ease-out; margin-top: 8px;">
+                    <div style="display: flex; flex-direction: row; overflow-x: auto; scroll-snap-type: x mandatory; gap: 8px; padding-bottom: 4px;">
+                        ${imagesHtml}
+                    </div>
+                </div>
+            `;
+            return `
+            <div class="flex-col gap-sm" style="width: 100%; max-width: 100%; align-self: flex-start; margin-bottom: 0.5rem;">
+                ${data.content ? `<span class="bubble">${data.content}</span>` : ''}
+                ${html}
+            </div>`;
+        }
+
+        // TextCard y Fallback para desconocidos
+        return data.content ? `<span class="bubble">${data.content}</span>` : '';
+    }
+
+    window.escapeHTML = function(str: string) {
+        if (!str) return '';
+        return str.replace(/[&<>'"]/g, 
+            tag => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                "'": '&#39;',
+                '"': '&quot;'
+            }[tag] || tag)
+        );
+    };
+
+    // --- CONEXIÓN CON EL CEREBRO DE IA ---
+    async function sendMessageToAI(text: string, isHiddenInit: boolean = false, inputType: string = 'typed') {
+        if (!text.trim()) return;
+        
+        // 1. Pintar mensaje del usuario y guardarlo en historial
+        if (!isHiddenInit) {
+            addMessage('user', `<span class="bubble">${window.escapeHTML(text)}</span>`);
+        }
+        chatHistory.push({ role: 'user', parts: [{ text }] });
+        
+        if (!isHiddenInit) {
+            inputField.value = '';
+        }
+
+        // 2. Mostrar "Pensando..."
+        const typingId = showTypingIndicator();
+
+        // 3. Obtener o crear sessionId
+        let sessionId = localStorage.getItem('cadiz_chat_session');
+        if (!sessionId) {
+            sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            localStorage.setItem('cadiz_chat_session', sessionId);
+        }
+
+        try {
+            // 4. Llamar al API Endpoint de Astro (SSR)
+            const response = await fetch('/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: text, history: chatHistory, inputType: isHiddenInit ? 'system' : inputType, sessionId })
+            });
+
+            const data = await response.json();
+            removeTypingIndicator(typingId);
+
+            if (data.error) {
+                let errorMsg = typeof data.error === 'string' ? data.error : JSON.stringify(data.error);
+                if (errorMsg.includes('503') || errorMsg.includes('high demand') || errorMsg.includes('demasiada gente')) {
+                    errorMsg = "Servidores de Inteligencia Artificial saturados temporalmente. Por favor, inténtalo de nuevo en unos segundos.";
+                }
+                
+                const safeText = text.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                addMessage('bot', `
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <span class="bubble" style="background:#ffebee; color:#c62828;">⚠️ ${errorMsg}</span>
+                        <button class="call-btn" style="background: #c62828; margin: 0; align-self: flex-start; padding: 6px 12px; font-size: 0.85rem;" onclick="window.sendToAI('${safeText}')">🔄 Reintentar</button>
+                    </div>
+                `);
+                
+                chatHistory.pop(); // Remove failed user message from history
+                return;
+            }
+
+            // Guardar respuesta del bot en el historial (como JSON string para que el modelo lo lea)
+            chatHistory.push({ role: 'model', parts: [{ text: JSON.stringify(data) }] });
+
+            // 4. Renderizar la Tarjeta generada por la IA
+            const msgId = Date.now().toString();
+            let finalHtml = renderCard(data, msgId);
+
+            // Renderizar Suggested Blocks (Botones)
+            if (data.suggestedBlocks && data.suggestedBlocks.length > 0) {
+                const buttonsHtml = data.suggestedBlocks.map((block: string) => {
+                    return `<button class="suggested-btn" onclick="window.sendToAI('${block}', false, 'click')">${block}</button>`;
+                }).join('');
+                finalHtml += `<div class="suggested-blocks-container">${buttonsHtml}</div>`;
+            }
+            
+            addMessage('bot', finalHtml);
+
+
+
+            // 5. Instanciar el mapa en línea o activar navegación
+            if (data.cardType === 'NavigationCard' && data.lat && data.lon) {
+                setTimeout(() => {
+                    window.startLiveNavigation(data.lat, data.lon, data.stopName || 'Destino');
+                }, 800); // Dar un poco de tiempo para leer el mensaje antes de abrir a pantalla completa
+            }
+
+        } catch (error) {
+            removeTypingIndicator(typingId);
+            addMessage('bot', `<span class="bubble" style="background:#ffebee; color:#c62828;">Error de conexión. Inténtalo de nuevo.</span>`);
+        }
+    }
+
+    // --- LÓGICA DE NAVEGACIÓN Y CABECERA ESTÁTICA ---
+    document.addEventListener("DOMContentLoaded", () => {
+        const swiper = document.getElementById('main-swiper');
+        if (swiper) {
+            // Ajustar al chat sin animación al cargar la página
+            swiper.style.scrollBehavior = 'auto';
+            swiper.scrollLeft = window.innerWidth;
+            setTimeout(() => { swiper.style.scrollBehavior = 'smooth'; }, 50);
+        }
+    });
+
+    window.switchPanel = function(panelId: 'guardados' | 'chat' | 'mapa') {
+        const swiper = document.getElementById('main-swiper');
+        if (!swiper) return;
+
+        let leftPos = 0;
+        
+        if (panelId === 'guardados') {
+            leftPos = 0;
+        } else if (panelId === 'chat') {
+            leftPos = window.innerWidth;
+        } else if (panelId === 'mapa') {
+            leftPos = window.innerWidth * 2;
+        }
+
+        swiper.scrollTo({ left: leftPos, behavior: 'smooth' });
+    };
+
+    window.openFullscreenMap = function(lat: string | null, lon: string | null, msgId: string) {
+        // Mover panel, actualizar cabecera y cerrar píldora por si estaba abierta
+        window.switchPanel('mapa');
+        if (window.closeMapInfoPill) window.closeMapInfoPill();
+        
+        const topPills = document.getElementById('map-top-pills');
+        if (topPills) topPills.style.display = 'none';
+
+        const container = document.getElementById('fullscreen-widget-area');
+        if (!container) return;
+
+        // Limpiar contenedor e inyectar el div del mapa
+        container.innerHTML = `<div id="fullscreen-leaflet-${msgId}" style="width: 100%; height: 100%;"></div>`;
+
+        setTimeout(() => {
+            const mapL = (window as any).L;
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            
+            const map = mapL.map(`fullscreen-leaflet-${msgId}`, { 
+                zoomControl: false, 
+                dragging: !isMobile,
+                tap: !isMobile
+            });
+            
+            if (isMobile) {
+                map.on('touchstart', (e: any) => {
+                    if (e.originalEvent && e.originalEvent.touches && e.originalEvent.touches.length === 1) {
+                        let overlay = document.getElementById('map-touch-warning');
+                        if (!overlay) {
+                            overlay = document.createElement('div');
+                            overlay.id = 'map-touch-warning';
+                            overlay.style.cssText = 'position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); background:rgba(0,0,0,0.7); color:white; padding:12px 20px; border-radius:20px; font-weight:600; z-index:9999; pointer-events:none; opacity:0; transition:opacity 0.3s; text-align:center; font-size:14px; box-shadow: 0 4px 12px rgba(0,0,0,0.2);';
+                            overlay.innerText = 'Usa dos dedos para mover el mapa';
+                            document.getElementById(`fullscreen-leaflet-${msgId}`)?.appendChild(overlay);
+                        }
+                        overlay.style.opacity = '1';
+                        if ((window as any)._touchWarningTimeout) clearTimeout((window as any)._touchWarningTimeout);
+                        (window as any)._touchWarningTimeout = setTimeout(() => { overlay.style.opacity = '0'; }, 1500);
+                    }
+                });
+            }
+
+            window.currentMap = map; // Guardar referencia global
+            
+            // --- Botón DEV Mode ---
+            const devControl = mapL.control({ position: 'bottomright' });
+            devControl.onAdd = function() {
+                const btn = mapL.DomUtil.create('button', 'leaflet-bar leaflet-control');
+                btn.innerHTML = '📍 Dev';
+                btn.style.backgroundColor = 'var(--primary-color)';
+                btn.style.color = 'white';
+                btn.style.fontWeight = 'bold';
+                btn.style.border = 'none';
+                btn.style.padding = '8px 12px';
+                btn.style.cursor = 'pointer';
+                btn.style.marginBottom = '10px';
+                btn.style.borderRadius = '8px';
+                btn.style.fontSize = '12px';
+                btn.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
+                
+                btn.onclick = function(e: any) {
+                    mapL.DomEvent.stopPropagation(e);
+                    if (window.isDevModeLocation) {
+                        window.isDevModeLocation = false;
+                        btn.innerHTML = '📍 Dev';
+                        btn.style.backgroundColor = 'var(--primary-color)';
+                        map.getContainer().style.cursor = '';
+                        map.off('click', window.devMapClickListener);
+                    } else {
+                        window.isDevModeLocation = true;
+                        btn.innerHTML = 'Haz clic en el mapa...';
+                        btn.style.backgroundColor = '#f59e0b';
+                        map.getContainer().style.cursor = 'crosshair';
+                        
+                        window.devMapClickListener = function(ev: any) {
+                            window.devMockLat = ev.latlng.lat;
+                            window.devMockLon = ev.latlng.lng;
+                            
+                            window.isDevModeLocation = false;
+                            btn.innerHTML = '📍 Fake Loc ✔';
+                            btn.style.backgroundColor = '#10b981';
+                            map.getContainer().style.cursor = '';
+                            map.off('click', window.devMapClickListener);
+                            
+                            if (window.activeMapStopLat) {
+                                window.mapActionDirections();
+                            }
+                        };
+                        map.on('click', window.devMapClickListener);
+                    }
+                };
+                return btn;
+            };
+            devControl.addTo(map);
+
+            mapL.control.zoom({ position: 'bottomright' }).addTo(map);
+            
+            // Crear panel para los textos (labels) encima de los vectores (zIndex 500)
+            map.createPane('labels');
+            map.getPane('labels').style.zIndex = 500;
+            map.getPane('labels').style.pointerEvents = 'none'; // No bloquear clics
+            
+            mapL.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png', {
+                attribution: '© OpenStreetMap, © CartoDB', subdomains: 'abcd', maxZoom: 20
+            }).addTo(map);
+
+            mapL.tileLayer('https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png', {
+                subdomains: 'abcd', maxZoom: 20,
+                pane: 'labels'
+            }).addTo(map);
+
+
+
+            window.doNearestPOI = function(userLat: number, userLon: number, poiType: 'stop' | 'airport' = 'stop') {
+                const loadingHtml = `
+                <div class="message bot" id="loading-nearest">
+                    <div class="message-content">
+                        <span class="bubble">Calculando tu ${poiType === 'airport' ? 'aeropuerto' : 'parada'} más cercan${poiType === 'airport' ? 'o' : 'a'}... 📍</span>
+                    </div>
+                </div>`;
+                const chatOutput = document.getElementById('chat-output');
+                if (chatOutput) chatOutput.insertAdjacentHTML('beforeend', loadingHtml);
+                
+                document.body.style.cursor = 'wait';
+
+                // Fake geolocation for testing (center of Cadiz) if location is outside
+                if (userLat > 37 || userLat < 36 || userLon > -6 || userLon < -7) {
+                    userLat = 36.529217;
+                    userLon = -6.295707;
+                }
+
+                setTimeout(() => {
+                    const loadingMsg = document.getElementById('loading-nearest');
+                    if (loadingMsg) loadingMsg.remove();
+                    
+                    const map = window.currentMap;
+                    const mapL = (window as any).L;
+                    map.invalidateSize();
+                    
+                    // 1. Calcular distancias en línea recta para filtrar
+                    const getDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
+                        const R = 6371e3;
+                        const dLat = (lat2 - lat1) * Math.PI/180;
+                        const dLon = (lon2 - lon1) * Math.PI/180;
+                        const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                                  Math.cos(lat1*Math.PI/180) * Math.cos(lat2*Math.PI/180) *
+                                  Math.sin(dLon/2) * Math.sin(dLon/2);
+                        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+                        return R * c;
+                    };
+                    
+                    const POI_LIST = poiType === 'airport' ? AIRPORTS : CADIZ_STOPS;
+                    
+                    const paradasConDist = POI_LIST.map(p => ({
+                        ...p,
+                        distance: getDistance(userLat, userLon, parseFloat(p.lat as unknown as string), parseFloat(p.lon as unknown as string))
+                    })).sort((a,b) => a.distance - b.distance);
+                    
+                    const top5 = paradasConDist.slice(0, 5);
+                    
+                    // 2. Cálculo real de ruta con OSRM
+                    const routeProfile = poiType === 'airport' ? 'routed-car/route/v1/driving' : 'routed-foot/route/v1/foot';
+                    Promise.all(top5.map(async (p) => {
+                        try {
+                            const url = `https://routing.openstreetmap.de/${routeProfile}/${userLon},${userLat};${p.lon},${p.lat}?overview=false`;
+                            const response = await fetch(url);
+                            const data = await response.json();
+                            if (data.routes && data.routes[0]) {
+                                return { ...p, realDistance: data.routes[0].distance, duration: data.routes[0].duration };
+                            }
+                            return { ...p, realDistance: Infinity, duration: 0 };
+                        } catch (e) {
+                            return { ...p, realDistance: Infinity, duration: 0 };
+                        }
+                    })).then(resultados => {
+                        document.body.style.cursor = 'default';
+                        resultados.sort((a, b) => a.realDistance - b.realDistance);
+                        const masCercana = resultados[0];
+                        
+                        // Formatear distancia y tiempo
+                        let distText = '';
+                        if (masCercana.realDistance !== Infinity) {
+                            if (masCercana.realDistance > 1000) {
+                                distText = `a ${(masCercana.realDistance / 1000).toFixed(1)} km`;
+                            } else {
+                                distText = `a ${Math.round(masCercana.realDistance)} metros`;
+                            }
+                        }
+                        const timeText = masCercana.duration ? `(${Math.ceil(masCercana.duration / 60)} min ${poiType === 'airport' ? 'en coche' : 'a pie'})` : '';
+                        
+                        // Añadir un mensaje al chat
+                        // Enviar destino a la IA para que lo gestione
+                        window.sendToAI(`He seleccionado la ubicación: ${masCercana.name}. Dame información sobre este lugar o guíame.`);
+                        
+                        // Mostrar el mapa
+                        map.setView([masCercana.lat, masCercana.lon], poiType === 'airport' ? 10 : 16);
+                        const targetIcon = mapL.divIcon({
+                            html: '<div style="background:var(--primary-color); border: 2px solid white; width:16px; height:16px; border-radius:50%; box-shadow:0 2px 4px rgba(0,0,0,0.4);"></div>',
+                            className: '', iconSize: [16, 16], iconAnchor: [8, 8]
+                        });
+                        const marker = mapL.marker([masCercana.lat, masCercana.lon], {icon: targetIcon}).addTo(map);
+                        marker.on('click', () => {
+                            window.openMapInfoPill(masCercana.name, masCercana.desc, masCercana.lat, masCercana.lon, poiType);
+                            window.mapActionDirections(poiType);
+                        });
+                        window.openMapInfoPill(masCercana.name, masCercana.desc, masCercana.lat, masCercana.lon, poiType);
+                        
+                        // Activar inmediatamente la ruta y mostrar las indicaciones en la tarjeta
+                        setTimeout(() => {
+                            window.mapActionDirections(poiType);
+                        }, 500);
+                    });
+                }, 10);
+            };
+
+            window.doAllAirportsWithRoutes = function(userLat: number, userLon: number) {
+                document.body.style.cursor = 'wait';
+                if (userLat > 37 || userLat < 36 || userLon > -6 || userLon < -7) {
+                    userLat = 36.529217;
+                    userLon = -6.295707;
+                }
+
+                setTimeout(() => {
+                    const map = window.currentMap;
+                    const mapL = (window as any).L;
+                    map.invalidateSize();
+                    
+                    const bounds = mapL.latLngBounds([userLat, userLon]);
+                    AIRPORTS.forEach(p => bounds.extend([p.lat, p.lon]));
+                    map.fitBounds(bounds, { padding: [20, 20] });
+                    window.globalAirportsBounds = bounds;
+                    
+                    const userIcon = mapL.divIcon({
+                        html: '<div style="background:#4285F4; border: 2px solid white; width:16px; height:16px; border-radius:50%; box-shadow:0 2px 4px rgba(0,0,0,0.4);"></div>',
+                        className: '', iconSize: [16, 16], iconAnchor: [8, 8]
+                    });
+                    mapL.marker([userLat, userLon], {icon: userIcon, zIndexOffset: 1000}).addTo(map);
+
+                    const targetIcon = mapL.divIcon({
+                        html: '<div style="background:var(--primary-color); border: 2px solid white; width:16px; height:16px; border-radius:50%; box-shadow:0 2px 4px rgba(0,0,0,0.4);"></div>',
+                        className: '', iconSize: [16, 16], iconAnchor: [8, 8]
+                    });
+
+                    const markersLayer = mapL.layerGroup().addTo(map);
+                    window.currentMarkersLayer = markersLayer;
+
+                    const topPillsContainer = document.getElementById('map-top-pills');
+                    if (topPillsContainer) {
+                        topPillsContainer.innerHTML = '';
+                        topPillsContainer.style.display = 'flex';
+                    }
+
+                    const airportSvgIcon = mapL.divIcon({
+                        html: `
+                        <div style="background:var(--primary-color); border: 2px solid white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.4);">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="20" height="20" style="transform: rotate(45deg);">
+                                <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/>
+                            </svg>
+                        </div>`,
+                        className: '', iconSize: [32, 32], iconAnchor: [16, 16]
+                    });
+
+                    AIRPORTS.forEach(res => {
+                        const cityName = res.name.replace("Aeropuerto de ", "").replace("Aeroporto do ", "").replace(/\s*\(.*?\)\s*/g, "");
+
+                        const marker = mapL.marker([res.lat, res.lon], {icon: airportSvgIcon}).addTo(markersLayer);
+                        
+                        const selectAirport = async () => {
+                            if (topPillsContainer) topPillsContainer.style.display = 'none';
+                            
+                            window.openMapInfoPill(res.name, res.desc, res.lat, res.lon, 'airport');
+                            const routeBounds = mapL.latLngBounds([userLat, userLon], [res.lat, res.lon]);
+                            map.fitBounds(routeBounds, { paddingTopLeft: [50, 250], paddingBottomRight: [50, 50] });
+                            map.removeLayer(markersLayer);
+                            
+                            if (window.currentActiveMarker) map.removeLayer(window.currentActiveMarker);
+                            window.currentActiveMarker = mapL.marker([res.lat, res.lon], {icon: airportSvgIcon}).addTo(map);
+
+                            if (window.currentAirportRouteLayer) map.removeLayer(window.currentAirportRouteLayer);
+                            window.currentAirportRouteLayer = mapL.layerGroup().addTo(map);
+
+                            document.body.style.cursor = 'wait';
+                            try {
+                                const url = `https://routing.openstreetmap.de/routed-car/route/v1/driving/${userLon},${userLat};${res.lon},${res.lat}?overview=full&geometries=geojson`;
+                                const response = await fetch(url);
+                                const data = await response.json();
+                                if (data.routes && data.routes[0]) {
+                                    const routeData = data.routes[0];
+                                    const coordinates = routeData.geometry.coordinates.map((c: number[]) => [c[1], c[0]]);
+                                    
+                                    const polyline = mapL.polyline(coordinates, {
+                                        color: 'white', weight: 6, opacity: 0.8
+                                    }).addTo(window.currentAirportRouteLayer);
+                                    
+                                    map.fitBounds(polyline.getBounds(), { paddingTopLeft: [50, 250], paddingBottomRight: [50, 50] });
+                                    
+                                    mapL.polyline(coordinates, {
+                                        color: '#4285F4', weight: 4, opacity: 0.8,
+                                        dashArray: '10, 10', className: 'animated-route'
+                                    }).addTo(window.currentAirportRouteLayer);
+
+                                    const durationMin = Math.ceil(routeData.duration / 60);
+                                    const distanceKm = (routeData.distance / 1000).toFixed(1);
+                                    const h = Math.floor(durationMin / 60);
+                                    const m = durationMin % 60;
+                                    const durationText = h > 0 ? `${h}h ${m}m` : `${m}m`;
+                                    const distanceText = `${distanceKm}km`;
+
+                                    const statsEl = document.getElementById('map-floating-route-stats');
+                                    const timeEl = document.getElementById('route-time');
+                                    const distEl = document.getElementById('route-distance');
+                                    if (statsEl && timeEl && distEl) {
+                                        statsEl.style.display = 'flex';
+                                        timeEl.innerText = durationText;
+                                        distEl.innerText = distanceText;
+                                    }
+                                }
+                            } catch (e) {
+                                console.error('Error fetching route', e);
+                            }
+                            document.body.style.cursor = 'default';
+                        };
+
+                        marker.on('click', selectAirport);
+                        
+                        if (topPillsContainer) {
+                            const btn = document.createElement('button');
+                            const miniSvg = `
+                            <div style="background:var(--primary-color); width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 8px;">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="16" height="16" style="transform: rotate(45deg);">
+                                    <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/>
+                                </svg>
+                            </div>`;
+                            btn.innerHTML = `${miniSvg}${cityName}`;
+                            btn.style.cssText = 'display: flex; align-items: center; background: var(--header-bg); border: 1px solid var(--header-border); border-radius: 20px; padding: 6px 16px 6px 6px; font-size: 14px; font-weight: 600; color: var(--text-primary); cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.15); flex-shrink: 0; transition: transform 0.2s;';
+                            btn.onmousedown = () => btn.style.transform = 'scale(0.95)';
+                            btn.onmouseup = () => btn.style.transform = 'scale(1)';
+                            btn.onmouseleave = () => btn.style.transform = 'scale(1)';
+                            btn.onclick = selectAirport;
+                            topPillsContainer.appendChild(btn);
+                        }
+                    });
+                    document.body.style.cursor = 'default';
+                }, 10);
+            };
+
+            window.doAllAirportsFallback = function() {
+                const map = window.currentMap;
+                const mapL = (window as any).L;
+                map.setView([36.516, -6.0], 10);
+                const targetIcon = mapL.divIcon({
+                    html: '<div style="background:var(--primary-color); border: 2px solid white; width:16px; height:16px; border-radius:50%; box-shadow:0 2px 4px rgba(0,0,0,0.4);"></div>',
+                    className: '', iconSize: [16, 16], iconAnchor: [8, 8]
+                });
+                const markersLayer = mapL.layerGroup().addTo(map);
+                window.currentMarkersLayer = markersLayer;
+                AIRPORTS.forEach(stop => {
+                    const marker = mapL.marker([stop.lat, stop.lon], {icon: targetIcon}).addTo(markersLayer);
+                    marker.on('click', () => {
+                        window.openMapInfoPill(stop.name, stop.desc, stop.lat, stop.lon, 'airport');
+                        map.setView([stop.lat, stop.lon], 14);
+                        map.removeLayer(markersLayer);
+                        if (window.currentActiveMarker) map.removeLayer(window.currentActiveMarker);
+                        window.currentActiveMarker = mapL.marker([stop.lat, stop.lon], {icon: targetIcon}).addTo(map);
+                    });
+                });
+            };
+
+            if (lat === 'NEAREST' || lat === 'NEAREST_AIRPORT' || lat === 'ALL_AIRPORTS') {
+                const isNearestAirport = lat === 'NEAREST_AIRPORT';
+                const isAllAirports = lat === 'ALL_AIRPORTS';
+                const poiType = (isNearestAirport || isAllAirports) ? 'airport' : 'stop';
+
+                const onLocationSuccess = (uLat: number, uLon: number) => {
+                    if (isAllAirports) {
+                        window.doAllAirportsWithRoutes(uLat, uLon);
+                    } else {
+                        window.doNearestPOI(uLat, uLon, poiType);
+                    }
+                };
+
+                const onLocationError = () => {
+                    document.body.style.cursor = 'default';
+                    alert("No se pudo obtener la ubicación. Mostrando mapa general.");
+                    if (isAllAirports) {
+                        window.doAllAirportsFallback();
+                    } else {
+                        window.openFullscreenMap(poiType === 'airport' ? 'ALL_AIRPORTS' : null, null, msgId);
+                    }
+                };
+
+                if (window.devMockLat && window.devMockLon) {
+                    onLocationSuccess(window.devMockLat, window.devMockLon);
+                } else if (navigator.geolocation) {
+                    const needHighAccuracy = (lat !== 'ALL_AIRPORTS');
+                    navigator.geolocation.getCurrentPosition((position) => {
+                        onLocationSuccess(position.coords.latitude, position.coords.longitude);
+                    }, onLocationError, { enableHighAccuracy: needHighAccuracy, timeout: 10000, maximumAge: 300000 });
+                } else {
+                    onLocationError();
+                }
+            } else if (!lat) {
+                map.setView([36.516, -6.283], 13);
+                
+                const targetIcon = mapL.divIcon({
+                    html: '<div style="background:var(--primary-color); border: 2px solid white; width:16px; height:16px; border-radius:50%; box-shadow:0 2px 4px rgba(0,0,0,0.4);"></div>',
+                    className: '', iconSize: [16, 16], iconAnchor: [8, 8]
+                });
+                
+                const markersLayer = mapL.layerGroup().addTo(map);
+                window.currentMarkersLayer = markersLayer;
+
+                CADIZ_STOPS.forEach(stop => {
+                    const marker = mapL.marker([stop.lat, stop.lon], {icon: targetIcon});
+                    marker.addTo(markersLayer);
+                    
+                    marker.on('click', () => {
+                        window.openMapInfoPill(stop.name, stop.desc, stop.lat, stop.lon, 'stop');
+                        
+                        map.setView([stop.lat, stop.lon], 16);
+                        map.removeLayer(markersLayer); 
+                        
+                        if (window.currentActiveMarker) map.removeLayer(window.currentActiveMarker);
+                        window.currentActiveMarker = mapL.marker([stop.lat, stop.lon], {icon: targetIcon}).addTo(map);
+                    });
+                });
+            } else if (lat && lon) {
+                map.setView([lat, lon], 16);
+                const marker = mapL.marker([lat, lon]).addTo(map);
+                marker.on('click', () => {
+                    window.openMapInfoPill("Destino Seleccionado", "Coordenadas exactas", lat, lon);
+                });
+                window.openMapInfoPill("Destino Seleccionado", "Coordenadas exactas", lat, lon);
+            }
+            
+            // Forzar resize para que Leaflet dibuje bien en el nuevo panel
+            setTimeout(() => map.invalidateSize(), 300);
+        }, 100);
+    };
+
+    // --- LÓGICA DE PÍLDORA DEL MAPA ---
+    window.closeMapInfoPill = function() {
+        if (window.cancelMapRoute) window.cancelMapRoute();
+        const uiContainer = document.getElementById('map-ui-container');
+        const mapCloseBtn = document.getElementById('map-close-btn');
+        const floatingStats = document.getElementById('map-floating-route-stats');
+        
+        if (uiContainer) {
+            uiContainer.style.opacity = '0';
+            uiContainer.style.transform = 'translateX(-50%) translateY(-10px)';
+            uiContainer.style.pointerEvents = 'none';
+            const pill = document.getElementById('map-info-pill');
+            if (pill) pill.style.pointerEvents = 'none';
+        }
+        if (floatingStats) {
+            floatingStats.style.display = 'none';
+        }
+        if (mapCloseBtn) {
+            mapCloseBtn.style.opacity = '1';
+            mapCloseBtn.style.pointerEvents = 'auto';
+            mapCloseBtn.style.transform = 'scale(1)';
+        }
+        
+        // Restaurar mapa global si existe
+        if (window.currentMap && window.currentMarkersLayer) {
+            const isAirportMode = window.activePoiType === 'airport';
+            if (isAirportMode && window.globalAirportsBounds) {
+                window.currentMap.fitBounds(window.globalAirportsBounds, { padding: [20, 20] });
+                const topPills = document.getElementById('map-top-pills');
+                if (topPills) topPills.style.display = 'flex';
+            } else {
+                window.currentMap.setView([36.516, -6.283], 13); // Zoom out
+            }
+            if (window.currentActiveMarker) window.currentMap.removeLayer(window.currentActiveMarker); // Quitar el aislado
+            if (window.currentAirportRouteLayer) window.currentMap.removeLayer(window.currentAirportRouteLayer); // Quitar ruta de aeropuerto
+            window.currentMap.addLayer(window.currentMarkersLayer); // Mostrar todos
+        }
+    };
+
+    window.openMapInfoPill = function(title: string, desc: string, lat: string | number, lon: string | number, type: 'stop' | 'airport' = 'stop') {
+        const mapL = (window as any).L;
+        window.activeMapStopLat = parseFloat(lat as string);
+        window.activeMapStopLon = parseFloat(lon as string);
+        window.activeMapStopName = title;
+        window.activePoiType = type;
+
+        const uiContainer = document.getElementById('map-ui-container');
+        const mapCloseBtn = document.getElementById('map-close-btn');
+        if (uiContainer) {
+            const titleEl = document.getElementById('map-info-title');
+            const descEl = document.getElementById('map-info-desc');
+            const labelEl = document.getElementById('map-stop-label');
+            if (titleEl) titleEl.innerText = title;
+            if (descEl) {
+                if (type === 'airport') {
+                    descEl.style.display = 'none';
+                } else {
+                    descEl.style.display = 'block';
+                    descEl.innerText = desc || '';
+                }
+            }
+            if (labelEl) labelEl.innerText = type === 'airport' ? 'DESTINO:' : 'PARADA DE TAXI';
+            
+            const actions = document.getElementById('map-pill-actions');
+            const floatingStats = document.getElementById('map-floating-route-stats');
+            const instEl = document.getElementById('route-instruction');
+            
+            const btnDirections = document.getElementById('pill-btn-directions');
+            const btnReserve = document.getElementById('pill-btn-reserve');
+            
+            if (actions) actions.style.display = 'flex';
+            if (floatingStats) floatingStats.style.display = 'none';
+            if (instEl) instEl.style.display = 'none';
+
+            if (btnDirections && btnReserve) {
+                if (type === 'airport') {
+                    btnDirections.style.display = 'none';
+                    btnReserve.style.display = 'flex';
+                } else {
+                    btnDirections.style.display = 'flex';
+                    btnReserve.style.display = 'none';
+                }
+            }
+            
+            uiContainer.style.opacity = '1';
+            uiContainer.style.transform = 'translateX(-50%) translateY(0)';
+            uiContainer.style.pointerEvents = 'auto';
+            const pill = document.getElementById('map-info-pill');
+            if (pill) pill.style.pointerEvents = 'auto';
+        }
+        if (mapCloseBtn) {
+            mapCloseBtn.style.opacity = '0';
+            mapCloseBtn.style.pointerEvents = 'none';
+            mapCloseBtn.style.transform = 'scale(0.8)';
+        }
+    };
+
+    window.mapActionDirections = function(forceType?: 'stop' | 'airport') {
+        if (!window.activeMapStopLat || !window.activeMapStopLon || !window.currentMap) return;
+        const type = forceType || window.activePoiType || 'stop';
+
+        if (navigator.geolocation || window.devMockLat) {
+            const actions = document.getElementById('map-pill-actions');
+            const floatingStats = document.getElementById('map-floating-route-stats');
+            const routeTime = document.getElementById('route-time');
+            const routeDistance = document.getElementById('route-distance');
+            const labelEl = document.getElementById('map-stop-label');
+            const instEl = document.getElementById('route-instruction');
+
+            if (actions) actions.style.display = 'none';
+            if (floatingStats) floatingStats.style.display = 'flex';
+            if (instEl) instEl.style.display = 'flex';
+            if (routeTime) routeTime.innerText = "Calculando...";
+            if (routeDistance) routeDistance.innerText = "-- m";
+            if (labelEl) labelEl.innerText = type === 'airport' ? 'DESTINO:' : 'DESTINO: PARADA DE TAXI';
+
+            const handlePosition = async (userLat: number, userLon: number) => {
+                const stopLat = window.activeMapStopLat;
+                const stopLon = window.activeMapStopLon;
+                const mapL = (window as any).L;
+
+                if (!window.currentUserMarker) {
+                    const userIcon = mapL.divIcon({
+                        className: 'custom-user-marker',
+                        html: '<div style="width:14px;height:14px;background:#3b82f6;border-radius:50%;border:2px solid white;box-shadow:0 0 5px rgba(0,0,0,0.3);"></div>',
+                        iconSize: [18, 18],
+                        iconAnchor: [9, 9]
+                    });
+
+                    window.currentUserMarker = mapL.marker([userLat, userLon], {
+                        icon: userIcon,
+                        draggable: !!window.devMockLat
+                    }).addTo(window.currentMap);
+
+                    if (window.devMockLat) {
+                        window.currentUserMarker.on('dragstart', () => {
+                            window.isDraggingDevMarker = true;
+                        });
+
+                        window.currentUserMarker.on('drag', function(event: any) {
+                            if (!window.currentRoutePolylineBase) return;
+                            const latlngs = window.currentRoutePolylineBase.getLatLngs();
+                            if (!latlngs || latlngs.length < 2) return;
+                            
+                            const currentPoint = window.currentMap.latLngToLayerPoint(event.latlng);
+                            let minDistance = Infinity;
+                            let closestP = null;
+
+                            for (let i = 0; i < latlngs.length - 1; i++) {
+                                const p1 = window.currentMap.latLngToLayerPoint(latlngs[i]);
+                                const p2 = window.currentMap.latLngToLayerPoint(latlngs[i+1]);
+                                
+                                let x = p1.x, y = p1.y, dx = p2.x - x, dy = p2.y - y;
+                                const dot = dx * dx + dy * dy;
+                                if (dot > 0) {
+                                    const t = ((currentPoint.x - x) * dx + (currentPoint.y - y) * dy) / dot;
+                                    if (t > 1) { x = p2.x; y = p2.y; }
+                                    else if (t > 0) { x += dx * t; y += dy * t; }
+                                }
+                                const projectedPoint = mapL.point(x, y);
+                                const distance = currentPoint.distanceTo(projectedPoint);
+                                if (distance < minDistance) {
+                                    minDistance = distance;
+                                    closestP = window.currentMap.layerPointToLatLng(projectedPoint);
+                                }
+                            }
+                            
+                            if (closestP) {
+                                event.target.setLatLng(closestP);
+                                window.devMockLat = closestP.lat;
+                                window.devMockLon = closestP.lng;
+                                
+                                if (window.devDragThrottle) return;
+                                window.devDragThrottle = setTimeout(() => {
+                                    window.devDragThrottle = null;
+                                    if (window.activeMapStopLat) window.mapActionDirections();
+                                }, 400);
+                            }
+                        });
+
+                        window.currentUserMarker.on('dragend', function(event: any) {
+                            window.isDraggingDevMarker = false;
+                            const position = event.target.getLatLng();
+                            window.devMockLat = position.lat;
+                            window.devMockLon = position.lng;
+                            if (window.activeMapStopLat) window.mapActionDirections();
+                        });
+                    }
+                } else {
+                    if (!window.devMockLat || !window.isDraggingDevMarker) {
+                        window.currentUserMarker.setLatLng([userLat, userLon]);
+                    }
+                }
+
+                try {
+                    const profile = type === 'airport' ? 'routed-car/route/v1/driving' : 'routed-foot/route/v1/foot';
+                    const response = await fetch(`https://routing.openstreetmap.de/${profile}/${userLon},${userLat};${stopLon},${stopLat}?overview=full&geometries=geojson&steps=true`);
+                    const data = await response.json();
+
+                    if (data.routes && data.routes.length > 0) {
+                        const route = data.routes[0];
+                        const distanceMeters = route.distance;
+                        const durationSeconds = route.duration;
+                        const minutes = Math.ceil(durationSeconds / 60);
+                        
+                        const routeInstructionText = document.getElementById('route-instruction-text');
+                        if (routeTime) routeTime.innerText = `${minutes} min`;
+                        if (routeDistance) {
+                            if (distanceMeters > 1000) {
+                                routeDistance.innerText = `${(distanceMeters / 1000).toFixed(1)} km`;
+                            } else {
+                                routeDistance.innerText = `${Math.round(distanceMeters)} m`;
+                            }
+                        }
+
+                        const actionElem = document.getElementById('route-instruction-action');
+                        const streetElem = document.getElementById('route-instruction-street');
+
+                        if (actionElem && streetElem && route.legs && route.legs[0] && route.legs[0].steps) {
+                            const steps = route.legs[0].steps;
+                            const firstStep = steps[0];
+                            
+                            if (firstStep) {
+                                const dist = Math.round(firstStep.distance);
+                                const nextStep = steps[1];
+
+                                let actionStr = `Avanza ${dist} m`;
+                                let streetStr = (firstStep.name && firstStep.name.trim() !== '') ? `por ${firstStep.name}` : "por esta vía";
+
+                                if (nextStep) {
+                                    const nextType = nextStep.maneuver.type;
+                                    const nextModifier = nextStep.maneuver.modifier || '';
+                                    const nextName = (nextStep.name && nextStep.name.trim() !== '') ? nextStep.name : 'la vía';
+
+                                    if (nextType === 'turn' || nextType === 'new name' || nextType === 'roundabout' || nextType === 'fork') {
+                                        let action = 'Gira';
+                                        if (nextModifier.includes('left')) action = 'Gira a la izq.';
+                                        else if (nextModifier.includes('right')) action = 'Gira a la der.';
+                                        else if (nextModifier === 'straight') action = 'Sigue recto';
+
+                                        if (dist > 15) {
+                                            actionStr = `En ${dist} m, ${action.toLowerCase()}`;
+                                            streetStr = `por ${nextName}`;
+                                        } else {
+                                            actionStr = `${action}`;
+                                            streetStr = `por ${nextName}`;
+                                        }
+                                    } else if (nextType === 'arrive') {
+                                        if (dist > 15) {
+                                            actionStr = `En ${dist} m llegarás`;
+                                            streetStr = `a tu destino`;
+                                        } else {
+                                            actionStr = `Has llegado`;
+                                            streetStr = `a tu destino`;
+                                        }
+                                    }
+                                } else {
+                                    if (firstStep.maneuver.type === 'arrive' || dist <= 15) {
+                                        actionStr = `Has llegado`;
+                                        streetStr = `a tu destino`;
+                                    }
+                                }
+
+                                actionElem.innerText = actionStr;
+                                streetElem.innerText = streetStr;
+                            } else {
+                                actionElem.innerText = "Sigue la ruta";
+                                streetElem.innerText = `hacia ${window.activeMapStopName}`;
+                            }
+                        }
+
+                        const coordinates = route.geometry.coordinates.map((coord: number[]) => [coord[1], coord[0]]);
+                        
+                        if (!window.currentRoutePolylineBase) {
+                            window.currentRoutePolylineBase = mapL.polyline(coordinates, {
+                                color: '#ffffff',
+                                weight: 6,
+                                opacity: 1,
+                                lineJoin: 'round'
+                            }).addTo(window.currentMap);
+
+                            window.currentRoutePolyline = mapL.polyline(coordinates, {
+                                color: 'var(--primary-color)',
+                                weight: 6,
+                                opacity: 1,
+                                dashArray: '10, 10',
+                                lineJoin: 'round',
+                                className: 'animated-route'
+                            }).addTo(window.currentMap);
+                        } else {
+                            window.currentRoutePolylineBase.setLatLngs(coordinates);
+                            window.currentRoutePolyline.setLatLngs(coordinates);
+                        }
+
+                        if (!window.isDraggingDevMarker) {
+                            const bounds = mapL.latLngBounds([
+                                [userLat, userLon],
+                                [stopLat, stopLon]
+                            ]);
+                            window.currentMap.fitBounds(bounds, {
+                                paddingTopLeft: [20, 200],
+                                paddingBottomRight: [20, 20]
+                            });
+                        }
+
+                    } else {
+                        if (routeTime) routeTime.innerText = "Error";
+                        if (routeDistance) routeDistance.innerText = "Error";
+                    }
+                } catch (e) {
+                    console.error(e);
+                    if (routeTime) routeTime.innerText = "Error red";
+                }
+            };
+
+            if (window.devMockLat && window.devMockLon) {
+                handlePosition(window.devMockLat, window.devMockLon);
+            } else {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => handlePosition(position.coords.latitude, position.coords.longitude),
+                    (error) => {
+                        console.error("Error GPS", error);
+                        alert("No hemos podido acceder a tu ubicación. Comprueba que tienes el GPS activado y le has dado permisos al navegador.");
+                        window.cancelMapRoute();
+                    },
+                    { enableHighAccuracy: true, timeout: 10000 }
+                );
+            }
+        } else {
+            alert("Tu navegador no soporta geolocalización.");
+        }
+    };
+
+    window.cancelMapRoute = function() {
+        if (window.currentRoutePolyline && window.currentMap) {
+            window.currentMap.removeLayer(window.currentRoutePolyline);
+            window.currentRoutePolyline = null;
+        }
+        if (window.currentRoutePolylineBase && window.currentMap) {
+            window.currentMap.removeLayer(window.currentRoutePolylineBase);
+            window.currentRoutePolylineBase = null;
+        }
+        if (window.currentUserMarker && window.currentMap) {
+            window.currentMap.removeLayer(window.currentUserMarker);
+            window.currentUserMarker = null;
+        }
+
+        const actions = document.getElementById('map-pill-actions');
+        const routeInfo = document.getElementById('map-pill-route-info');
+        if (actions) actions.style.display = 'flex';
+        if (routeInfo) routeInfo.style.display = 'none';
+
+        if (window.activeMapStopLat && window.activeMapStopLon && window.currentMap) {
+            window.currentMap.setView([window.activeMapStopLat, window.activeMapStopLon], 16);
+        }
+    };
+
+    window.mapActionReserve = function() {
+        const title = window.activeMapStopName || 'el aeropuerto';
+        window.closeMapInfoPill();
+        
+        // Llamar global addMessage si existe
+        if (typeof addMessage === 'function') {
+            addMessage('user', `<span class="bubble">Quiero reservar un taxi para: ${window.escapeHTML(title)}</span>`);
+            const chatOutput = document.getElementById('chat-output');
+            if (chatOutput) {
+                chatOutput.insertAdjacentHTML('beforeend', window.renderCard({
+                    cardType: 'ReservationCard',
+                    content: `¡Perfecto! Te preparo el acceso rápido para solicitar una reserva hacia <strong>${title}</strong>.`
+                }, 'reserve-' + Date.now()));
+                chatOutput.scrollTop = chatOutput.scrollHeight;
+            }
+        }
+    };
+
+    window.mapActionTaxi = function() {
+        if (window.activeMapStopName) {
+            window.switchPanel('chat');
+            // Añadir el mensaje del usuario
+            if (typeof addMessage === 'function') {
+                addMessage('user', `<span class="bubble">Quiero pedir un taxi desde la parada: ${window.escapeHTML(window.activeMapStopName)}</span>`);
+                
+                // Mostrar la tarjeta de contacto con el mismo formato exacto que la IA
+                const contentText = "¡Claro! Para pedir un taxi ahora en Cádiz, debes ponerte en contacto directamente con la emisora oficial autorizada por el Ayuntamiento. Puedes llamarles por teléfono o pedir el taxi por whatsapp.";
+                
+                const contactHtml = `
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%; max-width: 100%; align-self: flex-start; margin-bottom: 0.5rem;">
+                        <span class="bubble" style="border-bottom-left-radius: 4px;">${contentText}</span>
+                        <div class="info-card contact-card">
+                            <div style="display: flex; align-items: center; justify-content: space-between;">
+                                <span style="font-weight: 600; color: #333;">RadioTaxi Cádiz</span>
+                                <div style="display: flex; gap: 8px;">
+                                    <a href="tel:956212121" class="call-btn" style="text-decoration: none; width: auto; padding: 8px 12px; margin: 0; display: flex; align-items: center; gap: 6px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M6.62 10.79c1.44 2.83 3.76 5.15 6.59 6.59l2.2-2.2c.28-.28.67-.36 1.02-.25 1.12.37 2.32.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg> <span class="btn-text">Llamar</span></a>
+                                    <a href="https://wa.me/34956212121" class="wa-btn" target="_blank" rel="noopener noreferrer" style="background: #25D366; color: white; border-radius: 8px; font-weight: 600; text-decoration: none; width: auto; padding: 8px 12px; margin: 0; display: flex; align-items: center; gap: 6px; transition: opacity 0.2s;" onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.6 2.326zM7.994 14.521a6.6 6.6 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.56 6.56 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592m3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.73.73 0 0 0-.529.247c-.182.198-.691.677-.691 1.654s.71 1.916.81 2.049c.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232"/></svg> <span class="btn-text">WhatsApp</span></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                addMessage('bot', contactHtml);
+            }
+        }
+    };
+
+    // --- LÓGICA DE GUARDADOS (LOCALSTORAGE) ---
+    window.shareMessage = async function(encodedHtml: string) {
+        const html = decodeURIComponent(encodedHtml);
+        const temp = document.createElement('div');
+        temp.innerHTML = html;
+        const text = temp.innerText.trim();
+        
+        if (navigator.share) {
+            try {
+                await navigator.share({
+                    title: 'Info de Cádiz Plus',
+                    text: text,
+                    url: window.location.href
+                });
+            } catch (err) {
+                console.error('Error al compartir:', err);
+            }
+        } else {
+            navigator.clipboard.writeText(text).then(() => {
+                alert('¡Información copiada al portapapeles!');
+            });
+        }
+    };
+
+    window.toggleThumb = function(btn: HTMLElement) {
+        if (btn.classList.contains('active')) {
+            btn.classList.remove('active');
+            btn.style.color = 'var(--text-secondary)';
+            btn.style.fill = 'none';
+        } else {
+            btn.classList.add('active');
+            btn.style.color = 'var(--primary-color)';
+            btn.style.fill = 'var(--primary-color)';
+            
+            const parent = btn.parentElement;
+            if (parent) {
+                if (btn.classList.contains('thumb-up')) {
+                    const down = parent.querySelector('.thumb-down') as HTMLElement;
+                    if (down && down.classList.contains('active')) window.toggleThumb(down);
+                } else if (btn.classList.contains('thumb-down')) {
+                    const up = parent.querySelector('.thumb-up') as HTMLElement;
+                    if (up && up.classList.contains('active')) window.toggleThumb(up);
+                }
+            }
+        }
+    };
+
+    window.saveMessage = async function(btn: HTMLElement, encodedHtml: string) {
+        const html = decodeURIComponent(encodedHtml);
+        
+        // Primero intentamos sincronizar con la nube si hay sesión
+        try {
+            const resMe = await fetch('/api/auth/me');
+            const dataMe = await resMe.json();
+            const isLoggedIn = !!dataMe.user;
+
+            let savedLocal = JSON.parse(localStorage.getItem('cadiz_saved_messages') || '[]');
+            const isSavedLocally = savedLocal.indexOf(html) > -1;
+            
+            // Queremos alternar el estado
+            const willBeSaved = !isSavedLocally;
+
+            if (willBeSaved) {
+                if (isLoggedIn) {
+                    await fetch('/api/bookmarks/add', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ content: html })
+                    });
+                }
+                savedLocal.push(html);
+                btn.classList.add('saved');
+                btn.style.fill = '#ef4444';
+                btn.style.color = '#ef4444';
+            } else {
+                if (isLoggedIn) {
+                    await fetch('/api/bookmarks/remove', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ content: html })
+                    });
+                }
+                const index = savedLocal.indexOf(html);
+                if (index > -1) savedLocal.splice(index, 1);
+                btn.classList.remove('saved');
+                btn.style.fill = 'none';
+                btn.style.color = 'var(--text-secondary)';
+            }
+            
+            localStorage.setItem('cadiz_saved_messages', JSON.stringify(savedLocal));
+            window.renderSavedMessages();
+            if (window.updateBookmarksBadge) window.updateBookmarksBadge();
+
+            // Si intentó guardar y NO tiene sesión, sugerimos loguearse después de guardar en local
+            if (willBeSaved && !isLoggedIn && window.openLoginModal) {
+                // Pequeño timeout para que se vea que se ha guardado primero
+                setTimeout(() => {
+                    if (confirm("¡Mensaje guardado localmente!\n\n¿Quieres iniciar sesión para guardar tus favoritos en la nube de forma permanente y no perderlos si cambias de móvil?")) {
+                        window.openLoginModal();
+                    }
+                }, 400);
+            }
+
+        } catch (e) {
+            console.error('Error saving bookmark', e);
+        }
+    };
+
+    window.updateBookmarksBadge = async function() {
+        try {
+            const resMe = await fetch('/api/auth/me');
+            const dataMe = await resMe.json();
+            let saved = [];
+            
+            if (dataMe.user) {
+                const resList = await fetch('/api/bookmarks/list');
+                saved = await resList.json();
+                localStorage.setItem('cadiz_saved_messages', JSON.stringify(saved));
+            } else {
+                saved = JSON.parse(localStorage.getItem('cadiz_saved_messages') || '[]');
+            }
+
+            const badge = document.getElementById('bookmarks-badge');
+            const icon = document.getElementById('bookmark-icon');
+            if (badge && icon) {
+                if (saved.length > 0) {
+                    badge.style.display = 'flex';
+                    badge.innerText = saved.length.toString();
+                    icon.style.fill = '#ef4444';
+                    icon.style.stroke = '#ef4444';
+                } else {
+                    badge.style.display = 'none';
+                    icon.style.fill = 'none';
+                    icon.style.stroke = 'currentColor';
+                }
+            }
+        } catch (e) {
+            console.error('Error updating badge', e);
+        }
+    };
+
+    window.renderSavedMessages = async function() {
+        const container = document.getElementById('saved-messages-container');
+        if (!container) return;
+        
+        let saved = JSON.parse(localStorage.getItem('cadiz_saved_messages') || '[]');
+        
+        if (saved.length === 0) {
+            container.innerHTML = '<p style="color:var(--text-secondary); text-align:center; margin-top:40px;">No tienes mensajes guardados aún.</p>';
+            return;
+        }
+
+        container.innerHTML = '';
+        // Mostramos de más nuevo a más viejo (invertimos el array)
+        [...saved].reverse().forEach((html, i) => {
+            const div = document.createElement('div');
+            div.className = 'message bot';
+            // Añadimos botón para eliminar desde la propia vista de guardados
+            const rawContent = encodeURIComponent(html);
+            div.innerHTML = `${html}<div class="message-meta" style="justify-content: flex-end; display: flex; width: 100%; margin-top: 8px;"><button class="action-btn" onclick="window.saveMessage(this, '${rawContent}')" aria-label="Eliminar" style="background: #fee2e2; color: #ef4444; border: none; border-radius: 8px; padding: 6px 12px; display: flex; align-items: center; gap: 6px; font-weight: 600; cursor: pointer; font-size: 0.85rem;">🗑️ Eliminar de Guardados</button></div>`;
+            container.appendChild(div);
+        });
+    };
+
+    // Cargar guardados al iniciar y posicionar el swiper en el chat
+    document.addEventListener('DOMContentLoaded', () => {
+        window.renderSavedMessages();
+        // Inicializar estado del panel central
+        const swiper = document.getElementById('main-swiper');
+        if (swiper) {
+            setTimeout(() => {
+                swiper.scrollTo({ left: window.innerWidth, behavior: 'instant' });
+            }, 50);
+        }
+    });
+
+    // --- DATOS DEL WIDGET DE TARIFAS ---
+    const TARIFF_DATA: Record<string, any> = {
+        urbana: {
+            dia: [
+                { name: 'Bajada de Bandera', price: '1.39 €' },
+                { name: 'Precio por Kilómetro', price: '0.70 €' },
+                { name: 'Carrera Mínima', price: '3.56 €' },
+                { name: 'Hora de Espera', price: '18.95 €' }
+            ],
+            noche: [
+                { name: 'Bajada de Bandera', price: '1.73 €' },
+                { name: 'Precio por Kilómetro', price: '0.90 €' },
+                { name: 'Carrera Mínima', price: '4.43 €' },
+                { name: 'Hora de Espera', price: '23.66 €' }
+            ],
+            finde: [
+                { name: 'Bajada de Bandera', price: '1.73 €' },
+                { name: 'Precio por Kilómetro', price: '0.90 €' },
+                { name: 'Carrera Mínima', price: '4.43 €' },
+                { name: 'Hora de Espera', price: '23.66 €' }
+            ],
+            festivo: [
+                { name: 'Bajada de Bandera', price: '1.73 €' },
+                { name: 'Precio por Kilómetro', price: '0.90 €' },
+                { name: 'Carrera Mínima', price: '4.43 €' },
+                { name: 'Hora de Espera', price: '23.66 €' }
+            ]
+        },
+        interurbana: {
+            dia: [
+                { name: 'Bajada de Bandera (<12km)', price: '3.66 €' },
+                { name: 'Precio por Kilómetro', price: '0.71 €' },
+                { name: 'Mínimo de Percepción', price: '3.83 €' },
+                { name: 'Hora de Espera', price: '17.57 €' }
+            ],
+            noche: [
+                { name: 'Bajada de Bandera (<12km)', price: '3.60 €' },
+                { name: 'Precio por Kilómetro', price: '0.82 €' },
+                { name: 'Mínimo de Percepción', price: '4.51 €' },
+                { name: 'Hora de Espera', price: '20.71 €' }
+            ],
+            finde: [
+                { name: 'Bajada de Bandera (<12km)', price: '3.60 €' },
+                { name: 'Precio por Kilómetro', price: '0.82 €' },
+                { name: 'Mínimo de Percepción', price: '4.51 €' },
+                { name: 'Hora de Espera', price: '20.71 €' }
+            ],
+            festivo: [
+                { name: 'Bajada de Bandera (<12km)', price: '3.60 €' },
+                { name: 'Precio por Kilómetro', price: '0.82 €' },
+                { name: 'Mínimo de Percepción', price: '4.51 €' },
+                { name: 'Hora de Espera', price: '20.71 €' }
+            ]
+        },
+        suplementos: [
+            { name: 'Maleta o Bulto', price: '0.51 €', info: 'Por cada bulto en el maletero. ¡Ojo! Los carritos de bebé, carros de la compra, sillas de ruedas, andadores, bicis plegables y patinetes viajan siempre gratis.' },
+            { name: 'Recogida Estación (Tren/Bus)', price: '0.82 €', info: 'Solo aplica si te recogen en la estación. Si tu viaje termina allí, no se cobra.' },
+            { name: 'Entrada Astilleros/Puertos', price: '1.06 €', info: 'Aplica si el viaje empieza o termina dentro del Puerto, Astilleros o Espigones (compensa el acceso a zonas restringidas).' },
+            { name: 'Destino Cortadura-Torregorda', price: '4.46 €', info: 'Recargo fijo para trayectos con origen o destino en la zona periférica entre Cortadura y Torregorda.' },
+            { name: 'Plaza adicional (6ª y 7ª)', price: '0.91 €', info: 'Se suma por cada persona a partir de la quinta plaza. No se cobra si en el grupo viaja alguien con movilidad reducida.' }
+        ]
+    };
+
+    const HOLIDAYS: Record<string, string> = {
+        "01/01/2026": "Año Nuevo",
+        "06/01/2026": "Reyes Magos",
+        "16/02/2026": "Lunes de Coros (Carnaval)",
+        "28/02/2026": "Día de Andalucía",
+        "02/04/2026": "Jueves Santo",
+        "03/04/2026": "Viernes Santo",
+        "01/05/2026": "Fiesta del Trabajo",
+        "15/08/2026": "Asunción de la Virgen",
+        "07/10/2026": "Virgen del Rosario",
+        "12/10/2026": "Fiesta Nacional",
+        "02/11/2026": "Todos los Santos",
+        "07/12/2026": "Día de la Constitución",
+        "08/12/2026": "Inmaculada Concepción",
+        "25/12/2026": "Navidad",
+        "01/01/2027": "Año Nuevo",
+        "06/01/2027": "Reyes Magos",
+        "08/02/2027": "Lunes Carnaval",
+        "01/03/2027": "Día de Andalucía",
+        "25/03/2027": "Jueves Santo",
+        "26/03/2027": "Viernes Santo",
+        "01/05/2027": "Fiesta del Trabajo",
+        "16/08/2027": "Asunción de la Virgen",
+        "07/10/2027": "Virgen del Rosario",
+        "12/10/2027": "Fiesta Nacional",
+        "01/11/2027": "Todos los Santos",
+        "06/12/2027": "Día de la Constitución",
+        "08/12/2027": "Inmaculada Concepción",
+        "25/12/2027": "Navidad"
+    };
+
+    // Estado del widget por msgId
+    const widgetState: Record<string, { type: string, time: string }> = {};
+
+    // --- LEAFLET NAVEGACIÓN EN VIVO (FULLSCREEN) ---
+    let liveMap: any = null;
+    let liveRoutingControl: any = null;
+    let watchId: number | null = null;
+    let userMarker: any = null;
+
+    window.startLiveNavigation = function(destLatStr: string, destLonStr: string, destName: string) {
+        const layer = document.getElementById('fullscreen-nav-layer');
+        if (!layer) return;
+        
+        const destLat = parseFloat(destLatStr);
+        const destLon = parseFloat(destLonStr);
+
+        // Mostrar capa
+        layer.classList.remove('closed');
+
+        setTimeout(() => {
+            const mapL = (window as any).L;
+            if (!liveMap) {
+                liveMap = mapL.map('nav-map', { zoomControl: false }).setView([destLat, destLon], 16);
+                liveMap.createPane('labels');
+                liveMap.getPane('labels').style.zIndex = 500;
+                liveMap.getPane('labels').style.pointerEvents = 'none';
+
+                mapL.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png', {
+                    attribution: '© OpenStreetMap, © CartoDB', subdomains: 'abcd', maxZoom: 20
+                }).addTo(liveMap);
+
+                mapL.tileLayer('https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png', {
+                    subdomains: 'abcd', maxZoom: 20,
+                    pane: 'labels'
+                }).addTo(liveMap);
+                
+                // Botones de Zoom personalizados
+                mapL.control.zoom({ position: 'bottomright' }).addTo(liveMap);
+            }
+
+            // Limpiar routing anterior si existe
+            if (liveRoutingControl) {
+                liveMap.removeControl(liveRoutingControl);
+                liveRoutingControl = null;
+            }
+            if (userMarker) {
+                liveMap.removeLayer(userMarker);
+                userMarker = null;
+            }
+
+            // Añadir marcador de destino personalizado
+            const destIcon = mapL.divIcon({
+                className: '', // Usar solo nuestro HTML/CSS
+                html: '<div class="destination-marker">📍</div>',
+                iconSize: [32, 38],
+                iconAnchor: [16, 38],
+                popupAnchor: [0, -38]
+            });
+            mapL.marker([destLat, destLon], { icon: destIcon }).addTo(liveMap).bindPopup(destName).openPopup();
+
+            // Configurar botón DEV para simular movimiento
+            const devBtn = document.getElementById('nav-dev-btn');
+            if (devBtn) {
+                devBtn.style.display = 'block';
+                let isDevModeActive = false;
+                devBtn.onclick = () => {
+                    isDevModeActive = true;
+                    devBtn.innerText = 'CLIC EN EL MAPA';
+                    devBtn.style.background = '#388e3c';
+                };
+                liveMap.on('click', (e: any) => {
+                    if (isDevModeActive) {
+                        updateUserLocation(e.latlng.lat, e.latlng.lng, destLat, destLon, true);
+                        isDevModeActive = false;
+                        devBtn.innerText = 'DEV: FAKE GPS';
+                        devBtn.style.background = 'rgba(211, 47, 47, 0.9)';
+                    }
+                });
+            }
+
+            // Iniciar rastreo GPS real
+            if (navigator.geolocation) {
+                watchId = navigator.geolocation.watchPosition(
+                    (position) => {
+                        updateUserLocation(position.coords.latitude, position.coords.longitude, destLat, destLon, false);
+                    },
+                    (error) => {
+                        console.error("GPS Error:", error);
+                        document.getElementById('nav-instruction-text')!.innerText = "Esperando señal GPS...";
+                    },
+                    { enableHighAccuracy: true, maximumAge: 10000, timeout: 5000 }
+                );
+            } else {
+                document.getElementById('nav-instruction-text')!.innerText = "GPS no disponible.";
+            }
+
+        }, 400); // Dar tiempo a la animación CSS
+    };
+
+    function updateUserLocation(userLat: number, userLon: number, destLat: number, destLon: number, isFake: boolean) {
+        const mapL = (window as any).L;
+        
+        // Actualizar marcador de usuario personalizado
+        const userIcon = mapL.divIcon({
+            className: '', // Usar solo nuestro HTML/CSS
+            html: '<div class="user-gps-marker"></div>',
+            iconSize: [20, 20],
+            iconAnchor: [10, 10]
+        });
+
+        if (!userMarker) {
+            userMarker = mapL.marker([userLat, userLon], { icon: userIcon }).addTo(liveMap);
+        } else {
+            userMarker.setLatLng([userLat, userLon]);
+            userMarker.setIcon(userIcon);
+        }
+
+        // Crear ruta si no existe o actualizar waypoints
+        if (!liveRoutingControl) {
+            liveRoutingControl = mapL.Routing.control({
+                waypoints: [ mapL.latLng(userLat, userLon), mapL.latLng(destLat, destLon) ],
+                router: mapL.Routing.osrmv1({
+                    serviceUrl: 'https://routing.openstreetmap.de/routed-foot/route/v1',
+                    profile: 'foot'
+                }),
+                routeWhileDragging: false,
+                language: 'es',
+                showAlternatives: false,
+                show: false,
+                addWaypoints: false,
+                createMarker: function() { return null; },
+                lineOptions: {
+                    styles: [{ color: '#3b82f6', opacity: 0.8, weight: 6 }] // COLOR SISTEMA (AZUL)
+                }
+            }).addTo(liveMap);
+
+            // Escuchar instrucciones
+            liveRoutingControl.on('routesfound', function(e: any) {
+                const route = e.routes[0];
+                const summary = route.summary;
+                const instructions = route.instructions;
+
+                // Actualizar Top Panel (ETA y Distancia)
+                const etaMin = Math.ceil(summary.totalTime / 60);
+                const distKm = (summary.totalDistance / 1000).toFixed(1);
+                document.getElementById('nav-eta')!.innerText = `${etaMin} min`;
+                document.getElementById('nav-distance')!.innerText = `${distKm} km`;
+
+                // Actualizar Bottom Panel (Píldora de Instrucción Actual)
+                let currentInstruction = instructions[0];
+                // A veces la instrucción 0 es solo "Head north", pasamos a la siguiente si la distancia es muy corta o irrelevante
+                if (currentInstruction.type === 'Head' && instructions.length > 1 && currentInstruction.distance < 10) {
+                    currentInstruction = instructions[1];
+                }
+
+                if (currentInstruction) {
+                    let icon = '⬆️';
+                    const t = currentInstruction.type.toLowerCase();
+                    if (t.includes('left')) icon = '⬅️';
+                    if (t.includes('right')) icon = '➡️';
+                    if (t.includes('arrive') || t.includes('destinationreached')) icon = '📍';
+                    if (t.includes('roundabout')) icon = '🔄';
+                    if (t.includes('turnaround')) icon = '↩️';
+                    
+                    document.getElementById('nav-instruction-icon')!.innerText = icon;
+                    document.getElementById('nav-instruction-text')!.innerText = currentInstruction.text;
+                    
+                    if (currentInstruction.distance > 0) {
+                        document.getElementById('nav-instruction-dist')!.innerText = `en ${Math.round(currentInstruction.distance)} m`;
+                    } else {
+                        document.getElementById('nav-instruction-dist')!.innerText = '';
+                    }
+                }
+            });
+        } else {
+            // Ya existe el control, solo actualizamos los waypoints
+            liveRoutingControl.setWaypoints([
+                mapL.latLng(userLat, userLon),
+                mapL.latLng(destLat, destLon)
+            ]);
+        }
+    }
+
+    window.exitLiveNavigation = function() {
+        const layer = document.getElementById('fullscreen-nav-layer');
+        if (layer) layer.classList.add('closed');
+        
+        if (watchId !== null) {
+            navigator.geolocation.clearWatch(watchId);
+            watchId = null;
+        }
+        
+        if (liveRoutingControl) {
+            liveMap.removeControl(liveRoutingControl);
+            liveRoutingControl = null;
+        }
+        if (userMarker) {
+            liveMap.removeLayer(userMarker);
+            userMarker = null;
+        }
+    };
+
+    // Exponer función global para botones internos de las tarjetas
+    window.sendToAI = sendMessageToAI;
+
+    // --- EVENT LISTENERS ---
+    sendButton?.addEventListener('click', () => {
+        sendMessageToAI(inputField.value);
+    });
+
+    inputField?.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            sendMessageToAI(inputField.value);
+        }
+    });
+
+    // --- INICIALIZACIÓN (MOMENTO 0) ---
+    setTimeout(() => {
+        const skeletonHtml = `
+            <div id="weather-widget-container" class="wg-card" style="opacity: 0.8;">
+                <div class="wg-header">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
+                    <span>El clima en Cádiz</span>
+                </div>
+                <div class="wg-body" style="text-align: center; padding: 40px 16px;">
+                    <div class="spinner" style="display: inline-block; width: 28px; height: 28px; border: 3px solid var(--bubble-bot-border); border-top-color: var(--primary-color); border-radius: 50%; animation: spin 1s linear infinite;"></div>
+                    <div style="margin-top: 16px; font-size: 0.85rem; color: var(--text-secondary); font-weight: 500;">Conectando con AEMET...</div>
+                </div>
+            </div>
+        `;
+
+        addMessage('bot', skeletonHtml, false);
+        sendMessageToAI('¡Hola! Acabo de entrar a la web. Preséntate brevemente de forma muy natural y dime en qué puedes ayudarme. NO añadas sugerencias ni listas en tu mensaje de texto, usa EXCLUSIVAMENTE los bloques de sugerencia de la interfaz.', true);
+        // Llamada asíncrona a la API del clima con reintentos
+        const fetchWeatherWithRetry = (retriesLeft = 3, delay = 2000) => {
+            fetch('/api/weather?t=' + new Date().getTime())
+                .then(wRes => {
+                    if (!wRes.ok) throw new Error('Fetch failed with status: ' + wRes.status);
+                    return wRes.json();
+                })
+                .then(wData => {
+                    const container = document.getElementById('weather-widget-container');
+                    if (!container) return;
+
+                    if (!wData.error && wData.current && wData.current.temp !== 'N/A') {
+                        let weatherIcon = '🌤️';
+                        const desc = (wData.current.skyDesc || '').toLowerCase();
+                        if (desc.includes('lluvia') || desc.includes('chubasco')) weatherIcon = '🌧️';
+                        else if (desc.includes('nuboso') || desc.includes('cubierto')) weatherIcon = '☁️';
+                        else if (desc.includes('despejado')) weatherIcon = '☀️';
+
+                        let windStr = '';
+                        if (wData.current.windSpeed && wData.current.windSpeed !== 'N/A') {
+                            const windDir = wData.current.windDir && wData.current.windDir !== 'N/A' ? ` (${wData.current.windDir})` : '';
+                            windStr = `${wData.current.windSpeed} km/h${windDir}`;
+                        } else {
+                            windStr = '--';
+                        }
+
+                        const now = new Date();
+                        const fetchTimeStr = now.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: '2-digit' }) + ' ' + now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }) + ' h';
+
+                        container.outerHTML = `
+                            <div class="wg-card" style="animation: slideIn 0.3s ease-out;">
+                                <div class="wg-header">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
+                                    <span>El clima en Cádiz</span>
+                                </div>
+                                <div class="wg-body">
+                                    <div class="wg-status">Hoy, ${wData.current.skyDesc.toLowerCase()}</div>
+                                    
+                                    <div class="wg-main-row">
+                                        <div style="display: flex; align-items: center; gap: 8px;">
+                                            <div class="wg-icon">${weatherIcon}</div>
+                                            <div class="wg-temp-container">
+                                                <span class="wg-temp">${wData.current.temp}</span>
+                                                <span class="wg-unit">°C</span>
+                                            </div>
+                                        </div>
+                                        <div class="wg-right-col">
+                                            <span>${windStr}</span>
+                                            <span>Máx ${wData.daily.tempMax}°C | ${wData.daily.tempMaxTime.replace(':00', '')}</span>
+                                            <span>Mín ${wData.daily.tempMin}°C | ${wData.daily.tempMinTime.replace(':00', '')}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="wg-footer">
+                                    Fuente: AEMET - ${fetchTimeStr}
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        throw new Error('API returned error or N/A');
+                    }
+                })
+                .catch(e => {
+                    console.error('Weather fetch error:', e);
+                    if (retriesLeft > 0) {
+                        setTimeout(() => fetchWeatherWithRetry(retriesLeft - 1, delay * 1.5), delay);
+                    } else {
+                        const container = document.getElementById('weather-widget-container');
+                        if (container) {
+                            container.innerHTML = `
+                                <div class="wg-header">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
+                                    <span>El clima en Cádiz</span>
+                                </div>
+                                <div class="wg-body" style="text-align: center; padding: 24px 16px;">
+                                    <div style="font-size: 2rem; margin-bottom: 8px;">⚠️</div>
+                                    <div style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 500; margin-bottom: 16px;">Servicio temporalmente no disponible</div>
+                                    <button onclick="this.innerHTML='Reintentando...'; setTimeout(() => window.location.reload(), 500);" style="background: var(--primary-color); color: white; border: none; padding: 6px 16px; border-radius: 6px; font-weight: 500; font-size: 0.8rem; cursor: pointer; transition: opacity 0.2s;">Reintentar</button>
+                                </div>
+                            `;
+                        }
+                    }
+                });
+        };
+        fetchWeatherWithRetry();
+    }, 500);
+
+    // Tipado global
+    declare global {
+        interface Window {
+            sendToAI: (text: string) => void;
+            initInlineMap: (lat: string, lon: string, msgId: string) => void;
+            startLiveNavigation: (lat: string, lon: string, name: string) => void;
+            exitLiveNavigation: () => void;
+
+
+            L: any;
+        }
+    }

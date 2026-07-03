@@ -72,6 +72,14 @@ export async function onRequestPost(context) {
                 value TEXT NOT NULL,
                 updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
             );
+
+            CREATE TABLE IF NOT EXISTS knowledge_base (
+                id TEXT PRIMARY KEY,
+                tipo TEXT,
+                materia TEXT,
+                content TEXT NOT NULL,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            );
         `;
         // Split and execute multiple queries using D1 batch for performance and transactional integrity
         const statements = createSocialTablesQuery.split(';').map(s => s.trim()).filter(s => s.length > 0);
