@@ -67,12 +67,15 @@ export async function onRequestPost(context) {
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
             );
+            CREATE TABLE IF NOT EXISTS system_cache (
+                key TEXT PRIMARY KEY,
+                value TEXT NOT NULL,
+                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            );
         `;
-        // Split and execute multiple queries because D1 might not support multi-statement execution via prepare().run()
+        // Split and execute multiple queries using D1 batch for performance and transactional integrity
         const statements = createSocialTablesQuery.split(';').map(s => s.trim()).filter(s => s.length > 0);
-        for (const stmt of statements) {
-            await env.DB.prepare(stmt).run();
-        }
+        await env.DB.batch(statements.map(s => env.DB.prepare(s)));
 
         // Intentar añadir las nuevas columnas para observabilidad (ignorará errores si ya existen)
         const alterQueries = [

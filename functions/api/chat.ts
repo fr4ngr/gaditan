@@ -181,26 +181,35 @@ ${b.content}
                     let beachData = { error: "No se pudo obtener datos" };
                     
                     try {
-                        const playaRes = await fetch(`https://opendata.aemet.es/opendata/api/prediccion/especifica/playa/${beachId}/?api_key=${env.AEMET_API_KEY}`);
-                        const playaJson = await playaRes.json();
-                        if (playaJson.estado == 200 && playaJson.datos) {
-                            const dataRes = await fetch(playaJson.datos);
-                            const dataArr = await dataRes.json();
-                            if (dataArr && dataArr[0] && dataArr[0].prediccion && dataArr[0].prediccion.dia) {
-                                const todayData = dataArr[0].prediccion.dia[0];
-                                beachData = {
-                                    nombre: dataArr[0].nombre,
-                                    estadoCielo: todayData.estadoCielo ? todayData.estadoCielo.descripcion1 : "N/A",
-                                    viento: todayData.viento ? todayData.viento.descripcion1 : "N/A",
-                                    oleaje: todayData.oleaje ? todayData.oleaje.descripcion1 : "N/A",
-                                    temperaturaAgua: todayData.tAgua ? `${todayData.tAgua.valor1}ºC` : "N/A",
-                                    sensacionTermica: todayData.sTermica ? todayData.sTermica.descripcion1 : "N/A",
-                                    uvMax: todayData.uvMax ? todayData.uvMax.valor1 : "N/A"
-                                };
+                        // 1. Try Cache First (Cerebro B)
+                        const cacheResult = await env.DB.prepare('SELECT value FROM system_cache WHERE key = ?').bind(`beach_${beachId}`).first();
+                        if (cacheResult && cacheResult.value) {
+                            beachData = JSON.parse(cacheResult.value);
+                            beachData.fuente = "Caché Rápida (Cerebro B)";
+                        } else {
+                            // 2. Fallback to API (Cerebro A)
+                            const playaRes = await fetch(`https://opendata.aemet.es/opendata/api/prediccion/especifica/playa/${beachId}/?api_key=${env.AEMET_API_KEY}`);
+                            const playaJson = await playaRes.json();
+                            if (playaJson.estado == 200 && playaJson.datos) {
+                                const dataRes = await fetch(playaJson.datos);
+                                const dataArr = await dataRes.json();
+                                if (dataArr && dataArr[0] && dataArr[0].prediccion && dataArr[0].prediccion.dia) {
+                                    const todayData = dataArr[0].prediccion.dia[0];
+                                    beachData = {
+                                        nombre: dataArr[0].nombre,
+                                        estadoCielo: todayData.estadoCielo ? todayData.estadoCielo.descripcion1 : "N/A",
+                                        viento: todayData.viento ? todayData.viento.descripcion1 : "N/A",
+                                        oleaje: todayData.oleaje ? todayData.oleaje.descripcion1 : "N/A",
+                                        temperaturaAgua: todayData.tAgua ? `${todayData.tAgua.valor1}ºC` : "N/A",
+                                        sensacionTermica: todayData.sTermica ? todayData.sTermica.descripcion1 : "N/A",
+                                        uvMax: todayData.uvMax ? todayData.uvMax.valor1 : "N/A",
+                                        fuente: "AEMET en vivo"
+                                    };
+                                }
                             }
                         }
                     } catch (e) {
-                        console.error("AEMET API error:", e);
+                        console.error("AEMET Cache/API error:", e);
                     }
 
                     // Append model's function call to history
