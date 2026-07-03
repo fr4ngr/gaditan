@@ -1,3 +1,791 @@
+/* src/styles/chat.css */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
+:root {
+  --bg-color: #f8fafc; /* Color de fondo general claro */
+  --header-bg: #ffffff; /* Fondo de la cabecera */
+  --header-border: #e2e8f0;
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --primary-color: #3b82f6; /* Azul base */
+  --primary-hover: #2563eb;
+  --chat-bg: #f1f5f9; /* Fondo de la zona de mensajes */
+  
+  --bubble-user-bg: #3b82f6;
+  --bubble-user-text: #ffffff;
+  --bubble-bot-bg: #ffffff;
+  --bubble-bot-text: #1e293b;
+  --bubble-bot-border: #e2e8f0;
+  
+  --input-bg: #ffffff;
+  --input-border: #e2e8f0;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  /* CRÍTICO: El chat no hace scroll en el body, se comporta como una app nativa */
+  height: 100vh;
+  height: 100dvh; /* Dynamic viewport para móviles */
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* --- Layout --- */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  max-width: 600px; /* Ancho máximo en escritorio para que parezca móvil */
+  margin: 0 auto;
+  background-color: var(--chat-bg);
+  position: relative;
+  box-shadow: 0 0 20px rgba(0,0,0,0.05);
+}
+
+.chat-header {
+  height: 60px;
+  background-color: var(--header-bg);
+  border-bottom: 1px solid var(--header-border);
+  display: flex;
+  align-items: center;
+  padding: 0 1rem;
+  z-index: 2000;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.chat-header-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.chat-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--primary-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+}
+
+.chat-title-group h1 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.chat-subtitle {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.messages-area {
+  flex-grow: 1;
+  padding: 1rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* --- Burbujas de Chat --- */
+.message {
+  display: flex;
+  flex-direction: column;
+  max-width: 85%;
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* === ANIMACIONES === */
+@keyframes slideUpFade {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes popIn {
+  0% { transform: scale(0.9); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.message.user {
+  align-self: flex-end;
+}
+
+.message.bot {
+  align-self: flex-start;
+}
+
+/* === LEAFLET CUSTOM STYLES === */
+.leaflet-control-zoom {
+  border: none !important;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1) !important;
+  border-radius: 12px !important;
+  overflow: hidden;
+}
+
+.leaflet-control-zoom-in,
+.leaflet-control-zoom-out {
+  background-color: var(--header-bg) !important;
+  color: var(--text-primary) !important;
+  width: 36px !important;
+  height: 36px !important;
+  line-height: 36px !important;
+  border: none !important;
+  transition: background-color 0.2s ease !important;
+}
+
+.leaflet-control-zoom-in:hover,
+.leaflet-control-zoom-out:hover {
+  background-color: var(--chat-bg) !important;
+}
+
+.leaflet-control-zoom-in {
+  border-bottom: 1px solid var(--input-border) !important;
+}
+
+.bubble {
+  padding: 0.75rem 1rem;
+  border-radius: 1.2rem;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.message.user .bubble {
+  background-color: var(--bubble-user-bg);
+  color: var(--bubble-user-text);
+  border-bottom-right-radius: 0.25rem;
+}
+
+.message.bot .bubble {
+  background-color: var(--bubble-bot-bg);
+  color: var(--bubble-bot-text);
+  border: 1px solid var(--bubble-bot-border);
+  border-bottom-left-radius: 0.25rem;
+}
+
+.message-time {
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  margin-top: 0.25rem;
+  align-self: flex-end;
+}
+
+.message.user .message-time {
+  align-self: flex-end;
+}
+
+.message.bot .message-time {
+  align-self: flex-start;
+}
+
+/* --- Área de Input Flotante --- */
+.input-area {
+  background-color: transparent;
+  border-top: none;
+  padding: 0 1rem 1rem 1rem;
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-end;
+  flex-shrink: 0;
+  padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  
+  /* Flotante sobre el swiper */
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1100;
+  pointer-events: none; /* Permitir clics a través del fondo invisible */
+}
+
+.input-area > * {
+  pointer-events: auto; /* Reactivar clics para los hijos */
+}
+
+.chat-input-wrapper {
+  flex-grow: 1;
+  background-color: rgba(255, 255, 255, 0.85); /* Semi-transparente base */
+  border-radius: 1.5rem;
+  border: 1px solid var(--input-border);
+  padding: 0.6rem 1.2rem;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+[data-theme="dark"] .chat-input-wrapper {
+  background-color: rgba(30, 30, 30, 0.85);
+}
+
+.chat-input {
+  width: 100%;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  outline: none;
+  resize: none;
+  max-height: 100px;
+  line-height: 1.4;
+}
+
+.chat-input::placeholder {
+  color: var(--text-secondary);
+}
+
+.send-button {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.2s;
+  flex-shrink: 0;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+}
+
+.send-button:hover {
+  background-color: var(--primary-hover);
+}
+
+.send-button svg {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+  transform: translateX(1px); /* Ajuste óptico del icono enviar */
+}
+
+/* --- Chips de Acción Rápida (Opciones) --- */
+.action-chips {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-top: 0.5rem;
+}
+.rule-source {
+  font-size: 0.8rem;
+  color: var(--primary-color);
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--border-color);
+  font-weight: 500;
+}
+
+/* --- Tariff Card Widget V2 --- */
+.tariff-card {
+  background: var(--bubble-bot-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Fila 1: Pestañas Principales */
+.tariff-tabs-row1 {
+  display: flex;
+  background: var(--chat-bg);
+  border-bottom: 1px solid var(--border-color);
+}
+.t-tab {
+  flex: 1;
+  background: transparent;
+  border: none;
+  padding: 12px 5px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s;
+  border-bottom: 2px solid transparent;
+}
+.t-tab:hover {
+  color: var(--primary-color);
+  background: var(--chat-bg);
+}
+.t-tab.active {
+  color: var(--primary-color);
+  border-bottom: 2px solid var(--primary-color);
+  background: var(--bubble-bot-bg);
+}
+
+/* Fila 2: Sub-pestañas de Tiempo */
+.tariff-tabs-row2 {
+  display: flex;
+  background: var(--bubble-bot-bg);
+  border-bottom: 1px solid var(--border-color);
+  padding: 8px 6px;
+  gap: 4px;
+  width: 100%;
+}
+.t-subtab {
+  flex: 1;
+  background: var(--chat-bg);
+  border: 1px solid transparent;
+  color: var(--text-secondary);
+  padding: 6px 2px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.1;
+}
+.t-subtab:hover {
+  background: var(--input-border);
+}
+.t-subtab.active {
+  background: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Fila 3: Tabla (Cuerpo) */
+.tariff-body {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 150px; /* Previene saltos bruscos de altura al cambiar pestaña */
+}
+.tariff-anim-layer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  animation: slideFadeUp 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes slideFadeUp {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tariff-item-wrapper {
+  border-bottom: 1px solid var(--border-color);
+  padding: 10px 0;
+}
+.tariff-item-wrapper:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+.tariff-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+.tariff-price-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.tariff-info-btn {
+  cursor: pointer;
+  font-size: 0.9em;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+  background: var(--surface-color);
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.tariff-info-btn:hover {
+  opacity: 1;
+}
+.tariff-name {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  flex-grow: 1;
+}
+.tariff-price {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+.tariff-notes {
+  margin-top: 8px;
+  padding-top: 8px;
+  font-size: 0.85rem;
+  color: #666;
+  font-style: italic;
+  border-top: 1px solid rgba(0,0,0,0.05);
+}
+.chip {
+  background: white;
+  border: 1px solid var(--border-color);
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: var(--text-primary);
+}
+
+.chip:hover {
+  background: var(--chat-bg);
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+/* --- Suggested Blocks (Quick Replies) --- */
+.suggested-blocks-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+  margin-bottom: 16px;
+  width: 100%;
+}
+
+.suggested-btn {
+  background: var(--bubble-bot-bg);
+  border: 1px solid var(--primary-color);
+  color: var(--primary-color);
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.suggested-btn:hover {
+  background: var(--primary-color);
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+.suggested-btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* --- Tarjeta de Contacto UI --- */
+.contact-card {
+  background: var(--bubble-bot-bg);
+  border: 1px solid var(--header-border);
+  border-radius: 0.75rem;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+}
+
+.contact-card-title {
+  font-weight: 600;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.contact-card-phone {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--text-primary);
+  margin: 0.25rem 0;
+}
+
+.call-btn {
+  background-color: #16a34a; /* Verde llamada */
+  color: white;
+  border: none;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+  display: block;
+  margin-top: 0.5rem;
+  transition: background-color 0.2s;
+}
+
+.call-btn:hover {
+  background-color: #15803d;
+}
+
+/* Estado de cargando */
+.typing-indicator {
+  display: flex;
+  gap: 4px;
+  padding: 0.5rem;
+}
+
+.typing-dot {
+  width: 6px;
+  height: 6px;
+  background-color: var(--text-secondary);
+  border-radius: 50%;
+  animation: typing 1.4s infinite ease-in-out both;
+}
+
+.typing-dot:nth-child(1) { animation-delay: -0.32s; }
+.typing-dot:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes typing {
+  0%, 80%, 100% { transform: scale(0); }
+  40% { transform: scale(1); }
+}
+
+/* --- Navegación a Pantalla Completa --- */
+.fullscreen-nav {
+  position: absolute;
+  top: 60px; /* Debajo del header */
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1000;
+  background: white;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+}
+
+.fullscreen-nav.closed {
+  transform: translateY(100%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.nav-map-container {
+  flex-grow: 1;
+  width: 100%;
+  height: 100%;
+}
+
+.nav-close-btn {
+  position: absolute;
+  top: env(safe-area-inset-top, 20px);
+  left: 20px;
+  width: 44px;
+  height: 44px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(0,0,0,0.05);
+  border-radius: 50%;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  font-size: 1.2rem;
+  font-weight: bold;
+  z-index: 1000;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-primary);
+  transition: transform 0.2s;
+}
+.nav-close-btn:active {
+  transform: scale(0.95);
+}
+
+.nav-dev-btn {
+  position: absolute;
+  top: calc(env(safe-area-inset-top, 20px) + 60px);
+  left: 20px;
+  padding: 8px 12px;
+  background: rgba(211, 47, 47, 0.9);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 0.8rem;
+  z-index: 1000;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.nav-top-panel {
+  position: absolute;
+  top: env(safe-area-inset-top, 20px);
+  right: 20px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(15px);
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid rgba(0,0,0,0.04);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+  z-index: 1000;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.nav-eta {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--primary-color);
+}
+
+.nav-distance {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  border-left: 1px solid rgba(0,0,0,0.1);
+  padding-left: 12px;
+}
+
+.nav-bottom-panel {
+  position: absolute;
+  bottom: env(safe-area-inset-bottom, 30px);
+  left: 0;
+  width: 100%;
+  padding: 0 20px;
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+}
+
+.nav-instruction-pill {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(0,0,0,0.03);
+  padding: 12px 16px;
+  border-radius: 24px;
+  box-shadow: 0 10px 35px rgba(0,0,0,0.15);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  max-width: 420px;
+}
+
+.nav-icon {
+  font-size: 2.2rem;
+  background: linear-gradient(135deg, var(--chat-bg), #fff);
+  width: 56px;
+  height: 56px;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+  color: var(--primary-color);
+}
+
+.nav-text-container {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.nav-main-text {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+}
+
+.nav-sub-text {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--primary-color);
+  margin-top: 4px;
+}
+
+/* --- Map Custom Markers --- */
+.user-gps-marker {
+  width: 20px;
+  height: 20px;
+  background-color: var(--primary-color);
+  border: 3px solid white;
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+  position: relative;
+}
+.user-gps-marker::after {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  right: -10px;
+  bottom: -10px;
+  background: var(--primary-color);
+  border-radius: 50%;
+  opacity: 0.4;
+  animation: gpsPulse 2s ease-out infinite;
+}
+
+@keyframes gpsPulse {
+  0% { transform: scale(0.5); opacity: 0.8; }
+  100% { transform: scale(1.5); opacity: 0; }
+}
+
+.destination-marker {
+  background-color: white;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  border: 2px solid var(--primary-color);
+  color: var(--primary-color);
+  font-size: 1.1rem;
+  position: relative;
+}
+.destination-marker::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid var(--primary-color);
+}
+
+/* --- GENERATIVE UI STYLES --- */
 
     /* Estilos para las Tarjetas Generativas (Generative UI) */
     .ai-card {
