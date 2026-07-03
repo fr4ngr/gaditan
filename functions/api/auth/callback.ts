@@ -9,9 +9,17 @@ export async function onRequestGet(context) {
         return Response.redirect(`${url.origin}/?error=auth_failed`);
     }
 
-    // Opcional: Validar el state con la cookie
-    // Para simplicidad en este MVP, pasaremos directo al token, pero en producción deberíamos validarlo.
+    // 0. Validar el state con la cookie (Prevención CSRF)
+    const cookieHeader = request.headers.get('Cookie');
+    let savedState = null;
+    if (cookieHeader) {
+        const match = cookieHeader.match(/oauth_state=([^;]+)/);
+        if (match) savedState = match[1];
+    }
 
+    if (!savedState || state !== savedState) {
+        return Response.redirect(`${url.origin}/?error=csrf_failed`);
+    }
     const clientId = env.GOOGLE_CLIENT_ID;
     const clientSecret = env.GOOGLE_CLIENT_SECRET;
     const redirectUri = `${url.origin}/api/auth/callback`;

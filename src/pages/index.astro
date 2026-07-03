@@ -362,7 +362,7 @@ import ChatLayout from '../layouts/ChatLayout.astro';
     // --- GENERATIVE UI ENGINE (TARJETAS) ---
     function renderCard(data: any, msgId: string): string {
         if (data.content) {
-            data.content = data.content.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\*(.*?)\*/g, '<i>$1</i>').replace(/\n/g, '<br>');
+            data.content = window.escapeHTML(data.content).replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\*(.*?)\*/g, '<i>$1</i>').replace(/\n/g, '<br>');
         }
         const title = data.title || '';
         const subtitle = data.subtitle || '';
@@ -582,13 +582,26 @@ import ChatLayout from '../layouts/ChatLayout.astro';
         return data.content ? `<span class="bubble">${data.content}</span>` : '';
     }
 
+    window.escapeHTML = function(str: string) {
+        if (!str) return '';
+        return str.replace(/[&<>'"]/g, 
+            tag => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                "'": '&#39;',
+                '"': '&quot;'
+            }[tag] || tag)
+        );
+    };
+
     // --- CONEXIÓN CON EL CEREBRO DE IA ---
     async function sendMessageToAI(text: string, isHiddenInit: boolean = false, inputType: string = 'typed') {
         if (!text.trim()) return;
         
         // 1. Pintar mensaje del usuario y guardarlo en historial
         if (!isHiddenInit) {
-            addMessage('user', `<span class="bubble">${text}</span>`);
+            addMessage('user', `<span class="bubble">${window.escapeHTML(text)}</span>`);
         }
         chatHistory.push({ role: 'user', parts: [{ text }] });
         
@@ -1498,7 +1511,7 @@ import ChatLayout from '../layouts/ChatLayout.astro';
         
         // Llamar global addMessage si existe
         if (typeof addMessage === 'function') {
-            addMessage('user', `<span class="bubble">Quiero reservar un taxi para: ${title}</span>`);
+            addMessage('user', `<span class="bubble">Quiero reservar un taxi para: ${window.escapeHTML(title)}</span>`);
             const chatOutput = document.getElementById('chat-output');
             if (chatOutput) {
                 chatOutput.insertAdjacentHTML('beforeend', window.renderCard({
@@ -1515,7 +1528,7 @@ import ChatLayout from '../layouts/ChatLayout.astro';
             window.switchPanel('chat');
             // Añadir el mensaje del usuario
             if (typeof addMessage === 'function') {
-                addMessage('user', `<span class="bubble">Quiero pedir un taxi desde la parada: ${window.activeMapStopName}</span>`);
+                addMessage('user', `<span class="bubble">Quiero pedir un taxi desde la parada: ${window.escapeHTML(window.activeMapStopName)}</span>`);
                 
                 // Mostrar la tarjeta de contacto con el mismo formato exacto que la IA
                 const contentText = "¡Claro! Para pedir un taxi ahora en Cádiz, debes ponerte en contacto directamente con la emisora oficial autorizada por el Ayuntamiento. Puedes llamarles por teléfono o pedir el taxi por whatsapp.";
