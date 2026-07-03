@@ -158,29 +158,47 @@ import themeData from '../data/theme.json';
                     data.posts.forEach(post => {
                         const date = new Date(post.created_at).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
                         
-                        let html = `
-                            <div style="background: var(--header-bg); border: 1px solid var(--header-border); border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
-                                <div style="display: flex; align-items: center; gap: 12px;">
-                                    <img src="${post.user_avatar || 'https://ui-avatars.com/api/?name=' + (post.user_name || '?')}" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover;" alt="Avatar" />
-                                    <div>
-                                        <div style="font-weight: 600; color: var(--text-primary); font-size: 15px;">${post.user_name || 'Usuario'}</div>
-                                        <div style="font-size: 12px; color: var(--text-secondary);">${date}</div>
-                                    </div>
-                                </div>
-                        `;
+                        const div = document.createElement('div');
+                        div.style.cssText = "background: var(--header-bg); border: 1px solid var(--header-border); border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);";
+
+                        const headerDiv = document.createElement('div');
+                        headerDiv.style.cssText = "display: flex; align-items: center; gap: 12px;";
+
+                        const img = document.createElement('img');
+                        img.src = post.user_avatar || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(post.user_name || '?');
+                        img.style.cssText = "width: 36px; height: 36px; border-radius: 50%; object-fit: cover;";
+                        img.alt = "Avatar";
+
+                        const nameContainer = document.createElement('div');
+                        const nameDiv = document.createElement('div');
+                        nameDiv.style.cssText = "font-weight: 600; color: var(--text-primary); font-size: 15px;";
+                        nameDiv.textContent = post.user_name || 'Usuario';
+                        const dateDiv = document.createElement('div');
+                        dateDiv.style.cssText = "font-size: 12px; color: var(--text-secondary);";
+                        dateDiv.textContent = date;
+
+                        nameContainer.appendChild(nameDiv);
+                        nameContainer.appendChild(dateDiv);
+                        headerDiv.appendChild(img);
+                        headerDiv.appendChild(nameContainer);
+                        div.appendChild(headerDiv);
 
                         if (post.content) {
-                            html += `<div style="color: var(--text-primary); font-size: 15px; line-height: 1.4; white-space: pre-wrap;">${post.content.replace(/</g, '&lt;')}</div>`;
+                            const contentDiv = document.createElement('div');
+                            contentDiv.style.cssText = "color: var(--text-primary); font-size: 15px; line-height: 1.4; white-space: pre-wrap;";
+                            contentDiv.textContent = post.content;
+                            div.appendChild(contentDiv);
                         }
 
                         if (post.image_url) {
-                            html += `<img src="${post.image_url}" style="width: 100%; border-radius: 12px; max-height: 300px; object-fit: cover; margin-top: 4px;" alt="Post image" loading="lazy" />`;
+                            const postImg = document.createElement('img');
+                            postImg.src = post.image_url;
+                            postImg.style.cssText = "width: 100%; border-radius: 12px; max-height: 300px; object-fit: cover; margin-top: 4px;";
+                            postImg.alt = "Post image";
+                            postImg.loading = "lazy";
+                            div.appendChild(postImg);
                         }
 
-                        html += `</div>`;
-                        
-                        const div = document.createElement('div');
-                        div.innerHTML = html;
                         container.appendChild(div);
                     });
                 } catch (e) {

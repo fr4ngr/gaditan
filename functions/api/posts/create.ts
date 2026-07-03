@@ -31,7 +31,20 @@ export async function onRequestPost(context) {
 
         // 3. Upload to R2 if image exists
         if (image && image.name) {
-            const extension = image.name.split('.').pop();
+            const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+            if (!allowedTypes.includes(image.type)) {
+                return new Response(JSON.stringify({ error: 'Solo se permiten imágenes (JPG, PNG, WEBP)' }), { status: 400 });
+            }
+            if (image.size > 5 * 1024 * 1024) {
+                return new Response(JSON.stringify({ error: 'La imagen supera los 5MB permitidos' }), { status: 400 });
+            }
+
+            const extMap = {
+                'image/jpeg': 'jpg',
+                'image/png': 'png',
+                'image/webp': 'webp'
+            };
+            const extension = extMap[image.type];
             const filename = `posts/${postId}.${extension}`;
             
             await env.BUCKET.put(filename, image.stream(), {

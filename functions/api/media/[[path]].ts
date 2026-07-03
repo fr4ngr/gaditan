@@ -5,9 +5,9 @@ export async function onRequestGet(context) {
     if (!pathSegments) return new Response('Bad Request', { status: 400 });
 
     let id = Array.isArray(pathSegments) ? pathSegments.join('/') : pathSegments;
-    id = decodeURIComponent(id);
 
     try {
+        id = decodeURIComponent(id);
         const object = await env.BUCKET.get(id);
 
         if (object === null) {
@@ -19,6 +19,11 @@ export async function onRequestGet(context) {
         headers.set('etag', object.httpEtag);
         // Cache control para imágenes (1 año cache público)
         headers.set('Cache-Control', 'public, max-age=31536000, immutable');
+        
+        const contentType = headers.get('content-type') || '';
+        if (!contentType.startsWith('image/')) {
+            headers.set('Content-Disposition', 'attachment');
+        }
 
         return new Response(object.body, { headers });
     } catch (e) {
