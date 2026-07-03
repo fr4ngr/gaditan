@@ -1586,52 +1586,106 @@ import ChatLayout from '../layouts/ChatLayout.astro';
         }
     };
 
-    window.saveMessage = function(btn: HTMLElement, encodedHtml: string) {
+    window.saveMessage = async function(btn: HTMLElement, encodedHtml: string) {
         const html = decodeURIComponent(encodedHtml);
-        let saved = JSON.parse(localStorage.getItem('cadiz_saved_messages') || '[]');
         
-        // Comprobar si ya existe para quitarlo (toggle)
-        const index = saved.indexOf(html);
-        if (index > -1) {
-            saved.splice(index, 1);
-            btn.classList.remove('saved');
-            btn.style.fill = 'none';
-            btn.style.color = 'var(--text-secondary)';
-        } else {
-            saved.push(html);
-            btn.classList.add('saved');
-            btn.style.fill = '#ef4444';
-            btn.style.color = '#ef4444';
-        }
-        
-        localStorage.setItem('cadiz_saved_messages', JSON.stringify(saved));
-        window.renderSavedMessages();
-        if (window.updateBookmarksBadge) window.updateBookmarksBadge();
-    };
+        // Primero intentamos sincronizar con la nube si hay sesión
+        try {
+            const resMe = await fetch('/api/auth/me');
+            const dataMe = await resMe.json();
+            const isLoggedIn = !!dataMe.user;
 
-    window.updateBookmarksBadge = function() {
-        const saved = JSON.parse(localStorage.getItem('cadiz_saved_messages') || '[]');
-        const badge = document.getElementById('bookmarks-badge');
-        const icon = document.getElementById('bookmark-icon');
-        if (badge && icon) {
-            if (saved.length > 0) {
-                badge.style.display = 'flex';
-                badge.innerText = saved.length.toString();
-                icon.style.fill = '#ef4444';
-                icon.style.stroke = '#ef4444';
+            let savedLocal = JSON.parse(localStorage.getItem('cadiz_saved_messages') || '[]');
+            const isSavedLocally = savedLocal.indexOf(html) > -1;
+            
+            // Queremos alternar el estado
+            const willBeSaved = !isSavedLocally;
+
+            if (willBeSaved) {
+                if (isLoggedIn) {
+                    await fetch('/api/bookmarks/add', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ content: html })
+                    });
+                }
+                savedLocal.push(html);
+                btn.classList.add('saved');
+                btn.style.fill = '#ef4444';
+                btn.style.color = '#ef4444';
             } else {
-                badge.style.display = 'none';
-                icon.style.fill = 'none';
-                icon.style.stroke = 'currentColor';
+                if (isLoggedIn) {
+                    await fetch('/api/bookmarks/remove', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ content: html })
+                    });
+                }
+                const index = savedLocal.indexOf(html);
+                if (index > -1) savedLocal.splice(index, 1);
+                btn.classList.remove('saved');
+                btn.style.fill = 'none';
+                btn.style.color = 'var(--text-secondary)';
             }
+            
+            localStorage.setItem('cadiz_saved_messages', JSON.stringify(savedLocal));
+            window.renderSavedMessages();
+            if (window.updateBookmarksBadge) window.updateBookmarksBadge();
+
+            // Si intentó guardar y NO tiene sesión, sugerimos loguearse después de guardar en local
+            if (willBeSaved && !isLoggedIn && window.openLoginModal) {
+                // Pequeño timeout para que se vea que se ha guardado primero
+                setTimeout(() => {
+                    if (confirm("¡Mensaje guardado localmente!\n\n¿Quieres iniciar sesión para guardar tus favoritos en la nube de forma permanente y no perderlos si cambias de móvil?")) {
+                        window.openLoginModal();
+                    }
+                }, 400);
+            }
+
+        } catch (e) {
+            console.error('Error saving bookmark', e);
         }
     };
 
-    window.renderSavedMessages = function() {
+    window.updateBookmarksBadge = async function() {
+        try {
+            const resMe = await fetch('/api/auth/me');
+            const dataMe = await resMe.json();
+            let saved = [];
+            
+            if (dataMe.user) {
+                const resList = await fetch('/api/bookmarks/list');
+                saved = await resList.json();
+                localStorage.setItem('cadiz_saved_messages', JSON.stringify(saved));
+            } else {
+                saved = JSON.parse(localStorage.getItem('cadiz_saved_messages') || '[]');
+            }
+
+            const badge = document.getElementById('bookmarks-badge');
+            const icon = document.getElementById('bookmark-icon');
+            if (badge && icon) {
+                if (saved.length > 0) {
+                    badge.style.display = 'flex';
+                    badge.innerText = saved.length.toString();
+                    icon.style.fill = '#ef4444';
+                    icon.style.stroke = '#ef4444';
+                } else {
+                    badge.style.display = 'none';
+                    icon.style.fill = 'none';
+                    icon.style.stroke = 'currentColor';
+                }
+            }
+        } catch (e) {
+            console.error('Error updating badge', e);
+        }
+    };
+
+    window.renderSavedMessages = async function() {
         const container = document.getElementById('saved-messages-container');
         if (!container) return;
         
-        const saved = JSON.parse(localStorage.getItem('cadiz_saved_messages') || '[]');
+        let saved = JSON.parse(localStorage.getItem('cadiz_saved_messages') || '[]');
+        
         if (saved.length === 0) {
             container.innerHTML = '<p style="color:var(--text-secondary); text-align:center; margin-top:40px;">No tienes mensajes guardados aún.</p>';
             return;

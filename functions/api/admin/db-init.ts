@@ -59,6 +59,14 @@ export async function onRequestPost(context) {
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
             );
+
+            CREATE TABLE IF NOT EXISTS bookmarks (
+                id TEXT PRIMARY KEY,
+                user_id TEXT NOT NULL,
+                content TEXT NOT NULL,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+            );
         `;
         // Split and execute multiple queries because D1 might not support multi-statement execution via prepare().run()
         const statements = createSocialTablesQuery.split(';').map(s => s.trim()).filter(s => s.length > 0);
