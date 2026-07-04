@@ -1972,11 +1972,37 @@
                     const tempSpan = document.getElementById('header-weather-temp');
                     
                     if (!wData.error && wData.current && wData.current.temp !== 'N/A') {
+                        // Fix timezone issue: AEMET/Cloudflare use UTC. We must use local browser time to pick the right "Ahora"
+                        let filteredHourly = wData.hourly || [];
+                        if (wData.hourly && wData.hourly.length > 0) {
+                            const now = new Date();
+                            const currentHourStr = now.getHours().toString().padStart(2, '0');
+                            const currentFechaStr = now.getFullYear() + "-" + String(now.getMonth()+1).padStart(2,'0') + "-" + String(now.getDate()).padStart(2,'0');
+
+                            filteredHourly = wData.hourly.filter(h => {
+                                if (!h.fecha) return true;
+                                if (h.fecha < currentFechaStr) return false;
+                                if (h.fecha === currentFechaStr && h.periodo < currentHourStr) return false;
+                                return true;
+                            });
+                            if (filteredHourly.length === 0) filteredHourly = wData.hourly;
+                            
+                            const currentHourly = filteredHourly[0];
+                            if (currentHourly) {
+                                wData.current.temp = currentHourly.temp || wData.current.temp;
+                                wData.current.feelsLike = currentHourly.feelsLike || wData.current.feelsLike;
+                                wData.current.skyDesc = currentHourly.skyDesc || wData.current.skyDesc;
+                                wData.current.windDir = currentHourly.windDir || wData.current.windDir;
+                                wData.current.windSpeed = currentHourly.windSpeed || wData.current.windSpeed;
+                                wData.current.humidity = currentHourly.humidity || wData.current.humidity;
+                            }
+                        }
+
                         let weatherIcon = '⛅';
                         const desc = (wData.current.skyDesc || '').toLowerCase();
                         if (desc.includes('lluvia') || desc.includes('chubasco') || desc.includes('tormenta')) weatherIcon = '🌧️';
                         else if (desc.includes('poco nuboso') || desc.includes('intervalos nubosos')) weatherIcon = '⛅';
-                        else if (desc.includes('nuboso') || desc.includes('cubierto')) weatherIcon = '☁️';
+                        else if (desc.includes('nubo') || desc.includes('cubierto')) weatherIcon = '☁️';
                         else if (desc.includes('despejado')) weatherIcon = '☀️';
 
                         // 1. Llenar el Chip de la Cabecera
@@ -2056,20 +2082,6 @@
                         // 2. Hourly Carousel (24h)
                         let hourlyHtml = '';
                         if (wData.hourly && wData.hourly.length > 0) {
-                            const now = new Date();
-                            const currentHourStr = now.getHours().toString().padStart(2, '0');
-                            const currentFechaStr = now.getFullYear() + "-" + String(now.getMonth()+1).padStart(2,'0') + "-" + String(now.getDate()).padStart(2,'0');
-
-                            let filteredHourly = wData.hourly.filter(h => {
-                                if (!h.fecha) return true; // Fallback just in case old cache doesn't have fecha
-                                if (h.fecha < currentFechaStr) return false;
-                                if (h.fecha === currentFechaStr && h.periodo < currentHourStr) return false;
-                                return true;
-                            });
-
-                            // Si por algún motivo nos quedamos sin horas (AEMET muy desactualizado), mostramos todo
-                            if (filteredHourly.length === 0) filteredHourly = wData.hourly;
-
                             filteredHourly.slice(0, 24).forEach((h, index) => {
                                 const hEmoji = getEmoji(h.skyDesc);
                                 const isNow = index === 0;
