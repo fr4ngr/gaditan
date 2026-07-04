@@ -2113,7 +2113,7 @@
                                             </div>
                                             ${(parseFloat(h.precip || '0') > 0) ? `<div style="font-size: 0.65rem; font-weight: 400; color: ${isNow ? 'rgba(255,255,255,0.7)' : 'var(--text-secondary)'}; margin-top: -2px;">${parseFloat(h.precip)} mm</div>` : ''}
                                         </div>
-                                        ${(h.windSpeed && h.windSpeed !== 'N/A') ? `<div style="font-size: 0.7rem; font-weight: 600; color: ${isNow ? 'rgba(255,255,255,0.8)' : 'var(--text-secondary)'}; margin-top: 4px; display: flex; align-items: center; gap: 2px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.8; flex-shrink:0;"><path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"/></svg><span style="white-space: nowrap;">${h.windSpeed} Km/h ${(h.windDir && h.windDir !== 'N/A' && h.windDir !== 'C') ? `<span style="display:inline-block; transform: rotate(${getWindRotation(h.windDir)}deg);"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg></span> ` + h.windDir : ''}</span></div>` : ''}
+                                        ${(h.windSpeed && h.windSpeed !== 'N/A') ? `<div style="font-size: 0.7rem; font-weight: 600; color: ${isNow ? 'rgba(255,255,255,0.8)' : 'var(--text-secondary)'}; margin-top: 4px; text-align: center;">${h.windSpeed} Km/h ${(h.windDir && h.windDir !== 'N/A' && h.windDir !== 'C') ? h.windDir : ''}</div>` : ''}
                                     </div>
                                 `;
                             });
@@ -2142,10 +2142,13 @@
                                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px; opacity:0.8;"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M8 19v1"/><path d="M8 14v1"/><path d="M16 19v1"/><path d="M16 14v1"/><path d="M12 21v1"/><path d="M12 16v1"/></svg>
                                             ${f.probPrecipitacion}%
                                         </div>
-                                        ${f.windMax && f.windMax !== 'N/A' ? `<div style="color: var(--text-secondary); font-size: 0.85rem; width: 85px; text-align: right; font-weight: 500;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right:2px; opacity:0.8"><path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"/></svg>${f.windMax} Km/h</div>` : '<div style="width: 85px;"></div>'}
-                                        <div style="font-weight: 600; color: var(--text-primary); flex-grow: 1; text-align: right; display: flex; justify-content: flex-end; gap: 8px;">
-                                            <span style="color: var(--text-secondary); width: 28px; text-align: right;">${f.min}º</span>
-                                            <span style="width: 28px; text-align: right;">${f.max}º</span>
+                                        <div style="color: var(--text-secondary); font-size: 0.85rem; width: 75px; text-align: right; font-weight: 500;">
+                                            ${f.windMax && f.windMax !== 'N/A' ? `${f.windMax} Km/h` : ''}
+                                        </div>
+                                        <div style="font-weight: 600; display: flex; justify-content: flex-end; align-items: center; gap: 6px; flex-grow: 1; font-size: 0.85rem;">
+                                            <span style="color: #ef4444;">↑ ${f.max}º</span>
+                                            <span style="color: var(--text-secondary); opacity: 0.5;">|</span>
+                                            <span style="color: #3b82f6;">↓ ${f.min}º</span>
                                         </div>
                                     </div>
                                 `;
