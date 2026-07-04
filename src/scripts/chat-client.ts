@@ -2108,7 +2108,7 @@
                                         <div style="font-size: 1rem; font-weight: 700;">${h.temp}º</div>
                                         <div style="font-size: 0.7rem; font-weight: 500; color: ${isNow ? 'rgba(255,255,255,0.8)' : '#3b82f6'}; margin-top: 4px; display: flex; flex-direction: column; align-items: center; gap: 2px;">
                                             <div style="display: flex; align-items: center;">
-                                                <svg xmlns="http://www.w3.org/2000/svg" height="12" viewBox="0 -960 960 960" width="12" fill="currentColor" style="margin-right:2px; opacity:0.8;"><path d="M480-120q-134 0-227-93t-93-227q0-136 121.5-286.5T480-920q117 103 238.5 253.5T840-440q0 134-93 227t-227 93Z"/></svg>
+                                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:2px; opacity:0.8;"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M8 19v1"/><path d="M8 14v1"/><path d="M16 19v1"/><path d="M16 14v1"/><path d="M12 21v1"/><path d="M12 16v1"/></svg>
                                                 ${h.probPrecipitacion}%
                                             </div>
                                             ${(parseFloat(h.precip || '0') > 0) ? `<div style="font-size: 0.65rem; font-weight: 400; color: ${isNow ? 'rgba(255,255,255,0.7)' : 'var(--text-secondary)'}; margin-top: -2px;">${parseFloat(h.precip)} mm</div>` : ''}
@@ -2138,8 +2138,8 @@
                                     <div style="display: flex; justify-content: space-between; align-items: center; padding: 4px 0; border-bottom: ${index === wData.forecast.length - 1 ? 'none' : '1px solid var(--border-color)'}; margin-bottom: ${index === wData.forecast.length - 1 ? '0' : '4px'};">
                                         <div style="font-weight: 500; width: 80px; text-transform: capitalize; color: var(--text-primary); font-size: 0.95rem;">${dayName}</div>
                                         <div style="display: flex; align-items: center; width: 45px; font-size: 1.2rem;">${fEmoji}</div>
-                                        <div style="color: #3b82f6; font-size: 0.85rem; width: 40px; text-align: left; font-weight: 500;">
-                                            <svg xmlns="http://www.w3.org/2000/svg" height="12" viewBox="0 -960 960 960" width="12" fill="currentColor" style="margin-right:2px; opacity:0.8; vertical-align: middle;"><path d="M480-120q-134 0-227-93t-93-227q0-136 121.5-286.5T480-920q117 103 238.5 253.5T840-440q0 134-93 227t-227 93Z"/></svg>
+                                        <div style="color: #3b82f6; font-size: 0.85rem; width: 45px; text-align: left; font-weight: 500; display: flex; align-items: center;">
+                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px; opacity:0.8;"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M8 19v1"/><path d="M8 14v1"/><path d="M16 19v1"/><path d="M16 14v1"/><path d="M12 21v1"/><path d="M12 16v1"/></svg>
                                             ${f.probPrecipitacion}%
                                         </div>
                                         ${f.windMax && f.windMax !== 'N/A' ? `<div style="color: var(--text-secondary); font-size: 0.85rem; width: 85px; text-align: right; font-weight: 500;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right:2px; opacity:0.8"><path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"/></svg>${f.windMax} Km/h</div>` : '<div style="width: 85px;"></div>'}
