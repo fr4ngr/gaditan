@@ -2135,16 +2135,25 @@
                                 else if (f.probPrecipitacion > 20) fEmoji = '⛅';
 
                                 forecastHtml += `
-                                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: ${index === wData.forecast.length - 1 ? 'none' : '1px solid var(--border-color)'}; margin-bottom: ${index === wData.forecast.length - 1 ? '0' : '4px'};">
-                                        <div style="font-weight: 500; width: 85px; text-transform: capitalize; color: var(--text-primary); font-size: 0.95rem;">${dayName}</div>
-                                        <div style="display: flex; align-items: center; width: 40px; font-size: 1.25rem;">${fEmoji}</div>
-                                        <div style="color: #3b82f6; font-size: 0.85rem; width: 50px; text-align: left; font-weight: 500; display: flex; align-items: center;">
-                                            ${f.probPrecipitacion > 0 ? `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px; opacity:0.8;"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M8 19v1"/><path d="M8 14v1"/><path d="M16 19v1"/><path d="M16 14v1"/><path d="M12 21v1"/><path d="M12 16v1"/></svg>${f.probPrecipitacion}%` : ''}
+                                    <div style="display: flex; flex-direction: column; padding: 12px 0; border-bottom: ${index === wData.forecast.length - 1 ? 'none' : '1px solid var(--border-color)'}; margin-bottom: ${index === wData.forecast.length - 1 ? '0' : '4px'};">
+                                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                                            <div style="font-weight: 600; text-transform: capitalize; color: var(--text-primary); font-size: 1rem; display: flex; align-items: center; gap: 10px;">
+                                                <span style="font-size: 1.3rem;">${fEmoji}</span>
+                                                ${dayName}
+                                            </div>
+                                            <div style="font-weight: 600; display: flex; align-items: center; gap: 6px; font-size: 0.95rem; white-space: nowrap;">
+                                                <span style="color: #ef4444;">↑ ${f.max}º</span>
+                                                <span style="color: var(--text-secondary); opacity: 0.5;">|</span>
+                                                <span style="color: #3b82f6;">↓ ${f.min}º</span>
+                                            </div>
                                         </div>
-                                        <div style="font-weight: 600; display: flex; justify-content: flex-end; align-items: center; gap: 6px; flex-grow: 1; font-size: 0.9rem; white-space: nowrap;">
-                                            <span style="color: #ef4444; white-space: nowrap;">↑ ${f.max}º</span>
-                                            <span style="color: var(--text-secondary); opacity: 0.5;">|</span>
-                                            <span style="color: #3b82f6; white-space: nowrap;">↓ ${f.min}º</span>
+                                        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; color: var(--text-secondary); font-weight: 500; padding-left: 36px;">
+                                            <div style="color: #3b82f6; display: flex; align-items: center;">
+                                                ${f.probPrecipitacion > 0 ? `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px; opacity:0.8;"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M8 19v1"/><path d="M8 14v1"/><path d="M16 19v1"/><path d="M16 14v1"/><path d="M12 21v1"/><path d="M12 16v1"/></svg>${f.probPrecipitacion}%` : ''}
+                                            </div>
+                                            <div>
+                                                ${f.windMax && f.windMax !== 'N/A' ? `${f.windMax} Km/h` : ''}
+                                            </div>
                                         </div>
                                     </div>
                                 `;
