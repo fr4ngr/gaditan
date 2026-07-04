@@ -2091,9 +2091,12 @@
                                         <div style="font-size: 0.85rem; font-weight: 600; margin-bottom: 8px;">${label}</div>
                                         <div style="font-size: 1.5rem; margin-bottom: 8px;">${hEmoji}</div>
                                         <div style="font-size: 1rem; font-weight: 700;">${h.temp}º</div>
-                                        <div style="font-size: 0.7rem; font-weight: 500; color: ${isNow ? 'rgba(255,255,255,0.8)' : '#3b82f6'}; margin-top: 4px; display: flex; align-items: center; gap: 2px;">
-                                            <svg xmlns="http://www.w3.org/2000/svg" height="12" viewBox="0 -960 960 960" width="12" fill="currentColor" style="margin-right:2px; opacity:0.8;"><path d="M480-120q-134 0-227-93t-93-227q0-136 121.5-286.5T480-920q117 103 238.5 253.5T840-440q0 134-93 227t-227 93Z"/></svg>
-                                            ${h.probPrecipitacion}%
+                                        <div style="font-size: 0.7rem; font-weight: 500; color: ${isNow ? 'rgba(255,255,255,0.8)' : '#3b82f6'}; margin-top: 4px; display: flex; flex-direction: column; align-items: center; gap: 2px;">
+                                            <div style="display: flex; align-items: center;">
+                                                <svg xmlns="http://www.w3.org/2000/svg" height="12" viewBox="0 -960 960 960" width="12" fill="currentColor" style="margin-right:2px; opacity:0.8;"><path d="M480-120q-134 0-227-93t-93-227q0-136 121.5-286.5T480-920q117 103 238.5 253.5T840-440q0 134-93 227t-227 93Z"/></svg>
+                                                ${h.probPrecipitacion}%
+                                            </div>
+                                            ${(parseFloat(h.precip || '0') > 0) ? `<div style="font-size: 0.65rem; font-weight: 400; color: ${isNow ? 'rgba(255,255,255,0.7)' : 'var(--text-secondary)'}; margin-top: -2px;">${parseFloat(h.precip)} mm</div>` : ''}
                                         </div>
                                         ${(h.windSpeed && h.windSpeed !== 'N/A') ? `<div style="font-size: 0.7rem; font-weight: 600; color: ${isNow ? 'rgba(255,255,255,0.8)' : 'var(--text-secondary)'}; margin-top: 4px; display: flex; align-items: center; gap: 2px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.8"><path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"/></svg>${h.windSpeed}</div>` : ''}
                                     </div>
