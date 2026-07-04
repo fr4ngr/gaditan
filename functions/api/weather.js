@@ -65,7 +65,7 @@ export async function onRequest(context) {
         locationInfo = cityMap["Cádiz"];
     }
 
-    const cacheKey = `weather_v4_${locationInfo.id}`;
+    const cacheKey = `weather_v6_${locationInfo.id}`;
 
     // Función para obtener y procesar datos de AEMET y guardarlos en D1
     const syncWeather = async () => {
@@ -126,6 +126,13 @@ export async function onRequest(context) {
                     tMin = dias[0].temperatura.minima;
                     uvMax = dias[0].uvMax || "N/A";
 
+                    const getDailyMax = (prop) => {
+                        if (!prop) return "N/A";
+                        const arr = Array.isArray(prop) ? prop : [prop];
+                        const vals = arr.map(x => parseInt(x.value || x.velocidad)).filter(x => !isNaN(x));
+                        return vals.length > 0 ? String(Math.max(...vals)) : "N/A";
+                    };
+
                     for (let i = 0; i < Math.min(dias.length, 7); i++) {
                         const d = dias[i];
                         forecast.push({
@@ -133,7 +140,9 @@ export async function onRequest(context) {
                             max: d.temperatura.maxima,
                             min: d.temperatura.minima,
                             uv: d.uvMax || "N/A",
-                            probPrecipitacion: Array.isArray(d.probPrecipitacion) ? d.probPrecipitacion[0]?.value : (d.probPrecipitacion?.value || 0)
+                            probPrecipitacion: Array.isArray(d.probPrecipitacion) ? d.probPrecipitacion[0]?.value : (d.probPrecipitacion?.value || 0),
+                            windMax: getDailyMax(d.viento),
+                            gustMax: getDailyMax(d.rachaMax)
                         });
                     }
                 }
