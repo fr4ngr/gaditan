@@ -30,7 +30,7 @@ export async function onRequest(context) {
         locationInfo = cityMap["Cádiz"];
     }
 
-    const cacheKey = `weather_${locationInfo.id}`;
+    const cacheKey = `weather_v2_${locationInfo.id}`;
 
     // Función para obtener y procesar datos de AEMET y guardarlos en D1
     const syncWeather = async () => {
