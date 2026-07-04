@@ -415,7 +415,7 @@
                 addMessage('bot', `
                     <div style="display: flex; flex-direction: column; gap: 8px;">
                         <span class="bubble" style="background:#ffebee; color:#c62828;">⚠️ ${errorMsg}</span>
-                        <button class="call-btn" style="background: #c62828; margin: 0; align-self: flex-start; padding: 6px 12px; font-size: 0.85rem;" onclick="window.sendToAI('${safeText}')">🔄 Reintentar</button>
+                        <button class="call-btn" style="background: #c62828; margin: 0; align-self: flex-start; padding: 6px 12px; font-size: 0.85rem;" onclick="window.sendToAI('${safeText}', ${isHiddenInit})">🔄 Reintentar</button>
                     </div>
                 `);
                 
