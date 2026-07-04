@@ -219,7 +219,7 @@ body {
 
 .chat-input-wrapper {
   flex-grow: 1;
-  background-color: rgba(255, 255, 255, 0.85); /* Semi-transparente base */
+  background-color: var(--input-bg, rgba(255, 255, 255, 0.85));
   border-radius: 1.5rem;
   border: 1px solid var(--input-border);
   padding: 0.6rem 1.2rem;
@@ -228,10 +228,6 @@ body {
   box-shadow: 0 8px 24px rgba(0,0,0,0.12);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-}
-
-[data-theme="dark"] .chat-input-wrapper {
-  background-color: rgba(30, 30, 30, 0.85);
 }
 
 .chat-input {

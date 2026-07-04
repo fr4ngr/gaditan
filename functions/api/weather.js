@@ -1,5 +1,5 @@
 export async function onRequest(context) {
-    const { env } = context;
+    const { env, request } = context;
     const aemetKey = env.AEMET_API_KEY;
 
     if (!aemetKey) {
@@ -9,8 +9,24 @@ export async function onRequest(context) {
         });
     }
 
+    // 1. Configurar la caché
+    const cacheUrl = new URL(request.url);
+    cacheUrl.search = ""; // Ignorar parámetros de búsqueda como ?t=123 para el cache hit
+    const cacheKey = new Request(cacheUrl.toString(), request);
+    const cache = caches.default;
+
+    // 2. Intentar devolver de la caché primero
     try {
-        // 1. Fetch AEMET Diaria (Max/Min temps, UV)
+        let cachedResponse = await cache.match(cacheKey);
+        if (cachedResponse) {
+            return cachedResponse;
+        }
+    } catch (e) {
+        console.error("Cache match error:", e);
+    }
+
+    try {
+        // Fetch AEMET Diaria (Max/Min temps, UV)
         const diariaRes = await fetch(`https://opendata.aemet.es/opendata/api/prediccion/especifica/municipio/diaria/11012/?api_key=${aemetKey}`);
         const diariaJson = await diariaRes.json();
         
@@ -22,7 +38,7 @@ export async function onRequest(context) {
             dailyData = dDataArr[0].prediccion.dia[0]; // Today
         }
 
-        // 2. Fetch AEMET Horaria (Current temp, sky)
+        // Fetch AEMET Horaria (Current temp, sky)
         const horariaRes = await fetch(`https://opendata.aemet.es/opendata/api/prediccion/especifica/municipio/horaria/11012/?api_key=${aemetKey}`);
         const horariaJson = await horariaRes.json();
         
@@ -33,21 +49,20 @@ export async function onRequest(context) {
             hourlyData = hDataArr[0].prediccion.dia[0]; // Today
         }
 
-        // 3. Fetch Tides from IHM (ID 42 = Cadiz)
+        // Fetch Tides from IHM (ID 42 = Cadiz)
         let tidesData = null;
         try {
             const tidesRes = await fetch(`https://ideihm.covam.es/api-ihm/getmarea?request=gettide&id=42&format=json`);
             if (tidesRes.ok) {
                 const tidesJson = await tidesRes.json();
                 if (tidesJson && tidesJson.mareas && tidesJson.mareas.datos) {
-                    tidesData = tidesJson.mareas.datos.marea; // Array of tides (bajamar/pleamar)
+                    tidesData = tidesJson.mareas.datos.marea;
                 }
             }
         } catch (e) {
             console.error("Error fetching tides:", e);
         }
 
-        // Extraer datos útiles
         let currentTemp = "N/A";
         let currentSky = "N/A";
         let currentSkyDesc = "";
@@ -56,6 +71,8 @@ export async function onRequest(context) {
         let tMax = "N/A";
         let tMin = "N/A";
         let uvMax = "N/A";
+        let tMaxTime = "N/A";
+        let tMinTime = "N/A";
 
         if (dailyData) {
             if (dailyData.temperatura) {
@@ -65,7 +82,6 @@ export async function onRequest(context) {
             if (dailyData.uvMax !== undefined) {
                 uvMax = dailyData.uvMax;
             } else if (diariaJson && diariaJson.datos && dDataArr) {
-                // If today has no UV, try tomorrow
                 const tomorrow = dDataArr[0].prediccion?.dia[1];
                 if (tomorrow && tomorrow.uvMax !== undefined) {
                     uvMax = tomorrow.uvMax;
@@ -73,13 +89,9 @@ export async function onRequest(context) {
             }
         }
 
-        let tMaxTime = "N/A";
-        let tMinTime = "N/A";
-
         if (hourlyData) {
             if (hourlyData.temperatura && hourlyData.temperatura.length > 0) {
                 currentTemp = hourlyData.temperatura[0].value;
-                
                 let maxFound = -999;
                 let minFound = 999;
                 hourlyData.temperatura.forEach(t => {
@@ -102,41 +114,35 @@ export async function onRequest(context) {
             }
         }
 
-        // Tides formatting
         const formattedTides = [];
         if (tidesData && Array.isArray(tidesData)) {
             tidesData.forEach(t => {
                 formattedTides.push({
-                    type: t.tipo.toLowerCase(), // 'pleamar' or 'bajamar'
+                    type: t.tipo.toLowerCase(),
                     time: t.hora,
                     height: t.altura
                 });
             });
         }
 
-        return new Response(JSON.stringify({
+        const responseData = {
             location: "Cádiz",
-            current: {
-                temp: currentTemp,
-                sky: currentSky,
-                skyDesc: currentSkyDesc,
-                windDir: currentWindDir,
-                windSpeed: currentWindSpeed
-            },
-            daily: {
-                tempMax: tMax,
-                tempMaxTime: tMaxTime,
-                tempMin: tMin,
-                tempMinTime: tMinTime,
-                uvMax: uvMax
-            },
+            current: { temp: currentTemp, sky: currentSky, skyDesc: currentSkyDesc, windDir: currentWindDir, windSpeed: currentWindSpeed },
+            daily: { tempMax: tMax, tempMaxTime: tMaxTime, tempMin: tMin, tempMinTime: tMinTime, uvMax: uvMax },
             tides: formattedTides
-        }), {
+        };
+
+        const response = new Response(JSON.stringify(responseData), {
             headers: {
                 "Content-Type": "application/json",
-                "Cache-Control": "max-age=0, no-cache, no-store, must-revalidate" // Prevent caching issues during test
+                "Cache-Control": "public, max-age=3600" // Cache during 1 hour
             }
         });
+
+        // 3. Guardar en caché para los próximos usuarios (background)
+        context.waitUntil(cache.put(cacheKey, response.clone()));
+
+        return response;
 
     } catch (error) {
         return new Response(JSON.stringify({ error: error.message }), {
