@@ -37,9 +37,10 @@ export async function onRequest(context) {
             const diariaRes = await fetch(`https://opendata.aemet.es/opendata/api/prediccion/especifica/municipio/diaria/${locationInfo.id}/?api_key=${aemetKey}`);
             const diariaJson = await diariaRes.json();
             let dailyData = null;
+            let dDataArr = null;
             if (diariaJson.estado == 200 && diariaJson.datos) {
                 const dataRes = await fetch(diariaJson.datos);
-                const dDataArr = await dataRes.json();
+                dDataArr = await dataRes.json();
                 dailyData = dDataArr[0]?.prediccion?.dia[0];
             }
 
