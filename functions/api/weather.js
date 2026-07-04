@@ -6,8 +6,10 @@ export async function onRequest(context) {
         return new Response(JSON.stringify({ error: "Missing AEMET API KEY" }), { status: 500, headers: { "Content-Type": "application/json" } });
     }
 
-    // Identificar la ciudad del usuario usando Cloudflare IP Geolocation
-    const cfCity = (request.cf && request.cf.city) ? request.cf.city : "Cádiz";
+    // Identificar la ciudad del usuario
+    const url = new URL(request.url);
+    const queryCity = url.searchParams.get('city');
+    const cfCity = queryCity ? queryCity : ((request.cf && request.cf.city) ? request.cf.city : "Cádiz");
     
     // Mapear ciudad a ID de municipio de AEMET y Zona de Avisos
     const cityMap = {

@@ -17,6 +17,7 @@ export async function onRequestPost(context) {
         const body = await request.json();
         const userMessage = body.message;
         const sessionId = body.sessionId || 'anonymous';
+        const userCity = body.city || null;
         
         // A/B Testing Assignment
         let activeVariant = 'A';
@@ -72,7 +73,8 @@ ${b.content}
             console.error("Error en RAG Vectorize:", ragError);
         }
 
-        const systemInstruction = (activeSystemPrompt || "Eres un asistente.").replace('{{CEREBROS_INJECTION_POINT}}', `<cerebros_activos>\n${cerebrosXml}\n</cerebros_activos>`);
+        const userCityContext = userCity ? `<contexto_usuario>\nEl usuario ha configurado explícitamente su ciudad actual como: ${userCity}. Prioriza y orienta tus recomendaciones a esta ciudad si es relevante.\n</contexto_usuario>\n` : "";
+        const systemInstruction = (activeSystemPrompt || "Eres un asistente.").replace('{{CEREBROS_INJECTION_POINT}}', `<cerebros_activos>\n${cerebrosXml}\n</cerebros_activos>\n${userCityContext}`);
 
         const schema = {
             type: Type.OBJECT,

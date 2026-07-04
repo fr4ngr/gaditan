@@ -225,7 +225,10 @@ import themeData from '../data/theme.json';
                     <div class="logo" id="header-lottie" style="width: 56px; height: 56px; overflow: hidden; flex-shrink: 0;"></div>
                     <div class="chat-title-group" id="header-title-group" style="display: flex; flex-direction: column; justify-content: center; min-width: 0;">
                         <h1 id="header-title" style="margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">cadiz.chat</h1>
-                        <span class="chat-subtitle" id="header-subtitle" style="margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Asistente Virtual</span>
+                        <button id="header-subtitle-btn" onclick="window.openCityModal()" style="background: none; border: none; padding: 0; margin: 0; display: flex; align-items: center; gap: 4px; cursor: pointer; color: var(--text-secondary); font-size: 0.8rem; white-space: nowrap; transition: color 0.2s; text-align: left;">
+                            <span class="chat-subtitle" id="header-subtitle" style="margin: 0; padding: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Cádiz Capital</span>
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;"><path d="m6 9 6 6 6-6"/></svg>
+                        </button>
                     </div>
                 </div>
                 
@@ -735,6 +738,25 @@ import themeData from '../data/theme.json';
                         <!-- Se llena vía JS -->
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <!-- OVERLAY Y MODAL DE MUNICIPIOS -->
+        <div id="city-modal-overlay" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 2999; opacity: 0; transition: opacity 0.3s;" onclick="window.closeCityModal()"></div>
+        <div id="city-modal" class="wg-card" style="display: none; position: fixed; bottom: -100%; left: 0; right: 0; margin: 0 auto; max-width: 480px; width: 100%; z-index: 3000; border-bottom-left-radius: 0; border-bottom-right-radius: 0; transition: bottom 0.3s cubic-bezier(0.4, 0, 0.2, 1); max-height: 80vh; overflow-y: auto; background: var(--chat-bg);">
+            <div class="wg-header" style="justify-content: space-between; border-bottom: 1px solid var(--border-color);">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                    <span>Selecciona tu municipio</span>
+                </div>
+                <button onclick="window.closeCityModal()" style="background: none; border: none; color: var(--text-secondary); cursor: pointer; padding: 4px;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                </button>
+            </div>
+            <div class="wg-body" style="padding: 0;">
+                <ul id="city-list" style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column;">
+                    <!-- Rellenado por JS -->
+                </ul>
             </div>
         </div>
 

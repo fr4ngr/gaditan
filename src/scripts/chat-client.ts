@@ -1846,13 +1846,82 @@
         }
     };
 
-    // Carga de clima silenciosa
+    // --- MANEJO DE CIUDAD ---
+    const subtitleEl = document.getElementById('header-subtitle');
+    const savedCity = localStorage.getItem('cadiz_city');
+    if (subtitleEl && savedCity) {
+        subtitleEl.textContent = savedCity;
+    } else if (subtitleEl) {
+        subtitleEl.textContent = "Cádiz Capital";
+    }
+
+    const citiesList = [
+        "Cádiz", "Jerez de la Frontera", "Algeciras", "San Fernando", 
+        "El Puerto de Santa María", "Chiclana de la Frontera", 
+        "Sanlúcar de Barrameda", "La Línea de la Concepción", "Puerto Real"
+    ];
+
+    (window as any).openCityModal = () => {
+        const modal = document.getElementById('city-modal');
+        const overlay = document.getElementById('city-modal-overlay');
+        const ul = document.getElementById('city-list');
+        if (modal && overlay && ul) {
+            ul.innerHTML = '';
+            const currentCity = localStorage.getItem('cadiz_city') || "Cádiz";
+            citiesList.forEach(city => {
+                const li = document.createElement('li');
+                li.style.cssText = `padding: 16px; border-bottom: 1px solid var(--border-color); cursor: pointer; display: flex; align-items: center; justify-content: space-between; color: ${city === currentCity ? 'var(--primary-color)' : 'inherit'}; font-weight: ${city === currentCity ? 'bold' : 'normal'};`;
+                li.innerHTML = `<span>${city}</span> ${city === currentCity ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>' : ''}`;
+                li.onclick = () => (window as any).selectCity(city);
+                ul.appendChild(li);
+            });
+            overlay.style.display = 'block';
+            modal.style.display = 'block';
+            setTimeout(() => {
+                overlay.style.opacity = '1';
+                modal.style.bottom = '0';
+            }, 10);
+        }
+    };
+
+    (window as any).closeCityModal = () => {
+        const modal = document.getElementById('city-modal');
+        const overlay = document.getElementById('city-modal-overlay');
+        if (modal && overlay) {
+            modal.style.bottom = '-100%';
+            overlay.style.opacity = '0';
+            setTimeout(() => {
+                overlay.style.display = 'none';
+                modal.style.display = 'none';
+            }, 300);
+        }
+    };
+
+    (window as any).selectCity = (city: string) => {
+        localStorage.setItem('cadiz_city', city);
+        if (subtitleEl) subtitleEl.textContent = city;
+        (window as any).closeCityModal();
+        
+        // Reset chat
+        const messagesDiv = document.getElementById('chat-messages');
+        if (messagesDiv) messagesDiv.innerHTML = '';
+        chatHistory.length = 0; // vaciar array
+        
+        // Refresh Weather
+        const weatherChip = document.getElementById('header-weather-chip');
+        if (weatherChip) weatherChip.style.display = 'none';
+        
+        (window as any).fetchWeatherWithRetryFn();
+        sendMessageToAI('¡Hola! Acabo de entrar a la web. Preséntate brevemente de forma muy natural y dime en qué puedes ayudarme. NO añadas sugerencias ni listas en tu mensaje de texto, usa EXCLUSIVAMENTE los bloques de sugerencia de la interfaz.', true);
+    };
+
     setTimeout(() => {
         const fetchWeatherWithRetry = (retriesLeft = 3, delay = 2000) => {
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 10000);
             
-            fetch('/api/weather?t=' + new Date().getTime(), { signal: controller.signal })
+            const savedCityQuery = localStorage.getItem('cadiz_city') ? `&city=${encodeURIComponent(localStorage.getItem('cadiz_city')!)}` : '';
+            fetch('/api/weather?t=' + new Date().getTime() + savedCityQuery, { signal: controller.signal })
                 .then(wRes => {
                     clearTimeout(timeoutId);
                     if (!wRes.ok) throw new Error('Fetch failed with status: ' + wRes.status);
@@ -1969,6 +2038,7 @@
                     }
                 });
         };
+        (window as any).fetchWeatherWithRetryFn = fetchWeatherWithRetry;
         fetchWeatherWithRetry();
     }, 500);
 
