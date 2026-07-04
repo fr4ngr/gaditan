@@ -156,8 +156,13 @@ export async function onRequest(context) {
             // Comprobar si tiene más de 30 minutos de antigüedad
             const updatedDate = new Date(row.updated_at + 'Z'); // UTC
             const ageMs = Date.now() - updatedDate.getTime();
+            
             if (ageMs < 30 * 60 * 1000) {
-                isStale = false; // Fresco
+                isStale = false; // Fresco (menos de 30 mins)
+            } else if (ageMs > 2 * 60 * 60 * 1000) {
+                // Si tiene más de 2 horas de antigüedad, está DEMASIADO rancio (ej: datos de ayer).
+                // Lo anulamos para obligar a descargar el clima real antes de responder al usuario.
+                cachedData = null; 
             }
         }
     } catch (e) {
