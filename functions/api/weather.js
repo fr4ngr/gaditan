@@ -119,6 +119,7 @@ export async function onRequest(context) {
             }
 
             // --- PROCESAMIENTO ---
+            let tMax = "N/A", tMin = "N/A", uvMax = "N/A";
             if (dDataArr && dDataArr[0]?.prediccion?.dia) {
                 const dias = dDataArr[0].prediccion.dia;
                 if (dias.length > 0) {
@@ -194,6 +195,9 @@ export async function onRequest(context) {
                     });
                 });
             }
+
+            let currentTemp = "N/A", currentFeelsLike = "N/A", currentSky = "N/A", currentSkyDesc = "";
+            let currentWindDir = "N/A", currentWindSpeed = "N/A", currentWindGust = "N/A", currentHumidity = "N/A", currentPrecip = "0";
 
             if (hourlyForecast.length > 0) {
                 const now = new Date();
