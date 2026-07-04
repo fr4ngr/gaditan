@@ -1,0 +1,36 @@
+
+ ⛅️ wrangler 4.105.0 (update available 4.107.0)
+───────────────────────────────────────────────
+✨ Compiled Worker successfully
+Using secrets defined in .env
+Your Worker has access to the following bindings:
+Binding                                                                   Resource                  Mode
+env.DB (cadiz-chat)                                                       D1 Database               local
+env.VECTORIZE_INDEX (cadiz-knowledge)                                     Vectorize Index           not supported
+env.VECTORIZE (cadiz-knowledge-index)                                     Vectorize Index           remote
+env.AI                                                                    AI                        remote
+env.CF_PAGES ("1")                                                        Environment Variable      local
+env.CF_PAGES_BRANCH ("main")                                              Environment Variable      local
+env.CF_PAGES_COMMIT_SHA ("55c1625e92afdc2b4b00e9ebc3c0575c51f9d...")      Environment Variable      local
+env.CF_PAGES_URL ("https://55c1625.cadiz-chat.pages.dev")                 Environment Variable      local
+env.GEMINI_API_KEY ("(hidden)")                                           Environment Variable      local
+env.AEMET_API_KEY ("(hidden)")                                            Environment Variable      local
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mThere was an access violation in the runtime.[0m
+
+  On Windows, this may be caused by an outdated Microsoft Visual C++ Redistributable library.
+  Check that you have the latest version installed.
+  See [4mhttps://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist[0m
+
+
+⎔ Establishing remote connection...
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mThe Workers runtime failed to start. There was likely a problem with the workerd binary or your configuration.[0m
+
+  Runtime stderr:
+  *** Received structured exception #0xc0000005: access violation; stack: 7ffb4fa32f57 7ff6d732d96d 7ff6d732da33 7ff6d730b0dc 7ff6d730b090 7ff6d679fa16 7ff6d67a019f 7ff6d52c5e2f 7ff6d694c3f2 7ff6d69532f6 7ff6d694c94b 7ff6d69532f6 7ff6d6949e9b 7ff6d52b1e77 7ff6d876999e 7ffba8fce956 7ffbaaf6ad6b
+
+
+[32mIf you think this is a bug then please create an issue at https://github.com/cloudflare/workers-sdk/issues/new/choose[0m
+Note that there is a newer version of Wrangler available (4.107.0). Consider checking whether upgrading resolves this error.
+🪵  Logs were written to "C:\Users\frn\AppData\Roaming\xdg.config\.wrangler\logs\wrangler-2026-07-03_21-37-47_401.log"

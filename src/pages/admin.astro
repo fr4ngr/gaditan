@@ -291,6 +291,7 @@ import themeData from '../data/theme.json';
                 <button class="tab-btn" onclick="switchTab('personalidad')">🤖 Personalidad</button>
                 <button class="tab-btn" onclick="switchTab('simulador')">🧪 Simulador</button>
                 <button class="tab-btn" onclick="switchTab('ui')">🎨 Plantillas UI</button>
+                <button class="tab-btn" onclick="switchTab('muro')">📝 Muro (Moderación)</button>
             </div>
 
             <div class="card">
@@ -388,6 +389,7 @@ import themeData from '../data/theme.json';
                             <div style="display: flex; gap: 10px;">
                                 <button class="btn btn-secondary" style="margin: 0; padding: 5px 15px; display: none;" id="btn-back-materias" onclick="showMaterias()">← Volver</button>
                                 <button class="btn btn-danger" style="margin: 0; padding: 5px 15px; display: none; background: var(--ds-danger); color: white; border: none;" id="btn-delete-materia" onclick="deleteMateria()">🗑️ Borrar Materia</button>
+                                <button class="btn btn-primary" style="margin: 0; padding: 5px 15px; background: #8b5cf6; border-color: #8b5cf6;" onclick="syncVectorize()">🧠 Sincronizar IA</button>
                                 <button class="btn btn-primary" style="margin: 0; padding: 5px 15px;" id="btn-new-materia" onclick="promptNewMateria()">➕ Nueva Materia</button>
                             </div>
                         </div>
@@ -769,6 +771,19 @@ import themeData from '../data/theme.json';
                                 </div>
                             </div>
 
+                        </div>
+                    </div>
+
+                    <!-- TAB MURO MODERACION -->
+                    <div id="tab-muro" class="tab-content">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                            <h2 style="margin: 0; color: var(--ds-text-primary);">📝 Muro de la Comunidad</h2>
+                            <button class="btn btn-secondary" onclick="loadMuroAdmin()">🔄 Refrescar</button>
+                        </div>
+                        <p class="text-muted">Modera las publicaciones de los usuarios. Aquí puedes eliminar contenido inapropiado o SPAM.</p>
+                        
+                        <div id="muro-admin-list" style="display: flex; flex-direction: column; gap: 15px; margin-top: 20px;">
+                            <div class="text-center text-muted">Cargando publicaciones...</div>
                         </div>
                     </div>
 
@@ -1155,7 +1170,84 @@ import themeData from '../data/theme.json';
             if (tabId === 'cerebros') showMaterias();
             if (tabId === 'personalidad') loadSystemPrompt();
             if (tabId === 'ui') initThemeManager();
+            if (tabId === 'muro') loadMuroAdmin();
         }
+
+        window.loadMuroAdmin = async function() {
+            const container = document.getElementById('muro-admin-list');
+            container.innerHTML = '<div class="text-center text-muted">Cargando publicaciones...</div>';
+            try {
+                const response = await fetch('/api/posts/list?limit=100');
+                const data = await response.json();
+                if (data.posts && data.posts.length > 0) {
+                    let html = '';
+                    data.posts.forEach(p => {
+                        const date = new Date(p.created_at).toLocaleString('es-ES');
+                        let contentHtml = `<p style="margin: 0; font-size: 0.95rem;">${p.content}</p>`;
+                        if (p.image_url) {
+                            contentHtml += `<img src="${p.image_url}" style="max-width: 200px; max-height: 200px; border-radius: 8px; margin-top: 10px; object-fit: cover;" />`;
+                        }
+                        if (p.location_name) {
+                            contentHtml += `<div style="font-size: 0.8rem; color: var(--ds-text-secondary); margin-top: 5px;">📍 ${p.location_name}</div>`;
+                        }
+                        html += `
+                        <div style="background: white; border: 1px solid var(--bubble-bot-border); border-radius: 8px; padding: 15px; display: flex; justify-content: space-between; align-items: flex-start; gap: 15px;">
+                            <div style="flex: 1;">
+                                <div style="font-size: 0.8rem; color: var(--ds-primary); font-weight: bold; margin-bottom: 5px;">${p.author_name || 'Anónimo'} <span style="color: var(--ds-text-secondary); font-weight: normal;">- ${date}</span></div>
+                                ${contentHtml}
+                            </div>
+                            <button class="btn btn-danger" style="background: var(--ds-danger); color: white; border: none; padding: 8px 12px; font-size: 0.85rem;" onclick="deleteMuroPost(${p.id})">🗑️ Borrar</button>
+                        </div>
+                        `;
+                    });
+                    container.innerHTML = html;
+                } else {
+                    container.innerHTML = '<div class="text-center text-muted">No hay publicaciones en el muro.</div>';
+                }
+            } catch (e) {
+                console.error(e);
+                container.innerHTML = '<div class="text-center" style="color: var(--ds-danger);">Error al cargar las publicaciones.</div>';
+            }
+        };
+
+        window.deleteMuroPost = async function(id) {
+            if (!confirm('¿Estás seguro de eliminar este post? Esta acción es irreversible.')) return;
+            const pwd = document.getElementById('admin-pwd').value;
+            try {
+                const response = await fetch(`/api/admin/delete-post?secret=${encodeURIComponent(pwd)}`, {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id })
+                });
+                const result = await response.json();
+                if (response.ok) {
+                    showToast('Post eliminado', 'success');
+                    loadMuroAdmin();
+                } else {
+                    showToast(result.error || 'Error al eliminar', 'error');
+                }
+            } catch (e) {
+                showToast('Error de red al eliminar', 'error');
+            }
+        };
+
+        window.syncVectorize = async function() {
+            if (!confirm('¿Sincronizar el conocimiento con el motor de IA? Esto procesará todos los cerebros actuales.')) return;
+            const pwd = document.getElementById('admin-pwd').value;
+            showToast('Iniciando sincronización...', 'info');
+            try {
+                const response = await fetch(`/api/admin/vectorize-sync?secret=${encodeURIComponent(pwd)}`);
+                const result = await response.json();
+                if (response.ok) {
+                    showToast(result.message || 'Sincronización completada', 'success', 8000);
+                } else {
+                    showToast(result.error || 'Error al sincronizar', 'error', 8000);
+                }
+            } catch (e) {
+                showToast('Error de red al sincronizar', 'error');
+            }
+        };
+
 
         function showMessage(msg, type = 'info', duration = 4000) {
             if(type === true) type = 'error';
