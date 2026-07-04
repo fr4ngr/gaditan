@@ -65,7 +65,7 @@ export async function onRequest(context) {
         locationInfo = cityMap["Cádiz"];
     }
 
-    const cacheKey = `weather_v3_${locationInfo.id}`;
+    const cacheKey = `weather_v4_${locationInfo.id}`;
 
     // Función para obtener y procesar datos de AEMET y guardarlos en D1
     const syncWeather = async () => {
@@ -149,83 +149,76 @@ export async function onRequest(context) {
             const getArr = (v) => Array.isArray(v) ? v : (v ? [v] : []);
             
             let hourlyForecast = [];
-            let currentHumidity = "N/A";
             
-            if (hDataArr && hDataArr[0]?.prediccion?.dia) {
-                let count = 0;
-                for (const d of hDataArr[0].prediccion.dia) {
+            if (hDataArr) {
+                hDataArr[0].prediccion.dia.forEach(d => {
+                    const fecha = d.fecha; // Formato YYYY-MM-DD
                     const temps = getArr(d.temperatura);
+                    const feels = getArr(d.sensacionTermica);
                     const cielos = getArr(d.estadoCielo);
                     const probs = getArr(d.probPrecipitacion);
-                    
-                    const fecha = d.fecha ? d.fecha.substring(0, 10) : "";
-                    for (let i = 0; i < temps.length; i++) {
-                        if (count >= 24) break; // Solo queremos las proximas 24 horas
-                        const t = temps[i];
-                        // Buscar el cielo y prob correspondiente por periodo
-                        const cielo = cielos.find(c => c.periodo === t.periodo) || cielos[i] || { value: "", descripcion: "" };
-                        const prob = probs.find(p => p.periodo === t.periodo) || probs[i] || { value: 0 };
-                        
+                    const vientos = getArr(d.vientoAndRachaMax);
+                    const rachas = getArr(d.rachaMax);
+                    const humedades = getArr(d.humedadRelativa);
+                    const lluvias = getArr(d.precipitacion);
+
+                    // MATCH them up by 'periodo'
+                    temps.forEach(t => {
+                        const periodo = t.periodo;
+                        const tempValue = t.value;
+                        const feelObj = feels.find(f => f.periodo === periodo) || {};
+                        const skyObj = cielos.find(c => c.periodo === periodo) || {};
+                        const probObj = probs.find(p => p.periodo === periodo) || {};
+                        const windObj = vientos.find(v => v.periodo === periodo) || {};
+                        const rachaObj = rachas.find(r => r.periodo === periodo) || {};
+                        const humObj = humedades.find(h => h.periodo === periodo) || {};
+                        const lluviaObj = lluvias.find(l => l.periodo === periodo) || {};
+
                         hourlyForecast.push({
                             fecha: fecha,
-                            periodo: t.periodo,
-                            temp: t.value,
-                            sky: cielo.value,
-                            skyDesc: cielo.descripcion,
-                            probPrecipitacion: prob.value
+                            periodo: periodo,
+                            temp: tempValue,
+                            feelsLike: feelObj.value || "N/A",
+                            sky: skyObj.value || "N/A",
+                            skyDesc: skyObj.descripcion || "",
+                            probPrecipitacion: probObj.value || "0",
+                            windDir: windObj.direccion ? getArr(windObj.direccion)[0] : "N/A",
+                            windSpeed: windObj.velocidad ? getArr(windObj.velocidad)[0] : "N/A",
+                            windGust: rachaObj.value || "N/A",
+                            humidity: humObj.value || "N/A",
+                            precip: lluviaObj.value || "0"
                         });
-                        count++;
-                    }
-                }
+                    });
+                });
             }
             
-            if (hourlyData) {
-                const temps = getArr(hourlyData.temperatura);
-                if (temps.length > 0) {
-                    currentTemp = temps[0].value;
+            // We now have a rich hourlyForecast array. 
+            // We will find the EXACT current hour, or the next available hour to populate "current"
+            
+            if (hourlyForecast.length > 0) {
+                const now = new Date();
+                const currentHourStr = now.getHours().toString().padStart(2, '0');
+                const currentFechaStr = now.getFullYear() + "-" + String(now.getMonth()+1).padStart(2,'0') + "-" + String(now.getDate()).padStart(2,'0');
+                
+                let matchedHour = hourlyForecast.find(h => h.fecha === currentFechaStr && h.periodo === currentHourStr);
+                if (!matchedHour) {
+                    matchedHour = hourlyForecast.find(h => h.fecha > currentFechaStr || (h.fecha === currentFechaStr && h.periodo >= currentHourStr));
                 }
-                const feelsLike = getArr(hourlyData.sensacionTermica);
-                if (feelsLike.length > 0) {
-                    currentFeelsLike = feelsLike[0].value;
-                }
-                const cielos = getArr(hourlyData.estadoCielo);
-                if (cielos.length > 0) {
-                    currentSky = cielos[0].value;
-                    currentSkyDesc = cielos[0].descripcion;
-                }
-                const vientos = getArr(hourlyData.vientoAndRachaMax);
-                if (vientos.length > 0) {
-                    const windObj = vientos.find(v => v.direccion && v.velocidad);
-                    if (windObj) {
-                        currentWindDir = getArr(windObj.direccion)[0];
-                        currentWindSpeed = getArr(windObj.velocidad)[0];
-                        // Extraer la racha máxima si existe
-                        const gust = getArr(windObj.velocidad)[1]; // Aveces rachaMax viene después o en otra prop, revisemos
-                        // Según AEMET: vientoAndRachaMax array, puede tener direccion y velocidad, pero rachaMax a veces viene separado en 'rachaMax' o en el mismo. 
-                        // Realmente en horaria rachaMax suele ser un atributo separado `rachaMax` en dia, pero veamos si lo cogemos del objeto viento.
-                    }
-                }
-                // Intento buscar rachaMax directa
-                const rachas = getArr(hourlyData.rachaMax);
-                if (rachas.length > 0 && rachas[0].value) {
-                    currentWindGust = rachas[0].value;
+                if (!matchedHour) {
+                    matchedHour = hourlyForecast[0]; // Fallback to first available
                 }
                 
-                const humedades = getArr(hourlyData.humedadRelativa);
-                if (humedades.length > 0) {
-                    currentHumidity = humedades[0].value;
+                if (matchedHour) {
+                    currentTemp = matchedHour.temp;
+                    currentFeelsLike = matchedHour.feelsLike;
+                    currentSky = matchedHour.sky;
+                    currentSkyDesc = matchedHour.skyDesc;
+                    currentWindDir = matchedHour.windDir;
+                    currentWindSpeed = matchedHour.windSpeed;
+                    currentWindGust = matchedHour.windGust;
+                    currentHumidity = matchedHour.humidity;
+                    currentPrecip = matchedHour.precip;
                 }
-                const precipitacion = getArr(hourlyData.precipitacion);
-                if (precipitacion.length > 0) {
-                    currentPrecip = precipitacion[0].value;
-                }
-            }
-            
-            // Fallbacks if current data is missing but we have hourly forecast
-            if (hourlyForecast.length > 0) {
-                if (currentTemp === "N/A") currentTemp = hourlyForecast[0].temp;
-                if (currentSky === "N/A") currentSky = hourlyForecast[0].sky;
-                if (currentSkyDesc === "") currentSkyDesc = hourlyForecast[0].skyDesc;
             }
 
             const responseData = {
@@ -282,19 +275,26 @@ export async function onRequest(context) {
             // Actualizar el estado 'current' dinámicamente según la hora actual de España
             if (cachedData.hourly && cachedData.hourly.length > 0) {
                 const spainTime = new Date(new Date().toLocaleString("en-US", {timeZone: "Europe/Madrid"}));
-                const currentFecha = spainTime.toISOString().substring(0, 10);
+                const currentFechaStr = spainTime.toISOString().substring(0, 10);
                 const currentHourStr = spainTime.getHours().toString().padStart(2, '0');
                 
                 // Buscar la hora exacta o la primera disponible hacia el futuro
-                let matchedHour = cachedData.hourly.find(h => h.fecha === currentFecha && h.periodo === currentHourStr);
+                let matchedHour = cachedData.hourly.find(h => h.fecha === currentFechaStr && h.periodo === currentHourStr);
                 if (!matchedHour) {
-                    matchedHour = cachedData.hourly.find(h => h.fecha > currentFecha || (h.fecha === currentFecha && h.periodo >= currentHourStr));
+                    // fallback to next available hour
+                    matchedHour = cachedData.hourly.find(h => h.fecha > currentFechaStr || (h.fecha === currentFechaStr && h.periodo >= currentHourStr));
                 }
                 
                 if (matchedHour) {
                     cachedData.current.temp = matchedHour.temp;
+                    cachedData.current.feelsLike = matchedHour.feelsLike;
                     cachedData.current.sky = matchedHour.sky;
                     cachedData.current.skyDesc = matchedHour.skyDesc;
+                    cachedData.current.windDir = matchedHour.windDir;
+                    cachedData.current.windSpeed = matchedHour.windSpeed;
+                    cachedData.current.windGust = matchedHour.windGust;
+                    cachedData.current.humidity = matchedHour.humidity;
+                    cachedData.current.precip = matchedHour.precip;
                 }
             }
         }
