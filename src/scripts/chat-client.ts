@@ -2031,7 +2031,7 @@
                                         <div style="font-size: 1.5rem; margin-bottom: 8px;">${hEmoji}</div>
                                         <div style="font-size: 1rem; font-weight: 700;">${h.temp}º</div>
                                         <div style="font-size: 0.7rem; font-weight: 500; color: ${isNow ? 'rgba(255,255,255,0.8)' : '#3b82f6'}; margin-top: 4px; display: flex; align-items: center; gap: 2px;">
-                                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
                                             ${h.probPrecipitacion}%
                                         </div>
                                     </div>
