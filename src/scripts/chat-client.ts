@@ -1968,7 +1968,7 @@
                         }
                         document.getElementById('weather-modal-alerts').innerHTML = alertsHtml;
 
-                        // Info Actual y Viento
+                        // Info Actual y Detalles Extra
                         let windStr = '--';
                         if (wData.current.windSpeed && wData.current.windSpeed !== 'N/A') {
                             const windDir = wData.current.windDir && wData.current.windDir !== 'N/A' ? ` ${wData.current.windDir}` : '';
@@ -1976,56 +1976,123 @@
                         }
                         const tMax = (wData.daily && wData.daily.tempMax !== 'N/A') ? wData.daily.tempMax + 'º' : '--';
                         const tMin = (wData.daily && wData.daily.tempMin !== 'N/A') ? wData.daily.tempMin + 'º' : '--';
+                        const uvMax = (wData.daily && wData.daily.uvMax !== 'N/A') ? wData.daily.uvMax : '--';
+                        const currentHumidity = (wData.current.humidity && wData.current.humidity !== 'N/A') ? wData.current.humidity + '%' : '--';
 
+                        // Helper para emojis
+                        const getEmoji = (desc) => {
+                            if (!desc) return '⛅';
+                            const d = desc.toLowerCase();
+                            if (d.includes('tormenta')) return '🌩️';
+                            if (d.includes('lluvia') || d.includes('chubasco')) return '🌧️';
+                            if (d.includes('muy nuboso') || d.includes('cubierto')) return '☁️';
+                            if (d.includes('nuboso') || d.includes('nubes')) return '⛅';
+                            if (d.includes('despejado')) return '☀️';
+                            return '⛅';
+                        };
+
+                        const currentEmoji = getEmoji(wData.current.skyDesc);
+
+                        // 1. Current Block
                         document.getElementById('weather-modal-current').innerHTML = `
                             <div style="display: flex; align-items: center; justify-content: center; gap: 15px;">
-                                <div style="font-size: 3rem; line-height: 1;">${weatherIcon}</div>
+                                <div style="font-size: 3.5rem; line-height: 1; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));">${currentEmoji}</div>
                                 <div style="text-align: left;">
-                                    <div style="font-size: 2.5rem; font-weight: 700; color: var(--text-primary); line-height: 1;">${wData.current.temp}º</div>
-                                    <div style="font-size: 0.9rem; color: var(--text-secondary); margin-top: 4px; text-transform: capitalize;">${wData.current.skyDesc}</div>
-                                </div>
-                            </div>
-                            <div style="display: flex; justify-content: space-around; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border-color);">
-                                <div style="text-align: center;">
-                                    <div style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Max / Min</div>
-                                    <div style="font-size: 1rem; font-weight: 600; color: var(--text-primary); margin-top: 4px;">
-                                        <span style="color: #ef4444;">${tMax}</span> <span style="color: var(--text-secondary); font-weight: 400; margin: 0 4px;">/</span> <span style="color: #3b82f6;">${tMin}</span>
-                                    </div>
-                                </div>
-                                <div style="text-align: center;">
-                                    <div style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Viento</div>
-                                    <div style="font-size: 1rem; font-weight: 600; color: var(--text-primary); margin-top: 4px;">
-                                        ${windStr}
-                                    </div>
+                                    <div style="font-size: 3rem; font-weight: 700; color: var(--text-primary); line-height: 1; letter-spacing: -1px;">${wData.current.temp}º</div>
+                                    <div style="font-size: 1rem; color: var(--text-secondary); margin-top: 4px; text-transform: capitalize; font-weight: 500;">${wData.current.skyDesc}</div>
                                 </div>
                             </div>
                         `;
 
-                        // Previsión (Forecast)
-                        let forecastHtml = '';
-                        if (wData.forecast && wData.forecast.length > 0) {
-                            wData.forecast.forEach(f => {
-                                const dateObj = new Date(f.date);
-                                const dayName = dateObj.toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric' });
-                                forecastHtml += `
-                                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; background: var(--chat-bg); border-radius: 8px; font-size: 0.9rem;">
-                                        <div style="font-weight: 500; width: 60px; text-transform: capitalize;">${dayName}</div>
-                                        <div style="color: var(--text-secondary); display: flex; align-items: center; gap: 4px;">
-                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-                                            ${f.probPrecipitacion}%
-                                        </div>
-                                        <div style="font-weight: 600; color: var(--text-primary);">
-                                            <span style="color: #ef4444; width: 24px; display: inline-block; text-align: right;">${f.max}º</span> 
-                                            <span style="color: var(--text-secondary); font-weight: 400; margin: 0 4px;">/</span> 
-                                            <span style="color: #3b82f6; width: 24px; display: inline-block; text-align: right;">${f.min}º</span>
+                        // 2. Hourly Carousel (24h)
+                        let hourlyHtml = '';
+                        if (wData.hourly && wData.hourly.length > 0) {
+                            wData.hourly.forEach((h, index) => {
+                                const hEmoji = getEmoji(h.skyDesc);
+                                const isNow = index === 0;
+                                const label = isNow ? 'Ahora' : `${h.periodo}h`;
+                                hourlyHtml += `
+                                    <div style="display: flex; flex-direction: column; align-items: center; min-width: 60px; padding: 12px 8px; background: ${isNow ? 'var(--primary-color)' : 'var(--chat-bg)'}; color: ${isNow ? 'white' : 'var(--text-primary)'}; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); flex-shrink: 0;">
+                                        <div style="font-size: 0.85rem; font-weight: 600; margin-bottom: 8px;">${label}</div>
+                                        <div style="font-size: 1.5rem; margin-bottom: 8px;">${hEmoji}</div>
+                                        <div style="font-size: 1rem; font-weight: 700;">${h.temp}º</div>
+                                        <div style="font-size: 0.7rem; font-weight: 500; color: ${isNow ? 'rgba(255,255,255,0.8)' : '#3b82f6'}; margin-top: 4px; display: flex; align-items: center; gap: 2px;">
+                                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                                            ${h.probPrecipitacion}%
                                         </div>
                                     </div>
                                 `;
                             });
                         } else {
-                            forecastHtml = '<div style="color: var(--text-secondary); font-size: 0.85rem;">Previsión no disponible</div>';
+                            hourlyHtml = '<div style="color: var(--text-secondary); font-size: 0.85rem; padding: 8px 0;">Previsión horaria no disponible</div>';
+                        }
+                        document.getElementById('weather-hourly-list').innerHTML = hourlyHtml;
+
+                        // 3. Forecast 7-Days
+                        let forecastHtml = '';
+                        if (wData.forecast && wData.forecast.length > 0) {
+                            wData.forecast.forEach((f, index) => {
+                                const dateObj = new Date(f.date);
+                                const dayName = index === 0 ? 'Hoy' : index === 1 ? 'Mañana' : dateObj.toLocaleDateString('es-ES', { weekday: 'long' });
+                                
+                                // Simular emoji en base a la lluvia (para simplificar, ya que daily no tiene desc detallada)
+                                let fEmoji = '☀️';
+                                if (f.probPrecipitacion > 60) fEmoji = '🌧️';
+                                else if (f.probPrecipitacion > 20) fEmoji = '⛅';
+
+                                forecastHtml += `
+                                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 4px 0; border-bottom: ${index === wData.forecast.length - 1 ? 'none' : '1px solid var(--border-color)'}; margin-bottom: ${index === wData.forecast.length - 1 ? '0' : '4px'};">
+                                        <div style="font-weight: 500; width: 80px; text-transform: capitalize; color: var(--text-primary); font-size: 0.95rem;">${dayName}</div>
+                                        <div style="display: flex; align-items: center; width: 60px; font-size: 1.2rem;">${fEmoji}</div>
+                                        <div style="color: #3b82f6; font-size: 0.85rem; width: 40px; text-align: right; font-weight: 500;">
+                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:2px; vertical-align: middle;"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                                            ${f.probPrecipitacion}%
+                                        </div>
+                                        <div style="font-weight: 600; color: var(--text-primary); width: 80px; text-align: right; display: flex; justify-content: flex-end; gap: 8px;">
+                                            <span style="color: var(--text-secondary); width: 28px; text-align: right;">${f.min}º</span>
+                                            <span style="width: 28px; text-align: right;">${f.max}º</span>
+                                        </div>
+                                    </div>
+                                `;
+                            });
+                        } else {
+                            forecastHtml = '<div style="color: var(--text-secondary); font-size: 0.85rem;">Previsión a 7 días no disponible</div>';
                         }
                         document.getElementById('weather-forecast-list').innerHTML = forecastHtml;
+
+                        // 4. Details Grid
+                        document.getElementById('weather-modal-details').innerHTML = `
+                            <div style="background: var(--chat-bg); padding: 16px; border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
+                                <div style="display: flex; align-items: center; gap: 6px; color: var(--text-secondary); font-size: 0.8rem; font-weight: 600; text-transform: uppercase; margin-bottom: 8px;">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"/></svg>
+                                    Viento
+                                </div>
+                                <div style="font-size: 1.25rem; font-weight: 700; color: var(--text-primary);">${windStr}</div>
+                            </div>
+                            <div style="background: var(--chat-bg); padding: 16px; border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
+                                <div style="display: flex; align-items: center; gap: 6px; color: var(--text-secondary); font-size: 0.8rem; font-weight: 600; text-transform: uppercase; margin-bottom: 8px;">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/></svg>
+                                    Humedad
+                                </div>
+                                <div style="font-size: 1.25rem; font-weight: 700; color: var(--text-primary);">${currentHumidity}</div>
+                            </div>
+                            <div style="background: var(--chat-bg); padding: 16px; border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
+                                <div style="display: flex; align-items: center; gap: 6px; color: var(--text-secondary); font-size: 0.8rem; font-weight: 600; text-transform: uppercase; margin-bottom: 8px;">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+                                    Índice UV
+                                </div>
+                                <div style="font-size: 1.25rem; font-weight: 700; color: var(--text-primary);">${uvMax}</div>
+                            </div>
+                            <div style="background: var(--chat-bg); padding: 16px; border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
+                                <div style="display: flex; align-items: center; gap: 6px; color: var(--text-secondary); font-size: 0.8rem; font-weight: 600; text-transform: uppercase; margin-bottom: 8px;">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20V10"/><path d="m18 20-6-10-6 10"/></svg>
+                                    Max / Min
+                                </div>
+                                <div style="font-size: 1.25rem; font-weight: 700; color: var(--text-primary);">
+                                    <span style="color: #ef4444;">${tMax}</span> <span style="color: var(--text-secondary); font-weight: 400; font-size: 1rem;">/</span> <span style="color: #3b82f6;">${tMin}</span>
+                                </div>
+                            </div>
+                        `;
                         
                     } else {
                         throw new Error('API returned error or N/A');

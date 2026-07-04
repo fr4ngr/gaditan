@@ -85,10 +85,11 @@ export async function onRequest(context) {
                 uvMax = dailyData.uvMax || "N/A";
             }
             
-            // Si tenemos dDataArr, extraemos la previsión de los próximos días
-            if (dDataArr && dDataArr[0]?.prediccion?.dia?.length > 1) {
+            // Extraemos TODA la previsión de los próximos días (hasta 7)
+            if (dDataArr && dDataArr[0]?.prediccion?.dia?.length > 0) {
                 const dias = dDataArr[0].prediccion.dia;
-                for (let i = 1; i < Math.min(dias.length, 4); i++) {
+                // Devolvemos todos los días (normalmente 7)
+                for (let i = 0; i < dias.length; i++) {
                     const d = dias[i];
                     if (d.temperatura) {
                         forecast.push({
@@ -103,6 +104,35 @@ export async function onRequest(context) {
             }
             
             const getArr = (v) => Array.isArray(v) ? v : (v ? [v] : []);
+            
+            let hourlyForecast = [];
+            let currentHumidity = "N/A";
+            
+            if (hDataArr && hDataArr[0]?.prediccion?.dia) {
+                let count = 0;
+                for (const d of hDataArr[0].prediccion.dia) {
+                    const temps = getArr(d.temperatura);
+                    const cielos = getArr(d.estadoCielo);
+                    const probs = getArr(d.probPrecipitacion);
+                    
+                    for (let i = 0; i < temps.length; i++) {
+                        if (count >= 24) break; // Solo queremos las proximas 24 horas
+                        const t = temps[i];
+                        // Buscar el cielo y prob correspondiente por periodo
+                        const cielo = cielos.find(c => c.periodo === t.periodo) || cielos[i] || { value: "", descripcion: "" };
+                        const prob = probs.find(p => p.periodo === t.periodo) || probs[i] || { value: 0 };
+                        
+                        hourlyForecast.push({
+                            periodo: t.periodo,
+                            temp: t.value,
+                            sky: cielo.value,
+                            skyDesc: cielo.descripcion,
+                            probPrecipitacion: prob.value
+                        });
+                        count++;
+                    }
+                }
+            }
             
             if (hourlyData) {
                 const temps = getArr(hourlyData.temperatura);
@@ -122,14 +152,19 @@ export async function onRequest(context) {
                         currentWindSpeed = getArr(windObj.velocidad)[0];
                     }
                 }
+                const humedades = getArr(hourlyData.humedadRelativa);
+                if (humedades.length > 0) {
+                    currentHumidity = humedades[0].value;
+                }
             }
 
             const responseData = {
                 location: locationInfo.name,
                 zona: locationInfo.zona,
-                current: { temp: currentTemp, sky: currentSky, skyDesc: currentSkyDesc, windDir: currentWindDir, windSpeed: currentWindSpeed },
+                current: { temp: currentTemp, sky: currentSky, skyDesc: currentSkyDesc, windDir: currentWindDir, windSpeed: currentWindSpeed, humidity: currentHumidity },
                 daily: { tempMax: tMax, tempMin: tMin, uvMax: uvMax },
                 forecast: forecast,
+                hourly: hourlyForecast,
                 tides: tidesData,
                 alerts: [] // Avisos (Simplificado temporalmente)
             };

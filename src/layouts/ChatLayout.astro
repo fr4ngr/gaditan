@@ -732,11 +732,25 @@ import themeData from '../data/theme.json';
                     <!-- Se llena vía JS -->
                 </div>
 
-                <div id="weather-modal-forecast" style="margin-top: 16px;">
-                    <h3 style="font-size: 1rem; color: var(--text-secondary); margin-bottom: 12px;">Próximos Días</h3>
-                    <div id="weather-forecast-list" style="display: flex; flex-direction: column; gap: 8px;">
+                <!-- Carrusel de 24 horas -->
+                <div id="weather-modal-hourly" style="margin-bottom: 24px;">
+                    <h3 style="font-size: 0.9rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Próximas 24 horas</h3>
+                    <div id="weather-hourly-list" style="display: flex; overflow-x: auto; gap: 16px; padding-bottom: 8px; scrollbar-width: none; -ms-overflow-style: none;">
                         <!-- Se llena vía JS -->
                     </div>
+                </div>
+
+                <!-- Previsión 7 días -->
+                <div id="weather-modal-forecast" style="margin-bottom: 24px;">
+                    <h3 style="font-size: 0.9rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Previsión 7 Días</h3>
+                    <div id="weather-forecast-list" style="display: flex; flex-direction: column; gap: 12px; background: rgba(0,0,0,0.02); padding: 16px; border-radius: 16px; border: 1px solid var(--border-color);">
+                        <!-- Se llena vía JS -->
+                    </div>
+                </div>
+                
+                <!-- Detalles adicionales -->
+                <div id="weather-modal-details" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+                    <!-- Se llena vía JS -->
                 </div>
             </div>
         </div>
