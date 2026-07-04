@@ -2028,12 +2028,22 @@
                         const currentEmoji = getEmoji(wData.current.skyDesc);
 
                         // 1. Current Block
+                        let feelsLikeHtml = '';
+                        if (wData.current.feelsLike && wData.current.feelsLike !== 'N/A') {
+                            feelsLikeHtml = ` • Sensación de ${wData.current.feelsLike}º`;
+                        }
+
                         document.getElementById('weather-modal-current').innerHTML = `
                             <div style="display: flex; align-items: center; justify-content: center; gap: 15px;">
                                 <div style="font-size: 3.5rem; line-height: 1; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));">${currentEmoji}</div>
                                 <div style="text-align: left;">
                                     <div style="font-size: 3rem; font-weight: 700; color: var(--text-primary); line-height: 1; letter-spacing: -1px;">${wData.current.temp}º</div>
-                                    <div style="font-size: 1rem; color: var(--text-secondary); margin-top: 4px; text-transform: capitalize; font-weight: 500;">${wData.current.skyDesc}</div>
+                                    <div style="font-size: 1rem; color: var(--text-secondary); margin-top: 4px; font-weight: 500;">
+                                        <span style="text-transform: capitalize;">${wData.current.skyDesc}</span>${feelsLikeHtml}
+                                    </div>
+                                    <div style="font-size: 0.9rem; margin-top: 4px; font-weight: 600; color: var(--text-primary);">
+                                        <span style="color: #ef4444;">↑ ${tMax}</span> <span style="color: var(--text-secondary); margin: 0 4px;">|</span> <span style="color: #3b82f6;">↓ ${tMin}</span>
+                                    </div>
                                 </div>
                             </div>
                         `;
@@ -2109,6 +2119,48 @@
                         document.getElementById('weather-forecast-list').innerHTML = forecastHtml;
 
                         // 4. Details Grid
+                        
+                        let windSub = '';
+                        if (wData.current.windGust && wData.current.windGust !== 'N/A') {
+                            windSub = `<div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 2px;">Racha máx: <span style="color: #ef4444; font-weight:600;">${wData.current.windGust} km/h</span></div>`;
+                        }
+
+                        let dynamicCardHtml = '';
+                        if (wData.tides && wData.tides.length > 0) {
+                            // Find the next tide
+                            const now = new Date();
+                            const currentHour = now.getHours() + now.getMinutes() / 60;
+                            const nextTide = wData.tides.find(t => {
+                                const parts = t.time.split(':');
+                                const tHour = parseInt(parts[0]) + parseInt(parts[1])/60;
+                                return tHour > currentHour;
+                            }) || wData.tides[0]; // fallback to first
+                            
+                            const isHighTide = nextTide.type === 'pleamar';
+                            dynamicCardHtml = `
+                            <div style="background: var(--chat-bg); padding: 16px; border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
+                                <div style="display: flex; align-items: center; gap: 6px; color: var(--text-secondary); font-size: 0.8rem; font-weight: 600; text-transform: uppercase; margin-bottom: 8px;">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12h4l3-9 5 18 3-9h5"/></svg>
+                                    Mareas
+                                </div>
+                                <div style="font-size: 1.1rem; font-weight: 700; color: var(--text-primary); text-transform: capitalize;">${nextTide.type}</div>
+                                <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 2px;">a las ${nextTide.time} (${nextTide.height}m)</div>
+                            </div>
+                            `;
+                        } else {
+                            const precipVal = wData.current.precip && wData.current.precip !== '0' ? wData.current.precip + ' mm' : '0 mm';
+                            dynamicCardHtml = `
+                            <div style="background: var(--chat-bg); padding: 16px; border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
+                                <div style="display: flex; align-items: center; gap: 6px; color: var(--text-secondary); font-size: 0.8rem; font-weight: 600; text-transform: uppercase; margin-bottom: 8px;">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M8 19v1"/><path d="M8 14v1"/><path d="M16 19v1"/><path d="M16 14v1"/><path d="M12 21v1"/><path d="M12 16v1"/></svg>
+                                    Precipitación
+                                </div>
+                                <div style="font-size: 1.25rem; font-weight: 700; color: var(--text-primary);">${precipVal}</div>
+                                <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 2px;">En esta hora</div>
+                            </div>
+                            `;
+                        }
+
                         document.getElementById('weather-modal-details').innerHTML = `
                             <div style="background: var(--chat-bg); padding: 16px; border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
                                 <div style="display: flex; align-items: center; gap: 6px; color: var(--text-secondary); font-size: 0.8rem; font-weight: 600; text-transform: uppercase; margin-bottom: 8px;">
@@ -2116,6 +2168,7 @@
                                     Viento
                                 </div>
                                 <div style="font-size: 1.25rem; font-weight: 700; color: var(--text-primary);">${windStr}</div>
+                                ${windSub}
                             </div>
                             <div style="background: var(--chat-bg); padding: 16px; border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
                                 <div style="display: flex; align-items: center; gap: 6px; color: var(--text-secondary); font-size: 0.8rem; font-weight: 600; text-transform: uppercase; margin-bottom: 8px;">
@@ -2130,16 +2183,9 @@
                                     Índice UV
                                 </div>
                                 <div style="font-size: 1.25rem; font-weight: 700; color: var(--text-primary);">${uvMax}</div>
+                                <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 2px;">Máximo de hoy</div>
                             </div>
-                            <div style="background: var(--chat-bg); padding: 16px; border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
-                                <div style="display: flex; align-items: center; gap: 6px; color: var(--text-secondary); font-size: 0.8rem; font-weight: 600; text-transform: uppercase; margin-bottom: 8px;">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20V10"/><path d="m18 20-6-10-6 10"/></svg>
-                                    Max / Min
-                                </div>
-                                <div style="font-size: 1.25rem; font-weight: 700; color: var(--text-primary);">
-                                    <span style="color: #ef4444;">${tMax}</span> <span style="color: var(--text-secondary); font-weight: 400; font-size: 1rem;">/</span> <span style="color: #3b82f6;">${tMin}</span>
-                                </div>
-                            </div>
+                            ${dynamicCardHtml}
                         `;
                         
                     } else {

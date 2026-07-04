@@ -116,7 +116,8 @@ export async function onRequest(context) {
 
             // Extracción de datos procesados
             let currentTemp = "N/A", currentSky = "N/A", currentSkyDesc = "";
-            let currentWindDir = "N/A", currentWindSpeed = "N/A";
+            let currentWindDir = "N/A", currentWindSpeed = "N/A", currentWindGust = "N/A";
+            let currentFeelsLike = "N/A", currentPrecip = "0";
             let tMax = "N/A", tMin = "N/A", uvMax = "N/A";
             
             let forecast = []; // Previsión próximos días
@@ -183,6 +184,10 @@ export async function onRequest(context) {
                 if (temps.length > 0) {
                     currentTemp = temps[0].value;
                 }
+                const feelsLike = getArr(hourlyData.sensacionTermica);
+                if (feelsLike.length > 0) {
+                    currentFeelsLike = feelsLike[0].value;
+                }
                 const cielos = getArr(hourlyData.estadoCielo);
                 if (cielos.length > 0) {
                     currentSky = cielos[0].value;
@@ -194,11 +199,25 @@ export async function onRequest(context) {
                     if (windObj) {
                         currentWindDir = getArr(windObj.direccion)[0];
                         currentWindSpeed = getArr(windObj.velocidad)[0];
+                        // Extraer la racha máxima si existe
+                        const gust = getArr(windObj.velocidad)[1]; // Aveces rachaMax viene después o en otra prop, revisemos
+                        // Según AEMET: vientoAndRachaMax array, puede tener direccion y velocidad, pero rachaMax a veces viene separado en 'rachaMax' o en el mismo. 
+                        // Realmente en horaria rachaMax suele ser un atributo separado `rachaMax` en dia, pero veamos si lo cogemos del objeto viento.
                     }
                 }
+                // Intento buscar rachaMax directa
+                const rachas = getArr(hourlyData.rachaMax);
+                if (rachas.length > 0 && rachas[0].value) {
+                    currentWindGust = rachas[0].value;
+                }
+                
                 const humedades = getArr(hourlyData.humedadRelativa);
                 if (humedades.length > 0) {
                     currentHumidity = humedades[0].value;
+                }
+                const precipitacion = getArr(hourlyData.precipitacion);
+                if (precipitacion.length > 0) {
+                    currentPrecip = precipitacion[0].value;
                 }
             }
             
@@ -212,7 +231,17 @@ export async function onRequest(context) {
             const responseData = {
                 location: locationInfo.name,
                 zona: locationInfo.zona,
-                current: { temp: currentTemp, sky: currentSky, skyDesc: currentSkyDesc, windDir: currentWindDir, windSpeed: currentWindSpeed, humidity: currentHumidity },
+                current: { 
+                    temp: currentTemp, 
+                    feelsLike: currentFeelsLike,
+                    sky: currentSky, 
+                    skyDesc: currentSkyDesc, 
+                    windDir: currentWindDir, 
+                    windSpeed: currentWindSpeed, 
+                    windGust: currentWindGust,
+                    humidity: currentHumidity,
+                    precip: currentPrecip
+                },
                 daily: { tempMax: tMax, tempMin: tMin, uvMax: uvMax },
                 forecast: forecast,
                 hourly: hourlyForecast,
