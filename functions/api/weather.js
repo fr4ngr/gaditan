@@ -120,6 +120,8 @@ export async function onRequest(context) {
 
             // --- PROCESAMIENTO ---
             let tMax = "N/A", tMin = "N/A", uvMax = "N/A";
+            let forecast = [];
+            let tides = [];
             if (dDataArr && dDataArr[0]?.prediccion?.dia) {
                 const dias = dDataArr[0].prediccion.dia;
                 if (dias.length > 0) {
