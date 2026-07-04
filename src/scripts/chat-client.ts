@@ -2031,7 +2031,7 @@
                                         <div style="font-size: 1.5rem; margin-bottom: 8px;">${hEmoji}</div>
                                         <div style="font-size: 1rem; font-weight: 700;">${h.temp}º</div>
                                         <div style="font-size: 0.7rem; font-weight: 500; color: ${isNow ? 'rgba(255,255,255,0.8)' : '#3b82f6'}; margin-top: 4px; display: flex; align-items: center; gap: 2px;">
-                                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 12a11.05 11.05 0 0 0-22 0zm-5 7a3 3 0 0 1-6 0v-7"/></svg>
+                                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="16" y1="13" x2="16" y2="21"/><line x1="8" y1="13" x2="8" y2="21"/><line x1="12" y1="15" x2="12" y2="23"/><path d="M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25"/></svg>
                                             ${h.probPrecipitacion}%
                                         </div>
                                     </div>
@@ -2059,7 +2059,7 @@
                                         <div style="font-weight: 500; width: 80px; text-transform: capitalize; color: var(--text-primary); font-size: 0.95rem;">${dayName}</div>
                                         <div style="display: flex; align-items: center; width: 60px; font-size: 1.2rem;">${fEmoji}</div>
                                         <div style="color: #3b82f6; font-size: 0.85rem; width: 40px; text-align: right; font-weight: 500;">
-                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:2px; vertical-align: middle;"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:2px; vertical-align: middle;"><line x1="16" y1="13" x2="16" y2="21"/><line x1="8" y1="13" x2="8" y2="21"/><line x1="12" y1="15" x2="12" y2="23"/><path d="M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25"/></svg>
                                             ${f.probPrecipitacion}%
                                         </div>
                                         <div style="font-weight: 600; color: var(--text-primary); width: 80px; text-align: right; display: flex; justify-content: flex-end; gap: 8px;">
