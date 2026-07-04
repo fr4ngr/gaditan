@@ -289,6 +289,9 @@ export async function onRequest(context) {
             return new Response(JSON.stringify(freshData), { headers: { "Content-Type": "application/json", "X-Weather-Source": "AEMET-Fresh", "Access-Control-Allow-Origin": "*" } });
         }
     } catch (e) {
+        if (request.url.includes("debug=1")) {
+            return new Response(JSON.stringify({ error: e.message || e.toString() }), { headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" } });
+        }
         try {
             const oldRowV6 = await env.DB.prepare(`SELECT value FROM system_cache WHERE key = ?`).bind(`weather_v6_${locationInfo.id}`).first();
             if (oldRowV6) return new Response(oldRowV6.value, { headers: { "Content-Type": "application/json", "X-Weather-Source": "D1-Fallback-v6", "Access-Control-Allow-Origin": "*" } });
