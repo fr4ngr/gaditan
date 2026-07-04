@@ -305,24 +305,36 @@ export async function onRequest(context) {
     if (cachedData) {
         // Devolver datos instantáneos al usuario
         const response = new Response(JSON.stringify(cachedData), {
-            headers: { "Content-Type": "application/json", "X-Weather-Source": "D1-Cache", "X-Is-Stale": isStale.toString() }
+            headers: { "Content-Type": "application/json", "X-Weather-Source": "D1-Cache", "X-Is-Stale": isStale.toString(), "Access-Control-Allow-Origin": "*" }
         });
         
         // Si está rancio (stale), el servidor se encarga en background de actualizar AEMET
         if (isStale) {
-            context.waitUntil(syncWeather());
+            context.waitUntil(syncWeather().catch(e => console.error("Background sync failed", e)));
         }
         return response;
     }
 
-    // 2. Si D1 estaba vacío (nunca se había pedido esta ciudad), hacer fetch síncrono.
-    const freshData = await syncWeather();
-    if (freshData) {
-        return new Response(JSON.stringify(freshData), { headers: { "Content-Type": "application/json", "X-Weather-Source": "AEMET-Fresh" } });
+    // 2. Si D1 estaba vacío (ej: versión nueva de caché), hacer fetch síncrono.
+    try {
+        const freshData = await syncWeather();
+        if (freshData) {
+            return new Response(JSON.stringify(freshData), { headers: { "Content-Type": "application/json", "X-Weather-Source": "AEMET-Fresh", "Access-Control-Allow-Origin": "*" } });
+        }
+    } catch (e) {
+        // 3. Fallback a versiones antiguas si AEMET falla por 429
+        try {
+            const oldRowV3 = await env.DB.prepare(`SELECT value FROM system_cache WHERE key = ?`).bind(`weather_v3_${locationInfo.id}`).first();
+            if (oldRowV3) return new Response(oldRowV3.value, { headers: { "Content-Type": "application/json", "X-Weather-Source": "D1-Fallback-v3", "Access-Control-Allow-Origin": "*" } });
+            
+            const oldRowV2 = await env.DB.prepare(`SELECT value FROM system_cache WHERE key = ?`).bind(`weather_v2_${locationInfo.id}`).first();
+            if (oldRowV2) return new Response(oldRowV2.value, { headers: { "Content-Type": "application/json", "X-Weather-Source": "D1-Fallback-v2", "Access-Control-Allow-Origin": "*" } });
+        } catch (fallbackErr) {
+            console.error("Fallback Cache Read Error:", fallbackErr);
+        }
+        
+        return new Response(JSON.stringify({ error: "Datos meteorológicos no disponibles temporalmente. Error: " + e.message }), {
+            status: 503, headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" }
+        });
     }
-
-    // 3. Fallback en caso extremo
-    return new Response(JSON.stringify({ error: "Datos meteorológicos no disponibles temporalmente" }), {
-        status: 503, headers: { "Content-Type": "application/json" }
-    });
 }
