@@ -79,17 +79,25 @@ export async function onRequest(context) {
                 tMin = dailyData.temperatura.minima;
                 uvMax = dailyData.uvMax || "N/A";
             }
-            if (hourlyData?.temperatura?.length > 0) {
-                currentTemp = hourlyData.temperatura[0].value;
-                if (hourlyData.estadoCielo?.length > 0) {
-                    currentSky = hourlyData.estadoCielo[0].value;
-                    currentSkyDesc = hourlyData.estadoCielo[0].descripcion;
+            
+            const getArr = (v) => Array.isArray(v) ? v : (v ? [v] : []);
+            
+            if (hourlyData) {
+                const temps = getArr(hourlyData.temperatura);
+                if (temps.length > 0) {
+                    currentTemp = temps[0].value;
                 }
-                if (hourlyData.vientoAndRachaMax?.length > 0) {
-                    const windObj = hourlyData.vientoAndRachaMax.find(v => v.direccion && v.velocidad);
+                const cielos = getArr(hourlyData.estadoCielo);
+                if (cielos.length > 0) {
+                    currentSky = cielos[0].value;
+                    currentSkyDesc = cielos[0].descripcion;
+                }
+                const vientos = getArr(hourlyData.vientoAndRachaMax);
+                if (vientos.length > 0) {
+                    const windObj = vientos.find(v => v.direccion && v.velocidad);
                     if (windObj) {
-                        currentWindDir = windObj.direccion[0];
-                        currentWindSpeed = windObj.velocidad[0];
+                        currentWindDir = getArr(windObj.direccion)[0];
+                        currentWindSpeed = getArr(windObj.velocidad)[0];
                     }
                 }
             }
