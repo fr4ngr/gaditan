@@ -1950,8 +1950,11 @@
         }
     };
 
+    let weatherRequestId = 0;
+
     setTimeout(() => {
-        const fetchWeatherWithRetry = (retriesLeft = 3, delay = 2000) => {
+        const fetchWeatherWithRetry = (retriesLeft = 3, delay = 2000, reqId = null) => {
+            const currentReqId = reqId !== null ? reqId : ++weatherRequestId;
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 10000);
             
@@ -1963,6 +1966,7 @@
                     return wRes.json();
                 })
                 .then(wData => {
+                    if (currentReqId !== weatherRequestId) return; // Abort if a newer request exists
                     const chip = document.getElementById('header-weather-chip');
                     const iconSpan = document.getElementById('header-weather-icon');
                     const tempSpan = document.getElementById('header-weather-temp');
@@ -2199,9 +2203,10 @@
                     }
                 })
                 .catch(e => {
+                    if (currentReqId !== weatherRequestId) return; // Abort if a newer request exists
                     console.error('Weather fetch error:', e);
                     if (retriesLeft > 0) {
-                        setTimeout(() => fetchWeatherWithRetry(retriesLeft - 1, delay * 1.5), delay);
+                        setTimeout(() => fetchWeatherWithRetry(retriesLeft - 1, delay * 1.5, currentReqId), delay);
                     }
                 });
         };
