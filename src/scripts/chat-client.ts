@@ -2007,7 +2007,21 @@
                         // 2. Hourly Carousel (24h)
                         let hourlyHtml = '';
                         if (wData.hourly && wData.hourly.length > 0) {
-                            wData.hourly.forEach((h, index) => {
+                            const now = new Date();
+                            const currentHourStr = now.getHours().toString().padStart(2, '0');
+                            const currentFechaStr = now.getFullYear() + "-" + String(now.getMonth()+1).padStart(2,'0') + "-" + String(now.getDate()).padStart(2,'0');
+
+                            let filteredHourly = wData.hourly.filter(h => {
+                                if (!h.fecha) return true; // Fallback just in case old cache doesn't have fecha
+                                if (h.fecha < currentFechaStr) return false;
+                                if (h.fecha === currentFechaStr && h.periodo < currentHourStr) return false;
+                                return true;
+                            });
+
+                            // Si por algún motivo nos quedamos sin horas (AEMET muy desactualizado), mostramos todo
+                            if (filteredHourly.length === 0) filteredHourly = wData.hourly;
+
+                            filteredHourly.slice(0, 24).forEach((h, index) => {
                                 const hEmoji = getEmoji(h.skyDesc);
                                 const isNow = index === 0;
                                 const label = isNow ? 'Ahora' : `${h.periodo}h`;
