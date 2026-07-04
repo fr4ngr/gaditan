@@ -37,24 +37,31 @@ export async function onRequest(context) {
         try {
             // Predicción diaria (Max/Min)
             const diariaRes = await fetch(`https://opendata.aemet.es/opendata/api/prediccion/especifica/municipio/diaria/${locationInfo.id}/?api_key=${aemetKey}`);
-            const diariaJson = await diariaRes.json();
-            let dailyData = null;
-            let dDataArr = null;
-            if (diariaJson.estado == 200 && diariaJson.datos) {
-                const dataRes = await fetch(diariaJson.datos);
-                dDataArr = await dataRes.json();
-                dailyData = dDataArr[0]?.prediccion?.dia[0];
-            }
-
+            const dJson = await diariaRes.json();
+            
             // Predicción horaria (Actual)
             const horariaRes = await fetch(`https://opendata.aemet.es/opendata/api/prediccion/especifica/municipio/horaria/${locationInfo.id}/?api_key=${aemetKey}`);
-            const horariaJson = await horariaRes.json();
-            let hourlyData = null;
-            if (horariaJson.estado == 200 && horariaJson.datos) {
-                const hDataRes = await fetch(horariaJson.datos);
-                const hDataArr = await hDataRes.json();
-                hourlyData = hDataArr[0]?.prediccion?.dia[0];
+            const hJson = await horariaRes.json();
+
+            if (!dJson.datos) {
+                throw new Error("AEMET API error: no daily data URL provided");
             }
+
+            const dDataRes = await fetch(dJson.datos);
+            const dDataArr = await dDataRes.json();
+            
+            let hDataArr = null;
+            if (hJson.datos) {
+                try {
+                    const hDataRes = await fetch(hJson.datos);
+                    hDataArr = await hDataRes.json();
+                } catch(e) {
+                    console.error("Error fetching hourly data URL:", e);
+                }
+            }
+
+            let dailyData = dDataArr[0]?.prediccion?.dia[0];
+            let hourlyData = hDataArr ? hDataArr[0]?.prediccion?.dia[0] : null;
 
             // Mareas (IHM) - Opcional, solo funciona con Cádiz (ID 42) pero sirve para el Litoral
             let tidesData = [];
@@ -163,6 +170,11 @@ export async function onRequest(context) {
                 if (currentTemp === "N/A") currentTemp = hourlyForecast[0].temp;
                 if (currentSky === "N/A") currentSky = hourlyForecast[0].sky;
                 if (currentSkyDesc === "") currentSkyDesc = hourlyForecast[0].skyDesc;
+            } else if (forecast.length > 0) {
+                // EXTREME FALLBACK
+                if (currentTemp === "N/A") currentTemp = forecast[0].max;
+                if (currentSky === "N/A") currentSky = "11";
+                if (currentSkyDesc === "") currentSkyDesc = "Despejado";
             }
 
             const responseData = {
