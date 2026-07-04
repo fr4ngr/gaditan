@@ -157,6 +157,13 @@ export async function onRequest(context) {
                     currentHumidity = humedades[0].value;
                 }
             }
+            
+            // Fallbacks if current data is missing but we have hourly forecast
+            if (hourlyForecast.length > 0) {
+                if (currentTemp === "N/A") currentTemp = hourlyForecast[0].temp;
+                if (currentSky === "N/A") currentSky = hourlyForecast[0].sky;
+                if (currentSkyDesc === "") currentSkyDesc = hourlyForecast[0].skyDesc;
+            }
 
             const responseData = {
                 location: locationInfo.name,
