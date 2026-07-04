@@ -1212,7 +1212,7 @@ import themeData from '../data/theme.json';
 
         window.deleteMuroPost = async function(id) {
             if (!confirm('¿Estás seguro de eliminar este post? Esta acción es irreversible.')) return;
-            const pwd = document.getElementById('admin-pwd').value;
+            const pwd = document.getElementById('admin-pwd').value || localStorage.getItem('admin_pwd');
             try {
                 const response = await fetch(`/api/admin/delete-post?secret=${encodeURIComponent(pwd)}`, {
                     method: 'DELETE',
@@ -1221,30 +1221,30 @@ import themeData from '../data/theme.json';
                 });
                 const result = await response.json();
                 if (response.ok) {
-                    showToast('Post eliminado', 'success');
+                    showMessage('Post eliminado', 'success');
                     loadMuroAdmin();
                 } else {
-                    showToast(result.error || 'Error al eliminar', 'error');
+                    showMessage(result.error || 'Error al eliminar', 'error');
                 }
             } catch (e) {
-                showToast('Error de red al eliminar', 'error');
+                showMessage('Error de red al eliminar', 'error');
             }
         };
 
         window.syncVectorize = async function() {
             if (!confirm('¿Sincronizar el conocimiento con el motor de IA? Esto procesará todos los cerebros actuales.')) return;
-            const pwd = document.getElementById('admin-pwd').value;
-            showToast('Iniciando sincronización...', 'info');
+            const pwd = document.getElementById('admin-pwd').value || localStorage.getItem('admin_pwd');
+            showMessage('Iniciando sincronización...', 'info');
             try {
                 const response = await fetch(`/api/admin/vectorize-sync?secret=${encodeURIComponent(pwd)}`);
                 const result = await response.json();
                 if (response.ok) {
-                    showToast(result.message || 'Sincronización completada', 'success', 8000);
+                    showMessage(result.message || 'Sincronización completada', 'success', 8000);
                 } else {
-                    showToast(result.error || 'Error al sincronizar', 'error', 8000);
+                    showMessage(result.error || 'Error al sincronizar', 'error', 8000);
                 }
             } catch (e) {
-                showToast('Error de red al sincronizar', 'error');
+                showMessage('Error de red al sincronizar', 'error');
             }
         };
 
