@@ -1815,22 +1815,39 @@
 
     // --- INICIALIZACIÓN (MOMENTO 0) ---
     setTimeout(() => {
-        const skeletonHtml = `
-            <div id="weather-widget-container" class="wg-card" style="opacity: 0.8;">
-                <div class="wg-header">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
-                    <span>El clima en Cádiz</span>
-                </div>
-                <div class="wg-body" style="text-align: center; padding: 40px 16px;">
-                    <div class="spinner" style="display: inline-block; width: 28px; height: 28px; border: 3px solid var(--bubble-bot-border); border-top-color: var(--primary-color); border-radius: 50%; animation: spin 1s linear infinite;"></div>
-                    <div style="margin-top: 16px; font-size: 0.85rem; color: var(--text-secondary); font-weight: 500;">Conectando con AEMET...</div>
-                </div>
-            </div>
-        `;
-
-        addMessage('bot', skeletonHtml, false);
         sendMessageToAI('¡Hola! Acabo de entrar a la web. Preséntate brevemente de forma muy natural y dime en qué puedes ayudarme. NO añadas sugerencias ni listas en tu mensaje de texto, usa EXCLUSIVAMENTE los bloques de sugerencia de la interfaz.', true);
-        // Llamada asíncrona a la API del clima con reintentos
+    }, 500);
+
+    // --- MANEJO DEL CLIMA ---
+    window.openWeatherModal = () => {
+        const overlay = document.getElementById('weather-modal-overlay');
+        const modal = document.getElementById('weather-modal');
+        if (overlay && modal) {
+            overlay.style.display = 'block';
+            modal.style.display = 'block';
+            // Pequeño delay para la animación
+            setTimeout(() => {
+                overlay.style.opacity = '1';
+                modal.style.bottom = '0';
+            }, 10);
+        }
+    };
+
+    window.closeWeatherModal = () => {
+        const overlay = document.getElementById('weather-modal-overlay');
+        const modal = document.getElementById('weather-modal');
+        if (overlay && modal) {
+            overlay.style.opacity = '0';
+            modal.style.bottom = '-100%';
+            setTimeout(() => {
+                overlay.style.display = 'none';
+                modal.style.display = 'none';
+            }, 300);
+        }
+    };
+
+    // Carga de clima silenciosa
+    setTimeout(() => {
         const fetchWeatherWithRetry = (retriesLeft = 3, delay = 2000) => {
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 10000);
@@ -1842,9 +1859,10 @@
                     return wRes.json();
                 })
                 .then(wData => {
-                    const container = document.getElementById('weather-widget-container');
-                    if (!container) return;
-
+                    const chip = document.getElementById('header-weather-chip');
+                    const iconSpan = document.getElementById('header-weather-icon');
+                    const tempSpan = document.getElementById('header-weather-temp');
+                    
                     if (!wData.error && wData.current && wData.current.temp !== 'N/A') {
                         let weatherIcon = '🌤️';
                         const desc = (wData.current.skyDesc || '').toLowerCase();
@@ -1852,21 +1870,25 @@
                         else if (desc.includes('nuboso') || desc.includes('cubierto')) weatherIcon = '☁️';
                         else if (desc.includes('despejado')) weatherIcon = '☀️';
 
-                        let windStr = '--';
-                        if (wData.current.windSpeed && wData.current.windSpeed !== 'N/A') {
-                            const windDir = wData.current.windDir && wData.current.windDir !== 'N/A' ? ` ${wData.current.windDir}` : '';
-                            windStr = `${wData.current.windSpeed} km/h${windDir}`;
+                        // 1. Llenar el Chip de la Cabecera
+                        if (chip && iconSpan && tempSpan) {
+                            iconSpan.innerText = weatherIcon;
+                            tempSpan.innerText = `${wData.current.temp}º`;
+                            chip.style.display = 'flex';
                         }
 
+                        // 2. Llenar el Modal Completo
+                        document.getElementById('weather-modal-location').innerText = wData.location || 'Cádiz';
+
+                        // Alertas
                         let alertsHtml = '';
                         if (wData.alerts && wData.alerts.length > 0) {
                             const alert = wData.alerts[0]; // Mostrar la más grave
                             let bg = '#ef4444'; // Rojo por defecto
                             if (alert.nivel === 'amarillo') bg = '#eab308';
                             if (alert.nivel === 'naranja') bg = '#f97316';
-                            
                             alertsHtml = `
-                                <div style="margin: 12px 16px; padding: 10px 14px; border-radius: 8px; background-color: ${bg}15; border-left: 4px solid ${bg}; display: flex; align-items: flex-start; gap: 10px;">
+                                <div style="margin-bottom: 16px; padding: 10px 14px; border-radius: 8px; background-color: ${bg}15; border-left: 4px solid ${bg}; display: flex; align-items: flex-start; gap: 10px;">
                                     <div style="font-size: 1.2rem;">⚠️</div>
                                     <div style="text-align: left;">
                                         <div style="color: ${bg}; font-weight: 700; font-size: 0.85rem; text-transform: uppercase;">Aviso ${alert.nivel}</div>
@@ -1875,42 +1897,67 @@
                                 </div>
                             `;
                         }
+                        document.getElementById('weather-modal-alerts').innerHTML = alertsHtml;
 
+                        // Info Actual y Viento
+                        let windStr = '--';
+                        if (wData.current.windSpeed && wData.current.windSpeed !== 'N/A') {
+                            const windDir = wData.current.windDir && wData.current.windDir !== 'N/A' ? ` ${wData.current.windDir}` : '';
+                            windStr = `${wData.current.windSpeed} km/h${windDir}`;
+                        }
                         const tMax = (wData.daily && wData.daily.tempMax !== 'N/A') ? wData.daily.tempMax + 'º' : '--';
                         const tMin = (wData.daily && wData.daily.tempMin !== 'N/A') ? wData.daily.tempMin + 'º' : '--';
 
-                        container.innerHTML = `
-                            <div class="wg-header">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
-                                <span>El clima en ${wData.location || 'Cádiz'}</span>
+                        document.getElementById('weather-modal-current').innerHTML = `
+                            <div style="display: flex; align-items: center; justify-content: center; gap: 15px;">
+                                <div style="font-size: 3rem; line-height: 1;">${weatherIcon}</div>
+                                <div style="text-align: left;">
+                                    <div style="font-size: 2.5rem; font-weight: 700; color: var(--text-primary); line-height: 1;">${wData.current.temp}º</div>
+                                    <div style="font-size: 0.9rem; color: var(--text-secondary); margin-top: 4px; text-transform: capitalize;">${wData.current.skyDesc}</div>
+                                </div>
                             </div>
-                            ${alertsHtml}
-                            <div class="wg-body" style="padding: 16px; text-align: center;">
-                                <div style="display: flex; align-items: center; justify-content: center; gap: 15px;">
-                                    <div style="font-size: 3rem; line-height: 1;">${weatherIcon}</div>
-                                    <div style="text-align: left;">
-                                        <div style="font-size: 2.5rem; font-weight: 700; color: var(--text-primary); line-height: 1;">${wData.current.temp}º</div>
-                                        <div style="font-size: 0.9rem; color: var(--text-secondary); margin-top: 4px; text-transform: capitalize;">${wData.current.skyDesc}</div>
+                            <div style="display: flex; justify-content: space-around; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border-color);">
+                                <div style="text-align: center;">
+                                    <div style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Max / Min</div>
+                                    <div style="font-size: 1rem; font-weight: 600; color: var(--text-primary); margin-top: 4px;">
+                                        <span style="color: #ef4444;">${tMax}</span> <span style="color: var(--text-secondary); font-weight: 400; margin: 0 4px;">/</span> <span style="color: #3b82f6;">${tMin}</span>
                                     </div>
                                 </div>
-                                
-                                <div style="display: flex; justify-content: space-around; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border-color);">
-                                    <div style="text-align: center;">
-                                        <div style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Max / Min</div>
-                                        <div style="font-size: 1rem; font-weight: 600; color: var(--text-primary); margin-top: 4px;">
-                                            <span style="color: #ef4444;">${tMax}</span> <span style="color: var(--text-secondary); font-weight: 400; margin: 0 4px;">/</span> <span style="color: #3b82f6;">${tMin}</span>
-                                        </div>
-                                    </div>
-                                    <div style="text-align: center;">
-                                        <div style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Viento</div>
-                                        <div style="font-size: 1rem; font-weight: 600; color: var(--text-primary); margin-top: 4px;">
-                                            ${windStr}
-                                        </div>
+                                <div style="text-align: center;">
+                                    <div style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Viento</div>
+                                    <div style="font-size: 1rem; font-weight: 600; color: var(--text-primary); margin-top: 4px;">
+                                        ${windStr}
                                     </div>
                                 </div>
                             </div>
                         `;
-                        container.style.opacity = '1';
+
+                        // Previsión (Forecast)
+                        let forecastHtml = '';
+                        if (wData.forecast && wData.forecast.length > 0) {
+                            wData.forecast.forEach(f => {
+                                const dateObj = new Date(f.date);
+                                const dayName = dateObj.toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric' });
+                                forecastHtml += `
+                                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; background: var(--chat-bg); border-radius: 8px; font-size: 0.9rem;">
+                                        <div style="font-weight: 500; width: 60px; text-transform: capitalize;">${dayName}</div>
+                                        <div style="color: var(--text-secondary); display: flex; align-items: center; gap: 4px;">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                                            ${f.probPrecipitacion}%
+                                        </div>
+                                        <div style="font-weight: 600; color: var(--text-primary);">
+                                            <span style="color: #ef4444; width: 24px; display: inline-block; text-align: right;">${f.max}º</span> 
+                                            <span style="color: var(--text-secondary); font-weight: 400; margin: 0 4px;">/</span> 
+                                            <span style="color: #3b82f6; width: 24px; display: inline-block; text-align: right;">${f.min}º</span>
+                                        </div>
+                                    </div>
+                                `;
+                            });
+                        } else {
+                            forecastHtml = '<div style="color: var(--text-secondary); font-size: 0.85rem;">Previsión no disponible</div>';
+                        }
+                        document.getElementById('weather-forecast-list').innerHTML = forecastHtml;
+                        
                     } else {
                         throw new Error('API returned error or N/A');
                     }
@@ -1919,21 +1966,6 @@
                     console.error('Weather fetch error:', e);
                     if (retriesLeft > 0) {
                         setTimeout(() => fetchWeatherWithRetry(retriesLeft - 1, delay * 1.5), delay);
-                    } else {
-                        const container = document.getElementById('weather-widget-container');
-                        if (container) {
-                            container.innerHTML = `
-                                <div class="wg-header">
-                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
-                                    <span>El clima en Cádiz</span>
-                                </div>
-                                <div class="wg-body" style="text-align: center; padding: 24px 16px;">
-                                    <div style="font-size: 2rem; margin-bottom: 8px;">⚠️</div>
-                                    <div style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 500; margin-bottom: 16px;">Servicio temporalmente no disponible</div>
-                                    <button onclick="this.innerHTML='Reintentando...'; setTimeout(() => window.location.reload(), 500);" style="background: var(--primary-color); color: white; border: none; padding: 6px 16px; border-radius: 6px; font-weight: 500; font-size: 0.8rem; cursor: pointer; transition: opacity 0.2s;">Reintentar</button>
-                                </div>
-                            `;
-                        }
                     }
                 });
         };
@@ -1947,6 +1979,8 @@
             initInlineMap: (lat: string, lon: string, msgId: string) => void;
             startLiveNavigation: (lat: string, lon: string, name: string) => void;
             exitLiveNavigation: () => void;
+            openWeatherModal: () => void;
+            closeWeatherModal: () => void;
 
 
             L: any;

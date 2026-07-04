@@ -74,10 +74,29 @@ export async function onRequest(context) {
             let currentWindDir = "N/A", currentWindSpeed = "N/A";
             let tMax = "N/A", tMin = "N/A", uvMax = "N/A";
             
+            let forecast = []; // Previsión próximos días
+
             if (dailyData?.temperatura) {
                 tMax = dailyData.temperatura.maxima;
                 tMin = dailyData.temperatura.minima;
                 uvMax = dailyData.uvMax || "N/A";
+            }
+            
+            // Si tenemos dDataArr, extraemos la previsión de los próximos días
+            if (dDataArr && dDataArr[0]?.prediccion?.dia?.length > 1) {
+                const dias = dDataArr[0].prediccion.dia;
+                for (let i = 1; i < Math.min(dias.length, 4); i++) {
+                    const d = dias[i];
+                    if (d.temperatura) {
+                        forecast.push({
+                            date: d.fecha,
+                            max: d.temperatura.maxima,
+                            min: d.temperatura.minima,
+                            uv: d.uvMax || "N/A",
+                            probPrecipitacion: Array.isArray(d.probPrecipitacion) ? d.probPrecipitacion[0]?.value : (d.probPrecipitacion?.value || 0)
+                        });
+                    }
+                }
             }
             
             const getArr = (v) => Array.isArray(v) ? v : (v ? [v] : []);
@@ -107,6 +126,7 @@ export async function onRequest(context) {
                 zona: locationInfo.zona,
                 current: { temp: currentTemp, sky: currentSky, skyDesc: currentSkyDesc, windDir: currentWindDir, windSpeed: currentWindSpeed },
                 daily: { tempMax: tMax, tempMin: tMin, uvMax: uvMax },
+                forecast: forecast,
                 tides: tidesData,
                 alerts: [] // Avisos (Simplificado temporalmente)
             };
