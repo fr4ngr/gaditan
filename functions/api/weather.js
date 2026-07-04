@@ -98,43 +98,36 @@ export async function onRequest(context) {
             let dailyData = dDataArr[0]?.prediccion?.dia[0];
             let hourlyData = hDataArr ? hDataArr[0]?.prediccion?.dia[0] : null;
 
-            // Mareas (IHM) - Opcional, solo funciona con Cádiz (ID 42) pero sirve para el Litoral
-            let tidesData = [];
-            if (locationInfo.zona === "Litoral Gaditano") {
+            // Mareas (Si es de costa)
+            if (locationInfo.costa) {
+                const tideUrl = `https://ideihm.covam.es/api-ihm/getmarea?request=gettide&id=${locationInfo.ihm_id}&format=json`;
                 try {
-                    const tidesRes = await fetch(`https://ideihm.covam.es/api-ihm/getmarea?request=gettide&id=42&format=json`);
-                    if (tidesRes.ok) {
-                        const tidesJson = await tidesRes.json();
-                        if (tidesJson?.mareas?.datos?.marea) {
-                            tidesData = tidesJson.mareas.datos.marea.map(t => ({
-                                type: t.tipo.toLowerCase(), time: t.hora, height: t.altura
+                    const tRes = await fetch(tideUrl);
+                    if (tRes.ok) {
+                        const tData = await tRes.json();
+                        if (tData && tData.mareas && tData.mareas.datos && tData.mareas.datos.marea) {
+                            tides = tData.mareas.datos.marea.map(m => ({
+                                type: m.tipo.toLowerCase(),
+                                time: m.hora,
+                                height: m.altura
                             }));
                         }
                     }
-                } catch(e) {}
+                } catch (e) {
+                    console.error("Mareas fetch error", e);
+                }
             }
 
-            // Extracción de datos procesados
-            let currentTemp = "N/A", currentSky = "N/A", currentSkyDesc = "";
-            let currentWindDir = "N/A", currentWindSpeed = "N/A", currentWindGust = "N/A";
-            let currentFeelsLike = "N/A", currentPrecip = "0";
-            let tMax = "N/A", tMin = "N/A", uvMax = "N/A";
-            
-            let forecast = []; // Previsión próximos días
-
-            if (dailyData?.temperatura) {
-                tMax = dailyData.temperatura.maxima;
-                tMin = dailyData.temperatura.minima;
-                uvMax = dailyData.uvMax || "N/A";
-            }
-            
-            // Extraemos TODA la previsión de los próximos días (hasta 7)
-            if (dDataArr && dDataArr[0]?.prediccion?.dia?.length > 0) {
+            // --- PROCESAMIENTO ---
+            if (dDataArr && dDataArr[0]?.prediccion?.dia) {
                 const dias = dDataArr[0].prediccion.dia;
-                // Devolvemos todos los días (normalmente 7)
-                for (let i = 0; i < dias.length; i++) {
-                    const d = dias[i];
-                    if (d.temperatura) {
+                if (dias.length > 0) {
+                    tMax = dias[0].temperatura.maxima;
+                    tMin = dias[0].temperatura.minima;
+                    uvMax = dias[0].uvMax || "N/A";
+
+                    for (let i = 0; i < Math.min(dias.length, 7); i++) {
+                        const d = dias[i];
                         forecast.push({
                             date: d.fecha,
                             max: d.temperatura.maxima,
@@ -145,156 +138,127 @@ export async function onRequest(context) {
                     }
                 }
             }
-            
+
             const getArr = (v) => Array.isArray(v) ? v : (v ? [v] : []);
-            
             let hourlyForecast = [];
             
-            if (hDataArr) {
+            if (hDataArr && hDataArr[0]?.prediccion?.dia) {
                 hDataArr[0].prediccion.dia.forEach(d => {
-                    const fecha = d.fecha; // Formato YYYY-MM-DD
+                    const fecha = d.fecha;
                     const temps = getArr(d.temperatura);
                     const feels = getArr(d.sensacionTermica);
                     const cielos = getArr(d.estadoCielo);
                     const probs = getArr(d.probPrecipitacion);
                     const vientos = getArr(d.vientoAndRachaMax);
-                    const rachas = getArr(d.rachaMax);
                     const humedades = getArr(d.humedadRelativa);
                     const lluvias = getArr(d.precipitacion);
 
-                    // MATCH them up by 'periodo'
                     temps.forEach(t => {
-                        const periodo = t.periodo;
-                        const tempValue = t.value;
-                        const feelObj = feels.find(f => f.periodo === periodo) || {};
-                        const skyObj = cielos.find(c => c.periodo === periodo) || {};
-                        const probObj = probs.find(p => p.periodo === periodo) || {};
-                        const windObj = vientos.find(v => v.periodo === periodo) || {};
-                        const rachaObj = rachas.find(r => r.periodo === periodo) || {};
-                        const humObj = humedades.find(h => h.periodo === periodo) || {};
-                        const lluviaObj = lluvias.find(l => l.periodo === periodo) || {};
+                        const periodo = String(t.periodo);
+                        const feelObj = feels.find(f => String(f.periodo) == periodo) || {};
+                        const skyObj = cielos.find(c => String(c.periodo) == periodo) || {};
+                        const probObj = probs.find(p => String(p.periodo) == periodo) || {};
+                        const windObj = vientos.find(v => String(v.periodo) == periodo) || {};
+                        const humObj = humedades.find(h => String(h.periodo) == periodo) || {};
+                        const lluviaObj = lluvias.find(l => String(l.periodo) == periodo) || {};
+
+                        let extractedGust = "N/A";
+                        if (windObj.velocidad) {
+                            const velArr = getArr(windObj.velocidad);
+                            extractedGust = velArr.length > 1 ? velArr[1] : (windObj.racha || "N/A");
+                        }
 
                         hourlyForecast.push({
                             fecha: fecha,
                             periodo: periodo,
-                            temp: tempValue,
+                            temp: t.value,
                             feelsLike: feelObj.value || "N/A",
                             sky: skyObj.value || "N/A",
                             skyDesc: skyObj.descripcion || "",
                             probPrecipitacion: probObj.value || "0",
                             windDir: windObj.direccion ? getArr(windObj.direccion)[0] : "N/A",
                             windSpeed: windObj.velocidad ? getArr(windObj.velocidad)[0] : "N/A",
-                            windGust: rachaObj.value || "N/A",
+                            windGust: extractedGust,
                             humidity: humObj.value || "N/A",
                             precip: lluviaObj.value || "0"
                         });
                     });
                 });
             }
-            
-            // We now have a rich hourlyForecast array. 
-            // We will find the EXACT current hour, or the next available hour to populate "current"
-            
+
             if (hourlyForecast.length > 0) {
                 const now = new Date();
                 const currentHourStr = now.getHours().toString().padStart(2, '0');
                 const currentFechaStr = now.getFullYear() + "-" + String(now.getMonth()+1).padStart(2,'0') + "-" + String(now.getDate()).padStart(2,'0');
                 
-                let matchedHour = hourlyForecast.find(h => h.fecha === currentFechaStr && h.periodo === currentHourStr);
-                if (!matchedHour) {
-                    matchedHour = hourlyForecast.find(h => h.fecha > currentFechaStr || (h.fecha === currentFechaStr && h.periodo >= currentHourStr));
-                }
-                if (!matchedHour) {
-                    matchedHour = hourlyForecast[0]; // Fallback to first available
-                }
+                let matched = hourlyForecast.find(h => h.fecha === currentFechaStr && h.periodo === currentHourStr) || 
+                            hourlyForecast.find(h => h.fecha > currentFechaStr || (h.fecha === currentFechaStr && h.periodo >= currentHourStr)) || 
+                            hourlyForecast[0];
                 
-                if (matchedHour) {
-                    currentTemp = matchedHour.temp;
-                    currentFeelsLike = matchedHour.feelsLike;
-                    currentSky = matchedHour.sky;
-                    currentSkyDesc = matchedHour.skyDesc;
-                    currentWindDir = matchedHour.windDir;
-                    currentWindSpeed = matchedHour.windSpeed;
-                    currentWindGust = matchedHour.windGust;
-                    currentHumidity = matchedHour.humidity;
-                    currentPrecip = matchedHour.precip;
-                }
+                currentTemp = matched.temp;
+                currentFeelsLike = matched.feelsLike;
+                currentSky = matched.sky;
+                currentSkyDesc = matched.skyDesc;
+                currentWindDir = matched.windDir;
+                currentWindSpeed = matched.windSpeed;
+                currentWindGust = matched.windGust;
+                currentHumidity = matched.humidity;
+                currentPrecip = matched.precip;
             }
 
             const responseData = {
                 location: locationInfo.name,
                 zona: locationInfo.zona,
-                current: { 
-                    temp: currentTemp, 
-                    feelsLike: currentFeelsLike,
-                    sky: currentSky, 
-                    skyDesc: currentSkyDesc, 
-                    windDir: currentWindDir, 
-                    windSpeed: currentWindSpeed, 
-                    windGust: currentWindGust,
-                    humidity: currentHumidity,
-                    precip: currentPrecip
-                },
+                current: { temp: currentTemp, feelsLike: currentFeelsLike, sky: currentSky, skyDesc: currentSkyDesc, windDir: currentWindDir, windSpeed: currentWindSpeed, windGust: currentWindGust, humidity: currentHumidity, precip: currentPrecip },
                 daily: { tempMax: tMax, tempMin: tMin, uvMax: uvMax },
                 forecast: forecast,
                 hourly: hourlyForecast,
-                tides: tidesData,
-                alerts: [] // Avisos (Simplificado temporalmente)
+                tides: tides
             };
 
-            // Guardar en D1 system_cache
-            await env.DB.prepare(`
+            try {
+                await env.DB.prepare(`
                 INSERT INTO system_cache (key, value, updated_at) 
                 VALUES (?, ?, CURRENT_TIMESTAMP)
-                ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = CURRENT_TIMESTAMP
+                ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = excluded.updated_at
             `).bind(cacheKey, JSON.stringify(responseData)).run();
+            } catch (e) {
+                console.error("D1 Cache Save Error", e);
+            }
 
             return responseData;
         } catch (error) {
-            console.error("SyncWeather Error:", error);
-            return null; // Fallo silencioso
+            console.error("AEMET Sync Error:", error);
+            throw error;
         }
     };
 
-    // 1. Intentar leer de D1 (Instantáneo)
+    let isStale = false;
     let cachedData = null;
-    let isStale = true;
     
     try {
         const row = await env.DB.prepare(`SELECT value, updated_at FROM system_cache WHERE key = ?`).bind(cacheKey).first();
         if (row) {
             cachedData = JSON.parse(row.value);
-            // Comprobar si tiene más de 30 minutos de antigüedad
-            const updatedDate = new Date(row.updated_at + 'Z'); // UTC
-            const ageMs = Date.now() - updatedDate.getTime();
-            
-            if (ageMs < 30 * 60 * 1000) {
-                isStale = false; // Fresco (menos de 30 mins)
+            const updatedDate = new Date(row.updated_at + 'Z');
+            if ((Date.now() - updatedDate.getTime()) > 2 * 60 * 60 * 1000) {
+                isStale = true;
             }
             
-            // Actualizar el estado 'current' dinámicamente según la hora actual de España
             if (cachedData.hourly && cachedData.hourly.length > 0) {
                 const spainTime = new Date(new Date().toLocaleString("en-US", {timeZone: "Europe/Madrid"}));
                 const currentFechaStr = spainTime.toISOString().substring(0, 10);
                 const currentHourStr = spainTime.getHours().toString().padStart(2, '0');
                 
-                // Buscar la hora exacta o la primera disponible hacia el futuro
-                let matchedHour = cachedData.hourly.find(h => h.fecha === currentFechaStr && h.periodo === currentHourStr);
-                if (!matchedHour) {
-                    // fallback to next available hour
-                    matchedHour = cachedData.hourly.find(h => h.fecha > currentFechaStr || (h.fecha === currentFechaStr && h.periodo >= currentHourStr));
-                }
+                let matched = cachedData.hourly.find(h => h.fecha === currentFechaStr && h.periodo === currentHourStr) || 
+                            cachedData.hourly.find(h => h.fecha > currentFechaStr || (h.fecha === currentFechaStr && h.periodo >= currentHourStr));
                 
-                if (matchedHour) {
-                    cachedData.current.temp = matchedHour.temp;
-                    cachedData.current.feelsLike = matchedHour.feelsLike;
-                    cachedData.current.sky = matchedHour.sky;
-                    cachedData.current.skyDesc = matchedHour.skyDesc;
-                    cachedData.current.windDir = matchedHour.windDir;
-                    cachedData.current.windSpeed = matchedHour.windSpeed;
-                    cachedData.current.windGust = matchedHour.windGust;
-                    cachedData.current.humidity = matchedHour.humidity;
-                    cachedData.current.precip = matchedHour.precip;
+                if (matched) {
+                    cachedData.current = { 
+                        temp: matched.temp, feelsLike: matched.feelsLike, sky: matched.sky, 
+                        skyDesc: matched.skyDesc, windDir: matched.windDir, windSpeed: matched.windSpeed, 
+                        windGust: matched.windGust, humidity: matched.humidity, precip: matched.precip 
+                    };
                 }
             }
         }
@@ -303,27 +267,23 @@ export async function onRequest(context) {
     }
 
     if (cachedData) {
-        // Devolver datos instantáneos al usuario
         const response = new Response(JSON.stringify(cachedData), {
             headers: { "Content-Type": "application/json", "X-Weather-Source": "D1-Cache", "X-Is-Stale": isStale.toString(), "Access-Control-Allow-Origin": "*" }
         });
-        
-        // Si está rancio (stale), el servidor se encarga en background de actualizar AEMET
-        if (isStale) {
-            context.waitUntil(syncWeather().catch(e => console.error("Background sync failed", e)));
-        }
+        if (isStale) context.waitUntil(syncWeather().catch(e => console.error("Background sync failed", e)));
         return response;
     }
 
-    // 2. Si D1 estaba vacío (ej: versión nueva de caché), hacer fetch síncrono.
     try {
         const freshData = await syncWeather();
         if (freshData) {
             return new Response(JSON.stringify(freshData), { headers: { "Content-Type": "application/json", "X-Weather-Source": "AEMET-Fresh", "Access-Control-Allow-Origin": "*" } });
         }
     } catch (e) {
-        // 3. Fallback a versiones antiguas si AEMET falla por 429
         try {
+            const oldRowV4 = await env.DB.prepare(`SELECT value FROM system_cache WHERE key = ?`).bind(`weather_v4_${locationInfo.id}`).first();
+            if (oldRowV4) return new Response(oldRowV4.value, { headers: { "Content-Type": "application/json", "X-Weather-Source": "D1-Fallback-v4", "Access-Control-Allow-Origin": "*" } });
+            
             const oldRowV3 = await env.DB.prepare(`SELECT value FROM system_cache WHERE key = ?`).bind(`weather_v3_${locationInfo.id}`).first();
             if (oldRowV3) return new Response(oldRowV3.value, { headers: { "Content-Type": "application/json", "X-Weather-Source": "D1-Fallback-v3", "Access-Control-Allow-Origin": "*" } });
             
