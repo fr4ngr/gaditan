@@ -1852,46 +1852,65 @@
                         else if (desc.includes('nuboso') || desc.includes('cubierto')) weatherIcon = '☁️';
                         else if (desc.includes('despejado')) weatherIcon = '☀️';
 
-                        let windStr = '';
+                        let windStr = '--';
                         if (wData.current.windSpeed && wData.current.windSpeed !== 'N/A') {
-                            const windDir = wData.current.windDir && wData.current.windDir !== 'N/A' ? ` (${wData.current.windDir})` : '';
+                            const windDir = wData.current.windDir && wData.current.windDir !== 'N/A' ? ` ${wData.current.windDir}` : '';
                             windStr = `${wData.current.windSpeed} km/h${windDir}`;
-                        } else {
-                            windStr = '--';
                         }
 
-                        const now = new Date();
-                        const fetchTimeStr = now.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: '2-digit' }) + ' ' + now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }) + ' h';
-
-                        container.outerHTML = `
-                            <div class="wg-card" style="animation: slideIn 0.3s ease-out;">
-                                <div class="wg-header">
-                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
-                                    <span>El clima en Cádiz</span>
+                        let alertsHtml = '';
+                        if (wData.alerts && wData.alerts.length > 0) {
+                            const alert = wData.alerts[0]; // Mostrar la más grave
+                            let bg = '#ef4444'; // Rojo por defecto
+                            if (alert.nivel === 'amarillo') bg = '#eab308';
+                            if (alert.nivel === 'naranja') bg = '#f97316';
+                            
+                            alertsHtml = `
+                                <div style="margin: 12px 16px; padding: 10px 14px; border-radius: 8px; background-color: ${bg}15; border-left: 4px solid ${bg}; display: flex; align-items: flex-start; gap: 10px;">
+                                    <div style="font-size: 1.2rem;">⚠️</div>
+                                    <div style="text-align: left;">
+                                        <div style="color: ${bg}; font-weight: 700; font-size: 0.85rem; text-transform: uppercase;">Aviso ${alert.nivel}</div>
+                                        <div style="color: var(--text-secondary); font-size: 0.8rem; margin-top: 2px;">${alert.descripcion}</div>
+                                    </div>
                                 </div>
-                                <div class="wg-body">
-                                    <div class="wg-status">Hoy, ${wData.current.skyDesc.toLowerCase()}</div>
-                                    
-                                    <div class="wg-main-row">
-                                        <div style="display: flex; align-items: center; gap: 8px;">
-                                            <div class="wg-icon">${weatherIcon}</div>
-                                            <div class="wg-temp-container">
-                                                <span class="wg-temp">${wData.current.temp}</span>
-                                                <span class="wg-unit">°C</span>
-                                            </div>
+                            `;
+                        }
+
+                        const tMax = (wData.daily && wData.daily.tempMax !== 'N/A') ? wData.daily.tempMax + 'º' : '--';
+                        const tMin = (wData.daily && wData.daily.tempMin !== 'N/A') ? wData.daily.tempMin + 'º' : '--';
+
+                        container.innerHTML = `
+                            <div class="wg-header">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
+                                <span>El clima en ${wData.location || 'Cádiz'}</span>
+                            </div>
+                            ${alertsHtml}
+                            <div class="wg-body" style="padding: 16px; text-align: center;">
+                                <div style="display: flex; align-items: center; justify-content: center; gap: 15px;">
+                                    <div style="font-size: 3rem; line-height: 1;">${weatherIcon}</div>
+                                    <div style="text-align: left;">
+                                        <div style="font-size: 2.5rem; font-weight: 700; color: var(--text-primary); line-height: 1;">${wData.current.temp}º</div>
+                                        <div style="font-size: 0.9rem; color: var(--text-secondary); margin-top: 4px; text-transform: capitalize;">${wData.current.skyDesc}</div>
+                                    </div>
+                                </div>
+                                
+                                <div style="display: flex; justify-content: space-around; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border-color);">
+                                    <div style="text-align: center;">
+                                        <div style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Max / Min</div>
+                                        <div style="font-size: 1rem; font-weight: 600; color: var(--text-primary); margin-top: 4px;">
+                                            <span style="color: #ef4444;">${tMax}</span> <span style="color: var(--text-secondary); font-weight: 400; margin: 0 4px;">/</span> <span style="color: #3b82f6;">${tMin}</span>
                                         </div>
-                                        <div class="wg-right-col">
-                                            <span>${windStr}</span>
-                                            <span>Máx ${wData.daily.tempMax}°C | ${wData.daily.tempMaxTime.replace(':00', '')}</span>
-                                            <span>Mín ${wData.daily.tempMin}°C | ${wData.daily.tempMinTime.replace(':00', '')}</span>
+                                    </div>
+                                    <div style="text-align: center;">
+                                        <div style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Viento</div>
+                                        <div style="font-size: 1rem; font-weight: 600; color: var(--text-primary); margin-top: 4px;">
+                                            ${windStr}
                                         </div>
                                     </div>
                                 </div>
-                                <div class="wg-footer">
-                                    Fuente: AEMET - ${fetchTimeStr}
-                                </div>
                             </div>
                         `;
+                        container.style.opacity = '1';
                     } else {
                         throw new Error('API returned error or N/A');
                     }
