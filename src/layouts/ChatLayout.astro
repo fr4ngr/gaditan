@@ -235,12 +235,7 @@ import themeData from '../data/theme.json';
                         <span id="header-weather-icon"></span>
                         <span id="header-weather-temp"></span>
                     </button>
-                    <button id="bookmarks-btn" class="theme-btn" aria-label="Ver Guardados" onclick="window.switchPanel('guardados')" style="position: relative; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                        <svg id="bookmark-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/>
-                        </svg>
-                        <span id="bookmarks-badge" style="display: none; position: absolute; top: -2px; right: -2px; background: #ef4444; color: white; border-radius: 50%; width: 16px; height: 16px; font-size: 10px; font-weight: bold; align-items: center; justify-content: center;">0</span>
-                    </button>
+
                     <button id="profile-btn" class="theme-btn" aria-label="Perfil" onclick="window.openLoginModal()" style="display: flex; align-items: center; justify-content: center; overflow: hidden;">
                         <svg id="profile-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
@@ -255,6 +250,15 @@ import themeData from '../data/theme.json';
                     
                     <!-- Menú de opciones -->
                     <div id="dropdown-menu" style="display: none; position: absolute; top: 100%; right: 0; margin-top: 8px; background: var(--header-bg); border: 1px solid var(--header-border); border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); flex-direction: column; min-width: 180px; z-index: 1000; overflow: hidden;">
+                        <button id="bookmarks-menu-btn" onclick="window.switchPanel('guardados'); document.getElementById('dropdown-menu').style.display = 'none';" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; width: 100%; background: none; border: none; cursor: pointer; color: var(--text-primary); border-bottom: 1px solid var(--border-color); font-weight: 600; font-size: 14px; text-align: left; transition: background 0.2s;">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/>
+                                </svg>
+                                Mis Guardados
+                            </div>
+                            <span id="bookmarks-badge" style="display: none; background: #ef4444; color: white; border-radius: 10px; padding: 2px 6px; font-size: 11px; font-weight: bold;">0</span>
+                        </button>
                         <button onclick="window.toggleDarkMode(); document.getElementById('dropdown-menu').style.display = 'none';" style="display: flex; align-items: center; gap: 8px; padding: 12px 16px; width: 100%; background: none; border: none; cursor: pointer; color: var(--primary-color); font-weight: 600; font-size: 14px; text-align: left; transition: background 0.2s;">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
