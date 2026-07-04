@@ -1981,8 +1981,9 @@
 
                             filteredHourly = wData.hourly.filter(h => {
                                 if (!h.fecha) return true;
-                                if (h.fecha < currentFechaStr) return false;
-                                if (h.fecha === currentFechaStr && h.periodo < currentHourStr) return false;
+                                const hFecha = h.fecha.substring(0, 10);
+                                if (hFecha < currentFechaStr) return false;
+                                if (hFecha === currentFechaStr && h.periodo < currentHourStr) return false;
                                 return true;
                             });
                             if (filteredHourly.length === 0) filteredHourly = wData.hourly;

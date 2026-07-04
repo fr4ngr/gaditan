@@ -206,8 +206,8 @@ export async function onRequest(context) {
                 const currentHourStr = now.getHours().toString().padStart(2, '0');
                 const currentFechaStr = now.getFullYear() + "-" + String(now.getMonth()+1).padStart(2,'0') + "-" + String(now.getDate()).padStart(2,'0');
                 
-                let matched = hourlyForecast.find(h => h.fecha === currentFechaStr && h.periodo === currentHourStr) || 
-                            hourlyForecast.find(h => h.fecha > currentFechaStr || (h.fecha === currentFechaStr && h.periodo >= currentHourStr)) || 
+                let matched = hourlyForecast.find(h => h.fecha.substring(0, 10) === currentFechaStr && h.periodo === currentHourStr) || 
+                            hourlyForecast.find(h => h.fecha.substring(0, 10) > currentFechaStr || (h.fecha.substring(0, 10) === currentFechaStr && h.periodo >= currentHourStr)) || 
                             hourlyForecast[0];
                 
                 currentTemp = matched.temp;
