@@ -1933,9 +1933,10 @@
                     const tempSpan = document.getElementById('header-weather-temp');
                     
                     if (!wData.error && wData.current && wData.current.temp !== 'N/A') {
-                        let weatherIcon = '🌤️';
+                        let weatherIcon = '⛅';
                         const desc = (wData.current.skyDesc || '').toLowerCase();
-                        if (desc.includes('lluvia') || desc.includes('chubasco')) weatherIcon = '🌧️';
+                        if (desc.includes('lluvia') || desc.includes('chubasco') || desc.includes('tormenta')) weatherIcon = '🌧️';
+                        else if (desc.includes('poco nuboso') || desc.includes('intervalos nubosos')) weatherIcon = '⛅';
                         else if (desc.includes('nuboso') || desc.includes('cubierto')) weatherIcon = '☁️';
                         else if (desc.includes('despejado')) weatherIcon = '☀️';
 
@@ -1983,10 +1984,9 @@
                         const getEmoji = (desc) => {
                             if (!desc) return '⛅';
                             const d = desc.toLowerCase();
-                            if (d.includes('tormenta')) return '🌩️';
-                            if (d.includes('lluvia') || d.includes('chubasco')) return '🌧️';
-                            if (d.includes('muy nuboso') || d.includes('cubierto')) return '☁️';
-                            if (d.includes('nuboso') || d.includes('nubes')) return '⛅';
+                            if (d.includes('lluvia') || d.includes('chubasco') || d.includes('tormenta')) return '🌧️';
+                            if (d.includes('poco nuboso') || d.includes('intervalos nubosos')) return '⛅';
+                            if (d.includes('nubo') || d.includes('cubierto')) return '☁️';
                             if (d.includes('despejado')) return '☀️';
                             return '⛅';
                         };
