@@ -122,6 +122,7 @@ export async function onRequest(context) {
                     const cielos = getArr(d.estadoCielo);
                     const probs = getArr(d.probPrecipitacion);
                     
+                    const fecha = d.fecha ? d.fecha.substring(0, 10) : "";
                     for (let i = 0; i < temps.length; i++) {
                         if (count >= 24) break; // Solo queremos las proximas 24 horas
                         const t = temps[i];
@@ -130,6 +131,7 @@ export async function onRequest(context) {
                         const prob = probs.find(p => p.periodo === t.periodo) || probs[i] || { value: 0 };
                         
                         hourlyForecast.push({
+                            fecha: fecha,
                             periodo: t.periodo,
                             temp: t.value,
                             sky: cielo.value,
@@ -170,11 +172,6 @@ export async function onRequest(context) {
                 if (currentTemp === "N/A") currentTemp = hourlyForecast[0].temp;
                 if (currentSky === "N/A") currentSky = hourlyForecast[0].sky;
                 if (currentSkyDesc === "") currentSkyDesc = hourlyForecast[0].skyDesc;
-            } else if (forecast.length > 0) {
-                // EXTREME FALLBACK
-                if (currentTemp === "N/A") currentTemp = forecast[0].max;
-                if (currentSky === "N/A") currentSky = "11";
-                if (currentSkyDesc === "") currentSkyDesc = "Despejado";
             }
 
             const responseData = {
@@ -216,10 +213,25 @@ export async function onRequest(context) {
             
             if (ageMs < 30 * 60 * 1000) {
                 isStale = false; // Fresco (menos de 30 mins)
-            } else if (ageMs > 2 * 60 * 60 * 1000) {
-                // Si tiene más de 2 horas de antigüedad, está DEMASIADO rancio (ej: datos de ayer).
-                // Lo anulamos para obligar a descargar el clima real antes de responder al usuario.
-                cachedData = null; 
+            }
+            
+            // Actualizar el estado 'current' dinámicamente según la hora actual de España
+            if (cachedData.hourly && cachedData.hourly.length > 0) {
+                const spainTime = new Date(new Date().toLocaleString("en-US", {timeZone: "Europe/Madrid"}));
+                const currentFecha = spainTime.toISOString().substring(0, 10);
+                const currentHourStr = spainTime.getHours().toString().padStart(2, '0');
+                
+                // Buscar la hora exacta o la primera disponible hacia el futuro
+                let matchedHour = cachedData.hourly.find(h => h.fecha === currentFecha && h.periodo === currentHourStr);
+                if (!matchedHour) {
+                    matchedHour = cachedData.hourly.find(h => h.fecha > currentFecha || (h.fecha === currentFecha && h.periodo >= currentHourStr));
+                }
+                
+                if (matchedHour) {
+                    cachedData.current.temp = matchedHour.temp;
+                    cachedData.current.sky = matchedHour.sky;
+                    cachedData.current.skyDesc = matchedHour.skyDesc;
+                }
             }
         }
     } catch (e) {
