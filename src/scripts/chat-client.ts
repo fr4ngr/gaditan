@@ -1856,25 +1856,55 @@
     }
 
     const citiesList = [
-        "Cádiz", "Jerez de la Frontera", "Algeciras", "San Fernando", 
-        "El Puerto de Santa María", "Chiclana de la Frontera", 
-        "Sanlúcar de Barrameda", "La Línea de la Concepción", "Puerto Real"
-    ];
+        "Alcalá de los Gazules", "Alcalá del Valle", "Algar", "Algeciras", "Algodonales", 
+        "Arcos de la Frontera", "Barbate", "Los Barrios", "Benaocaz", "Bornos", "El Bosque", 
+        "Cádiz", "Castellar de la Frontera", "Conil de la Frontera", "Chiclana de la Frontera", 
+        "Chipiona", "Espera", "El Gastor", "Grazalema", "Jerez de la Frontera", 
+        "Jimena de la Frontera", "La Línea de la Concepción", "Medina-Sidonia", "Olvera", 
+        "Paterna de Rivera", "Prado del Rey", "El Puerto de Santa María", "Puerto Real", 
+        "Puerto Serrano", "Rota", "San Fernando", "Sanlúcar de Barrameda", "San Roque", 
+        "Setenil de las Bodegas", "Tarifa", "Torre Alháquime", "Trebujena", "Ubrique", 
+        "Vejer de la Frontera", "Villaluenga del Rosario", "Villamartín", "Zahara", 
+        "Benalup-Casas Viejas", "San José del Valle"
+    ].sort();
+
+    const renderCityList = (list: string[], ul: HTMLElement, currentCity: string) => {
+        ul.innerHTML = '';
+        if (list.length === 0) {
+            ul.innerHTML = '<li style="padding: 16px; color: var(--text-secondary); text-align: center;">No se encontraron municipios</li>';
+            return;
+        }
+        list.forEach(city => {
+            const li = document.createElement('li');
+            li.style.cssText = `padding: 16px; border-bottom: 1px solid var(--border-color); cursor: pointer; display: flex; align-items: center; justify-content: space-between; color: ${city === currentCity ? 'var(--primary-color)' : 'inherit'}; font-weight: ${city === currentCity ? 'bold' : 'normal'};`;
+            li.innerHTML = `<span>${city}</span> ${city === currentCity ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>' : ''}`;
+            li.onclick = () => (window as any).selectCity(city);
+            ul.appendChild(li);
+        });
+    };
+
+    (window as any).filterCities = (query: string) => {
+        const ul = document.getElementById('city-list');
+        if (!ul) return;
+        const currentCity = localStorage.getItem('cadiz_city') || "Cádiz";
+        const normalizedQuery = query.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        const filtered = citiesList.filter(city => {
+            const normalizedCity = city.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            return normalizedCity.includes(normalizedQuery);
+        });
+        renderCityList(filtered, ul, currentCity);
+    };
 
     (window as any).openCityModal = () => {
         const modal = document.getElementById('city-modal');
         const overlay = document.getElementById('city-modal-overlay');
         const ul = document.getElementById('city-list');
         if (modal && overlay && ul) {
-            ul.innerHTML = '';
+            const searchInput = document.getElementById('city-search-input') as HTMLInputElement;
+            if (searchInput) searchInput.value = '';
+            
             const currentCity = localStorage.getItem('cadiz_city') || "Cádiz";
-            citiesList.forEach(city => {
-                const li = document.createElement('li');
-                li.style.cssText = `padding: 16px; border-bottom: 1px solid var(--border-color); cursor: pointer; display: flex; align-items: center; justify-content: space-between; color: ${city === currentCity ? 'var(--primary-color)' : 'inherit'}; font-weight: ${city === currentCity ? 'bold' : 'normal'};`;
-                li.innerHTML = `<span>${city}</span> ${city === currentCity ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>' : ''}`;
-                li.onclick = () => (window as any).selectCity(city);
-                ul.appendChild(li);
-            });
+            renderCityList(citiesList, ul, currentCity);
             overlay.style.display = 'block';
             modal.style.display = 'block';
             setTimeout(() => {
@@ -1898,21 +1928,25 @@
     };
 
     (window as any).selectCity = (city: string) => {
+        const isFromWeatherModal = document.getElementById('weather-modal')?.style.display === 'block';
+        
         localStorage.setItem('cadiz_city', city);
         if (subtitleEl) subtitleEl.textContent = city;
         (window as any).closeCityModal();
         
-        // Reset chat
-        const messagesDiv = document.getElementById('chat-messages');
-        if (messagesDiv) messagesDiv.innerHTML = '';
-        chatHistory.length = 0; // vaciar array
-        
-        // Refresh Weather
+        // Refresh Weather data only
         const weatherChip = document.getElementById('header-weather-chip');
-        if (weatherChip) weatherChip.style.display = 'none';
+        if (weatherChip) weatherChip.style.display = 'none'; // Will reappear when loaded
         
         (window as any).fetchWeatherWithRetryFn();
-        sendMessageToAI('¡Hola! Acabo de entrar a la web. Preséntate brevemente de forma muy natural y dime en qué puedes ayudarme. NO añadas sugerencias ni listas en tu mensaje de texto, usa EXCLUSIVAMENTE los bloques de sugerencia de la interfaz.', true);
+        
+        if (!isFromWeatherModal) {
+            // Reset chat only if we changed city from outside the weather modal (e.g. initial setup)
+            const messagesDiv = document.getElementById('chat-messages');
+            if (messagesDiv) messagesDiv.innerHTML = '';
+            chatHistory.length = 0; 
+            sendMessageToAI('¡Hola! Acabo de entrar a la web. Preséntate brevemente de forma muy natural y dime en qué puedes ayudarme. NO añadas sugerencias ni listas en tu mensaje de texto, usa EXCLUSIVAMENTE los bloques de sugerencia de la interfaz.', true);
+        }
     };
 
     setTimeout(() => {
