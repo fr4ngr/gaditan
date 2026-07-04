@@ -1832,8 +1832,12 @@
         sendMessageToAI('¡Hola! Acabo de entrar a la web. Preséntate brevemente de forma muy natural y dime en qué puedes ayudarme. NO añadas sugerencias ni listas en tu mensaje de texto, usa EXCLUSIVAMENTE los bloques de sugerencia de la interfaz.', true);
         // Llamada asíncrona a la API del clima con reintentos
         const fetchWeatherWithRetry = (retriesLeft = 3, delay = 2000) => {
-            fetch('/api/weather?t=' + new Date().getTime())
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 10000);
+            
+            fetch('/api/weather?t=' + new Date().getTime(), { signal: controller.signal })
                 .then(wRes => {
+                    clearTimeout(timeoutId);
                     if (!wRes.ok) throw new Error('Fetch failed with status: ' + wRes.status);
                     return wRes.json();
                 })
