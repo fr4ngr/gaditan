@@ -1910,7 +1910,8 @@
             setTimeout(() => {
                 overlay.style.opacity = '1';
                 modal.style.bottom = '0';
-            }, 10);
+                if (searchInput) searchInput.focus();
+            }, 50);
         }
     };
 
