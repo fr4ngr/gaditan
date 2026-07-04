@@ -2079,6 +2079,20 @@
                             </div>
                         `;
 
+                        const getWindRotation = (dir) => {
+                            switch (dir) {
+                                case 'N': return 180;
+                                case 'NE': return 225;
+                                case 'E': return 270;
+                                case 'SE': return 315;
+                                case 'S': return 0;
+                                case 'SO': return 45;
+                                case 'O': return 90;
+                                case 'NO': return 135;
+                                default: return 0;
+                            }
+                        };
+
                         // 2. Hourly Carousel (24h)
                         let hourlyHtml = '';
                         if (wData.hourly && wData.hourly.length > 0) {
@@ -2098,7 +2112,7 @@
                                             </div>
                                             ${(parseFloat(h.precip || '0') > 0) ? `<div style="font-size: 0.65rem; font-weight: 400; color: ${isNow ? 'rgba(255,255,255,0.7)' : 'var(--text-secondary)'}; margin-top: -2px;">${parseFloat(h.precip)} mm</div>` : ''}
                                         </div>
-                                        ${(h.windSpeed && h.windSpeed !== 'N/A') ? `<div style="font-size: 0.7rem; font-weight: 600; color: ${isNow ? 'rgba(255,255,255,0.8)' : 'var(--text-secondary)'}; margin-top: 4px; display: flex; align-items: center; gap: 2px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.8; flex-shrink:0;"><path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"/></svg><span style="white-space: nowrap;">hasta ${h.windSpeed} Km/h ${(h.windDir && h.windDir !== 'N/A') ? h.windDir : ''}</span></div>` : ''}
+                                        ${(h.windSpeed && h.windSpeed !== 'N/A') ? `<div style="font-size: 0.7rem; font-weight: 600; color: ${isNow ? 'rgba(255,255,255,0.8)' : 'var(--text-secondary)'}; margin-top: 4px; display: flex; align-items: center; gap: 2px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.8; flex-shrink:0;"><path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"/></svg><span style="white-space: nowrap;">${h.windSpeed} Km/h ${(h.windDir && h.windDir !== 'N/A' && h.windDir !== 'C') ? `<span style="display:inline-block; transform: rotate(${getWindRotation(h.windDir)}deg);"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg></span> ` + h.windDir : ''}</span></div>` : ''}
                                     </div>
                                 `;
                             });
@@ -2127,7 +2141,7 @@
                                             <svg xmlns="http://www.w3.org/2000/svg" height="12" viewBox="0 -960 960 960" width="12" fill="currentColor" style="margin-right:2px; opacity:0.8; vertical-align: middle;"><path d="M480-120q-134 0-227-93t-93-227q0-136 121.5-286.5T480-920q117 103 238.5 253.5T840-440q0 134-93 227t-227 93Z"/></svg>
                                             ${f.probPrecipitacion}%
                                         </div>
-                                        ${f.windMax && f.windMax !== 'N/A' ? `<div style="color: var(--text-secondary); font-size: 0.85rem; width: 95px; text-align: right; font-weight: 500;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right:2px; opacity:0.8"><path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"/></svg>hasta ${f.windMax} Km/h</div>` : '<div style="width: 95px;"></div>'}
+                                        ${f.windMax && f.windMax !== 'N/A' ? `<div style="color: var(--text-secondary); font-size: 0.85rem; width: 85px; text-align: right; font-weight: 500;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right:2px; opacity:0.8"><path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"/></svg>${f.windMax} Km/h</div>` : '<div style="width: 85px;"></div>'}
                                         <div style="font-weight: 600; color: var(--text-primary); flex-grow: 1; text-align: right; display: flex; justify-content: flex-end; gap: 8px;">
                                             <span style="color: var(--text-secondary); width: 28px; text-align: right;">${f.min}º</span>
                                             <span style="width: 28px; text-align: right;">${f.max}º</span>
