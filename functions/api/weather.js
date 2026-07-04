@@ -65,7 +65,7 @@ export async function onRequest(context) {
         locationInfo = cityMap["Cádiz"];
     }
 
-    const cacheKey = `weather_v6_${locationInfo.id}`;
+    const cacheKey = `weather_v7_${locationInfo.id}`;
 
     // Función para obtener y procesar datos de AEMET y guardarlos en D1
     const syncWeather = async () => {
@@ -290,14 +290,17 @@ export async function onRequest(context) {
         }
     } catch (e) {
         try {
+            const oldRowV6 = await env.DB.prepare(`SELECT value FROM system_cache WHERE key = ?`).bind(`weather_v6_${locationInfo.id}`).first();
+            if (oldRowV6) return new Response(oldRowV6.value, { headers: { "Content-Type": "application/json", "X-Weather-Source": "D1-Fallback-v6", "Access-Control-Allow-Origin": "*" } });
+            
+            const oldRowV5 = await env.DB.prepare(`SELECT value FROM system_cache WHERE key = ?`).bind(`weather_v5_${locationInfo.id}`).first();
+            if (oldRowV5) return new Response(oldRowV5.value, { headers: { "Content-Type": "application/json", "X-Weather-Source": "D1-Fallback-v5", "Access-Control-Allow-Origin": "*" } });
+            
             const oldRowV4 = await env.DB.prepare(`SELECT value FROM system_cache WHERE key = ?`).bind(`weather_v4_${locationInfo.id}`).first();
             if (oldRowV4) return new Response(oldRowV4.value, { headers: { "Content-Type": "application/json", "X-Weather-Source": "D1-Fallback-v4", "Access-Control-Allow-Origin": "*" } });
             
             const oldRowV3 = await env.DB.prepare(`SELECT value FROM system_cache WHERE key = ?`).bind(`weather_v3_${locationInfo.id}`).first();
             if (oldRowV3) return new Response(oldRowV3.value, { headers: { "Content-Type": "application/json", "X-Weather-Source": "D1-Fallback-v3", "Access-Control-Allow-Origin": "*" } });
-            
-            const oldRowV2 = await env.DB.prepare(`SELECT value FROM system_cache WHERE key = ?`).bind(`weather_v2_${locationInfo.id}`).first();
-            if (oldRowV2) return new Response(oldRowV2.value, { headers: { "Content-Type": "application/json", "X-Weather-Source": "D1-Fallback-v2", "Access-Control-Allow-Origin": "*" } });
         } catch (fallbackErr) {
             console.error("Fallback Cache Read Error:", fallbackErr);
         }
