@@ -2048,7 +2048,8 @@
                         let windStr = '--';
                         if (wData.current.windSpeed && wData.current.windSpeed !== 'N/A') {
                             const windName = getWindName(wData.current.windDir);
-                            windStr = `${wData.current.windSpeed} km/h${windName ? ' • ' + windName : ''}`;
+                            const windNamePill = windName ? `<span style="display: inline-block; background: rgba(59, 130, 246, 0.1); color: #3b82f6; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.5px; margin-left: 6px; vertical-align: middle;">${windName}</span>` : '';
+                            windStr = `<div style="display: flex; align-items: center;">${wData.current.windSpeed} km/h${windNamePill}</div>`;
                         }
                         const tMax = (wData.daily && wData.daily.tempMax !== 'N/A') ? wData.daily.tempMax + 'º' : '--';
                         const tMin = (wData.daily && wData.daily.tempMin !== 'N/A') ? wData.daily.tempMin + 'º' : '--';
@@ -2124,7 +2125,7 @@
                                             ` : ''}
                                             ${(parseFloat(h.precip || '0') > 0) ? `<div style="font-size: 0.65rem; font-weight: 400; color: ${isNow ? 'rgba(255,255,255,0.7)' : 'var(--text-secondary)'}; margin-top: -2px;">${parseFloat(h.precip)} mm</div>` : ''}
                                         </div>
-                                        ${(h.windSpeed && h.windSpeed !== 'N/A') ? `<div style="font-size: 0.7rem; font-weight: 600; color: ${isNow ? 'rgba(255,255,255,0.8)' : 'var(--text-secondary)'}; margin-top: 4px; text-align: center;">${h.windSpeed} Km/h</div>${(h.windDir && h.windDir !== 'N/A' && h.windDir !== 'C') ? `<div style="font-size: 0.6rem; font-weight: 500; color: ${isNow ? 'rgba(255,255,255,0.7)' : 'var(--text-secondary)'}; margin-top: 1px; text-align: center; text-transform: capitalize;">${getWindName(h.windDir).toLowerCase()}</div>` : ''}` : ''}
+                                        ${(h.windSpeed && h.windSpeed !== 'N/A') ? `<div style="font-size: 0.7rem; font-weight: 600; color: ${isNow ? 'rgba(255,255,255,0.8)' : 'var(--text-secondary)'}; margin-top: 4px; text-align: center;">${h.windSpeed} Km/h</div>${(h.windDir && h.windDir !== 'N/A' && h.windDir !== 'C') ? `<div style="font-size: 0.55rem; font-weight: 700; color: ${isNow ? 'white' : '#3b82f6'}; background: ${isNow ? 'rgba(255,255,255,0.2)' : 'rgba(59, 130, 246, 0.1)'}; padding: 2px 6px; border-radius: 8px; margin-top: 4px; text-align: center; text-transform: uppercase; letter-spacing: 0.5px; display: inline-block;">${getWindName(h.windDir)}</div>` : ''}` : ''}
                                     </div>
                                 `;
                             });
