@@ -2124,7 +2124,7 @@
                                             ` : ''}
                                             ${(parseFloat(h.precip || '0') > 0) ? `<div style="font-size: 0.65rem; font-weight: 400; color: ${isNow ? 'rgba(255,255,255,0.7)' : 'var(--text-secondary)'}; margin-top: -2px;">${parseFloat(h.precip)} mm</div>` : ''}
                                         </div>
-                                        ${(h.windSpeed && h.windSpeed !== 'N/A') ? `<div style="font-size: 0.7rem; font-weight: 600; color: ${isNow ? 'rgba(255,255,255,0.8)' : 'var(--text-secondary)'}; margin-top: 4px; text-align: center;">${h.windSpeed} Km/h ${(h.windDir && h.windDir !== 'N/A' && h.windDir !== 'C') ? h.windDir : ''}</div>` : ''}
+                                        ${(h.windSpeed && h.windSpeed !== 'N/A') ? `<div style="font-size: 0.7rem; font-weight: 600; color: ${isNow ? 'rgba(255,255,255,0.8)' : 'var(--text-secondary)'}; margin-top: 4px; text-align: center;">${h.windSpeed} Km/h</div>${(h.windDir && h.windDir !== 'N/A' && h.windDir !== 'C') ? `<div style="font-size: 0.6rem; font-weight: 500; color: ${isNow ? 'rgba(255,255,255,0.7)' : 'var(--text-secondary)'}; margin-top: 1px; text-align: center; text-transform: capitalize;">${getWindName(h.windDir).toLowerCase()}</div>` : ''}` : ''}
                                     </div>
                                 `;
                             });
