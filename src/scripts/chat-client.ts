@@ -1824,7 +1824,7 @@
         const modal = document.getElementById('weather-modal');
         if (overlay && modal) {
             overlay.style.display = 'block';
-            modal.style.display = 'flex';
+            modal.style.display = 'block';
             // Pequeño delay para la animación
             setTimeout(() => {
                 overlay.style.opacity = '1';
