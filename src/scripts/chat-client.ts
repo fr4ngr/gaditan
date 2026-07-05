@@ -2014,7 +2014,7 @@
                         }
 
                         // 2. Llenar el Modal Completo
-                        document.getElementById('weather-modal-location').innerText = wData.location || 'Cádiz';
+                        document.getElementById('weather-modal-location').innerText = 'EL CLIMA AHORA EN ' + (wData.location || 'Cádiz').toUpperCase();
 
                         // Alertas
                         let alertsHtml = '';
@@ -2036,10 +2036,19 @@
                         document.getElementById('weather-modal-alerts').innerHTML = alertsHtml;
 
                         // Info Actual y Detalles Extra
+                        const getWindName = (dir) => {
+                            const d = dir ? dir.toUpperCase() : '';
+                            if (['E', 'SE', 'NE'].includes(d)) return 'LEVANTE';
+                            if (['O', 'SO', 'NO', 'W', 'SW', 'NW'].includes(d)) return 'PONIENTE';
+                            if (d === 'S') return 'SUR';
+                            if (d === 'N') return 'NORTE';
+                            if (d === 'C') return 'CALMA';
+                            return d;
+                        };
                         let windStr = '--';
                         if (wData.current.windSpeed && wData.current.windSpeed !== 'N/A') {
-                            const windDir = wData.current.windDir && wData.current.windDir !== 'N/A' ? ` ${wData.current.windDir}` : '';
-                            windStr = `${wData.current.windSpeed} km/h${windDir}`;
+                            const windName = getWindName(wData.current.windDir);
+                            windStr = `${wData.current.windSpeed} km/h${windName ? ' • ' + windName : ''}`;
                         }
                         const tMax = (wData.daily && wData.daily.tempMax !== 'N/A') ? wData.daily.tempMax + 'º' : '--';
                         const tMin = (wData.daily && wData.daily.tempMin !== 'N/A') ? wData.daily.tempMin + 'º' : '--';
@@ -2165,24 +2174,19 @@
 
                         // 4. Details Grid
                         
-                        let windSub = '';
-                        let displayGust = (wData.current.windGust && wData.current.windGust !== 'N/A') ? wData.current.windGust : ((wData.forecast && wData.forecast[0] && wData.forecast[0].gustMax !== 'N/A') ? wData.forecast[0].gustMax : null);
-                        if (displayGust) {
-                            windSub = `<div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 2px;">Racha máx (hoy): <span style="color: #ef4444; font-weight:600;">${displayGust} km/h</span></div>`;
-                        }
+                        let dynamicCards = '';
 
-                        let dynamicCardHtml = '';
+                        // TIDES
                         if (wData.tides && wData.tides.length > 0) {
-                            // Find the next tide
                             const now = new Date();
                             const currentHour = now.getHours() + now.getMinutes() / 60;
                             const nextTide = wData.tides.find(t => {
                                 const parts = t.time.split(':');
                                 const tHour = parseInt(parts[0]) + parseInt(parts[1])/60;
                                 return tHour > currentHour;
-                            }) || wData.tides[0]; // fallback to first
+                            }) || wData.tides[0];
                             
-                            dynamicCardHtml = `
+                            dynamicCards += `
                             <div style="background: var(--chat-bg); padding: 16px; border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
                                 <div style="display: flex; align-items: center; gap: 6px; color: var(--text-secondary); font-size: 0.8rem; font-weight: 600; text-transform: uppercase; margin-bottom: 8px;">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12c2-2 4-2 6 0s4 2 6 0 4-2 6 0"></path><path d="M2 18c2-2 4-2 6 0s4 2 6 0 4-2 6 0"></path></svg>
@@ -2192,12 +2196,14 @@
                                 <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 2px;">a las ${nextTide.time}h</div>
                             </div>
                             `;
-                        } else {
-                            const currentFechaStr = new Date().getFullYear() + "-" + String(new Date().getMonth()+1).padStart(2,'0') + "-" + String(new Date().getDate()).padStart(2,'0');
-                            const totalPrecip = wData.hourly ? wData.hourly.filter(h => h.fecha === currentFechaStr).reduce((acc, curr) => acc + (parseFloat(curr.precip) || 0), 0) : 0;
-                            const precipVal = totalPrecip > 0 ? totalPrecip.toFixed(1).replace('.0', '') + ' mm' : '0 mm';
-                            
-                            dynamicCardHtml = `
+                        }
+
+                        // RAIN TODAY
+                        const currentFechaStr = new Date().getFullYear() + "-" + String(new Date().getMonth()+1).padStart(2,'0') + "-" + String(new Date().getDate()).padStart(2,'0');
+                        const totalPrecip = wData.hourly ? wData.hourly.filter(h => h.fecha === currentFechaStr).reduce((acc, curr) => acc + (parseFloat(curr.precip) || 0), 0) : 0;
+                        if (totalPrecip > 0) {
+                            const precipVal = totalPrecip.toFixed(1).replace('.0', '') + ' mm';
+                            dynamicCards += `
                             <div style="background: var(--chat-bg); padding: 16px; border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
                                 <div style="display: flex; align-items: center; gap: 6px; color: var(--text-secondary); font-size: 0.8rem; font-weight: 600; text-transform: uppercase; margin-bottom: 8px;">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M8 19v1"/><path d="M8 14v1"/><path d="M16 19v1"/><path d="M16 14v1"/><path d="M12 21v1"/><path d="M12 16v1"/></svg>
@@ -2209,6 +2215,52 @@
                             `;
                         }
 
+                        // SNOW LEVEL
+                        let snowLevel = "0";
+                        if (wData.forecast && wData.forecast[0] && wData.forecast[0].cotaNieve && wData.forecast[0].cotaNieve.length > 0) {
+                            const todaySnowArr = wData.forecast[0].cotaNieve;
+                            const snowValObj = todaySnowArr.find(c => c.value && c.value !== "0" && c.value !== "");
+                            if (snowValObj) snowLevel = snowValObj.value;
+                        }
+                        if (snowLevel !== "0" && snowLevel !== "N/A" && snowLevel !== "") {
+                            dynamicCards += `
+                            <div style="background: var(--chat-bg); padding: 16px; border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
+                                <div style="display: flex; align-items: center; gap: 6px; color: var(--text-secondary); font-size: 0.8rem; font-weight: 600; text-transform: uppercase; margin-bottom: 8px;">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 19v-2"/><path d="M6.5 19v-2"/><path d="M12 22v-2"/><path d="M12 13v-3"/><path d="m14 12-2-2-2 2"/><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/></svg>
+                                    Cota de Nieve
+                                </div>
+                                <div style="font-size: 1.25rem; font-weight: 700; color: var(--text-primary);">${snowLevel}m</div>
+                            </div>
+                            `;
+                        }
+
+                        // SUNRISE / SUNSET
+                        let orto = "--", ocaso = "--";
+                        if (wData.forecast && wData.forecast[0]) {
+                            orto = wData.forecast[0].orto || "--";
+                            ocaso = wData.forecast[0].ocaso || "--";
+                        }
+                        if (orto !== "--" && ocaso !== "--") {
+                            dynamicCards += `
+                            <div style="background: var(--chat-bg); padding: 16px; border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
+                                <div style="display: flex; align-items: center; justify-content: space-between; gap: 6px; color: var(--text-secondary); font-size: 0.8rem; font-weight: 600; text-transform: uppercase; margin-bottom: 8px;">
+                                    <div style="display:flex; align-items:center; gap: 4px;">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v8"/><path d="m4.93 10.93 1.41 1.41"/><path d="M2 18h2"/><path d="M20 18h2"/><path d="m19.07 10.93-1.41 1.41"/><path d="M22 22H2"/><path d="m8 6 4-4 4 4"/><path d="M16 18a4 4 0 0 0-8 0"/></svg>
+                                        Amanecer
+                                    </div>
+                                    <div style="display:flex; align-items:center; gap: 4px;">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 10V2"/><path d="m4.93 10.93 1.41 1.41"/><path d="M2 18h2"/><path d="M20 18h2"/><path d="m19.07 10.93-1.41 1.41"/><path d="M22 22H2"/><path d="m8 6 4-4 4 4"/><path d="M16 18a4 4 0 0 0-8 0"/></svg>
+                                        Atardecer
+                                    </div>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div style="font-size: 1.1rem; font-weight: 700; color: var(--text-primary);">${orto}</div>
+                                    <div style="font-size: 1.1rem; font-weight: 700; color: var(--text-primary);">${ocaso}</div>
+                                </div>
+                            </div>
+                            `;
+                        }
+
                         document.getElementById('weather-modal-details').innerHTML = `
                             <div style="background: var(--chat-bg); padding: 16px; border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
                                 <div style="display: flex; align-items: center; gap: 6px; color: var(--text-secondary); font-size: 0.8rem; font-weight: 600; text-transform: uppercase; margin-bottom: 8px;">
@@ -2216,7 +2268,6 @@
                                     Viento
                                 </div>
                                 <div style="font-size: 1.25rem; font-weight: 700; color: var(--text-primary);">${windStr}</div>
-                                ${windSub}
                             </div>
                             <div style="background: var(--chat-bg); padding: 16px; border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
                                 <div style="display: flex; align-items: center; gap: 6px; color: var(--text-secondary); font-size: 0.8rem; font-weight: 600; text-transform: uppercase; margin-bottom: 8px;">
@@ -2233,7 +2284,7 @@
                                 <div style="font-size: 1.25rem; font-weight: 700; color: var(--text-primary);">${uvMax}</div>
                                 <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 2px;">Máximo de hoy</div>
                             </div>
-                            ${dynamicCardHtml}
+                            ${dynamicCards}
                         `;
                         
                     } else {

@@ -145,7 +145,10 @@ export async function onRequest(context) {
                             uv: d.uvMax || "N/A",
                             probPrecipitacion: Array.isArray(d.probPrecipitacion) ? d.probPrecipitacion[0]?.value : (d.probPrecipitacion?.value || 0),
                             windMax: getDailyMax(d.viento),
-                            gustMax: getDailyMax(d.rachaMax)
+                            gustMax: getDailyMax(d.rachaMax),
+                            orto: d.orto || "",
+                            ocaso: d.ocaso || "",
+                            cotaNieve: d.cotaNieveProv || []
                         });
                     }
                 }
