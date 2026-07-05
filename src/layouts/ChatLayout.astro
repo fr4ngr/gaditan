@@ -717,12 +717,14 @@ import themeData from '../data/theme.json';
             
             <div style="padding: 0 20px 20px 20px;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                    <button onclick="window.openCityModal()" style="background: none; border: none; padding: 0; cursor: pointer; display: flex; align-items: center; gap: 8px; color: var(--text-primary); font-family: inherit;">
+                    <button onclick="window.openCityModal()" style="background: none; border: none; padding: 0; cursor: pointer; display: flex; flex-direction: column; align-items: flex-start; gap: 2px; color: var(--text-primary); font-family: inherit;">
                         <h2 style="font-size: 1.25rem; margin: 0; display: flex; align-items: center; gap: 8px;">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
                             <span id="weather-modal-location">Cádiz</span>
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left: -4px;"><polyline points="6 9 12 15 18 9"/></svg>
                         </h2>
+                        <div style="font-size: 0.75rem; color: #3b82f6; font-weight: 500; margin-left: 28px; display: flex; align-items: center;">
+                            toogle <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left: 2px;"><polyline points="6 9 12 15 18 9"/></svg>
+                        </div>
                     </button>
                     <button onclick="window.closeWeatherModal()" style="background: none; border: none; color: var(--text-secondary); cursor: pointer; padding: 4px;">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>

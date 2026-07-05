@@ -2014,7 +2014,7 @@
                         }
 
                         // 2. Llenar el Modal Completo
-                        document.getElementById('weather-modal-location').innerText = 'EL CLIMA AHORA EN ' + (wData.location || 'Cádiz').toUpperCase();
+                        document.getElementById('weather-modal-location').innerText = wData.location || 'Cádiz';
 
                         // Alertas
                         let alertsHtml = '';
@@ -2174,7 +2174,38 @@
 
                         // 4. Details Grid
                         
-                        let dynamicCards = '';
+                        // 4. Details Grid
+                        
+                        let cardsList = [];
+
+                        cardsList.push(`
+                            <div class="weather-viento-card" style="background: var(--chat-bg); padding: 16px; border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
+                                <div style="display: flex; align-items: center; gap: 6px; color: var(--text-secondary); font-size: 0.8rem; font-weight: 600; text-transform: uppercase; margin-bottom: 8px;">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"/></svg>
+                                    Viento
+                                </div>
+                                <div style="font-size: 1.25rem; font-weight: 700; color: var(--text-primary);">${windStr}</div>
+                            </div>
+                        `);
+                        cardsList.push(`
+                            <div style="background: var(--chat-bg); padding: 16px; border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
+                                <div style="display: flex; align-items: center; gap: 6px; color: var(--text-secondary); font-size: 0.8rem; font-weight: 600; text-transform: uppercase; margin-bottom: 8px;">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/></svg>
+                                    Humedad
+                                </div>
+                                <div style="font-size: 1.25rem; font-weight: 700; color: var(--text-primary);">${currentHumidity}</div>
+                            </div>
+                        `);
+                        cardsList.push(`
+                            <div style="background: var(--chat-bg); padding: 16px; border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
+                                <div style="display: flex; align-items: center; gap: 6px; color: var(--text-secondary); font-size: 0.8rem; font-weight: 600; text-transform: uppercase; margin-bottom: 8px;">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+                                    Índice UV
+                                </div>
+                                <div style="font-size: 1.25rem; font-weight: 700; color: var(--text-primary);">${uvMax}</div>
+                                <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 2px;">Máximo de hoy</div>
+                            </div>
+                        `);
 
                         // TIDES
                         if (wData.tides && wData.tides.length > 0) {
@@ -2186,7 +2217,7 @@
                                 return tHour > currentHour;
                             }) || wData.tides[0];
                             
-                            dynamicCards += `
+                            cardsList.push(`
                             <div style="background: var(--chat-bg); padding: 16px; border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
                                 <div style="display: flex; align-items: center; gap: 6px; color: var(--text-secondary); font-size: 0.8rem; font-weight: 600; text-transform: uppercase; margin-bottom: 8px;">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12c2-2 4-2 6 0s4 2 6 0 4-2 6 0"></path><path d="M2 18c2-2 4-2 6 0s4 2 6 0 4-2 6 0"></path></svg>
@@ -2195,7 +2226,7 @@
                                 <div style="font-size: 1.1rem; font-weight: 700; color: var(--text-primary); text-transform: capitalize;">${nextTide.type}</div>
                                 <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 2px;">a las ${nextTide.time}h</div>
                             </div>
-                            `;
+                            `);
                         }
 
                         // RAIN TODAY
@@ -2203,7 +2234,7 @@
                         const totalPrecip = wData.hourly ? wData.hourly.filter(h => h.fecha === currentFechaStr).reduce((acc, curr) => acc + (parseFloat(curr.precip) || 0), 0) : 0;
                         if (totalPrecip > 0) {
                             const precipVal = totalPrecip.toFixed(1).replace('.0', '') + ' mm';
-                            dynamicCards += `
+                            cardsList.push(`
                             <div style="background: var(--chat-bg); padding: 16px; border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
                                 <div style="display: flex; align-items: center; gap: 6px; color: var(--text-secondary); font-size: 0.8rem; font-weight: 600; text-transform: uppercase; margin-bottom: 8px;">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M8 19v1"/><path d="M8 14v1"/><path d="M16 19v1"/><path d="M16 14v1"/><path d="M12 21v1"/><path d="M12 16v1"/></svg>
@@ -2212,7 +2243,7 @@
                                 <div style="font-size: 1.25rem; font-weight: 700; color: var(--text-primary);">${precipVal}</div>
                                 <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 2px;">Total esperado</div>
                             </div>
-                            `;
+                            `);
                         }
 
                         // SNOW LEVEL
@@ -2223,7 +2254,7 @@
                             if (snowValObj) snowLevel = snowValObj.value;
                         }
                         if (snowLevel !== "0" && snowLevel !== "N/A" && snowLevel !== "") {
-                            dynamicCards += `
+                            cardsList.push(`
                             <div style="background: var(--chat-bg); padding: 16px; border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
                                 <div style="display: flex; align-items: center; gap: 6px; color: var(--text-secondary); font-size: 0.8rem; font-weight: 600; text-transform: uppercase; margin-bottom: 8px;">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 19v-2"/><path d="M6.5 19v-2"/><path d="M12 22v-2"/><path d="M12 13v-3"/><path d="m14 12-2-2-2 2"/><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/></svg>
@@ -2231,7 +2262,7 @@
                                 </div>
                                 <div style="font-size: 1.25rem; font-weight: 700; color: var(--text-primary);">${snowLevel}m</div>
                             </div>
-                            `;
+                            `);
                         }
 
                         // SUNRISE / SUNSET
@@ -2241,7 +2272,7 @@
                             ocaso = wData.forecast[0].ocaso || "--";
                         }
                         if (orto !== "--" && ocaso !== "--") {
-                            dynamicCards += `
+                            cardsList.push(`
                             <div style="background: var(--chat-bg); padding: 16px; border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
                                 <div style="display: flex; align-items: center; justify-content: space-between; gap: 6px; color: var(--text-secondary); font-size: 0.8rem; font-weight: 600; text-transform: uppercase; margin-bottom: 8px;">
                                     <div style="display:flex; align-items:center; gap: 4px;">
@@ -2258,34 +2289,14 @@
                                     <div style="font-size: 1.1rem; font-weight: 700; color: var(--text-primary);">${ocaso}</div>
                                 </div>
                             </div>
-                            `;
+                            `);
                         }
 
-                        document.getElementById('weather-modal-details').innerHTML = `
-                            <div style="background: var(--chat-bg); padding: 16px; border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
-                                <div style="display: flex; align-items: center; gap: 6px; color: var(--text-secondary); font-size: 0.8rem; font-weight: 600; text-transform: uppercase; margin-bottom: 8px;">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"/></svg>
-                                    Viento
-                                </div>
-                                <div style="font-size: 1.25rem; font-weight: 700; color: var(--text-primary);">${windStr}</div>
-                            </div>
-                            <div style="background: var(--chat-bg); padding: 16px; border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
-                                <div style="display: flex; align-items: center; gap: 6px; color: var(--text-secondary); font-size: 0.8rem; font-weight: 600; text-transform: uppercase; margin-bottom: 8px;">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/></svg>
-                                    Humedad
-                                </div>
-                                <div style="font-size: 1.25rem; font-weight: 700; color: var(--text-primary);">${currentHumidity}</div>
-                            </div>
-                            <div style="background: var(--chat-bg); padding: 16px; border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
-                                <div style="display: flex; align-items: center; gap: 6px; color: var(--text-secondary); font-size: 0.8rem; font-weight: 600; text-transform: uppercase; margin-bottom: 8px;">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
-                                    Índice UV
-                                </div>
-                                <div style="font-size: 1.25rem; font-weight: 700; color: var(--text-primary);">${uvMax}</div>
-                                <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 2px;">Máximo de hoy</div>
-                            </div>
-                            ${dynamicCards}
-                        `;
+                        if (cardsList.length % 2 !== 0) {
+                            cardsList[0] = cardsList[0].replace('class="weather-viento-card" style="', 'class="weather-viento-card" style="grid-column: 1 / -1; ');
+                        }
+
+                        document.getElementById('weather-modal-details').innerHTML = cardsList.join('');
                         
                     } else {
                         throw new Error('API returned error or N/A');
