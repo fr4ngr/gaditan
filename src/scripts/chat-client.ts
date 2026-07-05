@@ -2116,10 +2116,12 @@
                                         <div style="font-size: 1.5rem; margin-bottom: 8px;">${hEmoji}</div>
                                         <div style="font-size: 1rem; font-weight: 700;">${h.temp}º</div>
                                         <div style="font-size: 0.7rem; font-weight: 500; color: ${isNow ? 'rgba(255,255,255,0.8)' : '#3b82f6'}; margin-top: 4px; display: flex; flex-direction: column; align-items: center; gap: 2px;">
+                                            ${parseInt(h.probPrecipitacion) > 0 ? `
                                             <div style="display: flex; align-items: center;">
                                                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:2px; opacity:0.8;"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M8 19v1"/><path d="M8 14v1"/><path d="M16 19v1"/><path d="M16 14v1"/><path d="M12 21v1"/><path d="M12 16v1"/></svg>
                                                 ${h.probPrecipitacion}%
                                             </div>
+                                            ` : ''}
                                             ${(parseFloat(h.precip || '0') > 0) ? `<div style="font-size: 0.65rem; font-weight: 400; color: ${isNow ? 'rgba(255,255,255,0.7)' : 'var(--text-secondary)'}; margin-top: -2px;">${parseFloat(h.precip)} mm</div>` : ''}
                                         </div>
                                         ${(h.windSpeed && h.windSpeed !== 'N/A') ? `<div style="font-size: 0.7rem; font-weight: 600; color: ${isNow ? 'rgba(255,255,255,0.8)' : 'var(--text-secondary)'}; margin-top: 4px; text-align: center;">${h.windSpeed} Km/h ${(h.windDir && h.windDir !== 'N/A' && h.windDir !== 'C') ? h.windDir : ''}</div>` : ''}
@@ -2158,7 +2160,7 @@
                                         </div>
                                         <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; color: var(--text-secondary); font-weight: 500; padding-left: 36px;">
                                             <div style="color: #3b82f6; display: flex; align-items: center;">
-                                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px; opacity:0.8;"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M8 19v1"/><path d="M8 14v1"/><path d="M16 19v1"/><path d="M16 14v1"/><path d="M12 21v1"/><path d="M12 16v1"/></svg>${f.probPrecipitacion}%
+                                                ${parseInt(f.probPrecipitacion) > 0 ? `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px; opacity:0.8;"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M8 19v1"/><path d="M8 14v1"/><path d="M16 19v1"/><path d="M16 14v1"/><path d="M12 21v1"/><path d="M12 16v1"/></svg>${f.probPrecipitacion}%` : ''}
                                             </div>
                                             <div>
                                                 ${f.windMax && f.windMax !== 'N/A' ? `${f.windMax} Km/h` : ''}
