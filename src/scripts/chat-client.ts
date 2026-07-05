@@ -1824,7 +1824,7 @@
         const modal = document.getElementById('weather-modal');
         if (overlay && modal) {
             overlay.style.display = 'block';
-            modal.style.display = 'block';
+            modal.style.display = 'flex';
             // Pequeño delay para la animación
             setTimeout(() => {
                 overlay.style.opacity = '1';
@@ -1906,7 +1906,7 @@
             const currentCity = localStorage.getItem('cadiz_city') || "Cádiz";
             renderCityList(citiesList, ul, currentCity);
             overlay.style.display = 'block';
-            modal.style.display = 'block';
+            modal.style.display = 'flex';
             setTimeout(() => {
                 overlay.style.opacity = '1';
                 modal.style.bottom = '0';
