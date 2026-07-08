@@ -1463,8 +1463,61 @@
                     icon.style.stroke = 'currentColor';
                 }
             }
+            
+            // Update the profile tab UI
+            if (window.updateProfileUI) {
+                window.updateProfileUI(dataMe);
+            }
         } catch (e) {
             console.error('Error updating badge', e);
+        }
+    };
+
+    window.updateProfileUI = async function(dataMe) {
+        const profileAvatarEmoji = document.getElementById('profile-page-avatar-emoji');
+        const profileAvatarImg = document.getElementById('profile-page-avatar-img');
+        const profileName = document.getElementById('profile-page-name');
+        const profileDesc = document.getElementById('profile-page-desc');
+        const profileAuthBtn = document.getElementById('profile-page-auth-btn');
+
+        if (dataMe && dataMe.user) {
+            if (profileName) profileName.innerText = dataMe.user.name || dataMe.user.email;
+            if (profileDesc) profileDesc.innerText = dataMe.user.email;
+            if (profileAuthBtn) {
+                profileAuthBtn.innerText = 'Cerrar Sesión';
+                profileAuthBtn.style.background = '#fee2e2';
+                profileAuthBtn.style.color = '#ef4444';
+                profileAuthBtn.onclick = () => window.location.href = '/api/auth/logout';
+            }
+            if (dataMe.user.picture && profileAvatarImg && profileAvatarEmoji) {
+                profileAvatarImg.src = dataMe.user.picture;
+                profileAvatarImg.style.display = 'block';
+                profileAvatarEmoji.style.display = 'none';
+            }
+            
+            // Also update the dropdown profile button in header
+            const headerAvatarImg = document.getElementById('profile-avatar');
+            const headerProfileIcon = document.getElementById('profile-icon');
+            if (headerAvatarImg && headerProfileIcon) {
+                if (dataMe.user.picture) {
+                    headerAvatarImg.src = dataMe.user.picture;
+                    headerAvatarImg.style.display = 'block';
+                    headerProfileIcon.style.display = 'none';
+                }
+            }
+        } else {
+            if (profileName) profileName.innerText = 'Invitado';
+            if (profileDesc) profileDesc.innerText = 'Inicia sesión para guardar tus favoritos en la nube.';
+            if (profileAuthBtn) {
+                profileAuthBtn.innerText = 'Unirse a la Comunidad';
+                profileAuthBtn.style.background = 'var(--primary-color)';
+                profileAuthBtn.style.color = 'white';
+                profileAuthBtn.onclick = () => window.openLoginModal();
+            }
+            if (profileAvatarImg && profileAvatarEmoji) {
+                profileAvatarImg.style.display = 'none';
+                profileAvatarEmoji.style.display = 'block';
+            }
         }
     };
 
@@ -1493,6 +1546,7 @@
 
     // Cargar guardados al iniciar y posicionar el swiper en el chat
     document.addEventListener('DOMContentLoaded', () => {
+        if (window.updateBookmarksBadge) window.updateBookmarksBadge();
         window.renderSavedMessages();
         // Inicializar estado del panel central
         const swiper = document.getElementById('main-swiper');

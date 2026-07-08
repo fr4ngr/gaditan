@@ -377,16 +377,61 @@ import themeData from '../data/theme.json';
             </div>
             </div> <!-- END TAB CHAT -->
 
-            <!-- TAB MURO -->
+            <!-- TAB PERFIL (Antiguo Muro) -->
             <div id="tab-muro" style="display: none; flex: 1; width: 100%; min-height: 0; flex-direction: column; background: var(--bg-color); max-width: 480px; margin: 0 auto; overflow-y: auto;">
-                <div style="padding: 16px; border-bottom: 1px solid var(--header-border); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; background: var(--header-bg); z-index: 10;">
-                    <h2 style="margin: 0; font-size: 18px; color: var(--text-primary);">Perfil</h2>
-                    <button onclick="window.openNewPostModal()" style="background: var(--primary-color); color: white; border: none; padding: 8px 16px; border-radius: 20px; font-weight: 600; cursor: pointer;">+ Nueva Foto</button>
+                <div style="padding: 16px; border-bottom: 1px solid var(--header-border); display: flex; justify-content: center; align-items: center; position: sticky; top: 0; background: var(--header-bg); z-index: 10;">
+                    <h2 style="margin: 0; font-size: 18px; color: var(--text-primary); text-align: center;">Mi Perfil</h2>
                 </div>
-                <div id="feed-container" style="flex: 1; padding: 16px; display: flex; flex-direction: column; gap: 16px;">
-                    <div style="text-align: center; color: var(--text-secondary); margin-top: 20px;">Cargando perfil...</div>
+                
+                <div style="flex: 1; padding: 24px 16px; display: flex; flex-direction: column; gap: 24px;">
+                    
+                    <!-- Tarjeta de Cuenta -->
+                    <div style="background: var(--chat-bg); border-radius: 20px; padding: 24px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid var(--border-color);">
+                        <div style="width: 64px; height: 64px; background: var(--primary-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 32px; margin: 0 auto 16px;">
+                            <span id="profile-page-avatar-emoji">👤</span>
+                            <img id="profile-page-avatar-img" src="" style="display:none; width: 100%; height: 100%; border-radius: 50%; object-fit: cover;" alt="Avatar">
+                        </div>
+                        <h3 id="profile-page-name" style="margin: 0 0 8px 0; font-size: 20px; color: var(--text-primary);">Invitado</h3>
+                        <p id="profile-page-desc" style="margin: 0 0 20px 0; font-size: 14px; color: var(--text-secondary);">Inicia sesión para guardar tus favoritos en la nube.</p>
+                        
+                        <button id="profile-page-auth-btn" onclick="window.openLoginModal()" style="background: var(--primary-color); color: white; border: none; padding: 12px 24px; border-radius: 20px; font-weight: 600; font-size: 15px; cursor: pointer; width: 100%;">
+                            Unirse a la Comunidad
+                        </button>
+                    </div>
+
+                    <!-- Accesos Directos -->
+                    <div>
+                        <h4 style="margin: 0 0 12px 12px; font-size: 13px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Tus Contenidos</h4>
+                        <div style="background: var(--chat-bg); border-radius: 20px; overflow: hidden; border: 1px solid var(--border-color); box-shadow: 0 4px 15px rgba(0,0,0,0.02);">
+                            <button onclick="window.switchTab('chat'); setTimeout(() => window.switchPanel('guardados'), 50);" style="display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 16px; background: none; border: none; cursor: pointer; border-bottom: 1px solid var(--border-color);">
+                                <div style="display: flex; align-items: center; gap: 12px; color: var(--text-primary); font-weight: 600; font-size: 16px;">
+                                    <div style="background: rgba(239, 68, 68, 0.1); color: #ef4444; width: 36px; height: 36px; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                                    </div>
+                                    Mis Favoritos Guardados
+                                </div>
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--text-secondary);"><polyline points="9 18 15 12 9 6"/></svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Ajustes e Interfaz -->
+                    <div>
+                        <h4 style="margin: 0 0 12px 12px; font-size: 13px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Ajustes</h4>
+                        <div style="background: var(--chat-bg); border-radius: 20px; overflow: hidden; border: 1px solid var(--border-color); box-shadow: 0 4px 15px rgba(0,0,0,0.02);">
+                            <button onclick="window.toggleDarkMode()" style="display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 16px; background: none; border: none; cursor: pointer;">
+                                <div style="display: flex; align-items: center; gap: 12px; color: var(--text-primary); font-weight: 600; font-size: 16px;">
+                                    <div style="background: rgba(59, 130, 246, 0.1); color: #3b82f6; width: 36px; height: 36px; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+                                    </div>
+                                    Cambiar Tema Visual
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                    
                 </div>
-            </div> <!-- END TAB MURO -->
+            </div> <!-- END TAB PERFIL -->
             
             <!-- BOTTOM NAVIGATION -->
             <nav id="bottom-nav" style="width: 100%; max-width: 480px; margin: 0 auto; background: var(--header-bg); border-top: 1px solid var(--header-border); display: flex; justify-content: space-around; padding: 8px 0; padding-bottom: calc(8px + env(safe-area-inset-bottom)); position: sticky; bottom: 0; z-index: 100; flex-shrink: 0;">
