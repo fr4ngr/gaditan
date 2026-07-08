@@ -9,7 +9,7 @@ export async function onRequestPost(context) {
 
     try {
         const queries = [
-            "ALTER TABLE users ADD COLUMN username TEXT UNIQUE",
+            "ALTER TABLE users ADD COLUMN username TEXT",
             "ALTER TABLE users ADD COLUMN is_profile_completed INTEGER DEFAULT 0",
             "ALTER TABLE users ADD COLUMN status TEXT DEFAULT 'active'",
             "ALTER TABLE users ADD COLUMN banned_until DATETIME",
