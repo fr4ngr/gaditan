@@ -66,12 +66,13 @@ export async function onRequestGet(context) {
 
         // 3. Crear o Actualizar Usuario en D1
         // UPSERT is available in SQLite: INSERT ... ON CONFLICT DO UPDATE
+        // Ahora solo actualizamos el email en conflicto, para no borrar el nombre de usuario
+        // personalizado ni la foto si el usuario ya los configuró.
         const upsertUserQuery = `
-            INSERT INTO users (id, email, name, avatar_url) 
-            VALUES (?, ?, ?, ?)
+            INSERT INTO users (id, email, name, avatar_url, is_profile_completed) 
+            VALUES (?, ?, ?, ?, 0)
             ON CONFLICT(id) DO UPDATE SET 
-                name = excluded.name, 
-                avatar_url = excluded.avatar_url;
+                email = excluded.email;
         `;
         
         await env.DB.prepare(upsertUserQuery).bind(userId, email, name, avatarUrl).run();

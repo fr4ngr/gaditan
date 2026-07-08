@@ -1472,6 +1472,93 @@
             console.error('Error updating badge', e);
         }
     };
+    let onboardingDebounce = null;
+    window.checkUsername = async function(value) {
+        const username = value.trim().toLowerCase();
+        const statusDiv = document.getElementById('username-status');
+        const submitBtn = document.getElementById('onboarding-submit-btn');
+        
+        // Solo letras, números y guión bajo
+        if (!/^[a-z0-9_]+$/.test(username)) {
+            statusDiv.innerText = 'Solo letras minúsculas, números y guión bajo.';
+            statusDiv.style.color = '#ef4444';
+            submitBtn.disabled = true;
+            submitBtn.style.opacity = '0.5';
+            submitBtn.style.cursor = 'not-allowed';
+            return;
+        }
+
+        if (username.length < 3) {
+            statusDiv.innerText = 'Debe tener al menos 3 caracteres.';
+            statusDiv.style.color = '#ef4444';
+            submitBtn.disabled = true;
+            submitBtn.style.opacity = '0.5';
+            submitBtn.style.cursor = 'not-allowed';
+            return;
+        }
+
+        statusDiv.innerText = 'Comprobando...';
+        statusDiv.style.color = 'var(--text-secondary)';
+
+        if (onboardingDebounce) clearTimeout(onboardingDebounce);
+        onboardingDebounce = setTimeout(async () => {
+            try {
+                const res = await fetch(`/api/users/check-username?username=${encodeURIComponent(username)}`);
+                const data = await res.json();
+                
+                if (data.available) {
+                    statusDiv.innerText = '✅ ¡Nombre de usuario disponible!';
+                    statusDiv.style.color = '#10b981';
+                    submitBtn.disabled = false;
+                    submitBtn.style.opacity = '1';
+                    submitBtn.style.cursor = 'pointer';
+                } else {
+                    statusDiv.innerText = '❌ Este usuario ya está en uso.';
+                    statusDiv.style.color = '#ef4444';
+                    submitBtn.disabled = true;
+                    submitBtn.style.opacity = '0.5';
+                    submitBtn.style.cursor = 'not-allowed';
+                }
+            } catch (e) {
+                statusDiv.innerText = 'Error al comprobar.';
+                statusDiv.style.color = '#ef4444';
+            }
+        }, 500);
+    };
+
+    window.submitOnboarding = async function() {
+        const name = document.getElementById('onboarding-name').value.trim();
+        const username = document.getElementById('onboarding-username').value.trim().toLowerCase();
+        const submitBtn = document.getElementById('onboarding-submit-btn');
+        
+        if (!name || !username) return;
+        
+        submitBtn.disabled = true;
+        submitBtn.innerText = 'Guardando...';
+
+        try {
+            const res = await fetch('/api/users/complete-profile', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, username })
+            });
+
+            if (res.ok) {
+                document.getElementById('onboarding-modal').style.display = 'none';
+                // Refrescar estado global
+                if (window.updateBookmarksBadge) window.updateBookmarksBadge();
+            } else {
+                const data = await res.json();
+                alert(data.error || 'Error al guardar el perfil.');
+                submitBtn.disabled = false;
+                submitBtn.innerText = 'Completar Perfil';
+            }
+        } catch (e) {
+            alert('Error de conexión.');
+            submitBtn.disabled = false;
+            submitBtn.innerText = 'Completar Perfil';
+        }
+    };
 
     window.updateProfileUI = async function(dataMe) {
         const profileAvatarEmoji = document.getElementById('profile-page-avatar-emoji');
@@ -1481,8 +1568,17 @@
         const profileAuthBtn = document.getElementById('profile-page-auth-btn');
 
         if (dataMe && dataMe.user) {
+            // Verificar si el perfil está completado
+            if (dataMe.user.is_profile_completed === 0) {
+                const onboardingModal = document.getElementById('onboarding-modal');
+                if (onboardingModal) {
+                    onboardingModal.style.display = 'flex';
+                }
+            }
             if (profileName) profileName.innerText = dataMe.user.name || dataMe.user.email;
-            if (profileDesc) profileDesc.innerText = dataMe.user.email;
+            if (profileDesc) {
+                profileDesc.innerText = dataMe.user.username ? '@' + dataMe.user.username : dataMe.user.email;
+            }
             if (profileAuthBtn) {
                 profileAuthBtn.innerText = 'Cerrar Sesión';
                 profileAuthBtn.style.background = '#fee2e2';

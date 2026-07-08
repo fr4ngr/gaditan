@@ -505,6 +505,37 @@ import themeData from '../data/theme.json';
                 </div>
             </div>
         </div>
+
+        <!-- ONBOARDING MODAL -->
+        <div id="onboarding-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 2500; align-items: center; justify-content: center; backdrop-filter: blur(8px);">
+            <div style="background: var(--header-bg); border: 1px solid var(--header-border); border-radius: 24px; padding: 32px 24px; width: 90%; max-width: 360px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); position: relative;">
+                
+                <h2 style="margin: 0 0 8px 0; font-size: 22px; color: var(--text-primary); text-align: center;">Elige tu @Usuario</h2>
+                <p style="margin: 0 0 24px 0; font-size: 14px; color: var(--text-secondary); line-height: 1.5; text-align: center;">
+                    Para participar en la comunidad de Cádiz, elige cómo quieres que te llamen los demás.
+                </p>
+                
+                <form id="onboarding-form" onsubmit="event.preventDefault(); window.submitOnboarding();">
+                    <div style="margin-bottom: 16px;">
+                        <label style="display: block; font-size: 13px; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Nombre Público</label>
+                        <input type="text" id="onboarding-name" required placeholder="Ej. Gaditano de Pro" style="width: 100%; padding: 12px 16px; border-radius: 12px; border: 1px solid var(--header-border); background: var(--chat-bg); color: var(--text-primary); font-size: 15px; box-sizing: border-box; outline: none; transition: border-color 0.2s;" onfocus="this.style.borderColor='var(--primary-color)'" onblur="this.style.borderColor='var(--header-border)'">
+                    </div>
+
+                    <div style="margin-bottom: 24px;">
+                        <label style="display: block; font-size: 13px; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">@Usuario Único</label>
+                        <div style="position: relative;">
+                            <span style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-secondary); font-weight: 600;">@</span>
+                            <input type="text" id="onboarding-username" required placeholder="gaditano" style="width: 100%; padding: 12px 16px 12px 32px; border-radius: 12px; border: 1px solid var(--header-border); background: var(--chat-bg); color: var(--text-primary); font-size: 15px; box-sizing: border-box; outline: none; transition: border-color 0.2s; text-transform: lowercase;" oninput="window.checkUsername(this.value)" onfocus="this.style.borderColor='var(--primary-color)'" onblur="this.style.borderColor='var(--header-border)'">
+                        </div>
+                        <div id="username-status" style="font-size: 12px; margin-top: 8px; min-height: 16px;"></div>
+                    </div>
+
+                    <button id="onboarding-submit-btn" type="submit" disabled style="width: 100%; background: var(--primary-color); color: white; border: none; padding: 14px; border-radius: 12px; font-weight: 600; font-size: 15px; cursor: not-allowed; opacity: 0.5; transition: all 0.2s;">
+                        Completar Perfil
+                    </button>
+                </form>
+            </div>
+        </div>
         
         <style is:global>
             /* ELIMINAR FONDO GRIS POR DEFECTO DE LEAFLET AL CARGAR */
