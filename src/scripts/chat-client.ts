@@ -1581,7 +1581,13 @@
                     onboardingModal.style.display = 'flex';
                 }
             }
-            if (profileName) profileName.innerText = dataMe.user.name || dataMe.user.email;
+            if (profileName) {
+                let name = dataMe.user.name || dataMe.user.email;
+                if (dataMe.user.verified) {
+                    name += ' <span style="color:#3b82f6" title="Verificado">✓</span>';
+                }
+                profileName.innerHTML = name;
+            }
             if (profileDesc) {
                 profileDesc.innerText = dataMe.user.username ? '@' + dataMe.user.username : dataMe.user.email;
             }
