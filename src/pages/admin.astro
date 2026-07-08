@@ -309,6 +309,7 @@ import themeData from '../data/theme.json';
                             <div style="display: flex; flex-direction: column; gap: 10px; align-items: flex-end; min-width: 200px;">
                                 <button class="btn btn-secondary" style="font-size: 0.85rem; padding: 8px 12px;" onclick="checkStatus(this)">🔄 Comprobar ahora</button>
                                 <button class="btn btn-primary" style="font-size: 0.85rem; padding: 8px 12px; border: none;" onclick="forceDeploy(this)">🚀 Forzar Actualización</button>
+                                <button class="btn btn-warning" style="font-size: 0.85rem; padding: 8px 12px; border: none; background: #eab308; color: white;" onclick="runDBMigration(this)">🛠️ Migrar Base de Datos</button>
                             </div>
                         </div>
                         <div class="status-grid" id="status-grid">
@@ -1359,6 +1360,30 @@ import themeData from '../data/theme.json';
             } catch(e) {
                 alert('Error de conexión');
             }
+        };
+
+        window.runDBMigration = async function(btn) {
+            if (!confirm('¿Estás seguro de que quieres aplicar la migración a la Base de Datos?')) return;
+            const originalText = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '⏳ Migrando...';
+            const pwd = document.getElementById('admin-pwd').value || localStorage.getItem('admin_pwd');
+            try {
+                const res = await fetch('/api/admin/run-migration', {
+                    method: 'POST',
+                    headers: { 'Authorization': 'Bearer ' + pwd }
+                });
+                const data = await res.json();
+                if (data.success) {
+                    alert('Migración aplicada con éxito:\n' + data.results.join('\n'));
+                } else {
+                    alert('Error en migración: ' + data.error);
+                }
+            } catch (e) {
+                alert('Error de red: ' + e.message);
+            }
+            btn.disabled = false;
+            btn.innerHTML = originalText;
         };
 
         window.loadMuroAdmin = async function() {
