@@ -381,6 +381,60 @@ import themeData from '../data/theme.json';
                         </div>
                     </div>
 
+                    <!-- TAB USUARIOS -->
+                    <div id="tab-usuarios" class="tab-content">
+                        <div class="header-actions" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px;">
+                            <div>
+                                <h3 class="text-title">Gestión de Usuarios</h3>
+                                <p class="text-muted">Directorio de la comunidad, crecimiento y moderación.</p>
+                            </div>
+                            <div>
+                                <button class="btn btn-secondary" style="font-size: 0.85rem; padding: 8px 12px;" onclick="loadAdminUsers()">🔄 Refrescar Listado</button>
+                            </div>
+                        </div>
+
+                        <!-- Stats Grid -->
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 30px;">
+                            <div class="card" style="padding: 15px; text-align: center;">
+                                <div style="font-size: 24px; font-weight: bold; color: var(--primary-color);" id="stats-users-today">0</div>
+                                <div style="font-size: 13px; color: var(--text-secondary);">Nuevos Hoy</div>
+                            </div>
+                            <div class="card" style="padding: 15px; text-align: center;">
+                                <div style="font-size: 24px; font-weight: bold; color: var(--primary-color);" id="stats-users-week">0</div>
+                                <div style="font-size: 13px; color: var(--text-secondary);">Últimos 7 días</div>
+                            </div>
+                            <div class="card" style="padding: 15px; text-align: center;">
+                                <div style="font-size: 24px; font-weight: bold; color: var(--primary-color);" id="stats-users-month">0</div>
+                                <div style="font-size: 13px; color: var(--text-secondary);">Último mes</div>
+                            </div>
+                            <div class="card" style="padding: 15px; text-align: center; border-left: 3px solid var(--primary-color);">
+                                <div style="font-size: 24px; font-weight: bold; color: var(--text-primary);" id="stats-users-total">0</div>
+                                <div style="font-size: 13px; color: var(--text-secondary);">Total Registrados</div>
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom: 15px;">
+                            <input type="text" id="admin-users-search" placeholder="🔍 Buscar por email o @usuario..." style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--header-border); background: var(--chat-bg); color: var(--text-primary);" oninput="filterAdminUsers()">
+                        </div>
+
+                        <div style="overflow-x: auto; border-radius: 8px; border: 1px solid var(--header-border);">
+                            <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 14px;">
+                                <thead style="background: var(--chat-bg);">
+                                    <tr>
+                                        <th style="padding: 12px; border-bottom: 1px solid var(--header-border);">Usuario / Email</th>
+                                        <th style="padding: 12px; border-bottom: 1px solid var(--header-border);">Registro</th>
+                                        <th style="padding: 12px; border-bottom: 1px solid var(--header-border);">Participación</th>
+                                        <th style="padding: 12px; border-bottom: 1px solid var(--header-border);">Estado</th>
+                                        <th style="padding: 12px; border-bottom: 1px solid var(--header-border); text-align: right;">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="admin-users-tbody">
+                                    <!-- Injected by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
                     <!-- TAB 2: Gestor Jerárquico de Cerebros -->
                     <div id="tab-cerebros" class="tab-content">
                         <div class="header-actions" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
