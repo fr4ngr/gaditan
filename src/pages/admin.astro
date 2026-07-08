@@ -287,6 +287,7 @@ import themeData from '../data/theme.json';
             <div class="tabs">
                 <button class="tab-btn active" onclick="switchTab('estado')">Panel de Control</button>
                 <button class="tab-btn" onclick="switchTab('analytics')">Radar</button>
+                <button class="tab-btn" onclick="switchTab('usuarios')">👤 Usuarios</button>
                 <button class="tab-btn" onclick="switchTab('cerebros')">Mis Cerebros</button>
                 <button class="tab-btn" onclick="switchTab('personalidad')">🤖 Personalidad</button>
                 <button class="tab-btn" onclick="switchTab('simulador')">🧪 Simulador</button>
@@ -1169,9 +1170,142 @@ import themeData from '../data/theme.json';
 
             if (tabId === 'cerebros') showMaterias();
             if (tabId === 'personalidad') loadSystemPrompt();
+            if (tabId === 'usuarios') loadAdminUsers();
             if (tabId === 'ui') initThemeManager();
             if (tabId === 'muro') loadMuroAdmin();
         }
+
+        let allAdminUsers = [];
+
+        window.loadAdminUsers = async function() {
+            const tbody = document.getElementById('admin-users-tbody');
+            if (tbody) tbody.innerHTML = '<tr><td colspan="5" style="padding:20px; text-align:center; color:var(--text-secondary);">Cargando usuarios...</td></tr>';
+            
+            const pwd = document.getElementById('admin-pwd').value || localStorage.getItem('admin_pwd');
+            try {
+                // Fetch Stats
+                const resStats = await fetch('/api/admin/users?action=stats', { headers: { 'Authorization': 'Bearer ' + pwd } });
+                const stats = await resStats.json();
+                
+                document.getElementById('stats-users-today').innerText = stats.users_today || 0;
+                document.getElementById('stats-users-week').innerText = stats.users_week || 0;
+                document.getElementById('stats-users-month').innerText = stats.users_month || 0;
+                document.getElementById('stats-users-total').innerText = stats.total_users || 0;
+
+                // Fetch Users
+                const resList = await fetch('/api/admin/users?action=list', { headers: { 'Authorization': 'Bearer ' + pwd } });
+                allAdminUsers = await resList.json();
+                
+                renderAdminUsers(allAdminUsers);
+            } catch (e) {
+                console.error(e);
+                if (tbody) tbody.innerHTML = '<tr><td colspan="5" style="padding:20px; text-align:center; color:#ef4444;">Error al cargar.</td></tr>';
+            }
+        };
+
+        window.filterAdminUsers = function() {
+            const val = document.getElementById('admin-users-search').value.toLowerCase();
+            if (!val) {
+                renderAdminUsers(allAdminUsers);
+                return;
+            }
+            const filtered = allAdminUsers.filter(u => 
+                (u.email && u.email.toLowerCase().includes(val)) || 
+                (u.username && u.username.toLowerCase().includes(val)) ||
+                (u.name && u.name.toLowerCase().includes(val))
+            );
+            renderAdminUsers(filtered);
+        };
+
+        window.renderAdminUsers = function(usersList) {
+            const tbody = document.getElementById('admin-users-tbody');
+            if (!tbody) return;
+            if (!usersList || usersList.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="padding:20px; text-align:center; color:var(--text-secondary);">No se encontraron usuarios.</td></tr>';
+                return;
+            }
+
+            let html = '';
+            usersList.forEach(u => {
+                const date = u.created_at ? new Date(u.created_at).toLocaleDateString() : 'Desconocida';
+                const displayName = u.name || 'Sin nombre';
+                const displayUsername = u.username ? '@' + u.username : '<small style="color:var(--text-secondary)">No configurado</small>';
+                const isBanned = u.status === 'banned';
+                
+                html += `
+                    <tr style="border-bottom: 1px solid var(--header-border);">
+                        <td style="padding: 12px;">
+                            <div style="font-weight: 600; color: var(--text-primary);">
+                                ${displayName} ${u.verified ? '<span style="color:#3b82f6" title="Verificado">✓</span>' : ''}
+                            </div>
+                            <div style="font-size: 12px; color: var(--text-secondary);">${displayUsername}</div>
+                            <div style="font-size: 12px; color: var(--text-secondary);">${u.email}</div>
+                        </td>
+                        <td style="padding: 12px; color: var(--text-secondary);">${date}</td>
+                        <td style="padding: 12px; color: var(--text-secondary);">
+                            Guardados: <b>${u.bookmarks_count || 0}</b>
+                        </td>
+                        <td style="padding: 12px;">
+                            ${isBanned 
+                                ? '<span style="background: #fee2e2; color: #ef4444; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold;">Baneado</span>'
+                                : '<span style="background: #dcfce7; color: #16a34a; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold;">Activo</span>'
+                            }
+                        </td>
+                        <td style="padding: 12px; text-align: right;">
+                            ${isBanned 
+                                ? `<button class="btn" style="background:#f3f4f6; color:var(--text-primary); font-size: 12px; padding: 4px 8px; margin-right: 4px;" onclick="moderateUser('${u.id}', 'unban')">Desbanear</button>`
+                                : `<button class="btn" style="background:#fee2e2; color:#ef4444; font-size: 12px; padding: 4px 8px; margin-right: 4px;" onclick="moderateUser('${u.id}', 'ban')">Banear</button>`
+                            }
+                            ${u.verified
+                                ? `<button class="btn" style="background:#f3f4f6; color:var(--text-primary); font-size: 12px; padding: 4px 8px;" onclick="moderateUser('${u.id}', 'unverify')">Quitar ✓</button>`
+                                : `<button class="btn" style="background:#dbeafe; color:#3b82f6; font-size: 12px; padding: 4px 8px;" onclick="moderateUser('${u.id}', 'verify')">Verificar ✓</button>`
+                            }
+                        </td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = html;
+        };
+
+        window.moderateUser = async function(userId, action) {
+            let confirmMsg = '';
+            let payload = { userId, action };
+
+            if (action === 'ban') {
+                const days = prompt('Días de baneo (0 o dejar vacío para permanente):', '0');
+                if (days === null) return;
+                payload.days = parseInt(days) || 0;
+                confirmMsg = '¿Seguro que quieres banear a este usuario?';
+            } else if (action === 'unban') {
+                confirmMsg = '¿Desbanear usuario?';
+            } else if (action === 'verify') {
+                confirmMsg = '¿Dar insignia de Verificado?';
+            } else if (action === 'unverify') {
+                confirmMsg = '¿Quitar insignia de Verificado?';
+            }
+
+            if (!confirm(confirmMsg)) return;
+
+            const pwd = document.getElementById('admin-pwd').value || localStorage.getItem('admin_pwd');
+            try {
+                const res = await fetch('/api/admin/users', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer ' + pwd,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+                
+                if (res.ok) {
+                    loadAdminUsers();
+                } else {
+                    alert('Error en la moderación');
+                }
+            } catch(e) {
+                alert('Error de conexión');
+            }
+        };
 
         window.loadMuroAdmin = async function() {
             const container = document.getElementById('muro-admin-list');

@@ -16,7 +16,7 @@ export async function onRequestGet(context) {
 
         // Buscar sesión y usuario en D1
         const query = `
-            SELECT u.id, u.email, u.name, u.avatar_url, u.bio, u.username, u.is_profile_completed
+            SELECT u.id, u.email, u.name, u.avatar_url, u.bio, u.username, u.is_profile_completed, u.status, u.banned_until
             FROM users u
             JOIN sessions s ON u.id = s.user_id
             WHERE s.id = ? AND s.expires_at > CURRENT_TIMESTAMP
@@ -26,6 +26,16 @@ export async function onRequestGet(context) {
 
         if (!result) {
             return new Response(JSON.stringify({ user: null }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+        }
+
+        // Si el usuario está baneado
+        if (result.status === 'banned') {
+            const isBanned = result.banned_until ? new Date(result.banned_until) > new Date() : true;
+            if (isBanned) {
+                // Borramos su sesión y devolvemos que está baneado
+                await env.DB.prepare(`DELETE FROM sessions WHERE id = ?`).bind(sessionId).run();
+                return new Response(JSON.stringify({ user: null, error: 'Tu cuenta ha sido suspendida por violar las normas de la comunidad.' }), { status: 403, headers: { 'Content-Type': 'application/json' } });
+            }
         }
 
         return new Response(JSON.stringify({ user: result }), { status: 200, headers: { 'Content-Type': 'application/json' } });

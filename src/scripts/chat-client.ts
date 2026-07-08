@@ -1439,6 +1439,12 @@
         try {
             const resMe = await fetch('/api/auth/me');
             const dataMe = await resMe.json();
+            
+            if (dataMe.error) {
+                alert(dataMe.error);
+                localStorage.removeItem('cadiz_saved_messages');
+            }
+
             let saved = [];
             
             if (dataMe.user) {

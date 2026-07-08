@@ -39,6 +39,11 @@ export async function onRequestPost(context) {
                 name TEXT,
                 avatar_url TEXT,
                 bio TEXT,
+                username TEXT UNIQUE,
+                is_profile_completed INTEGER DEFAULT 0,
+                status TEXT DEFAULT 'active',
+                banned_until DATETIME,
+                verified INTEGER DEFAULT 0,
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP
             );
 
