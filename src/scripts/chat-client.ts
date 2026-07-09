@@ -1595,7 +1595,7 @@
                 profileAuthBtn.innerText = 'Cerrar Sesión';
                 profileAuthBtn.style.background = '#fee2e2';
                 profileAuthBtn.style.color = '#ef4444';
-                profileAuthBtn.onclick = () => window.location.href = '/api/auth/logout';
+                profileAuthBtn.onclick = () => window.logout();
             }
             if (dataMe.user.picture && profileAvatarImg && profileAvatarEmoji) {
                 profileAvatarImg.src = dataMe.user.picture;
