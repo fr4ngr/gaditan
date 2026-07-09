@@ -387,9 +387,11 @@ import themeData from '../data/theme.json';
                     
                     <!-- Tarjeta de Cuenta -->
                     <div style="background: var(--chat-bg); border-radius: 20px; padding: 24px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid var(--border-color);">
-                        <div style="width: 64px; height: 64px; background: var(--primary-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 32px; margin: 0 auto 16px;">
+                        <div id="avatar-upload-container" style="width: 64px; height: 64px; background: var(--primary-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 32px; margin: 0 auto 16px; position: relative; cursor: pointer; overflow: hidden;" onclick="document.getElementById('avatar-upload-input').click()" title="Cambiar foto de perfil">
                             <span id="profile-page-avatar-emoji">👤</span>
-                            <img id="profile-page-avatar-img" src="" style="display:none; width: 100%; height: 100%; border-radius: 50%; object-fit: cover;" alt="Avatar">
+                            <img id="profile-page-avatar-img" src="" style="display:none; width: 100%; height: 100%; border-radius: 50%; object-fit: cover; z-index: 1;" alt="Avatar">
+                            <div style="position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.6); color: white; font-size: 10px; padding: 3px 0; display: flex; justify-content: center; opacity: 0; transition: opacity 0.2s; z-index: 2;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0'">📷</div>
+                            <input type="file" id="avatar-upload-input" accept="image/*" style="display: none;">
                         </div>
                         <h3 id="profile-page-name" style="margin: 0 0 8px 0; font-size: 20px; color: var(--text-primary);">Invitado</h3>
                         <p id="profile-page-desc" style="margin: 0 0 20px 0; font-size: 14px; color: var(--text-secondary);">Inicia sesión para guardar tus favoritos en la nube.</p>

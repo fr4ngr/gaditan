@@ -33,5 +33,11 @@
 			"database_name": "cadiz-chat",
 			"database_id": "cc0e148a-210f-454a-8ece-404442858c82"
 		}
+	],
+	"r2_buckets": [
+		{
+			"binding": "AVATAR_BUCKET",
+			"bucket_name": "cadiz-avatars"
+		}
 	]
 }

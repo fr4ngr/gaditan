@@ -1672,6 +1672,80 @@
                 }
             }, 50);
         }
+
+        // Lógica de subida de avatar
+        const avatarInput = document.getElementById('avatar-upload-input') as HTMLInputElement;
+        if (avatarInput) {
+            avatarInput.addEventListener('change', async (e) => {
+                const file = (e.target as HTMLInputElement).files?.[0];
+                if (!file) return;
+
+                const avatarContainer = document.getElementById('avatar-upload-container');
+                const originalOpacity = avatarContainer?.style.opacity;
+                if (avatarContainer) avatarContainer.style.opacity = '0.5';
+
+                try {
+                    const img = new Image();
+                    const objUrl = URL.createObjectURL(file);
+                    
+                    await new Promise((resolve, reject) => {
+                        img.onload = resolve;
+                        img.onerror = reject;
+                        img.src = objUrl;
+                    });
+
+                    const canvas = document.createElement('canvas');
+                    const MAX_SIZE = 256;
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > height) {
+                        if (width > MAX_SIZE) {
+                            height *= MAX_SIZE / width;
+                            width = MAX_SIZE;
+                        }
+                    } else {
+                        if (height > MAX_SIZE) {
+                            width *= MAX_SIZE / height;
+                            height = MAX_SIZE;
+                        }
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx?.drawImage(img, 0, 0, width, height);
+
+                    const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/webp', 0.8));
+                    if (!blob) throw new Error('No se pudo comprimir la imagen');
+
+                    const response = await fetch('/api/users/avatar', {
+                        method: 'POST',
+                        body: blob
+                    });
+
+                    const data = await response.json();
+                    if (data.success && data.url) {
+                        const avatarImg = document.getElementById('profile-page-avatar-img') as HTMLImageElement;
+                        const avatarEmoji = document.getElementById('profile-page-avatar-emoji');
+                        if (avatarImg && avatarEmoji) {
+                            avatarImg.src = data.url;
+                            avatarImg.style.display = 'block';
+                            avatarEmoji.style.display = 'none';
+                        }
+                    } else {
+                        alert('Error subiendo foto: ' + (data.error || 'Desconocido'));
+                    }
+
+                } catch (err) {
+                    console.error(err);
+                    alert('Error procesando imagen');
+                } finally {
+                    if (avatarContainer) avatarContainer.style.opacity = originalOpacity || '1';
+                    avatarInput.value = '';
+                }
+            });
+        }
     });
 
     // --- DATOS DEL WIDGET DE TARIFAS ---
