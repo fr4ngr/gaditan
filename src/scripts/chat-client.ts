@@ -2479,6 +2479,11 @@
         fetchWeatherWithRetry();
     }, 500);
 
+    // Funciones globales de autenticación
+    window.logout = () => {
+        window.location.href = '/api/auth/logout';
+    };
+
     // Tipado global
     declare global {
         interface Window {
@@ -2488,7 +2493,7 @@
             exitLiveNavigation: () => void;
             openWeatherModal: () => void;
             closeWeatherModal: () => void;
-
+            logout: () => void;
 
             L: any;
         }
