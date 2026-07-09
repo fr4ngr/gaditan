@@ -13,7 +13,9 @@ export async function onRequestPost(context) {
             "ALTER TABLE users ADD COLUMN is_profile_completed INTEGER DEFAULT 0",
             "ALTER TABLE users ADD COLUMN status TEXT DEFAULT 'active'",
             "ALTER TABLE users ADD COLUMN banned_until DATETIME",
-            "ALTER TABLE users ADD COLUMN verified INTEGER DEFAULT 0"
+            "ALTER TABLE users ADD COLUMN verified INTEGER DEFAULT 0",
+            "ALTER TABLE users ADD COLUMN picture TEXT",
+            "ALTER TABLE users ADD COLUMN bio TEXT"
         ];
 
         let results = [];
