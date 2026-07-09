@@ -1439,6 +1439,7 @@
         try {
             const resMe = await fetch('/api/auth/me');
             const dataMe = await resMe.json();
+            (window as any).dataMe = dataMe;
             
             if (dataMe.error) {
                 alert(dataMe.error);
@@ -1667,6 +1668,7 @@
     };
 
     window.openEditProfileModal = function() {
+        const dataMe = (window as any).dataMe;
         if (!dataMe || !dataMe.user) return;
         const modal = document.getElementById('edit-profile-modal');
         if (modal) {
@@ -1683,6 +1685,7 @@
     };
 
     window.saveProfile = async function() {
+        const dataMe = (window as any).dataMe;
         if (!dataMe || !dataMe.user) return;
         const name = document.getElementById('edit-profile-name').value.trim();
         const username = document.getElementById('edit-profile-username').value.trim().toLowerCase();
