@@ -38,7 +38,7 @@ export async function onRequestGet(context) {
             }
         }
 
-        return new Response(JSON.stringify({ user: result }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+        return new Response(JSON.stringify({ user: result }), { status: 200, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate' } });
 
     } catch (e) {
         console.error("Auth me error:", e);
