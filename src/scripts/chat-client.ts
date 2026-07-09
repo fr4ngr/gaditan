@@ -1679,6 +1679,10 @@
             if (catSelect) {
                 catSelect.value = dataMe.user.category || 'local';
             }
+            const avatarImg = document.getElementById('edit-profile-avatar');
+            if (avatarImg) {
+                avatarImg.src = dataMe.user.avatar_url || dataMe.user.picture || ('https://api.dicebear.com/7.x/notionists/svg?seed=' + dataMe.user.email);
+            }
             document.getElementById('edit-profile-error').style.display = 'none';
             modal.style.display = 'flex';
         }
@@ -1712,6 +1716,12 @@
                 body: JSON.stringify({ name, username, bio, category })
             });
 
+            if (!res.ok && res.status === 401) {
+                errorEl.innerText = 'Tu sesión ha expirado. Por favor, recarga la página.';
+                errorEl.style.display = 'block';
+                return;
+            }
+
             const data = await res.json();
             if (data.success) {
                 // Update local data
@@ -1728,7 +1738,7 @@
                 errorEl.style.display = 'block';
             }
         } catch (e) {
-            errorEl.innerText = 'Error de conexión.';
+            errorEl.innerText = 'Error de conexión o de servidor (' + e.message + ').';
             errorEl.style.display = 'block';
         } finally {
             btn.disabled = false;
