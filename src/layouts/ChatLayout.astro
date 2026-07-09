@@ -401,7 +401,7 @@ import themeData from '../data/theme.json';
                             <button id="profile-page-edit-btn" onclick="window.openEditProfileModal()" style="display: none; flex: 1; background: rgba(128, 128, 128, 0.05); color: var(--text-primary); border: 1px solid var(--border-color); padding: 12px; border-radius: 20px; font-weight: 600; font-size: 14px; font-family: inherit; cursor: pointer;">
                                 Editar Perfil
                             </button>
-                            <button id="profile-page-settings-btn" onclick="alert('Configuración en desarrollo...')" style="display: none; flex: 1; background: rgba(128, 128, 128, 0.05); color: var(--text-primary); border: 1px solid var(--border-color); padding: 12px; border-radius: 20px; font-weight: 600; font-size: 14px; font-family: inherit; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                            <button id="profile-page-settings-btn" onclick="window.openSettingsModal()" style="display: none; flex: 1; background: rgba(128, 128, 128, 0.05); color: var(--text-primary); border: 1px solid var(--border-color); padding: 12px; border-radius: 20px; font-weight: 600; font-size: 14px; font-family: inherit; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
                                 Configuración
                             </button>
                             <button id="profile-page-auth-btn" onclick="window.openLoginModal()" style="flex: 1; background: var(--primary-color); color: white; border: 1px solid transparent; padding: 12px; border-radius: 20px; font-weight: 600; font-size: 14px; font-family: inherit; cursor: pointer;">
@@ -853,39 +853,106 @@ import themeData from '../data/theme.json';
                 <div style="text-align: center; margin-bottom: 24px;">
                     <div style="width: 56px; height: 56px; background: rgba(59, 130, 246, 0.1); border-radius: 16px; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
                         <span style="font-size: 24px;">✍️</span>
-                    </div>
-                    <h2 style="margin: 0 0 8px 0; font-size: 22px; color: var(--text-primary);">Editar Perfil</h2>
-                    <p style="margin: 0; color: var(--text-secondary); font-size: 14px;">Actualiza cómo te ven los demás.</p>
-                </div>
-                
-                <div style="display: flex; flex-direction: column; gap: 16px; margin-bottom: 24px;">
-                    <div>
-                        <label style="display: block; margin-bottom: 8px; font-size: 13px; font-weight: 600; color: var(--text-secondary);">Nombre a mostrar</label>
-                        <input type="text" id="edit-profile-name" placeholder="Ej: Paco" style="width: 100%; padding: 14px 16px; border-radius: 12px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary); font-size: 15px; outline: none; box-sizing: border-box;" />
-                    </div>
-                    <div>
-                        <label style="display: block; margin-bottom: 8px; font-size: 13px; font-weight: 600; color: var(--text-secondary);">Nombre de usuario</label>
-                        <div style="position: relative;">
-                            <span style="position: absolute; left: 16px; top: 14px; color: var(--text-secondary); font-weight: 500;">@</span>
-                            <input type="text" id="edit-profile-username" placeholder="pacocadiz" style="width: 100%; padding: 14px 16px 14px 36px; border-radius: 12px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary); font-size: 15px; outline: none; box-sizing: border-box; text-transform: lowercase;" oninput="this.value = this.value.replace(/[^a-zA-Z0-9_]/g, '').toLowerCase()" />
-                        </div>
-                    </div>
-                    <div>
-                        <label style="display: block; margin-bottom: 8px; font-size: 13px; font-weight: 600; color: var(--text-secondary);">Biografía</label>
-                        <textarea id="edit-profile-bio" placeholder="Un poco sobre ti..." maxlength="160" style="width: 100%; padding: 14px 16px; border-radius: 12px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary); font-size: 15px; outline: none; box-sizing: border-box; resize: none; height: 100px; font-family: inherit;"></textarea>
-                        <div style="text-align: right; font-size: 11px; color: var(--text-secondary); margin-top: 4px;">Máximo 160 caracteres</div>
-                    </div>
-                </div>
+        <div id="edit-profile-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1001; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
+        <div style="background: var(--bg-color); width: 90%; max-width: 400px; border-radius: 24px; padding: 24px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04); border: 1px solid var(--border-color);">
+            <h3 style="margin: 0 0 20px 0; font-size: 20px; font-weight: 700; color: var(--text-primary); text-align: center;">Editar Perfil</h3>
+            
+            <div id="edit-profile-error" style="display: none; background: #fee2e2; color: #ef4444; padding: 12px; border-radius: 12px; font-size: 14px; margin-bottom: 16px; text-align: center; font-weight: 500;"></div>
+            
+            <label style="display: block; margin-bottom: 8px; font-size: 14px; font-weight: 600; color: var(--text-primary);">Nombre a Mostrar</label>
+            <input type="text" id="edit-profile-name" placeholder="Ej: Francisco González" style="width: 100%; padding: 12px 16px; border-radius: 16px; border: 1px solid var(--border-color); background: var(--chat-bg); color: var(--text-primary); margin-bottom: 16px; font-family: inherit; box-sizing: border-box; outline: none; transition: border-color 0.2s;">
+            
+            <label style="display: block; margin-bottom: 8px; font-size: 14px; font-weight: 600; color: var(--text-primary);">Nombre de Usuario</label>
+            <div style="display: flex; align-items: center; margin-bottom: 16px; background: var(--chat-bg); border: 1px solid var(--border-color); border-radius: 16px; padding-left: 16px; overflow: hidden;">
+                <span style="color: var(--text-secondary); font-weight: 500;">@</span>
+                <input type="text" id="edit-profile-username" placeholder="fr4ngr" style="flex: 1; padding: 12px 16px 12px 4px; border: none; background: transparent; color: var(--text-primary); font-family: inherit; outline: none;" oninput="this.value = this.value.toLowerCase().replace(/[^a-z0-9_]/g, '')">
+            </div>
 
-                <div style="display: flex; gap: 12px;">
-                    <button onclick="document.getElementById('edit-profile-modal').style.display='none'" style="flex: 1; padding: 14px; border-radius: 16px; font-weight: 600; font-size: 15px; cursor: pointer; border: none; background: var(--bg-color); color: var(--text-secondary);">Cancelar</button>
-                    <button onclick="window.saveProfile()" id="edit-profile-submit" style="flex: 1; background: var(--primary-color); color: white; border: none; padding: 14px; border-radius: 16px; font-weight: 600; font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                        Guardar Cambios
-                    </button>
-                </div>
-                <p id="edit-profile-error" style="color: #ef4444; font-size: 13px; text-align: center; margin: 16px 0 0 0; display: none;"></p>
+            <label style="display: block; margin-bottom: 8px; font-size: 14px; font-weight: 600; color: var(--text-primary);">Biografía <span style="color: var(--text-secondary); font-weight: 400; font-size: 12px;">(Opcional)</span></label>
+            <textarea id="edit-profile-bio" placeholder="Cuéntale a la comunidad algo sobre ti..." rows="3" maxlength="160" style="width: 100%; padding: 12px 16px; border-radius: 16px; border: 1px solid var(--border-color); background: var(--chat-bg); color: var(--text-primary); margin-bottom: 24px; font-family: inherit; box-sizing: border-box; outline: none; transition: border-color 0.2s; resize: none;"></textarea>
+
+            <div style="display: flex; gap: 12px;">
+                <button onclick="document.getElementById('edit-profile-modal').style.display='none'" style="flex: 1; padding: 14px; border-radius: 20px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary); font-weight: 600; font-size: 15px; cursor: pointer; font-family: inherit;">Cancelar</button>
+                <button id="edit-profile-submit" onclick="window.saveProfile()" style="flex: 1; padding: 14px; border-radius: 20px; border: none; background: var(--primary-color); color: white; font-weight: 600; font-size: 15px; cursor: pointer; font-family: inherit; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);">Guardar Cambios</button>
             </div>
         </div>
+    </div>
+
+    <!-- Modal de Configuración -->
+    <div id="settings-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1001; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
+        <div style="background: var(--bg-color); width: 90%; max-width: 450px; border-radius: 24px; padding: 24px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04); border: 1px solid var(--border-color); max-height: 85vh; overflow-y: auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                <h3 style="margin: 0; font-size: 20px; font-weight: 700; color: var(--text-primary);">Configuración</h3>
+                <button onclick="document.getElementById('settings-modal').style.display='none'" style="background: none; border: none; font-size: 24px; color: var(--text-secondary); cursor: pointer; padding: 0; line-height: 1;">&times;</button>
+            </div>
+            
+            <div id="settings-error" style="display: none; background: #fee2e2; color: #ef4444; padding: 12px; border-radius: 12px; font-size: 14px; margin-bottom: 16px; text-align: center; font-weight: 500;"></div>
+            
+            <!-- Preferencias de la Aplicación -->
+            <h4 style="margin: 0 0 12px 0; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-secondary); font-weight: 700;">Preferencias</h4>
+            <div style="background: var(--chat-bg); border-radius: 16px; border: 1px solid var(--border-color); margin-bottom: 24px; overflow: hidden;">
+                <!-- Apariencia -->
+                <div style="padding: 16px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div style="font-weight: 600; font-size: 15px; color: var(--text-primary);">Apariencia</div>
+                        <div style="font-size: 13px; color: var(--text-secondary); margin-top: 2px;">Tema visual de la interfaz</div>
+                    </div>
+                    <select id="settings-theme" onchange="window.changeTheme(this.value)" style="padding: 8px 12px; border-radius: 12px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary); font-family: inherit; font-size: 14px; outline: none; cursor: pointer;">
+                        <option value="system">Sistema</option>
+                        <option value="light">Claro</option>
+                        <option value="dark">Oscuro</option>
+                    </select>
+                </div>
+                <!-- Idioma -->
+                <div style="padding: 16px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div style="font-weight: 600; font-size: 15px; color: var(--text-primary);">Idioma</div>
+                        <div style="font-size: 13px; color: var(--text-secondary); margin-top: 2px;">Dialecto de la interfaz</div>
+                    </div>
+                    <select id="settings-lang" style="padding: 8px 12px; border-radius: 12px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary); font-family: inherit; font-size: 14px; outline: none; cursor: pointer;">
+                        <option value="es">Español</option>
+                        <option value="en" disabled>English (Próximamente)</option>
+                    </select>
+                </div>
+                <!-- Notificaciones -->
+                <div style="padding: 16px; display: flex; justify-content: space-between; align-items: center; opacity: 0.7;">
+                    <div>
+                        <div style="font-weight: 600; font-size: 15px; color: var(--text-primary);">Notificaciones Push</div>
+                        <div style="font-size: 13px; color: var(--text-secondary); margin-top: 2px;">Alertas y avisos</div>
+                    </div>
+                    <button disabled style="background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 20px; padding: 6px 12px; font-size: 12px; color: var(--text-secondary); cursor: not-allowed; font-weight: 600;">Próximamente</button>
+                </div>
+            </div>
+
+            <!-- Seguridad y Cuenta -->
+            <h4 style="margin: 0 0 12px 0; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-secondary); font-weight: 700;">Seguridad y Cuenta</h4>
+            <div style="background: var(--chat-bg); border-radius: 16px; border: 1px solid var(--border-color); margin-bottom: 24px; overflow: hidden;">
+                <!-- Email -->
+                <div style="padding: 16px; border-bottom: 1px solid var(--border-color);">
+                    <div style="font-weight: 600; font-size: 15px; color: var(--text-primary);">Correo Electrónico</div>
+                    <div id="settings-email-display" style="font-size: 14px; color: var(--text-secondary); margin-top: 4px; background: rgba(128,128,128,0.1); padding: 8px 12px; border-radius: 8px; font-family: monospace;">cargando...</div>
+                </div>
+                <!-- Borrar cuenta -->
+                <div style="padding: 16px; background: rgba(239, 68, 68, 0.05);">
+                    <div style="font-weight: 600; font-size: 15px; color: #ef4444;">Zona Peligrosa</div>
+                    <div style="font-size: 13px; color: var(--text-secondary); margin-top: 2px; margin-bottom: 12px;">Al eliminar tu cuenta se borrarán permanentemente todos tus datos, sesiones y fotografías. Esta acción no se puede deshacer.</div>
+                    <button onclick="window.confirmDeleteAccount()" style="width: 100%; padding: 12px; border-radius: 16px; border: 1px solid rgba(239, 68, 68, 0.3); background: #fee2e2; color: #ef4444; font-weight: 600; font-size: 14px; cursor: pointer; font-family: inherit; transition: background 0.2s;">
+                        Eliminar mi cuenta
+                    </button>
+                </div>
+            </div>
+            
+            <div id="delete-account-confirm" style="display: none; padding: 16px; background: #fee2e2; border: 1px solid #ef4444; border-radius: 16px; margin-bottom: 24px;">
+                <p style="margin: 0 0 12px 0; color: #ef4444; font-size: 14px; font-weight: 600; text-align: center;">¿Estás completamente seguro?</p>
+                <div style="display: flex; gap: 8px;">
+                    <button onclick="document.getElementById('delete-account-confirm').style.display='none'" style="flex: 1; padding: 10px; border-radius: 12px; border: 1px solid #ef4444; background: white; color: #ef4444; font-weight: 600; font-size: 13px; cursor: pointer;">Cancelar</button>
+                    <button id="delete-account-btn" onclick="window.executeDeleteAccount()" style="flex: 1; padding: 10px; border-radius: 12px; border: none; background: #ef4444; color: white; font-weight: 600; font-size: 13px; cursor: pointer;">Sí, borrar todo</button>
+                </div>
+            </div>
+
+            <button onclick="document.getElementById('settings-modal').style.display='none'" style="width: 100%; padding: 14px; border-radius: 20px; border: none; background: var(--primary-color); color: white; font-weight: 600; font-size: 15px; cursor: pointer; font-family: inherit;">Hecho</button>
+        </div>
+    </div>
 
         <!-- OVERLAY Y MODAL DE MUNICIPIOS -->
         <div id="city-modal-overlay" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 3002; opacity: 0; transition: opacity 0.3s;" onclick="window.closeCityModal()"></div>

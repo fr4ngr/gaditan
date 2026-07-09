@@ -2654,6 +2654,87 @@
         }
     };
 
+    window.changeTheme = function(themeValue: string) {
+        if (themeValue === 'system') {
+            localStorage.removeItem('cadiz_chat_theme');
+            const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            if (typeof (window as any).applyTheme === 'function') {
+                (window as any).applyTheme(isDark ? 'oscuro' : 'classic');
+            }
+        } else {
+            if (typeof (window as any).applyTheme === 'function') {
+                (window as any).applyTheme(themeValue === 'dark' ? 'oscuro' : 'classic');
+            }
+        }
+    };
+
+    window.openSettingsModal = function() {
+        const dataMe = (window as any).dataMe;
+        if (!dataMe || !dataMe.user) return;
+        const modal = document.getElementById('settings-modal');
+        if (modal) {
+            const emailDisp = document.getElementById('settings-email-display');
+            if (emailDisp) emailDisp.innerText = dataMe.user.email;
+            
+            const confirmEl = document.getElementById('delete-account-confirm');
+            if (confirmEl) confirmEl.style.display = 'none';
+            
+            const errEl = document.getElementById('settings-error');
+            if (errEl) errEl.style.display = 'none';
+            
+            const select = document.getElementById('settings-theme') as HTMLSelectElement;
+            if (select) {
+                const current = localStorage.getItem('cadiz_chat_theme');
+                if (!current) select.value = 'system';
+                else if (current === 'oscuro') select.value = 'dark';
+                else select.value = 'light';
+            }
+            
+            modal.style.display = 'flex';
+        }
+    };
+
+    window.confirmDeleteAccount = function() {
+        const confirmEl = document.getElementById('delete-account-confirm');
+        if (confirmEl) confirmEl.style.display = 'block';
+    };
+
+    window.executeDeleteAccount = async function() {
+        const btn = document.getElementById('delete-account-btn') as HTMLButtonElement;
+        const errorEl = document.getElementById('settings-error');
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = 'Borrando...';
+        }
+        if (errorEl) errorEl.style.display = 'none';
+        
+        try {
+            const res = await fetch('/api/users/delete-account', { method: 'DELETE' });
+            if (res.ok) {
+                window.location.reload();
+            } else {
+                const data = await res.json();
+                if (errorEl) {
+                    errorEl.innerText = data.error || 'Error al eliminar la cuenta.';
+                    errorEl.style.display = 'block';
+                }
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = 'Sí, borrar todo';
+                }
+            }
+        } catch (e) {
+            if (errorEl) {
+                errorEl.innerText = 'Error de conexión.';
+                errorEl.style.display = 'block';
+            }
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = 'Sí, borrar todo';
+            }
+        }
+    };
+
     // Tipado global
     declare global {
         interface Window {
@@ -2664,6 +2745,10 @@
             openWeatherModal: () => void;
             closeWeatherModal: () => void;
             logout: () => void;
+            changeTheme: (theme: string) => void;
+            openSettingsModal: () => void;
+            confirmDeleteAccount: () => void;
+            executeDeleteAccount: () => void;
 
             L: any;
         }
