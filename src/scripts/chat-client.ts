@@ -1571,7 +1571,9 @@
         const profileAvatarImg = document.getElementById('profile-page-avatar-img');
         const profileName = document.getElementById('profile-page-name');
         const profileDesc = document.getElementById('profile-page-desc');
+        const profileBio = document.getElementById('profile-page-bio');
         const profileAuthBtn = document.getElementById('profile-page-auth-btn');
+        const profileEditBtn = document.getElementById('profile-page-edit-btn');
 
         if (dataMe && dataMe.user) {
             // Verificar si el perfil está completado
@@ -1590,6 +1592,17 @@
             }
             if (profileDesc) {
                 profileDesc.innerText = dataMe.user.username ? '@' + dataMe.user.username : dataMe.user.email;
+            }
+            if (profileBio) {
+                if (dataMe.user.bio) {
+                    profileBio.innerText = dataMe.user.bio;
+                    profileBio.style.display = 'block';
+                } else {
+                    profileBio.style.display = 'none';
+                }
+            }
+            if (profileEditBtn) {
+                profileEditBtn.style.display = 'block';
             }
             if (profileAuthBtn) {
                 profileAuthBtn.innerText = 'Cerrar Sesión';
@@ -1616,6 +1629,8 @@
         } else {
             if (profileName) profileName.innerText = 'Invitado';
             if (profileDesc) profileDesc.innerText = 'Inicia sesión para guardar tus favoritos en la nube.';
+            if (profileBio) profileBio.style.display = 'none';
+            if (profileEditBtn) profileEditBtn.style.display = 'none';
             if (profileAuthBtn) {
                 profileAuthBtn.innerText = 'Unirse a la Comunidad';
                 profileAuthBtn.style.background = 'var(--primary-color)';
@@ -1626,6 +1641,66 @@
                 profileAvatarImg.style.display = 'none';
                 profileAvatarEmoji.style.display = 'block';
             }
+        }
+    };
+
+    window.openEditProfileModal = function() {
+        if (!dataMe || !dataMe.user) return;
+        const modal = document.getElementById('edit-profile-modal');
+        if (modal) {
+            document.getElementById('edit-profile-name').value = dataMe.user.name || '';
+            document.getElementById('edit-profile-username').value = dataMe.user.username || '';
+            document.getElementById('edit-profile-bio').value = dataMe.user.bio || '';
+            document.getElementById('edit-profile-error').style.display = 'none';
+            modal.style.display = 'flex';
+        }
+    };
+
+    window.saveProfile = async function() {
+        if (!dataMe || !dataMe.user) return;
+        const name = document.getElementById('edit-profile-name').value.trim();
+        const username = document.getElementById('edit-profile-username').value.trim().toLowerCase();
+        const bio = document.getElementById('edit-profile-bio').value.trim();
+        const btn = document.getElementById('edit-profile-submit');
+        const errorEl = document.getElementById('edit-profile-error');
+        
+        if (!name || !username) {
+            errorEl.innerText = 'El nombre y usuario son obligatorios.';
+            errorEl.style.display = 'block';
+            return;
+        }
+
+        btn.disabled = true;
+        btn.innerHTML = 'Guardando...';
+        errorEl.style.display = 'none';
+
+        try {
+            const res = await fetch('/api/users/complete-profile', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, username, bio })
+            });
+
+            const data = await res.json();
+            if (data.success) {
+                // Update local data
+                dataMe.user.name = name;
+                dataMe.user.username = username;
+                dataMe.user.bio = bio;
+                // Re-render UI
+                window.updateMeUI();
+                // Close Modal
+                document.getElementById('edit-profile-modal').style.display = 'none';
+            } else {
+                errorEl.innerText = data.error || 'Error al guardar el perfil.';
+                errorEl.style.display = 'block';
+            }
+        } catch (e) {
+            errorEl.innerText = 'Error de conexión.';
+            errorEl.style.display = 'block';
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = 'Guardar Cambios';
         }
     };
 

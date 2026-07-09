@@ -394,11 +394,17 @@ import themeData from '../data/theme.json';
                             <input type="file" id="avatar-upload-input" accept="image/*" style="display: none;">
                         </div>
                         <h3 id="profile-page-name" style="margin: 0 0 8px 0; font-size: 20px; color: var(--text-primary);">Invitado</h3>
-                        <p id="profile-page-desc" style="margin: 0 0 20px 0; font-size: 14px; color: var(--text-secondary);">Inicia sesión para guardar tus favoritos en la nube.</p>
+                        <p id="profile-page-desc" style="margin: 0 0 8px 0; font-size: 14px; color: var(--text-secondary); font-weight: 500;">Inicia sesión para guardar tus favoritos en la nube.</p>
+                        <p id="profile-page-bio" style="margin: 0 0 20px 0; font-size: 14px; color: var(--text-primary); display: none; line-height: 1.4; max-width: 280px; margin-left: auto; margin-right: auto;"></p>
                         
-                        <button id="profile-page-auth-btn" onclick="window.openLoginModal()" style="background: var(--primary-color); color: white; border: none; padding: 12px 24px; border-radius: 20px; font-weight: 600; font-size: 15px; cursor: pointer; width: 100%;">
-                            Unirse a la Comunidad
-                        </button>
+                        <div style="display: flex; gap: 8px;">
+                            <button id="profile-page-edit-btn" onclick="window.openEditProfileModal()" style="display: none; flex: 1; background: var(--bg-color); color: var(--text-primary); border: 1px solid var(--border-color); padding: 12px; border-radius: 20px; font-weight: 600; font-size: 14px; cursor: pointer;">
+                                Editar Perfil
+                            </button>
+                            <button id="profile-page-auth-btn" onclick="window.openLoginModal()" style="flex: 1; background: var(--primary-color); color: white; border: none; padding: 12px; border-radius: 20px; font-weight: 600; font-size: 14px; cursor: pointer;">
+                                Unirse a la Comunidad
+                            </button>
+                        </div>
                     </div>
 
                     <!-- Accesos Directos -->
@@ -835,6 +841,46 @@ import themeData from '../data/theme.json';
                         <!-- Se llena vía JS -->
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <!-- MODAL DE EDICIÓN DE PERFIL -->
+        <div id="edit-profile-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 2600; align-items: center; justify-content: center; backdrop-filter: blur(8px);">
+            <div style="background: var(--chat-bg); width: 90%; max-width: 400px; border-radius: 24px; padding: 32px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); border: 1px solid var(--border-color);">
+                <div style="text-align: center; margin-bottom: 24px;">
+                    <div style="width: 56px; height: 56px; background: rgba(59, 130, 246, 0.1); border-radius: 16px; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
+                        <span style="font-size: 24px;">✍️</span>
+                    </div>
+                    <h2 style="margin: 0 0 8px 0; font-size: 22px; color: var(--text-primary);">Editar Perfil</h2>
+                    <p style="margin: 0; color: var(--text-secondary); font-size: 14px;">Actualiza cómo te ven los demás.</p>
+                </div>
+                
+                <div style="display: flex; flex-direction: column; gap: 16px; margin-bottom: 24px;">
+                    <div>
+                        <label style="display: block; margin-bottom: 8px; font-size: 13px; font-weight: 600; color: var(--text-secondary);">Nombre a mostrar</label>
+                        <input type="text" id="edit-profile-name" placeholder="Ej: Paco" style="width: 100%; padding: 14px 16px; border-radius: 12px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary); font-size: 15px; outline: none; box-sizing: border-box;" />
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 8px; font-size: 13px; font-weight: 600; color: var(--text-secondary);">Nombre de usuario</label>
+                        <div style="position: relative;">
+                            <span style="position: absolute; left: 16px; top: 14px; color: var(--text-secondary); font-weight: 500;">@</span>
+                            <input type="text" id="edit-profile-username" placeholder="pacocadiz" style="width: 100%; padding: 14px 16px 14px 36px; border-radius: 12px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary); font-size: 15px; outline: none; box-sizing: border-box; text-transform: lowercase;" oninput="this.value = this.value.replace(/[^a-zA-Z0-9_]/g, '').toLowerCase()" />
+                        </div>
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 8px; font-size: 13px; font-weight: 600; color: var(--text-secondary);">Biografía</label>
+                        <textarea id="edit-profile-bio" placeholder="Un poco sobre ti..." maxlength="160" style="width: 100%; padding: 14px 16px; border-radius: 12px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary); font-size: 15px; outline: none; box-sizing: border-box; resize: none; height: 100px; font-family: inherit;"></textarea>
+                        <div style="text-align: right; font-size: 11px; color: var(--text-secondary); margin-top: 4px;">Máximo 160 caracteres</div>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 12px;">
+                    <button onclick="document.getElementById('edit-profile-modal').style.display='none'" style="flex: 1; padding: 14px; border-radius: 16px; font-weight: 600; font-size: 15px; cursor: pointer; border: none; background: var(--bg-color); color: var(--text-secondary);">Cancelar</button>
+                    <button onclick="window.saveProfile()" id="edit-profile-submit" style="flex: 1; background: var(--primary-color); color: white; border: none; padding: 14px; border-radius: 16px; font-weight: 600; font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                        Guardar Cambios
+                    </button>
+                </div>
+                <p id="edit-profile-error" style="color: #ef4444; font-size: 13px; text-align: center; margin: 16px 0 0 0; display: none;"></p>
             </div>
         </div>
 
