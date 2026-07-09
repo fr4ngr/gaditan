@@ -15,11 +15,15 @@ export async function onRequestPost(context) {
         if (!user) return new Response('Unauthorized', { status: 401 });
 
         const body = await request.json();
-        const { username, name, bio } = body;
+        const { username, name, bio, category } = body;
 
         if (!username || !name) {
             return new Response(JSON.stringify({ error: 'Username and name are required' }), { status: 400 });
         }
+
+        let finalCategory = 'local';
+        if (category === 'turista') finalCategory = 'turista';
+        if (category === 'profesional') finalCategory = 'profesional';
 
         // Verificar disponibilidad de nuevo por si acaso
         const checkQuery = `SELECT id FROM users WHERE username = ? COLLATE NOCASE AND id != ?`;
@@ -31,10 +35,10 @@ export async function onRequestPost(context) {
         // Actualizar usuario
         const updateQuery = `
             UPDATE users 
-            SET username = ?, name = ?, bio = ?, is_profile_completed = 1 
+            SET username = ?, name = ?, bio = ?, category = ?, is_profile_completed = 1 
             WHERE id = ?
         `;
-        await env.DB.prepare(updateQuery).bind(username, name, bio || '', user.id).run();
+        await env.DB.prepare(updateQuery).bind(username, name, bio || '', finalCategory, user.id).run();
 
         return new Response(JSON.stringify({ success: true }), { status: 200, headers: { 'Content-Type': 'application/json' } });
 

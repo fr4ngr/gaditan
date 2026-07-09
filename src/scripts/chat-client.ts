@@ -1589,6 +1589,21 @@
                 if (dataMe.user.verified) {
                     name += ' <span title="Verificado"><svg viewBox="0 0 24 24" width="16" height="16" fill="#3b82f6" style="vertical-align: -3px; margin-left: 2px;"><path d="M23 11.99l-2.44-2.79.34-3.69-3.61-.82-1.89-3.2L12 2.96 8.6 1.5 6.71 4.69 3.1 5.5l.34 3.7L1 11.99l2.44 2.79-.34 3.7 3.61.82L8.6 22.5l3.4-1.47 3.4 1.46 1.89-3.19 3.61-.82-.34-3.69L23 11.99zm-12.93 4.4L6.5 12.83l1.41-1.41 2.16 2.15 5.75-5.74 1.42 1.41-7.17 7.15z"/></svg></span>';
                 }
+                if (dataMe.user.category) {
+                    let pillBg = '#e0f2fe';
+                    let pillColor = '#0284c7';
+                    let pillText = 'Local';
+                    if (dataMe.user.category === 'turista') {
+                        pillBg = '#ffedd5';
+                        pillColor = '#f97316';
+                        pillText = 'Turista';
+                    } else if (dataMe.user.category === 'profesional') {
+                        pillBg = '#dcfce7';
+                        pillColor = '#16a34a';
+                        pillText = 'Profesional';
+                    }
+                    name += ` <span style="display: inline-block; vertical-align: middle; margin-left: 6px; padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; background: ${pillBg}; color: ${pillColor};">${pillText}</span>`;
+                }
                 profileName.innerHTML = name;
             }
             if (profileDesc) {
@@ -1658,6 +1673,10 @@
             document.getElementById('edit-profile-name').value = dataMe.user.name || '';
             document.getElementById('edit-profile-username').value = dataMe.user.username || '';
             document.getElementById('edit-profile-bio').value = dataMe.user.bio || '';
+            const catSelect = document.getElementById('edit-profile-category');
+            if (catSelect) {
+                catSelect.value = dataMe.user.category || 'local';
+            }
             document.getElementById('edit-profile-error').style.display = 'none';
             modal.style.display = 'flex';
         }
@@ -1668,6 +1687,8 @@
         const name = document.getElementById('edit-profile-name').value.trim();
         const username = document.getElementById('edit-profile-username').value.trim().toLowerCase();
         const bio = document.getElementById('edit-profile-bio').value.trim();
+        const catSelect = document.getElementById('edit-profile-category');
+        const category = catSelect ? catSelect.value : 'local';
         const btn = document.getElementById('edit-profile-submit');
         const errorEl = document.getElementById('edit-profile-error');
         
@@ -1685,7 +1706,7 @@
             const res = await fetch('/api/users/complete-profile', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, username, bio })
+                body: JSON.stringify({ name, username, bio, category })
             });
 
             const data = await res.json();
@@ -1694,6 +1715,7 @@
                 dataMe.user.name = name;
                 dataMe.user.username = username;
                 dataMe.user.bio = bio;
+                dataMe.user.category = category;
                 // Re-render UI
                 window.updateMeUI();
                 // Close Modal
