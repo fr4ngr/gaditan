@@ -8,7 +8,7 @@ export async function onRequestGet(context) {
 
         const query = `
             SELECT 
-                p.id, p.content, p.image_url, p.created_at,
+                p.id, p.content, p.image_url, p.created_at, p.user_id,
                 u.name as user_name, u.avatar_url as user_avatar
             FROM posts p
             JOIN users u ON p.user_id = u.id

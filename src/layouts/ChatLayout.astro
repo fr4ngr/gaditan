@@ -65,24 +65,38 @@ import themeData from '../data/theme.json';
             window.switchTab = function(tab) {
                 const tabChat = document.getElementById('tab-chat');
                 const tabMuro = document.getElementById('tab-muro');
+                const tabDms = document.getElementById('tab-dms');
                 const navChat = document.getElementById('nav-tab-chat');
                 const navMuro = document.getElementById('nav-tab-muro');
+                const navDms = document.getElementById('nav-tab-dms');
+
+                // Hide all
+                tabChat.style.display = 'none';
+                tabMuro.style.display = 'none';
+                if (tabDms) tabDms.style.display = 'none';
+                
+                navChat.classList.remove('active');
+                navMuro.classList.remove('active');
+                if (navDms) navDms.classList.remove('active');
+                
+                navChat.style.color = 'var(--text-secondary)';
+                navMuro.style.color = 'var(--text-secondary)';
+                if (navDms) navDms.style.color = 'var(--text-secondary)';
 
                 if (tab === 'chat') {
                     tabChat.style.display = 'flex';
-                    tabMuro.style.display = 'none';
                     navChat.classList.add('active');
-                    navMuro.classList.remove('active');
                     navChat.style.color = 'var(--primary-color)';
-                    navMuro.style.color = 'var(--text-secondary)';
                 } else if (tab === 'muro') {
-                    tabChat.style.display = 'none';
                     tabMuro.style.display = 'flex';
                     navMuro.classList.add('active');
-                    navChat.classList.remove('active');
                     navMuro.style.color = 'var(--primary-color)';
-                    navChat.style.color = 'var(--text-secondary)';
                     window.loadFeed();
+                } else if (tab === 'dms') {
+                    if (tabDms) tabDms.style.display = 'flex';
+                    if (navDms) navDms.classList.add('active');
+                    if (navDms) navDms.style.color = 'var(--primary-color)';
+                    if (window.loadDMsInbox) window.loadDMsInbox();
                 }
             };
 
@@ -181,6 +195,16 @@ import themeData from '../data/theme.json';
                         nameContainer.appendChild(dateDiv);
                         headerDiv.appendChild(img);
                         headerDiv.appendChild(nameContainer);
+
+                        // Add DM Button if not my own post
+                        if (post.user_id && dataMe && dataMe.user && post.user_id !== dataMe.user.id) {
+                            const dmBtn = document.createElement('button');
+                            dmBtn.innerHTML = '✉️ Mensaje';
+                            dmBtn.style.cssText = "margin-left: auto; background: var(--chat-bg); border: 1px solid var(--border-color); color: var(--primary-color); border-radius: 12px; padding: 6px 12px; font-size: 12px; font-weight: 600; cursor: pointer;";
+                            dmBtn.onclick = () => window.openDMChat(post.user_id, post.user_name, post.user_avatar);
+                            headerDiv.appendChild(dmBtn);
+                        }
+
                         div.appendChild(headerDiv);
 
                         if (post.content) {
@@ -456,10 +480,25 @@ import themeData from '../data/theme.json';
             </div> <!-- END TAB PERFIL -->
             
             <!-- BOTTOM NAVIGATION -->
+            <!-- TAB DMs (Mensajes Directos) -->
+            <div id="tab-dms" style="display: none; flex: 1; width: 100%; min-height: 0; flex-direction: column; background: var(--bg-color); max-width: 480px; margin: 0 auto; overflow-y: auto;">
+                <div style="padding: 16px; background: var(--header-bg); border-bottom: 1px solid var(--header-border); position: sticky; top: 0; z-index: 10;">
+                    <h2 style="margin: 0; font-size: 20px; color: var(--text-primary);">Mensajes</h2>
+                </div>
+                <div id="dms-inbox-container" style="padding: 16px; display: flex; flex-direction: column; gap: 8px;">
+                    <!-- Inbox items go here -->
+                </div>
+            </div>
+
             <nav id="bottom-nav" style="width: 100%; max-width: 480px; margin: 0 auto; background: var(--header-bg); border-top: 1px solid var(--header-border); display: flex; justify-content: space-around; padding: 8px 0; padding-bottom: calc(8px + env(safe-area-inset-bottom)); position: sticky; bottom: 0; z-index: 100; flex-shrink: 0;">
                 <button onclick="window.switchTab('chat')" id="nav-tab-chat" class="nav-tab active" style="background: none; border: none; display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--primary-color); cursor: pointer; flex: 1;">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z"/></svg>
-                    <span style="font-size: 11px; font-weight: 600;">Chat</span>
+                    <span style="font-size: 11px; font-weight: 600;">Asistente</span>
+                </button>
+                <button onclick="window.switchTab('dms')" id="nav-tab-dms" class="nav-tab" style="background: none; border: none; display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text-secondary); cursor: pointer; flex: 1; position: relative;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                    <span style="font-size: 11px; font-weight: 600;">Mensajes</span>
+                    <div id="dms-badge" style="display: none; position: absolute; top: -2px; right: 25%; background: red; color: white; border-radius: 50%; font-size: 10px; width: 16px; height: 16px; align-items: center; justify-content: center; font-weight: bold;"></div>
                 </button>
                 <button onclick="window.switchTab('muro')" id="nav-tab-muro" class="nav-tab" style="background: none; border: none; display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text-secondary); cursor: pointer; flex: 1;">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
@@ -894,6 +933,13 @@ import themeData from '../data/theme.json';
                             <option value="profesional">💼 Profesional</option>
                         </select>
                     </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 8px; font-size: 13px; font-weight: 600; color: var(--text-secondary);">Privacidad de Mensajes (DMs)</label>
+                        <select id="edit-profile-dmprivacy" style="width: 100%; padding: 14px 16px; border-radius: 12px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary); font-size: 15px; outline: none; box-sizing: border-box; cursor: pointer;">
+                            <option value="everyone">Todos pueden enviarme mensajes</option>
+                            <option value="nobody">Nadie (Desactivar DMs)</option>
+                        </select>
+                    </div>
                 </div>
 
                 <div style="display: flex; gap: 12px;">
@@ -902,7 +948,45 @@ import themeData from '../data/theme.json';
                         Guardar Cambios
                     </button>
                 </div>
-                <p id="edit-profile-error" style="color: #ef4444; font-size: 13px; text-align: center; margin: 16px 0 0 0; display: none;"></p>
+                <div id="edit-profile-error" style="display: none; margin-top: 16px; color: #ef4444; font-size: 13px; text-align: center;"></div>
+            </div>
+        </div>
+
+        <!-- MODAL DE CHAT PRIVADO (DM) -->
+        <div id="dm-chat-modal" style="display: none; position: fixed; inset: 0; background: var(--bg-color); z-index: 3000; flex-direction: column;">
+            <div style="padding: 16px; background: var(--header-bg); border-bottom: 1px solid var(--header-border); display: flex; align-items: center; gap: 12px;">
+                <button onclick="window.closeDMChat()" style="background: none; border: none; color: var(--text-primary); font-size: 24px; cursor: pointer;">←</button>
+                <img id="dm-chat-avatar" src="" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; display: none;" />
+                <div style="display: flex; flex-direction: column;">
+                    <h2 id="dm-chat-name" style="margin: 0; font-size: 18px; color: var(--text-primary);">Usuario</h2>
+                    <span id="dm-chat-username" style="font-size: 12px; color: var(--text-secondary);"></span>
+                </div>
+            </div>
+            
+            <div id="dm-messages-container" style="flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 8px;">
+                <!-- Messages go here -->
+            </div>
+
+            <!-- Previsualización de Imagen Efímera -->
+            <div id="dm-image-preview-container" style="display: none; padding: 12px; background: var(--chat-bg); border-top: 1px solid var(--border-color);">
+                <div style="position: relative; max-width: 150px; border-radius: 12px; overflow: hidden;">
+                    <img id="dm-image-preview" src="" style="width: 100%; display: block;" />
+                    <button onclick="document.getElementById('dm-image-preview-container').style.display='none'; document.getElementById('dm-image-upload').value=''" style="position: absolute; top: 4px; right: 4px; background: rgba(0,0,0,0.5); color: white; border: none; border-radius: 50%; width: 24px; height: 24px; cursor: pointer;">✕</button>
+                    <div style="position: absolute; bottom: 4px; left: 4px; background: rgba(0,0,0,0.6); color: white; font-size: 10px; padding: 2px 6px; border-radius: 8px; display: flex; align-items: center; gap: 4px;">
+                        <input type="checkbox" id="dm-is-view-once" checked style="accent-color: var(--primary-color);"> <span>Efímera</span>
+                    </div>
+                </div>
+            </div>
+
+            <div style="padding: 12px; background: var(--header-bg); border-top: 1px solid var(--header-border); display: flex; gap: 8px; align-items: center; padding-bottom: calc(12px + env(safe-area-inset-bottom));">
+                <input type="file" id="dm-image-upload" accept="image/*" style="display: none;" onchange="window.handleDMImageSelect(event)">
+                <button onclick="document.getElementById('dm-image-upload').click()" style="background: none; border: none; color: var(--text-secondary); cursor: pointer; padding: 8px; border-radius: 50%;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                </button>
+                <input type="text" id="dm-chat-input" placeholder="Escribe un mensaje..." style="flex: 1; padding: 12px 16px; border-radius: 20px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary); font-size: 15px; outline: none;">
+                <button onclick="window.sendDMMessage()" id="dm-send-btn" style="background: var(--primary-color); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                </button>
             </div>
         </div>
 

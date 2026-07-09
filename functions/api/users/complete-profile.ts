@@ -32,13 +32,15 @@ export async function onRequestPost(context) {
             return new Response(JSON.stringify({ error: 'Username already taken' }), { status: 409 });
         }
 
+        const dmPrivacy = body.dmPrivacy || 'everyone';
+
         // Actualizar usuario
         const updateQuery = `
             UPDATE users 
-            SET username = ?, name = ?, bio = ?, category = ?, is_profile_completed = 1 
+            SET username = ?, name = ?, bio = ?, category = ?, dm_privacy = ?, is_profile_completed = 1 
             WHERE id = ?
         `;
-        await env.DB.prepare(updateQuery).bind(username, name, bio || '', finalCategory, user.id).run();
+        await env.DB.prepare(updateQuery).bind(username, name, bio || '', finalCategory, dmPrivacy, user.id).run();
 
         return new Response(JSON.stringify({ success: true }), { status: 200, headers: { 'Content-Type': 'application/json' } });
 

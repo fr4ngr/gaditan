@@ -1680,6 +1680,10 @@
             if (catSelect) {
                 catSelect.value = dataMe.user.category || 'local';
             }
+            const privSelect = document.getElementById('edit-profile-dmprivacy');
+            if (privSelect) {
+                privSelect.value = dataMe.user.dm_privacy || 'everyone';
+            }
             const avatarImg = document.getElementById('edit-profile-avatar');
             if (avatarImg) {
                 avatarImg.src = dataMe.user.avatar_url || dataMe.user.picture || ('https://api.dicebear.com/7.x/notionists/svg?seed=' + dataMe.user.email);
@@ -1697,6 +1701,8 @@
         const bio = document.getElementById('edit-profile-bio').value.trim();
         const catSelect = document.getElementById('edit-profile-category');
         const category = catSelect ? catSelect.value : 'local';
+        const privSelect = document.getElementById('edit-profile-dmprivacy');
+        const dmPrivacy = privSelect ? privSelect.value : 'everyone';
         const btn = document.getElementById('edit-profile-submit');
         const errorEl = document.getElementById('edit-profile-error');
         
@@ -1714,7 +1720,7 @@
             const res = await fetch('/api/users/complete-profile', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, username, bio, category })
+                body: JSON.stringify({ name, username, bio, category, dmPrivacy })
             });
 
             if (!res.ok && res.status === 401) {
@@ -1730,6 +1736,7 @@
                 dataMe.user.username = username;
                 dataMe.user.bio = bio;
                 dataMe.user.category = category;
+                dataMe.user.dm_privacy = dmPrivacy;
                 // Re-render UI
                 if (window.updateProfileUI) {
                     window.updateProfileUI(dataMe);
@@ -2808,6 +2815,285 @@
             }
         }
     };
+
+    // --- LOGICA DE MENSAJES DIRECTOS (DMs) ---
+    
+    let activeDMChatUserId = null;
+    let dmChatPollingInterval = null;
+
+    window.loadDMsInbox = async function() {
+        const container = document.getElementById('dms-inbox-container');
+        if (!container) return;
+        
+        try {
+            container.innerHTML = '<div style="text-align: center; color: var(--text-secondary); margin-top: 20px;">Cargando mensajes...</div>';
+            const res = await fetch('/api/dms/conversations');
+            const data = await res.json();
+            
+            if (!data.conversations || data.conversations.length === 0) {
+                container.innerHTML = '<div style="text-align: center; color: var(--text-secondary); margin-top: 20px;">No tienes mensajes directos.</div>';
+                // Also hide the badge
+                const badge = document.getElementById('dms-badge');
+                if (badge) badge.style.display = 'none';
+                return;
+            }
+
+            container.innerHTML = '';
+            let totalUnread = 0;
+            
+            data.conversations.forEach(conv => {
+                totalUnread += conv.unread_count;
+                const div = document.createElement('div');
+                div.style.cssText = "display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--header-bg); border: 1px solid var(--header-border); border-radius: 16px; cursor: pointer;";
+                div.onclick = () => window.openDMChat(conv.user_id, conv.name, conv.avatar_url || 'https://ui-avatars.com/api/?name='+encodeURIComponent(conv.name));
+                
+                const img = document.createElement('img');
+                img.src = conv.avatar_url || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(conv.name);
+                img.style.cssText = "width: 48px; height: 48px; border-radius: 50%; object-fit: cover;";
+                
+                const infoDiv = document.createElement('div');
+                infoDiv.style.cssText = "flex: 1; min-width: 0; display: flex; flex-direction: column;";
+                
+                const topRow = document.createElement('div');
+                topRow.style.cssText = "display: flex; justify-content: space-between; align-items: baseline;";
+                
+                const nameSpan = document.createElement('span');
+                nameSpan.style.cssText = "font-weight: 600; color: var(--text-primary); font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;";
+                nameSpan.textContent = conv.name;
+                
+                const dateSpan = document.createElement('span');
+                dateSpan.style.cssText = "font-size: 11px; color: var(--text-secondary);";
+                if (conv.last_message_date) {
+                    const d = new Date(conv.last_message_date);
+                    dateSpan.textContent = d.toLocaleDateString() === new Date().toLocaleDateString() ? d.toLocaleTimeString([],{hour:'2-digit', minute:'2-digit'}) : d.toLocaleDateString();
+                }
+                
+                topRow.appendChild(nameSpan);
+                topRow.appendChild(dateSpan);
+                
+                const bottomRow = document.createElement('div');
+                bottomRow.style.cssText = "display: flex; justify-content: space-between; align-items: center; margin-top: 4px;";
+                
+                const msgSpan = document.createElement('span');
+                msgSpan.style.cssText = "font-size: 13px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;";
+                msgSpan.textContent = conv.last_message || '📷 Imagen adjunta';
+                
+                bottomRow.appendChild(msgSpan);
+                
+                if (conv.unread_count > 0) {
+                    const badge = document.createElement('div');
+                    badge.style.cssText = "background: var(--primary-color); color: white; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold;";
+                    badge.textContent = conv.unread_count;
+                    bottomRow.appendChild(badge);
+                    nameSpan.style.color = 'var(--primary-color)';
+                }
+                
+                infoDiv.appendChild(topRow);
+                infoDiv.appendChild(bottomRow);
+                
+                div.appendChild(img);
+                div.appendChild(infoDiv);
+                
+                container.appendChild(div);
+            });
+            
+            // Update global badge
+            const badge = document.getElementById('dms-badge');
+            if (badge) {
+                if (totalUnread > 0) {
+                    badge.textContent = totalUnread;
+                    badge.style.display = 'flex';
+                } else {
+                    badge.style.display = 'none';
+                }
+            }
+            
+        } catch (e) {
+            container.innerHTML = '<div style="text-align: center; color: #ef4444; margin-top: 20px;">Error al cargar mensajes.</div>';
+        }
+    };
+
+    window.openDMChat = function(userId, name, avatar) {
+        activeDMChatUserId = userId;
+        document.getElementById('dm-chat-modal').style.display = 'flex';
+        document.getElementById('dm-chat-name').textContent = name;
+        document.getElementById('dm-chat-avatar').src = avatar || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(name);
+        document.getElementById('dm-chat-avatar').style.display = 'block';
+        
+        window.loadDMChatHistory();
+        
+        // Auto-poll every 5 seconds
+        if (dmChatPollingInterval) clearInterval(dmChatPollingInterval);
+        dmChatPollingInterval = setInterval(window.loadDMChatHistory, 5000);
+    };
+
+    window.closeDMChat = function() {
+        activeDMChatUserId = null;
+        if (dmChatPollingInterval) {
+            clearInterval(dmChatPollingInterval);
+            dmChatPollingInterval = null;
+        }
+        document.getElementById('dm-chat-modal').style.display = 'none';
+        window.loadDMsInbox(); // Refresh inbox to update unread
+    };
+
+    window.loadDMChatHistory = async function() {
+        if (!activeDMChatUserId) return;
+        const container = document.getElementById('dm-messages-container');
+        try {
+            const res = await fetch(`/api/dms/history?userId=${activeDMChatUserId}`);
+            const data = await res.json();
+            if (!data.messages) return;
+            
+            container.innerHTML = '';
+            const myUserId = (window as any).dataMe?.user?.id;
+            
+            data.messages.forEach(msg => {
+                const isMe = msg.sender_id === myUserId;
+                const div = document.createElement('div');
+                div.style.cssText = `max-width: 80%; padding: 12px; border-radius: 16px; margin-bottom: 8px; align-self: ${isMe ? 'flex-end' : 'flex-start'}; background: ${isMe ? 'var(--primary-color)' : 'var(--chat-bg)'}; color: ${isMe ? 'white' : 'var(--text-primary)'}; border: ${isMe ? 'none' : '1px solid var(--border-color)'};`;
+                
+                if (msg.image_url) {
+                    if (msg.image_url === '[Foto Efímera Vista]') {
+                        const info = document.createElement('div');
+                        info.style.cssText = "font-size: 12px; font-style: italic; opacity: 0.8; margin-bottom: 4px;";
+                        info.textContent = "📷 Foto efímera (Vista)";
+                        div.appendChild(info);
+                    } else if (msg.is_view_once && !isMe) {
+                        const viewBtn = document.createElement('button');
+                        viewBtn.textContent = '👁️ Ver foto efímera';
+                        viewBtn.style.cssText = "background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: inherit; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: bold;";
+                        viewBtn.onclick = async () => {
+                            // Show full screen modal
+                            const overlay = document.createElement('div');
+                            overlay.style.cssText = "position: fixed; inset: 0; background: black; z-index: 9999; display: flex; align-items: center; justify-content: center; flex-direction: column;";
+                            
+                            const img = document.createElement('img');
+                            img.src = msg.image_url;
+                            img.style.cssText = "max-width: 100%; max-height: 80%; object-fit: contain;";
+                            
+                            const closeBtn = document.createElement('button');
+                            closeBtn.textContent = 'Cerrar y eliminar';
+                            closeBtn.style.cssText = "margin-top: 20px; padding: 12px 24px; background: #ef4444; color: white; border: none; border-radius: 20px; font-weight: bold; cursor: pointer;";
+                            
+                            overlay.appendChild(img);
+                            overlay.appendChild(closeBtn);
+                            document.body.appendChild(overlay);
+                            
+                            // Mark as viewed in DB immediately
+                            fetch('/api/dms/view', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ messageId: msg.id })
+                            });
+
+                            closeBtn.onclick = () => {
+                                document.body.removeChild(overlay);
+                                window.loadDMChatHistory(); // Refresh to show [Vista]
+                            };
+                        };
+                        div.appendChild(viewBtn);
+                    } else {
+                        const img = document.createElement('img');
+                        img.src = msg.image_url;
+                        img.style.cssText = "max-width: 100%; border-radius: 8px; margin-bottom: 8px;";
+                        div.appendChild(img);
+                        
+                        if (msg.is_view_once && isMe) {
+                            const lbl = document.createElement('div');
+                            lbl.style.cssText = "font-size: 10px; opacity: 0.7; margin-bottom: 4px;";
+                            lbl.textContent = msg.viewed_at ? "👀 Visto por destinatario" : "🔒 Foto efímera enviada";
+                            div.appendChild(lbl);
+                        }
+                    }
+                }
+                
+                if (msg.content) {
+                    const txt = document.createElement('div');
+                    txt.style.cssText = "font-size: 14px; line-height: 1.4; word-wrap: break-word;";
+                    txt.textContent = msg.content;
+                    div.appendChild(txt);
+                }
+                
+                const time = document.createElement('div');
+                time.style.cssText = "font-size: 10px; opacity: 0.6; text-align: right; margin-top: 4px;";
+                const d = new Date(msg.created_at);
+                time.textContent = d.toLocaleTimeString([],{hour:'2-digit', minute:'2-digit'});
+                div.appendChild(time);
+                
+                container.appendChild(div);
+            });
+            
+            // Scroll to bottom if user is at bottom? For simplicity, just scroll down on every load
+            container.scrollTop = container.scrollHeight;
+            
+        } catch (e) {
+            console.error(e);
+        }
+    };
+
+    window.sendDMMessage = async function() {
+        if (!activeDMChatUserId) return;
+        const input = document.getElementById('dm-chat-input');
+        const fileInput = document.getElementById('dm-image-upload');
+        const isViewOnce = document.getElementById('dm-is-view-once').checked;
+        const btn = document.getElementById('dm-send-btn');
+        
+        const content = input.value.trim();
+        const file = fileInput.files[0];
+        
+        if (!content && !file) return;
+        
+        btn.disabled = true;
+        btn.style.opacity = '0.5';
+        
+        const formData = new FormData();
+        formData.append('receiverId', activeDMChatUserId);
+        if (content) formData.append('content', content);
+        if (file) formData.append('image', file);
+        if (isViewOnce && file) formData.append('isViewOnce', 'true');
+        
+        try {
+            const res = await fetch('/api/dms/send', {
+                method: 'POST',
+                body: formData
+            });
+            const data = await res.json();
+            if (data.success) {
+                input.value = '';
+                fileInput.value = '';
+                document.getElementById('dm-image-preview-container').style.display = 'none';
+                window.loadDMChatHistory();
+            } else {
+                alert(data.error || 'Error al enviar');
+            }
+        } catch (e) {
+            alert('Error de red');
+        } finally {
+            btn.disabled = false;
+            btn.style.opacity = '1';
+        }
+    };
+
+    window.handleDMImageSelect = function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                document.getElementById('dm-image-preview').src = e.target.result;
+                document.getElementById('dm-image-preview-container').style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    // Auto-load DMs on start if logged in (for badge)
+    setTimeout(() => {
+        if ((window as any).dataMe?.user) {
+            window.loadDMsInbox();
+            setInterval(window.loadDMsInbox, 15000); // Poll inbox every 15s
+        }
+    }, 2000);
 
     // Tipado global
     declare global {
