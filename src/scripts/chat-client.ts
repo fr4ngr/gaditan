@@ -1656,11 +1656,20 @@
     document.addEventListener('DOMContentLoaded', () => {
         if (window.updateBookmarksBadge) window.updateBookmarksBadge();
         window.renderSavedMessages();
-        // Inicializar estado del panel central
         const swiper = document.getElementById('main-swiper');
         if (swiper) {
             setTimeout(() => {
                 swiper.scrollTo({ left: window.innerWidth, behavior: 'instant' });
+                
+                // Si venimos de un login exitoso, abrir pestaña de Perfil (muro)
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.get('login') === 'success') {
+                    if (typeof window.switchTab === 'function') {
+                        window.switchTab('muro');
+                    }
+                    // Limpiar la URL
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                }
             }, 50);
         }
     });
