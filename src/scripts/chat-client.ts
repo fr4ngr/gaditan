@@ -1614,8 +1614,10 @@
                 profileAuthBtn.style.color = '#ef4444';
                 profileAuthBtn.onclick = () => window.logout();
             }
-            if (dataMe.user.picture && profileAvatarImg && profileAvatarEmoji) {
-                profileAvatarImg.src = dataMe.user.picture;
+
+            const activeAvatar = dataMe.user.picture || dataMe.user.avatar_url;
+            if (activeAvatar && profileAvatarImg && profileAvatarEmoji) {
+                profileAvatarImg.src = activeAvatar;
                 profileAvatarImg.style.display = 'block';
                 profileAvatarEmoji.style.display = 'none';
             }
@@ -1624,8 +1626,8 @@
             const headerAvatarImg = document.getElementById('profile-avatar');
             const headerProfileIcon = document.getElementById('profile-icon');
             if (headerAvatarImg && headerProfileIcon) {
-                if (dataMe.user.picture) {
-                    headerAvatarImg.src = dataMe.user.picture;
+                if (activeAvatar) {
+                    headerAvatarImg.src = activeAvatar;
                     headerAvatarImg.style.display = 'block';
                     headerProfileIcon.style.display = 'none';
                 }
