@@ -2480,8 +2480,13 @@
     }, 500);
 
     // Funciones globales de autenticación
-    window.logout = () => {
-        window.location.href = '/api/auth/logout';
+    window.logout = async () => {
+        try {
+            await fetch('/api/auth/logout', { method: 'POST' });
+            window.location.reload();
+        } catch (e) {
+            console.error('Error logging out:', e);
+        }
     };
 
     // Tipado global
