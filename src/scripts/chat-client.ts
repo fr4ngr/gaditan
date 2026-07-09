@@ -1730,7 +1730,9 @@
                 dataMe.user.bio = bio;
                 dataMe.user.category = category;
                 // Re-render UI
-                window.updateMeUI();
+                if (window.updateProfileUI) {
+                    window.updateProfileUI(dataMe);
+                }
                 // Close Modal
                 document.getElementById('edit-profile-modal').style.display = 'none';
             } else {
