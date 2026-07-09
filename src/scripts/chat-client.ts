@@ -1590,6 +1590,10 @@
                 if (dataMe.user.verified) {
                     name += ' <span title="Verificado"><svg viewBox="0 0 24 24" width="16" height="16" fill="#3b82f6" style="vertical-align: -3px; margin-left: 2px;"><path d="M23 11.99l-2.44-2.79.34-3.69-3.61-.82-1.89-3.2L12 2.96 8.6 1.5 6.71 4.69 3.1 5.5l.34 3.7L1 11.99l2.44 2.79-.34 3.7 3.61.82L8.6 22.5l3.4-1.47 3.4 1.46 1.89-3.19 3.61-.82-.34-3.69L23 11.99zm-12.93 4.4L6.5 12.83l1.41-1.41 2.16 2.15 5.75-5.74 1.42 1.41-7.17 7.15z"/></svg></span>';
                 }
+                profileName.innerHTML = name;
+            }
+            if (profileDesc) {
+                let descHTML = dataMe.user.username ? '@' + dataMe.user.username : dataMe.user.email;
                 if (dataMe.user.category) {
                     let pillBg = '#e0f2fe';
                     let pillColor = '#0284c7';
@@ -1603,12 +1607,9 @@
                         pillColor = '#16a34a';
                         pillText = 'Gaditan Profesional';
                     }
-                    name += `<div style="margin-top: 6px; line-height: 1;"><span style="display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; background: ${pillBg}; color: ${pillColor};">${pillText}</span></div>`;
+                    descHTML += `<div style="margin-top: 10px; line-height: 1;"><span style="display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; background: ${pillBg}; color: ${pillColor};">${pillText}</span></div>`;
                 }
-                profileName.innerHTML = name;
-            }
-            if (profileDesc) {
-                profileDesc.innerText = dataMe.user.username ? '@' + dataMe.user.username : dataMe.user.email;
+                profileDesc.innerHTML = descHTML;
             }
             if (profileBio) {
                 if (dataMe.user.bio) {
