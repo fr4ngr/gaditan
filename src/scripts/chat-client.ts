@@ -1593,15 +1593,15 @@
                 if (dataMe.user.category) {
                     let pillBg = '#e0f2fe';
                     let pillColor = '#0284c7';
-                    let pillText = 'Local';
+                    let pillText = 'Gaditan Local';
                     if (dataMe.user.category === 'turista') {
                         pillBg = '#ffedd5';
                         pillColor = '#f97316';
-                        pillText = 'Turista';
+                        pillText = 'Gaditan Turista';
                     } else if (dataMe.user.category === 'profesional') {
                         pillBg = '#dcfce7';
                         pillColor = '#16a34a';
-                        pillText = 'Profesional';
+                        pillText = 'Gaditan Profesional';
                     }
                     name += ` <span style="display: inline-block; vertical-align: middle; margin-left: 6px; padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; background: ${pillBg}; color: ${pillColor};">${pillText}</span>`;
                 }
