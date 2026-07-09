@@ -1603,7 +1603,7 @@
                         pillColor = '#16a34a';
                         pillText = 'Gaditan Profesional';
                     }
-                    name += ` <span style="display: inline-block; vertical-align: middle; margin-left: 6px; padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; background: ${pillBg}; color: ${pillColor};">${pillText}</span>`;
+                    name += `<div style="margin-top: 6px; line-height: 1;"><span style="display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; background: ${pillBg}; color: ${pillColor};">${pillText}</span></div>`;
                 }
                 profileName.innerHTML = name;
             }
