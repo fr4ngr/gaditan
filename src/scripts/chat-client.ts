@@ -1574,6 +1574,7 @@
         const profileBio = document.getElementById('profile-page-bio');
         const profileAuthBtn = document.getElementById('profile-page-auth-btn');
         const profileEditBtn = document.getElementById('profile-page-edit-btn');
+        const profileSettingsBtn = document.getElementById('profile-page-settings-btn');
 
         if (dataMe && dataMe.user) {
             // Verificar si el perfil está completado
@@ -1604,6 +1605,9 @@
             if (profileEditBtn) {
                 profileEditBtn.style.display = 'block';
             }
+            if (profileSettingsBtn) {
+                profileSettingsBtn.style.display = 'flex';
+            }
             if (profileAuthBtn) {
                 profileAuthBtn.innerText = 'Cerrar Sesión';
                 profileAuthBtn.style.background = '#fee2e2';
@@ -1631,6 +1635,7 @@
             if (profileDesc) profileDesc.innerText = 'Inicia sesión para guardar tus favoritos en la nube.';
             if (profileBio) profileBio.style.display = 'none';
             if (profileEditBtn) profileEditBtn.style.display = 'none';
+            if (profileSettingsBtn) profileSettingsBtn.style.display = 'none';
             if (profileAuthBtn) {
                 profileAuthBtn.innerText = 'Unirse a la Comunidad';
                 profileAuthBtn.style.background = 'var(--primary-color)';
