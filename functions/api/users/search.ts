@@ -22,7 +22,7 @@ export async function onRequestGet(context) {
             id: u.id,
             name: u.name,
             username: u.username,
-            avatar_url: u.avatar_url || u.picture,
+            avatar_url: u.picture || u.avatar_url,
             category: u.category
         }));
 

@@ -27,7 +27,7 @@ export async function onRequestGet(context) {
             username: user.username,
             bio: user.bio,
             category: user.category,
-            avatar_url: user.avatar_url || user.picture,
+            avatar_url: user.picture || user.avatar_url,
             created_at: user.created_at,
             dm_privacy: user.dm_privacy || 'everyone',
             posts_count: totalPosts
