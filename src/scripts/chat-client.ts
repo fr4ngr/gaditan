@@ -3431,6 +3431,14 @@
         }
     }, 2000);
 
+    // Cerrar dropdown al hacer click fuera
+    document.addEventListener('click', function(event) {
+        const dropdown = document.getElementById('public-profile-more-dropdown');
+        if (dropdown && dropdown.style.display === 'block') {
+            dropdown.style.display = 'none';
+        }
+    });
+
     // Tipado global
     declare global {
         interface Window {
