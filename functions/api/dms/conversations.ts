@@ -21,7 +21,7 @@ export async function onRequestGet(context) {
                 u.id as user_id, 
                 u.name, 
                 u.username, 
-                u.avatar_url,
+                COALESCE(u.avatar_url, u.picture) as avatar_url,
                 u.verified,
                 u.category,
                 dm.content as last_message,
