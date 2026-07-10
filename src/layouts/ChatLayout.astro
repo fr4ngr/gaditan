@@ -997,27 +997,59 @@ import themeData from '../data/theme.json';
         </div>
 
         <!-- MODAL DE PERFIL PUBLICO -->
+        <!-- MODAL DE PERFIL PUBLICO -->
         <div id="public-profile-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2500; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
-            <div style="background: var(--bg-color); width: 90%; max-width: 400px; border-radius: 24px; padding: 24px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); border: 1px solid var(--border-color); text-align: center; position: relative;">
-                <button onclick="document.getElementById('public-profile-modal').style.display='none'" style="position: absolute; top: 16px; right: 16px; background: none; border: none; color: var(--text-secondary); font-size: 20px; cursor: pointer;">✕</button>
+            <div style="background: var(--bg-color); width: 100%; max-width: 480px; height: 100%; max-height: 800px; display: flex; flex-direction: column; position: relative; overflow: hidden; @media (min-width: 480px) { height: 90%; border-radius: 24px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2); }">
                 
-                <img id="public-profile-avatar" src="" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin: 0 auto 16px auto; display: block; border: 2px solid var(--primary-color);" />
-                
-                <h2 id="public-profile-name" style="margin: 0 0 4px 0; font-size: 20px; color: var(--text-primary);">Nombre</h2>
-                <div id="public-profile-username" style="font-size: 14px; color: var(--primary-color); font-weight: 600; margin-bottom: 16px;">@usuario</div>
-                
-                <div style="display: flex; justify-content: center; gap: 8px; margin-bottom: 16px;">
-                    <span id="public-profile-category" style="background: var(--chat-bg); color: var(--text-secondary); font-size: 12px; font-weight: 600; padding: 6px 12px; border-radius: 20px;">Categoría</span>
-                    <span id="public-profile-posts" style="background: var(--chat-bg); color: var(--text-secondary); font-size: 12px; font-weight: 600; padding: 6px 12px; border-radius: 20px;">0 Publicaciones</span>
+                <!-- Botón de Cerrar (Flotante) -->
+                <button onclick="document.getElementById('public-profile-modal').style.display='none'" style="position: absolute; top: 16px; left: 16px; width: 36px; height: 36px; background: rgba(0,0,0,0.5); border-radius: 50%; border: none; color: white; font-size: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 10; backdrop-filter: blur(4px);">←</button>
+
+                <!-- Banner / Portada (Degradado por defecto) -->
+                <div id="public-profile-banner" style="width: 100%; height: 140px; background: linear-gradient(135deg, #3b82f6, #8b5cf6); flex-shrink: 0;"></div>
+
+                <div style="padding: 0 16px 16px 16px; position: relative; display: flex; flex-direction: column; overflow-y: auto; flex: 1;">
+                    <!-- Zona Superior: Avatar y Botón -->
+                    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: -40px; margin-bottom: 12px;">
+                        <img id="public-profile-avatar" src="" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 4px solid var(--bg-color); background: var(--bg-color);" />
+                        <button id="public-profile-dm-btn" style="background: var(--primary-color); color: white; border: none; padding: 8px 16px; border-radius: 20px; font-weight: 600; font-size: 14px; cursor: pointer; display: none; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);">
+                            ✉️ Mensaje
+                        </button>
+                    </div>
+
+                    <!-- Información de Identidad -->
+                    <div style="margin-bottom: 16px;">
+                        <div style="display: flex; align-items: center; gap: 6px;">
+                            <h2 id="public-profile-name" style="margin: 0; font-size: 22px; color: var(--text-primary); font-weight: 800; line-height: 1.2;">Nombre</h2>
+                            <span id="public-profile-category-badge" style="font-size: 18px;" title="Categoría"></span>
+                        </div>
+                        <div id="public-profile-username" style="font-size: 15px; color: var(--text-secondary); margin-top: 2px;">@usuario</div>
+                    </div>
+
+                    <!-- Biografía -->
+                    <p id="public-profile-bio" style="font-size: 15px; color: var(--text-primary); line-height: 1.5; margin: 0 0 16px 0; white-space: pre-wrap;"></p>
+
+                    <!-- Métricas y Fecha -->
+                    <div style="display: flex; align-items: center; gap: 16px; font-size: 14px; color: var(--text-secondary); margin-bottom: 24px;">
+                        <div style="display: flex; align-items: center; gap: 4px;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                            <span id="public-profile-date">Se unió en...</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 4px;">
+                            <span id="public-profile-posts" style="font-weight: 700; color: var(--text-primary);">0</span>
+                            <span>Posts</span>
+                        </div>
+                    </div>
+
+                    <!-- Línea separadora -->
+                    <div style="height: 1px; background: var(--header-border); margin: 0 -16px; margin-bottom: 16px;"></div>
+
+                    <!-- Últimas Publicaciones -->
+                    <h3 style="margin: 0 0 12px 0; font-size: 18px; color: var(--text-primary);">Últimas Publicaciones</h3>
+                    <div id="public-profile-recent-posts" style="display: flex; flex-direction: column; gap: 12px; padding-bottom: 20px;">
+                        <!-- Mini posts go here -->
+                        <div style="text-align: center; color: var(--text-secondary); padding: 20px;">Cargando...</div>
+                    </div>
                 </div>
-                
-                <div id="public-profile-date" style="font-size: 12px; color: var(--text-secondary); margin-bottom: 16px;">Miembro desde: ...</div>
-                
-                <p id="public-profile-bio" style="font-size: 14px; color: var(--text-primary); line-height: 1.5; margin: 0 0 24px 0; white-space: pre-wrap; text-align: left; background: var(--header-bg); padding: 12px; border-radius: 12px; border: 1px solid var(--border-color);"></p>
-                
-                <button id="public-profile-dm-btn" style="width: 100%; background: var(--primary-color); color: white; border: none; padding: 14px; border-radius: 16px; font-weight: 600; font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; display: none;">
-                    ✉️ Enviar Mensaje
-                </button>
             </div>
         </div>
 

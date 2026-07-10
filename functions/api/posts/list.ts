@@ -5,18 +5,24 @@ export async function onRequestGet(context) {
         const url = new URL(request.url);
         const limit = parseInt(url.searchParams.get('limit')) || 20;
         const offset = parseInt(url.searchParams.get('offset')) || 0;
+        const userId = url.searchParams.get('userId');
 
-        const query = `
+        let query = `
             SELECT 
                 p.id, p.content, p.image_url, p.created_at, p.user_id,
                 u.name as user_name, u.avatar_url as user_avatar
             FROM posts p
             JOIN users u ON p.user_id = u.id
-            ORDER BY p.created_at DESC
-            LIMIT ? OFFSET ?
         `;
         
-        const { results } = await env.DB.prepare(query).bind(limit, offset).all();
+        let results;
+        if (userId) {
+            query += ` WHERE p.user_id = ? ORDER BY p.created_at DESC LIMIT ? OFFSET ?`;
+            results = (await env.DB.prepare(query).bind(userId, limit, offset).all()).results;
+        } else {
+            query += ` ORDER BY p.created_at DESC LIMIT ? OFFSET ?`;
+            results = (await env.DB.prepare(query).bind(limit, offset).all()).results;
+        }
 
         return new Response(JSON.stringify({ posts: results }), { status: 200, headers: { 'Content-Type': 'application/json' } });
 

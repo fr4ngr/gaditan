@@ -2845,15 +2845,19 @@
         document.getElementById('public-profile-name').textContent = 'Cargando...';
         document.getElementById('public-profile-username').textContent = '';
         document.getElementById('public-profile-bio').textContent = '';
-        document.getElementById('public-profile-category').textContent = '';
-        document.getElementById('public-profile-posts').textContent = '';
-        document.getElementById('public-profile-date').textContent = '';
+        document.getElementById('public-profile-category-badge').textContent = '';
+        document.getElementById('public-profile-posts').textContent = '0';
+        document.getElementById('public-profile-date').textContent = '...';
         document.getElementById('public-profile-avatar').src = 'https://ui-avatars.com/api/?name=...';
         document.getElementById('public-profile-dm-btn').style.display = 'none';
+        
+        const recentPostsContainer = document.getElementById('public-profile-recent-posts');
+        if (recentPostsContainer) recentPostsContainer.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: 20px;">Cargando...</div>';
         
         modal.style.display = 'flex';
 
         try {
+            // Fetch profile data
             const res = await fetch('/api/users/profile?id=' + encodeURIComponent(userId));
             const data = await res.json();
             
@@ -2863,18 +2867,26 @@
                 document.getElementById('public-profile-username').textContent = '@' + (p.username || 'usuario');
                 document.getElementById('public-profile-bio').textContent = p.bio || 'Sin biografía';
                 
-                const cats = {
-                    'local': '🌴 Local',
-                    'turista': '✈️ Turista',
-                    'profesional': '💼 Profesional'
+                const badges = {
+                    'local': '🌴',
+                    'turista': '🎒',
+                    'profesional': '🚕'
                 };
-                document.getElementById('public-profile-category').textContent = cats[p.category] || 'Usuario';
+                document.getElementById('public-profile-category-badge').textContent = badges[p.category] || '';
                 
-                document.getElementById('public-profile-posts').textContent = p.posts_count + (p.posts_count === 1 ? ' Publicación' : ' Publicaciones');
+                // Color banner depending on category
+                const banner = document.getElementById('public-profile-banner');
+                if (banner) {
+                    if (p.category === 'local') banner.style.background = 'linear-gradient(135deg, #10b981, #3b82f6)';
+                    else if (p.category === 'profesional') banner.style.background = 'linear-gradient(135deg, #f59e0b, #ef4444)';
+                    else banner.style.background = 'linear-gradient(135deg, #3b82f6, #8b5cf6)'; // Turista or default
+                }
+
+                document.getElementById('public-profile-posts').textContent = p.posts_count || '0';
                 
                 if (p.created_at) {
                     const d = new Date(p.created_at);
-                    document.getElementById('public-profile-date').textContent = 'Miembro desde: ' + d.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' });
+                    document.getElementById('public-profile-date').textContent = d.toLocaleDateString('es-ES', { month: 'short', year: 'numeric' });
                 } else {
                     document.getElementById('public-profile-date').textContent = '';
                 }
@@ -2897,6 +2909,51 @@
                         };
                     }
                 }
+
+                // Fetch recent posts
+                fetch('/api/posts/list?limit=3&userId=' + encodeURIComponent(userId))
+                    .then(r => r.json())
+                    .then(postData => {
+                        if (recentPostsContainer) {
+                            if (!postData.posts || postData.posts.length === 0) {
+                                recentPostsContainer.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: 20px;">Aún no hay publicaciones.</div>';
+                            } else {
+                                recentPostsContainer.innerHTML = '';
+                                postData.posts.forEach(post => {
+                                    const postDate = new Date(post.created_at).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
+                                    
+                                    const postDiv = document.createElement('div');
+                                    postDiv.style.cssText = "background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 8px;";
+                                    
+                                    const dateSpan = document.createElement('span');
+                                    dateSpan.style.cssText = "font-size: 12px; color: var(--text-secondary);";
+                                    dateSpan.textContent = postDate;
+                                    postDiv.appendChild(dateSpan);
+                                    
+                                    if (post.content) {
+                                        const contentP = document.createElement('p');
+                                        contentP.style.cssText = "font-size: 14px; color: var(--text-primary); margin: 0; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;";
+                                        contentP.textContent = post.content;
+                                        postDiv.appendChild(contentP);
+                                    }
+
+                                    if (post.image_url) {
+                                        const img = document.createElement('img');
+                                        img.src = post.image_url;
+                                        img.style.cssText = "width: 100%; height: 120px; object-fit: cover; border-radius: 8px; margin-top: 4px;";
+                                        postDiv.appendChild(img);
+                                    }
+
+                                    recentPostsContainer.appendChild(postDiv);
+                                });
+                            }
+                        }
+                    })
+                    .catch(err => {
+                        console.error("Error fetching user posts:", err);
+                        if (recentPostsContainer) recentPostsContainer.innerHTML = '';
+                    });
+
             } else {
                 document.getElementById('public-profile-name').textContent = 'Usuario no encontrado';
             }
