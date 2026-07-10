@@ -202,11 +202,11 @@ body {
   gap: 0.75rem;
   align-items: flex-end;
   flex-shrink: 0;
-  padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  padding-bottom: 0.5rem;
   
-  /* Flotante sobre el swiper */
+  /* Flotante sobre el swiper, pero por encima del bottom-nav */
   position: absolute;
-  bottom: 0;
+  bottom: calc(max(16px, env(safe-area-inset-bottom)) + 76px);
   left: 50%;
   transform: translateX(-50%);
   z-index: 1100;
