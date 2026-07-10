@@ -2910,6 +2910,12 @@
                 const dataMe = (window as any).dataMe;
                 const myUserId = dataMe?.user?.id;
                 
+                if (myUserId === userId) {
+                    document.getElementById('public-profile-cover-btn').style.display = 'flex';
+                } else {
+                    document.getElementById('public-profile-cover-btn').style.display = 'none';
+                }
+                
                 if (myUserId && myUserId !== userId) {
                     // Check if DM is allowed
                     if (p.dm_privacy === 'nobody') {
