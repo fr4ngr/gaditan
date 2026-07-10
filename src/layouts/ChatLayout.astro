@@ -526,9 +526,10 @@ import themeData from '../data/theme.json';
                 <div id="dms-inbox-container" style="padding: 16px; display: flex; flex-direction: column; gap: 8px;">
                     <!-- Inbox items go here -->
                 </div>
+            </div>
         <!-- MODAL DE PERFIL PUBLICO -->
         <!-- MODAL DE PERFIL PUBLICO -->
-        <div id="public-profile-modal" style="display: none; position: absolute; inset: 0; z-index: 2500; background: var(--bg-color); flex-direction: column; overflow: hidden;">
+        <div id="public-profile-modal" style="display: none; position: absolute; inset: 0; z-index: 50; background: var(--bg-color); flex-direction: column; overflow: hidden;">
             <div style="background: var(--bg-color); width: 100%; max-width: 480px; height: 100%; margin: 0 auto; display: flex; flex-direction: column; position: relative; overflow: hidden;">
                 
                 <!-- Botón de Cerrar (Flotante) -->
@@ -625,14 +626,13 @@ import themeData from '../data/theme.json';
 
                     <!-- Últimas Publicaciones -->
                     <h3 style="margin: 0 0 12px 0; font-size: 18px; color: var(--text-primary); text-align: center;">Últimas Publicaciones</h3>
-                    <div id="public-profile-recent-posts" style="display: flex; flex-direction: column; gap: 12px; padding-bottom: 20px;">
+                    <div id="public-profile-recent-posts" style="display: flex; flex-direction: column; gap: 12px; padding-bottom: 100px;">
                         <!-- Mini posts go here -->
                         <div style="text-align: center; color: var(--text-secondary); padding: 20px;">Cargando...</div>
                     </div>
                 </div>
             </div>
         </div>
-            </div>
 
             <nav id="bottom-nav" style="width: calc(100% - 32px); max-width: 448px; margin: 0 auto 16px auto; background: color-mix(in srgb, var(--header-bg) 75%, transparent); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid var(--header-border); border-radius: 40px; box-shadow: 0 8px 32px rgba(0,0,0,0.1); display: flex; justify-content: space-around; padding: 8px 8px; position: sticky; bottom: max(16px, env(safe-area-inset-bottom)); z-index: 100; flex-shrink: 0;">
                 <button onclick="window.switchTab('chat')" id="nav-tab-chat" class="nav-tab active" style="background: none; border: none; display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--primary-color); cursor: pointer; flex: 1;">
