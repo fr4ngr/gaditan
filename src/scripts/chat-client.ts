@@ -2980,6 +2980,100 @@
         });
     }
     
+    // --- LOGICA DE COMUNIDAD ---
+    let communityUsers = [];
+    let currentCategoryFilter = 'local';
+
+    window.loadCommunity = async function() {
+        const container = document.getElementById('comunidad-container');
+        if (!container) return;
+
+        try {
+            if (communityUsers.length === 0) {
+                container.innerHTML = '<div style="text-align: center; color: var(--text-secondary); margin-top: 20px;">Cargando usuarios...</div>';
+                const res = await fetch('/api/users/directory');
+                const data = await res.json();
+                
+                if (data.users) {
+                    communityUsers = data.users;
+                } else {
+                    communityUsers = [];
+                }
+            }
+            window.filterCommunity(currentCategoryFilter);
+        } catch (err) {
+            console.error("Error loading community:", err);
+            container.innerHTML = '<div style="text-align: center; color: #ef4444; margin-top: 20px;">Error al cargar la comunidad.</div>';
+        }
+    };
+
+    window.filterCommunity = function(category) {
+        currentCategoryFilter = category;
+        
+        // Actualizar UI de botones
+        ['local', 'turista', 'profesional'].forEach(cat => {
+            const btn = document.getElementById('filter-' + cat);
+            if (btn) {
+                if (cat === category) {
+                    btn.className = 'comunidad-filter active';
+                    btn.style.background = 'var(--chat-bg)';
+                    btn.style.color = 'var(--text-primary)';
+                } else {
+                    btn.className = 'comunidad-filter';
+                    btn.style.background = 'transparent';
+                    btn.style.color = 'var(--text-secondary)';
+                }
+            }
+        });
+
+        const container = document.getElementById('comunidad-container');
+        if (!container) return;
+
+        const filtered = communityUsers.filter(u => u.category === category);
+
+        if (filtered.length === 0) {
+            container.innerHTML = '<div style="text-align: center; color: var(--text-secondary); margin-top: 20px;">No hay usuarios en esta categoría.</div>';
+            return;
+        }
+
+        container.innerHTML = '';
+        filtered.forEach(user => {
+            const div = document.createElement('div');
+            div.style.cssText = "background: var(--header-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 16px; display: flex; align-items: center; gap: 16px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;";
+            div.onmouseover = () => div.style.boxShadow = '0 4px 12px rgba(0,0,0,0.08)';
+            div.onmouseout = () => div.style.boxShadow = 'none';
+            div.onclick = () => window.openPublicProfile(user.id);
+
+            const img = document.createElement('img');
+            img.src = user.avatar_url || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(user.name || '?');
+            img.style.cssText = "width: 56px; height: 56px; border-radius: 50%; object-fit: cover; flex-shrink: 0;";
+
+            const infoDiv = document.createElement('div');
+            infoDiv.style.cssText = "display: flex; flex-direction: column; gap: 4px; overflow: hidden; flex: 1;";
+
+            const nameDiv = document.createElement('div');
+            nameDiv.style.cssText = "font-weight: 600; color: var(--text-primary); font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;";
+            nameDiv.textContent = user.name || 'Usuario';
+
+            const userDiv = document.createElement('div');
+            userDiv.style.cssText = "font-size: 13px; color: var(--primary-color); font-weight: 500;";
+            userDiv.textContent = '@' + (user.username || 'usuario');
+
+            const bioDiv = document.createElement('div');
+            bioDiv.style.cssText = "font-size: 13px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px;";
+            bioDiv.textContent = user.bio || 'Sin descripción';
+
+            infoDiv.appendChild(nameDiv);
+            infoDiv.appendChild(userDiv);
+            infoDiv.appendChild(bioDiv);
+
+            div.appendChild(img);
+            div.appendChild(infoDiv);
+
+            container.appendChild(div);
+        });
+    };
+    
     let activeDMChatUserId = null;
     let dmChatPollingInterval = null;
 

@@ -66,22 +66,28 @@ import themeData from '../data/theme.json';
                 const tabChat = document.getElementById('tab-chat');
                 const tabMuro = document.getElementById('tab-muro');
                 const tabDms = document.getElementById('tab-dms');
+                const tabComunidad = document.getElementById('tab-comunidad');
+                
                 const navChat = document.getElementById('nav-tab-chat');
                 const navMuro = document.getElementById('nav-tab-muro');
                 const navDms = document.getElementById('nav-tab-dms');
+                const navComunidad = document.getElementById('nav-tab-comunidad');
 
                 // Hide all
                 tabChat.style.display = 'none';
                 tabMuro.style.display = 'none';
                 if (tabDms) tabDms.style.display = 'none';
+                if (tabComunidad) tabComunidad.style.display = 'none';
                 
                 navChat.classList.remove('active');
                 navMuro.classList.remove('active');
                 if (navDms) navDms.classList.remove('active');
+                if (navComunidad) navComunidad.classList.remove('active');
                 
                 navChat.style.color = 'var(--text-secondary)';
                 navMuro.style.color = 'var(--text-secondary)';
                 if (navDms) navDms.style.color = 'var(--text-secondary)';
+                if (navComunidad) navComunidad.style.color = 'var(--text-secondary)';
 
                 if (tab === 'chat') {
                     tabChat.style.display = 'flex';
@@ -97,6 +103,11 @@ import themeData from '../data/theme.json';
                     if (navDms) navDms.classList.add('active');
                     if (navDms) navDms.style.color = 'var(--primary-color)';
                     if (window.loadDMsInbox) window.loadDMsInbox();
+                } else if (tab === 'comunidad') {
+                    if (tabComunidad) tabComunidad.style.display = 'flex';
+                    if (navComunidad) navComunidad.classList.add('active');
+                    if (navComunidad) navComunidad.style.color = 'var(--primary-color)';
+                    if (window.loadCommunity) window.loadCommunity();
                 }
             };
 
@@ -488,6 +499,21 @@ import themeData from '../data/theme.json';
             </div> <!-- END TAB PERFIL -->
             
             <!-- BOTTOM NAVIGATION -->
+            <!-- TAB COMUNIDAD -->
+            <div id="tab-comunidad" style="display: none; flex: 1; width: 100%; min-height: 0; flex-direction: column; background: var(--bg-color); max-width: 480px; margin: 0 auto; overflow-y: auto;">
+                <div style="padding: 16px; background: var(--header-bg); border-bottom: 1px solid var(--header-border); position: sticky; top: 0; z-index: 10;">
+                    <h2 style="margin: 0 0 12px 0; font-size: 20px; color: var(--text-primary);">Comunidad</h2>
+                    <div style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px;">
+                        <button onclick="window.filterCommunity('local')" id="filter-local" class="comunidad-filter active" style="background: var(--chat-bg); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: 16px; padding: 6px 12px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap;">🌴 Locales</button>
+                        <button onclick="window.filterCommunity('turista')" id="filter-turista" class="comunidad-filter" style="background: transparent; color: var(--text-secondary); border: 1px solid var(--border-color); border-radius: 16px; padding: 6px 12px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap;">🎒 Turistas</button>
+                        <button onclick="window.filterCommunity('profesional')" id="filter-profesional" class="comunidad-filter" style="background: transparent; color: var(--text-secondary); border: 1px solid var(--border-color); border-radius: 16px; padding: 6px 12px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap;">🚕 Profesionales</button>
+                    </div>
+                </div>
+                <div id="comunidad-container" style="padding: 16px; display: flex; flex-direction: column; gap: 12px;">
+                    <!-- Community cards go here -->
+                </div>
+            </div>
+
             <!-- TAB DMs (Mensajes Directos) -->
             <div id="tab-dms" style="display: none; flex: 1; width: 100%; min-height: 0; flex-direction: column; background: var(--bg-color); max-width: 480px; margin: 0 auto; overflow-y: auto;">
                 <div style="padding: 16px; background: var(--header-bg); border-bottom: 1px solid var(--header-border); position: sticky; top: 0; z-index: 10;">
@@ -508,6 +534,10 @@ import themeData from '../data/theme.json';
                 <button onclick="window.switchTab('chat')" id="nav-tab-chat" class="nav-tab active" style="background: none; border: none; display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--primary-color); cursor: pointer; flex: 1;">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z"/></svg>
                     <span style="font-size: 11px; font-weight: 600;">Asistente</span>
+                </button>
+                <button onclick="window.switchTab('comunidad')" id="nav-tab-comunidad" class="nav-tab" style="background: none; border: none; display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text-secondary); cursor: pointer; flex: 1;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    <span style="font-size: 11px; font-weight: 600;">Comunidad</span>
                 </button>
                 <button onclick="window.switchTab('dms')" id="nav-tab-dms" class="nav-tab" style="background: none; border: none; display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text-secondary); cursor: pointer; flex: 1; position: relative;">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
