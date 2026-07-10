@@ -2867,12 +2867,26 @@
                 document.getElementById('public-profile-username').textContent = '@' + (p.username || 'usuario');
                 document.getElementById('public-profile-bio').textContent = p.bio || 'Sin biografía';
                 
-                const badges = {
-                    'local': '🌴',
-                    'turista': '🎒',
-                    'profesional': '🚕'
-                };
-                document.getElementById('public-profile-category-badge').textContent = badges[p.category] || '';
+                let badgeHtml = '';
+                if (p.category === 'profesional') {
+                    badgeHtml = `<span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; margin-left: 8px;">GADITAN PROFESIONAL</span>`;
+                } else if (p.category === 'local') {
+                    badgeHtml = `<span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; margin-left: 8px;">LOCAL</span>`;
+                } else if (p.category === 'turista') {
+                    badgeHtml = `<span style="background: #f59e0b; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; margin-left: 8px;">TURISTA</span>`;
+                }
+                
+                if (p.verified) {
+                    badgeHtml += `<span style="color: #3b82f6; margin-left: 4px; display: inline-flex; align-items: center;" title="Cuenta Verificada">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-1.9 14.7L6 12.6l1.4-1.4 2.7 2.7 6.6-6.6 1.4 1.4-8 8z"/>
+                        </svg>
+                    </span>`;
+                }
+                
+                document.getElementById('public-profile-category-badge').innerHTML = badgeHtml;
+                document.getElementById('public-profile-category-badge').style.display = 'inline-flex';
+                document.getElementById('public-profile-category-badge').style.alignItems = 'center';
                 
                 // Color banner depending on category
                 const banner = document.getElementById('public-profile-banner');

@@ -9,7 +9,7 @@ export async function onRequestGet(context) {
 
     try {
         // Query user data
-        const userQuery = `SELECT id, name, username, bio, category, avatar_url, picture, created_at, dm_privacy FROM users WHERE id = ?`;
+        const userQuery = `SELECT id, name, username, bio, category, verified, avatar_url, picture, created_at, dm_privacy FROM users WHERE id = ?`;
         const user = await env.DB.prepare(userQuery).bind(userId).first();
 
         if (!user) {
@@ -27,6 +27,7 @@ export async function onRequestGet(context) {
             username: user.username,
             bio: user.bio,
             category: user.category,
+            verified: user.verified,
             avatar_url: user.picture || user.avatar_url,
             created_at: user.created_at,
             dm_privacy: user.dm_privacy || 'everyone',
