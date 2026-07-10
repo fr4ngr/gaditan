@@ -434,6 +434,10 @@ import themeData from '../data/theme.json';
                         </div>
                         <h3 id="profile-page-name" style="margin: 0 0 8px 0; font-size: 20px; color: var(--text-primary);">Invitado</h3>
                         <p id="profile-page-desc" style="margin: 0 0 8px 0; font-size: 14px; color: var(--text-secondary); font-weight: 500;">Inicia sesión para guardar tus favoritos en la nube.</p>
+                        <div id="profile-page-stats" style="display: none; justify-content: center; gap: 8px; margin-bottom: 16px;">
+                            <span id="profile-page-posts-count" style="background: var(--chat-bg); color: var(--text-secondary); font-size: 12px; font-weight: 600; padding: 6px 12px; border-radius: 20px;">0 Publicaciones</span>
+                        </div>
+                        <div id="profile-page-date" style="display: none; font-size: 12px; color: var(--text-secondary); margin-bottom: 20px;">Miembro desde: ...</div>
                         <p id="profile-page-bio" style="margin: 0 0 20px 0; font-size: 14px; color: var(--text-primary); display: none; line-height: 1.4; max-width: 280px; margin-left: auto; margin-right: auto;"></p>
                         
                         <div style="display: flex; gap: 8px;">
@@ -487,7 +491,13 @@ import themeData from '../data/theme.json';
             <!-- TAB DMs (Mensajes Directos) -->
             <div id="tab-dms" style="display: none; flex: 1; width: 100%; min-height: 0; flex-direction: column; background: var(--bg-color); max-width: 480px; margin: 0 auto; overflow-y: auto;">
                 <div style="padding: 16px; background: var(--header-bg); border-bottom: 1px solid var(--header-border); position: sticky; top: 0; z-index: 10;">
-                    <h2 style="margin: 0; font-size: 20px; color: var(--text-primary);">Mensajes</h2>
+                    <div style="position: relative;">
+                        <input type="text" id="user-search-input" placeholder="Buscar usuarios (@usuario o nombre)..." style="width: 100%; padding: 10px 14px 10px 36px; border-radius: 20px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary); font-size: 14px; box-sizing: border-box; outline: none;">
+                        <span style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 14px; color: var(--text-secondary);">🔍</span>
+                    </div>
+                    <div id="user-search-results" style="display: none; position: absolute; top: 100%; left: 16px; right: 16px; background: var(--header-bg); border: 1px solid var(--border-color); border-radius: 12px; margin-top: 4px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); max-height: 250px; overflow-y: auto; z-index: 20;">
+                        <!-- Resultados de búsqueda -->
+                    </div>
                 </div>
                 <div id="dms-inbox-container" style="padding: 16px; display: flex; flex-direction: column; gap: 8px;">
                     <!-- Inbox items go here -->

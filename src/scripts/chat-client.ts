@@ -1619,6 +1619,26 @@
                     profileBio.style.display = 'none';
                 }
             }
+
+            const profileStats = document.getElementById('profile-page-stats');
+            const profilePostsCount = document.getElementById('profile-page-posts-count');
+            const profileDate = document.getElementById('profile-page-date');
+            
+            if (profileStats && profilePostsCount) {
+                profileStats.style.display = 'flex';
+                const count = dataMe.user.posts_count || 0;
+                profilePostsCount.textContent = count + (count === 1 ? ' Publicación' : ' Publicaciones');
+            }
+            
+            if (profileDate) {
+                if (dataMe.user.created_at) {
+                    const d = new Date(dataMe.user.created_at);
+                    profileDate.textContent = 'Miembro desde: ' + d.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' });
+                    profileDate.style.display = 'block';
+                } else {
+                    profileDate.style.display = 'none';
+                }
+            }
             if (profileEditBtn) {
                 profileEditBtn.style.display = 'block';
             }
@@ -2886,6 +2906,79 @@
     };
 
     // --- LOGICA DE MENSAJES DIRECTOS (DMs) ---
+
+    // User Search Logic
+    const userSearchInput = document.getElementById('user-search-input') as HTMLInputElement;
+    const userSearchResults = document.getElementById('user-search-results');
+    let userSearchTimeout;
+
+    if (userSearchInput && userSearchResults) {
+        // Hide results on outside click
+        document.addEventListener('click', (e) => {
+            if (!userSearchInput.contains(e.target as Node) && !userSearchResults.contains(e.target as Node)) {
+                userSearchResults.style.display = 'none';
+            }
+        });
+
+        userSearchInput.addEventListener('input', (e) => {
+            const query = (e.target as HTMLInputElement).value.trim();
+            if (query.length < 2) {
+                userSearchResults.style.display = 'none';
+                return;
+            }
+
+            clearTimeout(userSearchTimeout);
+            userSearchTimeout = setTimeout(async () => {
+                try {
+                    const res = await fetch('/api/users/search?q=' + encodeURIComponent(query));
+                    const data = await res.json();
+                    
+                    if (!data.users || data.users.length === 0) {
+                        userSearchResults.innerHTML = '<div style="padding: 12px; color: var(--text-secondary); font-size: 14px; text-align: center;">No se encontraron usuarios.</div>';
+                        userSearchResults.style.display = 'block';
+                        return;
+                    }
+
+                    userSearchResults.innerHTML = '';
+                    data.users.forEach(user => {
+                        const div = document.createElement('div');
+                        div.style.cssText = "padding: 12px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border-color); cursor: pointer; transition: background 0.2s;";
+                        div.onmouseover = () => div.style.background = 'var(--chat-bg)';
+                        div.onmouseout = () => div.style.background = 'transparent';
+                        
+                        const img = document.createElement('img');
+                        img.src = user.avatar_url || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(user.name || '?');
+                        img.style.cssText = "width: 32px; height: 32px; border-radius: 50%; object-fit: cover;";
+                        
+                        const infoDiv = document.createElement('div');
+                        const nameDiv = document.createElement('div');
+                        nameDiv.style.cssText = "font-weight: 600; color: var(--text-primary); font-size: 14px;";
+                        nameDiv.textContent = user.name || 'Usuario';
+                        
+                        const userDiv = document.createElement('div');
+                        userDiv.style.cssText = "font-size: 12px; color: var(--text-secondary);";
+                        userDiv.textContent = '@' + (user.username || 'usuario');
+                        
+                        infoDiv.appendChild(nameDiv);
+                        infoDiv.appendChild(userDiv);
+                        div.appendChild(img);
+                        div.appendChild(infoDiv);
+                        
+                        div.onclick = () => {
+                            userSearchResults.style.display = 'none';
+                            userSearchInput.value = '';
+                            window.openDMChat(user.id, user.name, user.avatar_url);
+                        };
+                        
+                        userSearchResults.appendChild(div);
+                    });
+                    userSearchResults.style.display = 'block';
+                } catch (err) {
+                    console.error("Search error", err);
+                }
+            }, 300);
+        });
+    }
     
     let activeDMChatUserId = null;
     let dmChatPollingInterval = null;
