@@ -1008,17 +1008,14 @@ import themeData from '../data/theme.json';
                 <div id="public-profile-banner" style="width: 100%; height: 140px; background: linear-gradient(135deg, #3b82f6, #8b5cf6); flex-shrink: 0;"></div>
 
                 <div style="padding: 0 16px 16px 16px; position: relative; display: flex; flex-direction: column; overflow-y: auto; flex: 1;">
-                    <!-- Zona Superior: Avatar y Botón -->
-                    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: -40px; margin-bottom: 12px;">
+                    <!-- Zona Superior: Avatar -->
+                    <div style="display: flex; justify-content: center; margin-top: -40px; margin-bottom: 12px;">
                         <img id="public-profile-avatar" src="" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 4px solid var(--bg-color); background: var(--bg-color);" />
-                        <button id="public-profile-dm-btn" style="background: var(--primary-color); color: white; border: none; padding: 8px 16px; border-radius: 20px; font-weight: 600; font-size: 14px; cursor: pointer; display: none; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);">
-                            ✉️ Mensaje
-                        </button>
                     </div>
 
                     <!-- Información de Identidad -->
-                    <div style="margin-bottom: 16px;">
-                        <div style="display: flex; align-items: center; gap: 6px;">
+                    <div style="margin-bottom: 16px; text-align: center;">
+                        <div style="display: flex; align-items: center; justify-content: center; gap: 6px;">
                             <h2 id="public-profile-name" style="margin: 0; font-size: 22px; color: var(--text-primary); font-weight: 800; line-height: 1.2;">Nombre</h2>
                             <span id="public-profile-category-badge" style="font-size: 18px;" title="Categoría"></span>
                         </div>
@@ -1026,10 +1023,10 @@ import themeData from '../data/theme.json';
                     </div>
 
                     <!-- Biografía -->
-                    <p id="public-profile-bio" style="font-size: 15px; color: var(--text-primary); line-height: 1.5; margin: 0 0 16px 0; white-space: pre-wrap;"></p>
+                    <p id="public-profile-bio" style="font-size: 15px; color: var(--text-primary); line-height: 1.5; margin: 0 0 16px 0; white-space: pre-wrap; text-align: center;"></p>
 
                     <!-- Métricas y Fecha -->
-                    <div style="display: flex; align-items: center; gap: 16px; font-size: 14px; color: var(--text-secondary); margin-bottom: 24px;">
+                    <div style="display: flex; justify-content: center; align-items: center; gap: 16px; font-size: 14px; color: var(--text-secondary); margin-bottom: 20px;">
                         <div style="display: flex; align-items: center; gap: 4px;">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                             <span id="public-profile-date">Se unió en...</span>
@@ -1040,11 +1037,18 @@ import themeData from '../data/theme.json';
                         </div>
                     </div>
 
+                    <!-- Botón de Mensaje (Centrado) -->
+                    <div style="display: flex; justify-content: center; margin-bottom: 24px;">
+                        <button id="public-profile-dm-btn" style="background: var(--primary-color); color: white; border: none; padding: 10px 24px; border-radius: 20px; font-weight: 600; font-size: 15px; cursor: pointer; display: none; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);">
+                            ✉️ Enviar Mensaje
+                        </button>
+                    </div>
+
                     <!-- Línea separadora -->
                     <div style="height: 1px; background: var(--header-border); margin: 0 -16px; margin-bottom: 16px;"></div>
 
                     <!-- Últimas Publicaciones -->
-                    <h3 style="margin: 0 0 12px 0; font-size: 18px; color: var(--text-primary);">Últimas Publicaciones</h3>
+                    <h3 style="margin: 0 0 12px 0; font-size: 18px; color: var(--text-primary); text-align: center;">Últimas Publicaciones</h3>
                     <div id="public-profile-recent-posts" style="display: flex; flex-direction: column; gap: 12px; padding-bottom: 20px;">
                         <!-- Mini posts go here -->
                         <div style="text-align: center; color: var(--text-secondary); padding: 20px;">Cargando...</div>
