@@ -2816,6 +2816,75 @@
         }
     };
 
+    window.openPublicProfile = async function(userId) {
+        if (!userId) return;
+        const modal = document.getElementById('public-profile-modal');
+        if (!modal) return;
+        
+        // Show loading state or reset
+        document.getElementById('public-profile-name').textContent = 'Cargando...';
+        document.getElementById('public-profile-username').textContent = '';
+        document.getElementById('public-profile-bio').textContent = '';
+        document.getElementById('public-profile-category').textContent = '';
+        document.getElementById('public-profile-posts').textContent = '';
+        document.getElementById('public-profile-date').textContent = '';
+        document.getElementById('public-profile-avatar').src = 'https://ui-avatars.com/api/?name=...';
+        document.getElementById('public-profile-dm-btn').style.display = 'none';
+        
+        modal.style.display = 'flex';
+
+        try {
+            const res = await fetch('/api/users/profile?id=' + encodeURIComponent(userId));
+            const data = await res.json();
+            
+            if (data.success && data.profile) {
+                const p = data.profile;
+                document.getElementById('public-profile-name').textContent = p.name || 'Usuario';
+                document.getElementById('public-profile-username').textContent = '@' + (p.username || 'usuario');
+                document.getElementById('public-profile-bio').textContent = p.bio || 'Sin biografía';
+                
+                const cats = {
+                    'local': '🌴 Local',
+                    'turista': '✈️ Turista',
+                    'profesional': '💼 Profesional'
+                };
+                document.getElementById('public-profile-category').textContent = cats[p.category] || 'Usuario';
+                
+                document.getElementById('public-profile-posts').textContent = p.posts_count + (p.posts_count === 1 ? ' Publicación' : ' Publicaciones');
+                
+                if (p.created_at) {
+                    const d = new Date(p.created_at);
+                    document.getElementById('public-profile-date').textContent = 'Miembro desde: ' + d.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' });
+                } else {
+                    document.getElementById('public-profile-date').textContent = '';
+                }
+
+                document.getElementById('public-profile-avatar').src = p.avatar_url || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(p.name || '?');
+
+                const dataMe = (window as any).dataMe;
+                const myUserId = dataMe?.user?.id;
+                
+                if (myUserId && myUserId !== userId) {
+                    // Check if DM is allowed
+                    if (p.dm_privacy === 'nobody') {
+                        document.getElementById('public-profile-dm-btn').style.display = 'none';
+                    } else {
+                        const dmBtn = document.getElementById('public-profile-dm-btn');
+                        dmBtn.style.display = 'flex';
+                        dmBtn.onclick = () => {
+                            modal.style.display = 'none';
+                            window.openDMChat(userId, p.name, p.avatar_url);
+                        };
+                    }
+                }
+            } else {
+                document.getElementById('public-profile-name').textContent = 'Usuario no encontrado';
+            }
+        } catch (e) {
+            document.getElementById('public-profile-name').textContent = 'Error de conexión';
+        }
+    };
+
     // --- LOGICA DE MENSAJES DIRECTOS (DMs) ---
     
     let activeDMChatUserId = null;

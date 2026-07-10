@@ -180,10 +180,14 @@ import themeData from '../data/theme.json';
 
                         const img = document.createElement('img');
                         img.src = post.user_avatar || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(post.user_name || '?');
-                        img.style.cssText = "width: 36px; height: 36px; border-radius: 50%; object-fit: cover;";
+                        img.style.cssText = "width: 36px; height: 36px; border-radius: 50%; object-fit: cover; cursor: pointer;";
                         img.alt = "Avatar";
+                        img.onclick = () => window.openPublicProfile(post.user_id);
 
                         const nameContainer = document.createElement('div');
+                        nameContainer.style.cursor = 'pointer';
+                        nameContainer.onclick = () => window.openPublicProfile(post.user_id);
+                        
                         const nameDiv = document.createElement('div');
                         nameDiv.style.cssText = "font-weight: 600; color: var(--text-primary); font-size: 15px;";
                         nameDiv.textContent = post.user_name || 'Usuario';
@@ -948,7 +952,32 @@ import themeData from '../data/theme.json';
                         Guardar Cambios
                     </button>
                 </div>
-                <div id="edit-profile-error" style="display: none; margin-top: 16px; color: #ef4444; font-size: 13px; text-align: center;"></div>
+                <p id="edit-profile-error" style="color: #ef4444; font-size: 13px; text-align: center; margin: 16px 0 0 0; display: none;"></p>
+            </div>
+        </div>
+
+        <!-- MODAL DE PERFIL PUBLICO -->
+        <div id="public-profile-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2500; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
+            <div style="background: var(--bg-color); width: 90%; max-width: 400px; border-radius: 24px; padding: 24px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); border: 1px solid var(--border-color); text-align: center; position: relative;">
+                <button onclick="document.getElementById('public-profile-modal').style.display='none'" style="position: absolute; top: 16px; right: 16px; background: none; border: none; color: var(--text-secondary); font-size: 20px; cursor: pointer;">✕</button>
+                
+                <img id="public-profile-avatar" src="" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin: 0 auto 16px auto; display: block; border: 2px solid var(--primary-color);" />
+                
+                <h2 id="public-profile-name" style="margin: 0 0 4px 0; font-size: 20px; color: var(--text-primary);">Nombre</h2>
+                <div id="public-profile-username" style="font-size: 14px; color: var(--primary-color); font-weight: 600; margin-bottom: 16px;">@usuario</div>
+                
+                <div style="display: flex; justify-content: center; gap: 8px; margin-bottom: 16px;">
+                    <span id="public-profile-category" style="background: var(--chat-bg); color: var(--text-secondary); font-size: 12px; font-weight: 600; padding: 6px 12px; border-radius: 20px;">Categoría</span>
+                    <span id="public-profile-posts" style="background: var(--chat-bg); color: var(--text-secondary); font-size: 12px; font-weight: 600; padding: 6px 12px; border-radius: 20px;">0 Publicaciones</span>
+                </div>
+                
+                <div id="public-profile-date" style="font-size: 12px; color: var(--text-secondary); margin-bottom: 16px;">Miembro desde: ...</div>
+                
+                <p id="public-profile-bio" style="font-size: 14px; color: var(--text-primary); line-height: 1.5; margin: 0 0 24px 0; white-space: pre-wrap; text-align: left; background: var(--header-bg); padding: 12px; border-radius: 12px; border: 1px solid var(--border-color);"></p>
+                
+                <button id="public-profile-dm-btn" style="width: 100%; background: var(--primary-color); color: white; border: none; padding: 14px; border-radius: 16px; font-weight: 600; font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; display: none;">
+                    ✉️ Enviar Mensaje
+                </button>
             </div>
         </div>
 
