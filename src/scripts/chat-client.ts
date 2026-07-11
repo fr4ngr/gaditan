@@ -101,10 +101,10 @@ import { renderCardDOM } from '../components/cards/CardRenderer';
             const suggestedBlocks = messageDiv.querySelector('.suggested-blocks-container');
             const metaBlock = messageDiv.querySelector('.message-meta');
             
-            if (suggestedBlocks) {
-                messageDiv.insertBefore(actionsDiv, suggestedBlocks);
-            } else if (metaBlock) {
-                messageDiv.insertBefore(actionsDiv, metaBlock);
+            if (suggestedBlocks && suggestedBlocks.parentNode) {
+                suggestedBlocks.parentNode.insertBefore(actionsDiv, suggestedBlocks);
+            } else if (metaBlock && metaBlock.parentNode) {
+                metaBlock.parentNode.insertBefore(actionsDiv, metaBlock);
             } else {
                 messageDiv.appendChild(actionsDiv);
             }
