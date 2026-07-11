@@ -29,7 +29,7 @@ Copia este código y pégalo directamente en tu base de conocimiento:
 
 ## 3. Tarifas Interurbanas (Salida de Cádiz Capital - Año 2026)
 
-*   **Regla de Facturación Total:** Si el destino final está fuera de Cádiz, el 100% del viaje se cobra con la tarifa interurbana, empezando a contar desde el kilómetro cero (el punto exacto de recogida del cliente) (Fuentes: Decreto 84/2021 / cadizchat).
+*   **Regla de Facturación Total:** Si el destino final está fuera de Cádiz, el 100% del viaje se cobra con la tarifa interurbana, empezando a contar desde el kilómetro cero (el punto exacto de recogida del cliente) (Fuentes: Decreto 84/2021 / gaditan).
 *   **Regla de los 12 Kilómetros:** La bajada de bandera interurbana solo se cobra en viajes de menos de 12 km. Para viajes más largos, la bajada de bandera es 0,00 € (Fuente: Orden de 5 de abril de 2022 / BOJA n° 68).
 *   **Tarifa 7 (Ordinaria - L a V de 06:00 a 22:00 h):** Bajada de bandera: 3,66 € | Precio Km: 0,71 € | Mínimo percepción: 3,83 € | Hora espera: 17,57 € (Fuente: Resolución de 5 de marzo de 2026 / BOJA n° 49).
 *   **Tarifa 8 (Especial - Noches de 22:00 a 06:00 h y Fines de semana/Festivos):** Bajada de bandera: 3,60 € | Precio Km: 0,82 € | Mínimo percepción: 4,51 € | Hora espera: 20,71 € (Fuente: Resolución de 5 de marzo de 2026 / BOJA nº 49).
@@ -46,7 +46,7 @@ Copia este código y pégalo directamente en tu base de conocimiento:
 
 *   **Regla de los 150 metros:** Si un taxi circula por la calle libre, no puede recoger a un cliente si este se encuentra a menos de 150 metros de una parada oficial (en el sentido de la marcha). Se exceptúa si el cliente tiene movilidad reducida (Fuente: Ordenanza Municipal de Cádiz).
 *   **Derecho de Elección en Parada:** El cliente que acude a una parada oficial tiene el derecho legal de elegir el vehículo que prefiera contratar; no está obligado a tomar el primero de la fila (Fuente: Ordenanza Municipal de Cádiz).
-*   **Listado de Paradas Principales:** Parador, Falla, Mora, San Antonio, Palillero, Plaza Tortugas, La Punta (solo 22 a 7h), Comes, Catedral, San Juan de Dios, Estación de Adif (Oeste), INSS, Estadio (Helios), Hospital Puerta del Mar, Zona Franca (Fuente: cadizchat).
+*   **Listado de Paradas Principales:** Parador, Falla, Mora, San Antonio, Palillero, Plaza Tortugas, La Punta (solo 22 a 7h), Comes, Catedral, San Juan de Dios, Estación de Adif (Oeste), INSS, Estadio (Helios), Hospital Puerta del Mar, Zona Franca (Fuente: gaditan).
 
 ## 6. Derechos del Pasajero: Pagos, Recibos y Confort
 
