@@ -1,4 +1,6 @@
 
+import { renderCardDOM } from '../components/cards/CardRenderer';
+
     // --- DATOS DE PARADAS GLOBALES ---
     const CADIZ_STOPS = [
         { name: "Parador", desc: "Parador de Cádiz", lat: 36.5342075, lon: -6.3050849 },
@@ -48,16 +50,28 @@
         }
     }
 
-    function addMessage(sender: 'user' | 'bot', htmlContent: string, shouldScroll: boolean = true) {
+    function addMessage(sender: 'user' | 'bot', content: string | HTMLElement, shouldScroll: boolean = true) {
         const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         const messageDiv = document.createElement('div');
         messageDiv.className = `message ${sender}`;
         
-        // Asignamos el HTML principal y el tiempo
-        messageDiv.innerHTML = `${htmlContent}<div class="message-meta"><span class="message-time">${time}</span></div>`;
+        const contentWrapper = document.createElement('div');
+        contentWrapper.style.display = 'contents';
+        if (typeof content === 'string') {
+            contentWrapper.innerHTML = content;
+        } else {
+            contentWrapper.appendChild(content);
+        }
+        
+        const metaDiv = document.createElement('div');
+        metaDiv.className = 'message-meta';
+        metaDiv.innerHTML = `<span class="message-time">${time}</span>`;
+        
+        messageDiv.appendChild(contentWrapper);
+        messageDiv.appendChild(metaDiv);
         
         if (sender === 'bot') {
-            const rawContent = encodeURIComponent(htmlContent);
+            const rawContent = typeof content === 'string' ? encodeURIComponent(content) : encodeURIComponent(contentWrapper.innerHTML);
             
             const actionsDiv = document.createElement('div');
             actionsDiv.className = 'msg-actions-row';
@@ -135,226 +149,8 @@
     }
 
     // --- GENERATIVE UI ENGINE (TARJETAS) ---
-    function renderCard(data: any, msgId: string): string {
-        if (data.content) {
-            data.content = window.escapeHTML(data.content).replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\*(.*?)\*/g, '<i>$1</i>').replace(/\n/g, '<br>');
-        }
-        const title = data.title || '';
-        const subtitle = data.subtitle || '';
-        const badge = data.badge ? `<div style="font-size: 0.75rem; text-transform: uppercase; font-weight: bold; color: var(--primary-color); letter-spacing: 0.5px; margin-bottom: 4px;">${data.badge}</div>` : '';
-        const img = data.imageUrl ? `<img src="${data.imageUrl}" alt="${title}" style="width: 100%; height: 180px; object-fit: cover;">` : '<div style="width: 100%; height: 180px; background: linear-gradient(45deg, #f1f5f9, #e2e8f0); display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 2.5rem; border-bottom: 1px solid var(--border-color);">🖼️</div>';
-        
-        let buttonHtml = '';
-        if (data.buttonText) {
-            const action = data.buttonAction ? `onclick="window.sendToAI('${data.buttonAction.replace(/'/g, "\\'")}')"` : '';
-            const url = data.buttonUrl ? `href="${data.buttonUrl}" target="_blank"` : '';
-            if (url) {
-                buttonHtml = `<a ${url} class="btn btn-primary btn-rect" style="display:block; text-align:center; text-decoration:none; margin-top:12px;">${data.buttonText}</a>`;
-            } else {
-                buttonHtml = `<button class="btn btn-primary btn-rect" style="width:100%; margin-top:12px;" ${action}>${data.buttonText}</button>`;
-            }
-        }
-
-        if (data.cardType === 'HeroCard') {
-            return `
-            <div class="flex-col gap-sm" style="width: 100%; max-width: 100%; align-self: flex-start; margin-bottom: 0.5rem;">
-                ${data.content ? `<span class="bubble" style="border-bottom-left-radius: 4px;">${data.content}</span>` : ''}
-                <div class="card mt-sm" style="overflow: hidden; border-radius: 12px; border: 1px solid var(--border-color);">
-                    ${img}
-                    <div class="card-body">
-                        ${badge}
-                        <h3 style="margin:0 0 8px 0; color:var(--text-color);">${title}</h3>
-                        ${subtitle ? `<p class="text-muted" style="margin:0">${subtitle}</p>` : ''}
-                        ${buttonHtml}
-                    </div>
-                </div>
-            </div>`;
-        }
-
-        if (data.cardType === 'ListCard') {
-            let listHtml = '';
-            if (data.listItems && Array.isArray(data.listItems)) {
-                listHtml = data.listItems.map((item: any, i: number) => `
-                    <div style="display:flex; align-items:center; gap: 12px; padding: 12px 0; border-bottom: ${i < data.listItems.length - 1 ? '1px solid var(--border-color)' : 'none'};">
-                        <div style="font-size:1.5rem; width:40px; text-align:center; flex-shrink:0;">${item.icon || '📌'}</div>
-                        <div style="flex:1;">
-                            <div style="font-weight:600; color:var(--text-color);">${item.title}</div>
-                            ${item.subtitle ? `<div style="font-size:0.85rem; color:var(--text-muted); margin-top:2px;">${item.subtitle}</div>` : ''}
-                        </div>
-                    </div>
-                `).join('');
-            }
-            return `
-            <div class="flex-col gap-sm" style="width: 100%; max-width: 100%; align-self: flex-start; margin-bottom: 0.5rem;">
-                ${data.content ? `<span class="bubble" style="border-bottom-left-radius: 4px;">${data.content}</span>` : ''}
-                <div class="card mt-sm">
-                    <div class="card-body">
-                        ${badge}
-                        <h3 style="margin:0 0 12px 0; color:var(--text-color);">${title}</h3>
-                        <div style="display:flex; flex-direction:column;">
-                            ${listHtml}
-                        </div>
-                        ${buttonHtml}
-                    </div>
-                </div>
-            </div>`;
-        }
-
-        if (data.cardType === 'BusinessCard') {
-            return `
-            <div class="flex-col gap-sm" style="width: 100%; max-width: 100%; align-self: flex-start; margin-bottom: 0.5rem;">
-                ${data.content ? `<span class="bubble" style="border-bottom-left-radius: 4px;">${data.content}</span>` : ''}
-                <div class="card mt-sm">
-                    <div class="card-body">
-                        ${badge}
-                        <h3 style="margin:0 0 4px 0; color:var(--text-color);">${data.contactName || title}</h3>
-                        ${subtitle ? `<p class="text-muted" style="margin:0 0 12px 0">${subtitle}</p>` : ''}
-                        <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top: 12px;">
-                            ${data.phoneNumber ? `<a href="tel:${data.phoneNumber.replace(/\s+/g, '')}" class="btn btn-success" style="flex:1; padding:8px; text-align:center; text-decoration:none;">📞 Llamar</a>` : ''}
-                            ${data.whatsappNumber ? `<a href="https://wa.me/${data.whatsappNumber.replace(/\s+/g, '').replace('+', '')}" class="btn" style="flex:1; background:#25D366; color:white; padding:8px; text-align:center; text-decoration:none;">💬 WhatsApp</a>` : ''}
-                            ${data.website ? `<a href="${data.website}" target="_blank" class="btn btn-primary" style="flex:1; padding:8px; text-align:center; text-decoration:none;">🌐 Web</a>` : ''}
-                        </div>
-                        ${buttonHtml}
-                    </div>
-                </div>
-            </div>`;
-        }
-
-        if (data.cardType === 'ArticleCard') {
-            return `
-            <div class="flex-col gap-sm" style="width: 100%; max-width: 100%; align-self: flex-start; margin-bottom: 0.5rem;">
-                ${data.content ? `<span class="bubble" style="border-bottom-left-radius: 4px;">${data.content}</span>` : ''}
-                <div class="card mt-sm" style="border-left: 4px solid var(--primary-color);">
-                    <div class="card-body">
-                        ${badge}
-                        <h4 style="margin:0 0 8px 0; color:var(--text-color);">${title}</h4>
-                        <p class="text-muted" style="margin:0; font-size: 0.95rem; line-height: 1.5;">${subtitle}</p>
-                        ${buttonHtml}
-                    </div>
-                </div>
-            </div>`;
-        }
-
-        if (data.cardType === 'AlertCard') {
-            return `
-            <div class="flex-col gap-sm" style="width: 100%; max-width: 100%; align-self: flex-start; margin-bottom: 0.5rem;">
-                ${data.content ? `<span class="bubble" style="border-bottom-left-radius: 4px;">${data.content}</span>` : ''}
-                <div class="card mt-sm" style="background-color: #fff3cd; border: 1px solid #ffeeba;">
-                    <div class="card-body">
-                        <div style="color: #856404; font-weight: bold; margin-bottom: 4px;">${badge || '⚠️ Aviso'}</div>
-                        <h3 style="margin:0 0 8px 0; color: #856404;">${title}</h3>
-                        <p style="margin:0; color: #856404; font-size: 0.9rem;">${subtitle}</p>
-                        ${buttonHtml}
-                    </div>
-                </div>
-            </div>`;
-        }
-
-        if (data.cardType === 'ProductCard') {
-            return `
-            <div class="flex-col gap-sm" style="width: 100%; max-width: 100%; align-self: flex-start; margin-bottom: 0.5rem;">
-                ${data.content ? `<span class="bubble" style="border-bottom-left-radius: 4px;">${data.content}</span>` : ''}
-                <div class="card mt-sm" style="overflow: hidden; display: flex; flex-direction: row; align-items: center;">
-                    ${data.imageUrl ? `<img src="${data.imageUrl}" alt="${title}" style="width: 100px; height: 100px; object-fit: cover;">` : '<div style="width: 100px; height: 100px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 1.5rem; border-right: 1px solid var(--border-color);">📦</div>'}
-                    <div class="card-body" style="flex:1;">
-                        ${badge}
-                        <h4 style="margin:0 0 4px 0; color:var(--text-color);">${title}</h4>
-                        <div style="display:flex; align-items:center; gap:8px;">
-                            ${data.price ? `<span style="font-weight:bold; color:var(--primary-color); font-size:1.1rem;">${data.price}</span>` : ''}
-                            ${data.oldPrice ? `<span style="text-decoration:line-through; color:var(--text-muted); font-size:0.9rem;">${data.oldPrice}</span>` : ''}
-                        </div>
-                        ${buttonHtml}
-                    </div>
-                </div>
-            </div>`;
-        }
-
-        if (data.cardType === 'ProfileCard') {
-            return `
-            <div class="flex-col gap-sm" style="width: 100%; max-width: 100%; align-self: flex-start; margin-bottom: 0.5rem;">
-                ${data.content ? `<span class="bubble" style="border-bottom-left-radius: 4px;">${data.content}</span>` : ''}
-                <div class="card mt-sm">
-                    <div class="card-body" style="display:flex; align-items:center; gap: 16px;">
-                        ${data.imageUrl ? `<img src="${data.imageUrl}" alt="${data.contactName || title}" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary-color);">` : '<div style="width:60px; height:60px; border-radius:50%; background:var(--primary-color); color:white; display:flex; align-items:center; justify-content:center; font-size:1.5rem;">👤</div>'}
-                        <div style="flex:1;">
-                            ${badge}
-                            <h3 style="margin:0 0 4px 0; color:var(--text-color);">${data.contactName || title}</h3>
-                            ${subtitle ? `<p class="text-muted" style="margin:0; font-size:0.9rem;">${subtitle}</p>` : ''}
-                        </div>
-                    </div>
-                    ${buttonHtml ? `<div style="padding: 0 16px 16px 16px;">${buttonHtml}</div>` : ''}
-                </div>
-            </div>`;
-        }
-
-        if (data.cardType === 'MapCard') {
-            const mapIcon = `📍`;
-            if (data.lat && data.lon) {
-                return `
-                <div class="flex-col gap-sm" style="width: 100%; max-width: 100%; align-self: flex-start;">
-                    ${data.content ? `<span class="bubble">${data.content}</span>` : ''}
-                    <button class="btn btn-primary" onclick="window.openFullscreenMap('${data.lat}', '${data.lon}', '${msgId}')">
-                        <div class="icon-circle">${mapIcon}</div> Ver ${data.locationTitle || title || 'ubicación'} en mapa
-                    </button>
-                </div>`;
-            }
-            return data.content ? `<span class="bubble">${data.content}</span>` : '';
-        }
-
-        if (data.cardType === 'NavigationCard') {
-            return `
-            <div class="flex-col gap-sm" style="width: 100%; max-width: 85%; align-self: flex-start;">
-                ${data.content ? `<span class="bubble">${data.content}</span>` : ''}
-                ${data.lat && data.lon ? `
-                <div class="card card-lg mt-sm">
-                    <div class="card-body">
-                        <div class="text-title text-center">📍 Destino: ${data.locationTitle || title || 'Ubicación'}</div>
-                        <button class="btn btn-primary btn-rect mt-sm" style="margin:0" onclick="window.startLiveNavigation('${data.lat}', '${data.lon}', '${data.locationTitle || title || 'Destino'}')">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M12 2L4.5 20.29L5.21 21L12 18L18.79 21L19.5 20.29L12 2Z" fill="currentColor"/>
-                            </svg>
-                            Iniciar Navegación
-                        </button>
-                    </div>
-                </div>
-                ` : ''}
-            </div>`;
-        }
-        
-        if (data.cardType === 'GalleryCard') {
-            let html = '';
-            let imagesHtml = '';
-            if (data.imageUrls && Array.isArray(data.imageUrls) && data.imageUrls.length > 0) {
-                imagesHtml = data.imageUrls.map((url: string) => `
-                    <div style="flex: 0 0 85%; scroll-snap-align: center; border-radius: 8px; overflow: hidden; border: 1px solid var(--border-color);">
-                        <img src="${url}" alt="Galería" style="width: 100%; height: 200px; object-fit: cover; display: block;" loading="lazy" />
-                    </div>
-                `).join('');
-            } else {
-                // Placeholder if no images
-                imagesHtml = [1, 2].map((i) => `
-                    <div style="flex: 0 0 85%; scroll-snap-align: center; border-radius: 8px; overflow: hidden; border: 1px solid var(--border-color); background: linear-gradient(45deg, #f1f5f9, #e2e8f0); display: flex; align-items: center; justify-content: center; height: 200px;">
-                        <span style="font-size: 2rem; opacity: 0.5;">📸</span>
-                    </div>
-                `).join('');
-            }
-
-            html = `
-                <div class="card-wrapper" style="animation: slideIn 0.3s ease-out; margin-top: 8px;">
-                    <div style="display: flex; flex-direction: row; overflow-x: auto; scroll-snap-type: x mandatory; gap: 8px; padding-bottom: 4px;">
-                        ${imagesHtml}
-                    </div>
-                </div>
-            `;
-            return `
-            <div class="flex-col gap-sm" style="width: 100%; max-width: 100%; align-self: flex-start; margin-bottom: 0.5rem;">
-                ${data.content ? `<span class="bubble">${data.content}</span>` : ''}
-                ${html}
-            </div>`;
-        }
-
-        // TextCard y Fallback para desconocidos
-        return data.content ? `<span class="bubble">${data.content}</span>` : '';
+    function renderCard(data: any, msgId: string): HTMLElement {
+        return renderCardDOM(data, msgId);
     }
 
     window.escapeHTML = function(str: string) {
@@ -374,7 +170,6 @@
     async function sendMessageToAI(text: string, isHiddenInit: boolean = false, inputType: string = 'typed') {
         if (!text.trim()) return;
         
-        // 1. Pintar mensaje del usuario y guardarlo en historial
         if (!isHiddenInit) {
             addMessage('user', `<span class="bubble">${window.escapeHTML(text)}</span>`);
         }
@@ -384,10 +179,8 @@
             inputField.value = '';
         }
 
-        // 2. Mostrar "Pensando..."
         const typingId = showTypingIndicator();
 
-        // 3. Obtener o crear sessionId
         let sessionId = localStorage.getItem('cadiz_chat_session');
         if (!sessionId) {
             sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
@@ -395,7 +188,6 @@
         }
 
         try {
-            // 4. Llamar al API Endpoint de Astro (SSR)
             const response = await fetch('/api/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -419,34 +211,21 @@
                     </div>
                 `);
                 
-                chatHistory.pop(); // Remove failed user message from history
+                chatHistory.pop();
                 return;
             }
 
-            // Guardar respuesta del bot en el historial (como JSON string para que el modelo lo lea)
             chatHistory.push({ role: 'model', parts: [{ text: JSON.stringify(data) }] });
 
-            // 4. Renderizar la Tarjeta generada por la IA
             const msgId = Date.now().toString();
-            let finalHtml = renderCard(data, msgId);
-
-            // Renderizar Suggested Blocks (Botones)
-            if (data.suggestedBlocks && data.suggestedBlocks.length > 0) {
-                const buttonsHtml = data.suggestedBlocks.map((block: string) => {
-                    return `<button class="suggested-btn" onclick="window.sendToAI('${block}', false, 'click')">${block}</button>`;
-                }).join('');
-                finalHtml += `<div class="suggested-blocks-container">${buttonsHtml}</div>`;
-            }
+            const cardEl = renderCardDOM(data, msgId);
             
-            addMessage('bot', finalHtml);
+            addMessage('bot', cardEl);
 
-
-
-            // 5. Instanciar el mapa en línea o activar navegación
             if (data.cardType === 'NavigationCard' && data.lat && data.lon) {
                 setTimeout(() => {
                     window.startLiveNavigation(data.lat, data.lon, data.stopName || 'Destino');
-                }, 800); // Dar un poco de tiempo para leer el mensaje antes de abrir a pantalla completa
+                }, 800);
             }
 
         } catch (error) {
@@ -459,7 +238,6 @@
     document.addEventListener("DOMContentLoaded", () => {
         const swiper = document.getElementById('main-swiper');
         if (swiper) {
-            // Ajustar al chat sin animación al cargar la página
             swiper.style.scrollBehavior = 'auto';
             swiper.scrollLeft = window.innerWidth;
             setTimeout(() => { swiper.style.scrollBehavior = 'smooth'; }, 50);
@@ -484,7 +262,6 @@
     };
 
     window.openFullscreenMap = function(lat: string | null, lon: string | null, msgId: string) {
-        // Mover panel, actualizar cabecera y cerrar píldora por si estaba abierta
         window.switchPanel('mapa');
         if (window.closeMapInfoPill) window.closeMapInfoPill();
         
@@ -494,7 +271,6 @@
         const container = document.getElementById('fullscreen-widget-area');
         if (!container) return;
 
-        // Limpiar contenedor e inyectar el div del mapa
         container.innerHTML = `<div id="fullscreen-leaflet-${msgId}" style="width: 100%; height: 100%;"></div>`;
 
         setTimeout(() => {
@@ -525,9 +301,8 @@
                 });
             }
 
-            window.currentMap = map; // Guardar referencia global
+            window.currentMap = map; 
             
-            // --- Botón DEV Mode ---
             const devControl = mapL.control({ position: 'bottomright' });
             devControl.onAdd = function() {
                 const btn = mapL.DomUtil.create('button', 'leaflet-bar leaflet-control');
@@ -580,10 +355,9 @@
 
             mapL.control.zoom({ position: 'bottomright' }).addTo(map);
             
-            // Crear panel para los textos (labels) encima de los vectores (zIndex 500)
             map.createPane('labels');
             map.getPane('labels').style.zIndex = 500;
-            map.getPane('labels').style.pointerEvents = 'none'; // No bloquear clics
+            map.getPane('labels').style.pointerEvents = 'none';
             
             mapL.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png', {
                 attribution: '© OpenStreetMap, © CartoDB', subdomains: 'abcd', maxZoom: 20
@@ -608,7 +382,6 @@
                 
                 document.body.style.cursor = 'wait';
 
-                // Fake geolocation for testing (center of Cadiz) if location is outside
                 if (userLat > 37 || userLat < 36 || userLon > -6 || userLon < -7) {
                     userLat = 36.529217;
                     userLon = -6.295707;
@@ -622,7 +395,6 @@
                     const mapL = (window as any).L;
                     map.invalidateSize();
                     
-                    // 1. Calcular distancias en línea recta para filtrar
                     const getDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
                         const R = 6371e3;
                         const dLat = (lat2 - lat1) * Math.PI/180;
@@ -643,7 +415,6 @@
                     
                     const top5 = paradasConDist.slice(0, 5);
                     
-                    // 2. Cálculo real de ruta con OSRM
                     const routeProfile = poiType === 'airport' ? 'routed-car/route/v1/driving' : 'routed-foot/route/v1/foot';
                     Promise.all(top5.map(async (p) => {
                         try {
@@ -662,7 +433,6 @@
                         resultados.sort((a, b) => a.realDistance - b.realDistance);
                         const masCercana = resultados[0];
                         
-                        // Formatear distancia y tiempo
                         let distText = '';
                         if (masCercana.realDistance !== Infinity) {
                             if (masCercana.realDistance > 1000) {
@@ -673,11 +443,8 @@
                         }
                         const timeText = masCercana.duration ? `(${Math.ceil(masCercana.duration / 60)} min ${poiType === 'airport' ? 'en coche' : 'a pie'})` : '';
                         
-                        // Añadir un mensaje al chat
-                        // Enviar destino a la IA para que lo gestione
                         window.sendToAI(`He seleccionado la ubicación: ${masCercana.name}. Dame información sobre este lugar o guíame.`);
                         
-                        // Mostrar el mapa
                         map.setView([masCercana.lat, masCercana.lon], poiType === 'airport' ? 10 : 16);
                         const targetIcon = mapL.divIcon({
                             html: '<div style="background:var(--primary-color); border: 2px solid white; width:16px; height:16px; border-radius:50%; box-shadow:0 2px 4px rgba(0,0,0,0.4);"></div>',
@@ -690,7 +457,6 @@
                         });
                         window.openMapInfoPill(masCercana.name, masCercana.desc, masCercana.lat, masCercana.lon, poiType);
                         
-                        // Activar inmediatamente la ruta y mostrar las indicaciones en la tarjeta
                         setTimeout(() => {
                             window.mapActionDirections(poiType);
                         }, 500);
@@ -918,12 +684,10 @@
                 window.openMapInfoPill("Destino Seleccionado", "Coordenadas exactas", lat, lon);
             }
             
-            // Forzar resize para que Leaflet dibuje bien en el nuevo panel
             setTimeout(() => map.invalidateSize(), 300);
         }, 100);
     };
 
-    // --- LÓGICA DE PÍLDORA DEL MAPA ---
     window.closeMapInfoPill = function() {
         if (window.cancelMapRoute) window.cancelMapRoute();
         const uiContainer = document.getElementById('map-ui-container');
@@ -946,7 +710,6 @@
             mapCloseBtn.style.transform = 'scale(1)';
         }
         
-        // Restaurar mapa global si existe
         if (window.currentMap && window.currentMarkersLayer) {
             const isAirportMode = window.activePoiType === 'airport';
             if (isAirportMode && window.globalAirportsBounds) {
@@ -954,11 +717,11 @@
                 const topPills = document.getElementById('map-top-pills');
                 if (topPills) topPills.style.display = 'flex';
             } else {
-                window.currentMap.setView([36.516, -6.283], 13); // Zoom out
+                window.currentMap.setView([36.516, -6.283], 13);
             }
-            if (window.currentActiveMarker) window.currentMap.removeLayer(window.currentActiveMarker); // Quitar el aislado
-            if (window.currentAirportRouteLayer) window.currentMap.removeLayer(window.currentAirportRouteLayer); // Quitar ruta de aeropuerto
-            window.currentMap.addLayer(window.currentMarkersLayer); // Mostrar todos
+            if (window.currentActiveMarker) window.currentMap.removeLayer(window.currentActiveMarker);
+            if (window.currentAirportRouteLayer) window.currentMap.removeLayer(window.currentAirportRouteLayer);
+            window.currentMap.addLayer(window.currentMarkersLayer);
         }
     };
 
@@ -1284,15 +1047,19 @@
         const title = window.activeMapStopName || 'el aeropuerto';
         window.closeMapInfoPill();
         
-        // Llamar global addMessage si existe
         if (typeof addMessage === 'function') {
             addMessage('user', `<span class="bubble">Quiero reservar un taxi para: ${window.escapeHTML(title)}</span>`);
             const chatOutput = document.getElementById('chat-output');
             if (chatOutput) {
-                chatOutput.insertAdjacentHTML('beforeend', window.renderCard({
+                const reserveData = {
                     cardType: 'ReservationCard',
                     content: `¡Perfecto! Te preparo el acceso rápido para solicitar una reserva hacia <strong>${title}</strong>.`
-                }, 'reserve-' + Date.now()));
+                };
+                const cardEl = renderCardDOM(reserveData, 'reserve-' + Date.now());
+                const msg = document.createElement('div');
+                msg.className = 'message bot';
+                msg.appendChild(cardEl);
+                chatOutput.appendChild(msg);
                 chatOutput.scrollTop = chatOutput.scrollHeight;
             }
         }
@@ -1301,11 +1068,9 @@
     window.mapActionTaxi = function() {
         if (window.activeMapStopName) {
             window.switchPanel('chat');
-            // Añadir el mensaje del usuario
             if (typeof addMessage === 'function') {
                 addMessage('user', `<span class="bubble">Quiero pedir un taxi desde la parada: ${window.escapeHTML(window.activeMapStopName)}</span>`);
                 
-                // Mostrar la tarjeta de contacto con el mismo formato exacto que la IA
                 const contentText = "¡Claro! Para pedir un taxi ahora en Cádiz, debes ponerte en contacto directamente con la emisora oficial autorizada por el Ayuntamiento. Puedes llamarles por teléfono o pedir el taxi por whatsapp.";
                 
                 const contactHtml = `
@@ -1327,7 +1092,6 @@
         }
     };
 
-    // --- LÓGICA DE GUARDADOS (LOCALSTORAGE) ---
     window.shareMessage = async function(encodedHtml: string) {
         const html = decodeURIComponent(encodedHtml);
         const temp = document.createElement('div');
@@ -1377,7 +1141,6 @@
     window.saveMessage = async function(btn: HTMLElement, encodedHtml: string) {
         const html = decodeURIComponent(encodedHtml);
         
-        // Primero intentamos sincronizar con la nube si hay sesión
         try {
             const resMe = await fetch('/api/auth/me');
             const dataMe = await resMe.json();
@@ -1386,7 +1149,6 @@
             let savedLocal = JSON.parse(localStorage.getItem('cadiz_saved_messages') || '[]');
             const isSavedLocally = savedLocal.indexOf(html) > -1;
             
-            // Queremos alternar el estado
             const willBeSaved = !isSavedLocally;
 
             if (willBeSaved) {
@@ -1420,9 +1182,7 @@
             window.renderSavedMessages();
             if (window.updateBookmarksBadge) window.updateBookmarksBadge();
 
-            // Si intentó guardar y NO tiene sesión, sugerimos loguearse después de guardar en local
             if (willBeSaved && !isLoggedIn && window.openLoginModal) {
-                // Pequeño timeout para que se vea que se ha guardado primero
                 setTimeout(() => {
                     if (confirm("¡Mensaje guardado localmente!\n\n¿Quieres iniciar sesión para guardar tus favoritos en la nube de forma permanente y no perderlos si cambias de móvil?")) {
                         window.openLoginModal();
@@ -1471,7 +1231,6 @@
                 }
             }
             
-            // Update the profile tab UI
             if (window.updateProfileUI) {
                 window.updateProfileUI(dataMe);
             }
@@ -1485,7 +1244,6 @@
         const statusDiv = document.getElementById('username-status');
         const submitBtn = document.getElementById('onboarding-submit-btn');
         
-        // Solo letras, números y guión bajo
         if (!/^[a-z0-9_]+$/.test(username)) {
             statusDiv.innerText = 'Solo letras minúsculas, números y guión bajo.';
             statusDiv.style.color = '#ef4444';
@@ -1552,7 +1310,6 @@
 
             if (res.ok) {
                 document.getElementById('onboarding-modal').style.display = 'none';
-                // Refrescar estado global
                 if (window.updateBookmarksBadge) window.updateBookmarksBadge();
             } else {
                 const data = await res.json();
@@ -1578,7 +1335,6 @@
         const profileSettingsBtn = document.getElementById('profile-page-settings-btn');
 
         if (dataMe && dataMe.user) {
-            // Verificar si el perfil está completado
             if (dataMe.user.is_profile_completed === 0) {
                 const onboardingModal = document.getElementById('onboarding-modal');
                 if (onboardingModal) {
@@ -1659,7 +1415,6 @@
                 profileAvatarEmoji.style.display = 'none';
             }
             
-            // Also update the dropdown profile button in header
             const headerAvatarImg = document.getElementById('profile-avatar');
             const headerProfileIcon = document.getElementById('profile-icon');
             if (headerAvatarImg && headerProfileIcon) {
@@ -1751,17 +1506,14 @@
 
             const data = await res.json();
             if (data.success) {
-                // Update local data
                 dataMe.user.name = name;
                 dataMe.user.username = username;
                 dataMe.user.bio = bio;
                 dataMe.user.category = category;
                 dataMe.user.dm_privacy = dmPrivacy;
-                // Re-render UI
                 if (window.updateProfileUI) {
                     window.updateProfileUI(dataMe);
                 }
-                // Close Modal
                 document.getElementById('edit-profile-modal').style.display = 'none';
             } else {
                 errorEl.innerText = data.error || 'Error al guardar el perfil.';
@@ -1788,18 +1540,15 @@
         }
 
         container.innerHTML = '';
-        // Mostramos de más nuevo a más viejo (invertimos el array)
         [...saved].reverse().forEach((html, i) => {
             const div = document.createElement('div');
             div.className = 'message bot';
-            // Añadimos botón para eliminar desde la propia vista de guardados
             const rawContent = encodeURIComponent(html);
             div.innerHTML = `${html}<div class="message-meta" style="justify-content: flex-end; display: flex; width: 100%; margin-top: 8px;"><button class="action-btn" onclick="window.saveMessage(this, '${rawContent}')" aria-label="Eliminar" style="background: #fee2e2; color: #ef4444; border: none; border-radius: 8px; padding: 6px 12px; display: flex; align-items: center; gap: 6px; font-weight: 600; cursor: pointer; font-size: 0.85rem;">🗑️ Eliminar de Guardados</button></div>`;
             container.appendChild(div);
         });
     };
 
-    // Cargar guardados al iniciar y posicionar el swiper en el chat
     document.addEventListener('DOMContentLoaded', () => {
         if (window.updateBookmarksBadge) window.updateBookmarksBadge();
         window.renderSavedMessages();
@@ -1808,19 +1557,16 @@
             setTimeout(() => {
                 swiper.scrollTo({ left: window.innerWidth, behavior: 'instant' });
                 
-                // Si venimos de un login exitoso, abrir pestaña de Perfil (muro)
                 const urlParams = new URLSearchParams(window.location.search);
                 if (urlParams.get('login') === 'success') {
                     if (typeof window.switchTab === 'function') {
                         window.switchTab('muro');
                     }
-                    // Limpiar la URL
                     window.history.replaceState({}, document.title, window.location.pathname);
                 }
             }, 50);
         }
 
-        // Lógica de subida de avatar con Cropper.js
         let cropperInstance: any = null;
 
         (window as any).cancelAvatarCrop = function() {
@@ -1859,7 +1605,6 @@
 
                 const data = await response.json();
                 if (data.success && data.url) {
-                    // Update main avatar on wall
                     const avatarImg = document.getElementById('profile-page-avatar-img') as HTMLImageElement;
                     const avatarEmoji = document.getElementById('profile-page-avatar-emoji');
                     if (avatarImg && avatarEmoji) {
@@ -1868,7 +1613,6 @@
                         avatarEmoji.style.display = 'none';
                     }
                     
-                    // Update in dataMe and header
                     const dataMe = (window as any).dataMe;
                     if (dataMe && dataMe.user) {
                         dataMe.user.picture = data.url;
@@ -1909,7 +1653,6 @@
                     cropperInstance.destroy();
                 }
                 
-                // Inicializamos Cropper.js después de que la imagen sea visible en el DOM
                 setTimeout(() => {
                     const Cropper = (window as any).Cropper;
                     cropperInstance = new Cropper(cropImage, {
@@ -1931,7 +1674,6 @@
 
     });
 
-    // --- DATOS DEL WIDGET DE TARIFAS ---
     const TARIFF_DATA: Record<string, any> = {
         urbana: {
             dia: [
@@ -2025,10 +1767,8 @@
         "25/12/2027": "Navidad"
     };
 
-    // Estado del widget por msgId
     const widgetState: Record<string, { type: string, time: string }> = {};
 
-    // --- LEAFLET NAVEGACIÓN EN VIVO (FULLSCREEN) ---
     let liveMap: any = null;
     let liveRoutingControl: any = null;
     let watchId: number | null = null;
@@ -2041,7 +1781,6 @@
         const destLat = parseFloat(destLatStr);
         const destLon = parseFloat(destLonStr);
 
-        // Mostrar capa
         layer.classList.remove('closed');
 
         setTimeout(() => {
@@ -2061,11 +1800,9 @@
                     pane: 'labels'
                 }).addTo(liveMap);
                 
-                // Botones de Zoom personalizados
                 mapL.control.zoom({ position: 'bottomright' }).addTo(liveMap);
             }
 
-            // Limpiar routing anterior si existe
             if (liveRoutingControl) {
                 liveMap.removeControl(liveRoutingControl);
                 liveRoutingControl = null;
@@ -2075,9 +1812,8 @@
                 userMarker = null;
             }
 
-            // Añadir marcador de destino personalizado
             const destIcon = mapL.divIcon({
-                className: '', // Usar solo nuestro HTML/CSS
+                className: '',
                 html: '<div class="destination-marker">📍</div>',
                 iconSize: [32, 38],
                 iconAnchor: [16, 38],
@@ -2085,7 +1821,6 @@
             });
             mapL.marker([destLat, destLon], { icon: destIcon }).addTo(liveMap).bindPopup(destName).openPopup();
 
-            // Configurar botón DEV para simular movimiento
             const devBtn = document.getElementById('nav-dev-btn');
             if (devBtn) {
                 devBtn.style.display = 'block';
@@ -2105,7 +1840,6 @@
                 });
             }
 
-            // Iniciar rastreo GPS real
             if (navigator.geolocation) {
                 watchId = navigator.geolocation.watchPosition(
                     (position) => {
@@ -2121,15 +1855,14 @@
                 document.getElementById('nav-instruction-text')!.innerText = "GPS no disponible.";
             }
 
-        }, 400); // Dar tiempo a la animación CSS
+        }, 400);
     };
 
     function updateUserLocation(userLat: number, userLon: number, destLat: number, destLon: number, isFake: boolean) {
         const mapL = (window as any).L;
         
-        // Actualizar marcador de usuario personalizado
         const userIcon = mapL.divIcon({
-            className: '', // Usar solo nuestro HTML/CSS
+            className: '',
             html: '<div class="user-gps-marker"></div>',
             iconSize: [20, 20],
             iconAnchor: [10, 10]
@@ -2142,7 +1875,6 @@
             userMarker.setIcon(userIcon);
         }
 
-        // Crear ruta si no existe o actualizar waypoints
         if (!liveRoutingControl) {
             liveRoutingControl = mapL.Routing.control({
                 waypoints: [ mapL.latLng(userLat, userLon), mapL.latLng(destLat, destLon) ],
@@ -2157,25 +1889,21 @@
                 addWaypoints: false,
                 createMarker: function() { return null; },
                 lineOptions: {
-                    styles: [{ color: '#3b82f6', opacity: 0.8, weight: 6 }] // COLOR SISTEMA (AZUL)
+                    styles: [{ color: '#3b82f6', opacity: 0.8, weight: 6 }]
                 }
             }).addTo(liveMap);
 
-            // Escuchar instrucciones
             liveRoutingControl.on('routesfound', function(e: any) {
                 const route = e.routes[0];
                 const summary = route.summary;
                 const instructions = route.instructions;
 
-                // Actualizar Top Panel (ETA y Distancia)
                 const etaMin = Math.ceil(summary.totalTime / 60);
                 const distKm = (summary.totalDistance / 1000).toFixed(1);
                 document.getElementById('nav-eta')!.innerText = `${etaMin} min`;
                 document.getElementById('nav-distance')!.innerText = `${distKm} km`;
 
-                // Actualizar Bottom Panel (Píldora de Instrucción Actual)
                 let currentInstruction = instructions[0];
-                // A veces la instrucción 0 es solo "Head north", pasamos a la siguiente si la distancia es muy corta o irrelevante
                 if (currentInstruction.type === 'Head' && instructions.length > 1 && currentInstruction.distance < 10) {
                     currentInstruction = instructions[1];
                 }
@@ -2200,7 +1928,6 @@
                 }
             });
         } else {
-            // Ya existe el control, solo actualizamos los waypoints
             liveRoutingControl.setWaypoints([
                 mapL.latLng(userLat, userLon),
                 mapL.latLng(destLat, destLon)
@@ -2227,10 +1954,8 @@
         }
     };
 
-    // Exponer función global para botones internos de las tarjetas
     window.sendToAI = sendMessageToAI;
 
-    // --- EVENT LISTENERS ---
     sendButton?.addEventListener('click', () => {
         sendMessageToAI(inputField.value);
     });
@@ -2241,19 +1966,16 @@
         }
     });
 
-    // --- INICIALIZACIÓN (MOMENTO 0) ---
     setTimeout(() => {
         sendMessageToAI('¡Hola! Acabo de entrar a la web. Preséntate brevemente de forma muy natural y dime en qué puedes ayudarme. NO añadas sugerencias ni listas en tu mensaje de texto, usa EXCLUSIVAMENTE los bloques de sugerencia de la interfaz.', true);
     }, 500);
 
-    // --- MANEJO DEL CLIMA ---
     window.openWeatherModal = () => {
         const overlay = document.getElementById('weather-modal-overlay');
         const modal = document.getElementById('weather-modal');
         if (overlay && modal) {
             overlay.style.display = 'block';
             modal.style.display = 'block';
-            // Pequeño delay para la animación
             setTimeout(() => {
                 overlay.style.opacity = '1';
                 modal.style.bottom = '0';
@@ -2274,7 +1996,6 @@
         }
     };
 
-    // --- MANEJO DE CIUDAD ---
     const subtitleEl = document.getElementById('header-subtitle');
     const savedCity = localStorage.getItem('cadiz_city');
     if (subtitleEl && savedCity) {
@@ -2363,14 +2084,12 @@
         if (subtitleEl) subtitleEl.textContent = city;
         (window as any).closeCityModal();
         
-        // Refresh Weather data only
         const weatherChip = document.getElementById('header-weather-chip');
-        if (weatherChip) weatherChip.style.display = 'none'; // Will reappear when loaded
+        if (weatherChip) weatherChip.style.display = 'none';
         
         (window as any).fetchWeatherWithRetryFn();
         
         if (!isFromWeatherModal) {
-            // Reset chat only if we changed city from outside the weather modal (e.g. initial setup)
             const messagesDiv = document.getElementById('chat-messages');
             if (messagesDiv) messagesDiv.innerHTML = '';
             chatHistory.length = 0; 
@@ -2394,13 +2113,12 @@
                     return wRes.json();
                 })
                 .then(wData => {
-                    if (currentReqId !== weatherRequestId) return; // Abort if a newer request exists
+                    if (currentReqId !== weatherRequestId) return;
                     const chip = document.getElementById('header-weather-chip');
                     const iconSpan = document.getElementById('header-weather-icon');
                     const tempSpan = document.getElementById('header-weather-temp');
                     
                     if (!wData.error && wData.current && wData.current.temp !== 'N/A') {
-                        // Fix timezone issue: AEMET/Cloudflare use UTC. We must use local browser time to pick the right "Ahora"
                         let filteredHourly = wData.hourly || [];
                         if (wData.hourly && wData.hourly.length > 0) {
                             const now = new Date();
@@ -2434,21 +2152,18 @@
                         else if (desc.includes('nubo') || desc.includes('cubierto')) weatherIcon = '☁️';
                         else if (desc.includes('despejado')) weatherIcon = '☀️';
 
-                        // 1. Llenar el Chip de la Cabecera
                         if (chip && iconSpan && tempSpan) {
                             iconSpan.innerText = weatherIcon;
                             tempSpan.innerText = `${wData.current.temp}º`;
                             chip.style.display = 'flex';
                         }
 
-                        // 2. Llenar el Modal Completo
                         document.getElementById('weather-modal-location').innerText = wData.location || 'Cádiz';
 
-                        // Alertas
                         let alertsHtml = '';
                         if (wData.alerts && wData.alerts.length > 0) {
-                            const alert = wData.alerts[0]; // Mostrar la más grave
-                            let bg = '#ef4444'; // Rojo por defecto
+                            const alert = wData.alerts[0];
+                            let bg = '#ef4444';
                             if (alert.nivel === 'amarillo') bg = '#eab308';
                             if (alert.nivel === 'naranja') bg = '#f97316';
                             alertsHtml = `
@@ -2463,7 +2178,6 @@
                         }
                         document.getElementById('weather-modal-alerts').innerHTML = alertsHtml;
 
-                        // Info Actual y Detalles Extra
                         const getWindName = (dir) => {
                             const d = dir ? dir.toUpperCase() : '';
                             if (['E', 'SE', 'NE'].includes(d)) return 'LEVANTE';
@@ -2484,7 +2198,6 @@
                         const uvMax = (wData.daily && wData.daily.uvMax !== 'N/A') ? wData.daily.uvMax : '--';
                         const currentHumidity = (wData.current.humidity && wData.current.humidity !== 'N/A') ? wData.current.humidity + '%' : '--';
 
-                        // Helper para emojis
                         const getEmoji = (desc) => {
                             if (!desc) return '⛅';
                             const d = desc.toLowerCase();
@@ -2497,7 +2210,6 @@
 
                         const currentEmoji = getEmoji(wData.current.skyDesc);
 
-                        // 1. Current Block
                         let feelsLikeHtml = '';
                         if (wData.current.feelsLike && wData.current.feelsLike !== 'N/A') {
                             feelsLikeHtml = ` • Sensación de ${wData.current.feelsLike}º`;
@@ -2518,21 +2230,6 @@
                             </div>
                         `;
 
-                        const getWindRotation = (dir) => {
-                            switch (dir) {
-                                case 'N': return 180;
-                                case 'NE': return 225;
-                                case 'E': return 270;
-                                case 'SE': return 315;
-                                case 'S': return 0;
-                                case 'SO': return 45;
-                                case 'O': return 90;
-                                case 'NO': return 135;
-                                default: return 0;
-                            }
-                        };
-
-                        // 2. Hourly Carousel (24h)
                         let hourlyHtml = '';
                         if (wData.hourly && wData.hourly.length > 0) {
                             filteredHourly.slice(0, 24).forEach((h, index) => {
@@ -2562,14 +2259,12 @@
                         }
                         document.getElementById('weather-hourly-list').innerHTML = hourlyHtml;
 
-                        // 3. Forecast 7-Days
                         let forecastHtml = '';
                         if (wData.forecast && wData.forecast.length > 0) {
                             wData.forecast.forEach((f, index) => {
                                 const dateObj = new Date(f.date);
                                 const dayName = index === 0 ? 'Hoy' : index === 1 ? 'Mañana' : dateObj.toLocaleDateString('es-ES', { weekday: 'long' });
                                 
-                                // Simular emoji en base a la lluvia (para simplificar, ya que daily no tiene desc detallada)
                                 let fEmoji = '☀️';
                                 if (f.probPrecipitacion > 60) fEmoji = '🌧️';
                                 else if (f.probPrecipitacion > 20) fEmoji = '⛅';
@@ -2603,10 +2298,6 @@
                         }
                         document.getElementById('weather-forecast-list').innerHTML = forecastHtml;
 
-                        // 4. Details Grid
-                        
-                        // 4. Details Grid
-                        
                         let cardsList = [];
 
                         cardsList.push(`
@@ -2638,7 +2329,6 @@
                             </div>
                         `);
 
-                        // TIDES
                         if (wData.tides && wData.tides.length > 0) {
                             const now = new Date();
                             const currentHour = now.getHours() + now.getMinutes() / 60;
@@ -2660,7 +2350,6 @@
                             `);
                         }
 
-                        // RAIN TODAY
                         const currentFechaStr = new Date().getFullYear() + "-" + String(new Date().getMonth()+1).padStart(2,'0') + "-" + String(new Date().getDate()).padStart(2,'0');
                         const totalPrecip = wData.hourly ? wData.hourly.filter(h => h.fecha === currentFechaStr).reduce((acc, curr) => acc + (parseFloat(curr.precip) || 0), 0) : 0;
                         if (totalPrecip > 0) {
@@ -2677,7 +2366,6 @@
                             `);
                         }
 
-                        // SNOW LEVEL
                         let snowLevel = "0";
                         if (wData.forecast && wData.forecast[0] && wData.forecast[0].cotaNieve && wData.forecast[0].cotaNieve.length > 0) {
                             const todaySnowArr = wData.forecast[0].cotaNieve;
@@ -2696,7 +2384,6 @@
                             `);
                         }
 
-                        // SUNRISE / SUNSET
                         let orto = "--", ocaso = "--";
                         if (wData.forecast && wData.forecast[0]) {
                             orto = wData.forecast[0].orto || "--";
@@ -2734,7 +2421,7 @@
                     }
                 })
                 .catch(e => {
-                    if (currentReqId !== weatherRequestId) return; // Abort if a newer request exists
+                    if (currentReqId !== weatherRequestId) return;
                     console.error('Weather fetch error:', e);
                     if (retriesLeft > 0) {
                         setTimeout(() => fetchWeatherWithRetry(retriesLeft - 1, delay * 1.5, currentReqId), delay);
@@ -2745,7 +2432,6 @@
         fetchWeatherWithRetry();
     }, 500);
 
-    // Funciones globales de autenticación
     window.logout = async () => {
         try {
             await fetch('/api/auth/logout', { method: 'POST' });

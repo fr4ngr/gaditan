@@ -1,0 +1,18 @@
+---
+// src/components/tabs/CommunityTab.astro
+---
+
+<!-- TAB COMUNIDAD -->
+<div id="tab-comunidad" style="display: none; flex: 1; width: 100%; min-height: 0; flex-direction: column; background: var(--bg-color); max-width: 480px; margin: 0 auto; overflow-y: auto;">
+    <div style="padding: 16px; background: var(--header-bg); border-bottom: 1px solid var(--header-border); position: sticky; top: 0; z-index: 10;">
+        <h2 style="margin: 0 0 12px 0; font-size: 20px; color: var(--text-primary);">Comunidad</h2>
+        <div style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px;">
+            <button onclick="window.filterCommunity('local')" id="filter-local" class="comunidad-filter active" style="background: var(--chat-bg); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: 16px; padding: 6px 12px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap;">🌴 Locales</button>
+            <button onclick="window.filterCommunity('turista')" id="filter-turista" class="comunidad-filter" style="background: transparent; color: var(--text-secondary); border: 1px solid var(--border-color); border-radius: 16px; padding: 6px 12px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap;">🎒 Turistas</button>
+            <button onclick="window.filterCommunity('profesional')" id="filter-profesional" class="comunidad-filter" style="background: transparent; color: var(--text-secondary); border: 1px solid var(--border-color); border-radius: 16px; padding: 6px 12px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap;">🚕 Profesionales</button>
+        </div>
+    </div>
+    <div id="comunidad-container" style="padding: 16px; display: flex; flex-direction: column; gap: 12px;">
+        <!-- Community cards go here -->
+    </div>
+</div>

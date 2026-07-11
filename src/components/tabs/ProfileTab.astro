@@ -1,0 +1,69 @@
+---
+// src/components/tabs/ProfileTab.astro
+---
+<!-- TAB PERFIL (Antiguo Muro) -->
+<div id="tab-muro" style="display: none; flex: 1; width: 100%; min-height: 0; flex-direction: column; background: var(--bg-color); max-width: 480px; margin: 0 auto; overflow-y: auto;">
+    <div style="flex: 1; padding: 24px 16px; display: flex; flex-direction: column; gap: 24px;">
+        
+        <!-- Tarjeta de Cuenta -->
+        <div style="background: var(--chat-bg); border-radius: 20px; padding: 24px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid var(--border-color);">
+            <div id="avatar-upload-container" style="width: 64px; height: 64px; background: var(--primary-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 32px; margin: 0 auto 16px; position: relative; cursor: pointer; overflow: hidden;" onclick="document.getElementById('avatar-upload-input').click()" title="Cambiar foto de perfil">
+                <span id="profile-page-avatar-emoji">👤</span>
+                <img id="profile-page-avatar-img" src="" style="display:none; width: 100%; height: 100%; border-radius: 50%; object-fit: cover; z-index: 1;" alt="Avatar">
+                <div style="position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.6); color: white; font-size: 10px; padding: 3px 0; display: flex; justify-content: center; opacity: 0; transition: opacity 0.2s; z-index: 2;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0'">📷</div>
+                <input type="file" id="avatar-upload-input" accept="image/*" style="display: none;">
+            </div>
+            <h3 id="profile-page-name" style="margin: 0 0 8px 0; font-size: 20px; color: var(--text-primary);">Invitado</h3>
+            <p id="profile-page-desc" style="margin: 0 0 8px 0; font-size: 14px; color: var(--text-secondary); font-weight: 500;">Inicia sesión para guardar tus favoritos en la nube.</p>
+            <div id="profile-page-stats" style="display: none; justify-content: center; gap: 8px; margin-bottom: 16px;">
+                <span id="profile-page-posts-count" style="background: var(--chat-bg); color: var(--text-secondary); font-size: 12px; font-weight: 600; padding: 6px 12px; border-radius: 20px;">0 Publicaciones</span>
+            </div>
+            <div id="profile-page-date" style="display: none; font-size: 12px; color: var(--text-secondary); margin-bottom: 20px;">Miembro desde: ...</div>
+            <p id="profile-page-bio" style="margin: 0 0 20px 0; font-size: 14px; color: var(--text-primary); display: none; line-height: 1.4; max-width: 280px; margin-left: auto; margin-right: auto;"></p>
+            
+            <div style="display: flex; gap: 8px;">
+                <button id="profile-page-edit-btn" onclick="window.openEditProfileModal()" style="display: none; flex: 1; background: rgba(128, 128, 128, 0.05); color: var(--text-primary); border: 1px solid var(--border-color); padding: 12px; border-radius: 20px; font-weight: 600; font-size: 14px; font-family: inherit; cursor: pointer;">
+                    Editar Perfil
+                </button>
+                <button id="profile-page-settings-btn" onclick="window.openSettingsModal()" style="display: none; flex: 1; background: rgba(128, 128, 128, 0.05); color: var(--text-primary); border: 1px solid var(--border-color); padding: 12px; border-radius: 20px; font-weight: 600; font-size: 14px; font-family: inherit; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                    Configuración
+                </button>
+                <button id="profile-page-auth-btn" onclick="window.openLoginModal()" style="flex: 1; background: var(--primary-color); color: white; border: 1px solid transparent; padding: 12px; border-radius: 20px; font-weight: 600; font-size: 14px; font-family: inherit; cursor: pointer;">
+                    Unirse a la Comunidad
+                </button>
+            </div>
+        </div>
+
+        <!-- Accesos Directos -->
+        <div>
+            <h4 style="margin: 0 0 12px 12px; font-size: 13px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Tus Contenidos</h4>
+            <div style="background: var(--chat-bg); border-radius: 20px; overflow: hidden; border: 1px solid var(--border-color); box-shadow: 0 4px 15px rgba(0,0,0,0.02);">
+                <button onclick="window.switchTab('chat'); setTimeout(() => window.switchPanel('guardados'), 50);" style="display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 16px; background: none; border: none; cursor: pointer; border-bottom: 1px solid var(--border-color);">
+                    <div style="display: flex; align-items: center; gap: 12px; color: var(--text-primary); font-weight: 600; font-size: 16px;">
+                        <div style="background: rgba(239, 68, 68, 0.1); color: #ef4444; width: 36px; height: 36px; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                        </div>
+                        Mis Favoritos Guardados
+                    </div>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--text-secondary);"><polyline points="9 18 15 12 9 6"/></svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Ajustes e Interfaz -->
+        <div>
+            <h4 style="margin: 0 0 12px 12px; font-size: 13px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Ajustes</h4>
+            <div style="background: var(--chat-bg); border-radius: 20px; overflow: hidden; border: 1px solid var(--border-color); box-shadow: 0 4px 15px rgba(0,0,0,0.02);">
+                <button onclick="window.toggleDarkMode()" style="display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 16px; background: none; border: none; cursor: pointer;">
+                    <div style="display: flex; align-items: center; gap: 12px; color: var(--text-primary); font-weight: 600; font-size: 16px;">
+                        <div style="background: rgba(59, 130, 246, 0.1); color: #3b82f6; width: 36px; height: 36px; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+                        </div>
+                        Cambiar Tema Visual
+                    </div>
+                </button>
+            </div>
+        </div>
+        
+    </div>
+</div>
