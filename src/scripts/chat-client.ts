@@ -228,9 +228,10 @@ import { renderCardDOM } from '../components/cards/CardRenderer';
                 }, 800);
             }
 
-        } catch (error) {
+        } catch (error: any) {
+            console.error('CHAT ERROR:', error);
             removeTypingIndicator(typingId);
-            addMessage('bot', `<span class="bubble" style="background:#ffebee; color:#c62828;">Error de conexión. Inténtalo de nuevo.</span>`);
+            addMessage('bot', `<span class="bubble" style="background:#ffebee; color:#c62828;">Error interno: ${error?.message || error}. Inténtalo de nuevo.</span>`);
         }
     }
 
