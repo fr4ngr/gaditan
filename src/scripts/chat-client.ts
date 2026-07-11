@@ -244,6 +244,18 @@ import { renderCardDOM } from '../components/cards/CardRenderer';
             swiper.style.scrollBehavior = 'auto';
             swiper.scrollLeft = window.innerWidth;
             setTimeout(() => { swiper.style.scrollBehavior = 'smooth'; }, 50);
+
+            let mapLoadedOnSwipe = false;
+            swiper.addEventListener('scroll', () => {
+                if (!mapLoadedOnSwipe && swiper.scrollLeft > window.innerWidth * 1.5) {
+                    mapLoadedOnSwipe = true;
+                    if (!(window as any).currentMap) {
+                        if (typeof window.openFullscreenMap === 'function') {
+                            window.openFullscreenMap(null, null, 'swipe');
+                        }
+                    }
+                }
+            });
         }
     });
 
