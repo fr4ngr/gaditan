@@ -28,6 +28,11 @@ import MapWidget from '../components/widgets/MapWidget.astro';
 		<meta name="description" content={Astro.props.description || "Asistente Inteligente de Cádiz"} />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#3b82f6" />
+        <link rel="apple-touch-icon" href="/logo.png" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
 		<slot name="head" />
@@ -474,6 +479,17 @@ import MapWidget from '../components/widgets/MapWidget.astro';
 
         <LoginModal />
         <OnboardingModal />
+        <script>
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                    navigator.serviceWorker.register('/sw.js').then(registration => {
+                        console.log('SW registered: ', registration);
+                    }).catch(registrationError => {
+                        console.log('SW registration failed: ', registrationError);
+                    });
+                });
+            }
+        </script>
         <style is:global>
             /* ELIMINAR FONDO GRIS POR DEFECTO DE LEAFLET AL CARGAR */
             .leaflet-container {
