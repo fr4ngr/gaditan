@@ -14,10 +14,6 @@
 	},
 	"vectorize": [
 		{
-			"binding": "VECTORIZE_INDEX",
-			"index_name": "cadiz-knowledge"
-		},
-		{
 			"binding": "VECTORIZE",
 			"index_name": "cadiz-knowledge-index",
 			"remote": true
