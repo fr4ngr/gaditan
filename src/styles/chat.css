@@ -993,3 +993,4 @@ body {
     @keyframes spin {
         to { transform: rotate(360deg); }
     }
+button:active { transform: scale(0.97); transition: transform 0.1s ease; } 

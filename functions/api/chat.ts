@@ -18,6 +18,7 @@ export async function onRequestPost(context) {
         const userMessage = body.message;
         const sessionId = body.sessionId || 'anonymous';
         const userCity = body.city || null;
+        const userProfile = body.userProfile || 'desconocido';
         
         // A/B Testing Assignment
         let activeVariant = 'A';
@@ -133,6 +134,19 @@ ${b.content}
             },
             required: ['cardType', 'content', 'suggestedBlocks', 'intentCategory']
         };
+
+        // Injecting the Profile into the prompt
+        let finalSystemPrompt = activeSystemPrompt;
+        if (userProfile && userProfile !== 'desconocido') {
+            finalSystemPrompt += `\n\n<GADITAN_PROFILE>\nEl usuario actual se ha identificado como: **${userProfile.toUpperCase()}**.\nAdapta tus respuestas, recomendaciones y tono a este perfil. Por ejemplo, si es Turista recomiéndale básicos; si es Gaditano, cosas locales o avanzadas; si es Negocio, facilítale opciones profesionales.\n</GADITAN_PROFILE>`;
+        }
+
+        // Construir la estructura final que Gemini espera
+        let apiHistory = [];
+        if (finalSystemPrompt) {
+            apiHistory.push({ role: 'user', parts: [{ text: finalSystemPrompt }] });
+            apiHistory.push({ role: 'model', parts: [{ text: 'Entendido. Actuaré según las directrices y el esquema JSON establecido, considerando el perfil del usuario.' }] });
+        }
 
         const historyContents = body.history && body.history.length > 0 ? body.history : [{ role: 'user', parts: [{ text: userMessage }] }];
         const inputType = body.inputType || 'typed';

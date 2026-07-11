@@ -1,6 +1,7 @@
 import { h } from 'preact';
 import type { CardData } from './types';
 import { CardWrapper, CardButton } from './CardShared';
+import { IconPackage } from '../Icons';
 
 export const ProductCard = ({ data }: { data: CardData }) => {
     return (
@@ -9,8 +10,8 @@ export const ProductCard = ({ data }: { data: CardData }) => {
                 {data.imageUrl ? (
                     <img src={data.imageUrl} alt={data.title || 'Producto'} style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
                 ) : (
-                    <div style={{ width: '100px', height: '100px', background: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94a3b8', fontSize: '1.5rem', borderRight: '1px solid var(--border-color)' }}>
-                        📦
+                    <div style={{ width: '100px', height: '100px', background: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRight: '1px solid var(--border-color)' }}>
+                        <IconPackage size={32} color="#94a3b8" />
                     </div>
                 )}
                 <div className="card-body" style={{ flex: 1, padding: '16px' }}>

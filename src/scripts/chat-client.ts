@@ -187,11 +187,13 @@ import { renderCardDOM } from '../components/cards/CardRenderer';
             localStorage.setItem('cadiz_chat_session', sessionId);
         }
 
+        let userProfile = localStorage.getItem('gaditan_profile') || 'desconocido';
+
         try {
             const response = await fetch('/api/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: text, history: chatHistory, inputType: isHiddenInit ? 'system' : inputType, sessionId })
+                body: JSON.stringify({ message: text, history: chatHistory, inputType: isHiddenInit ? 'system' : inputType, sessionId, userProfile })
             });
 
             const data = await response.json();

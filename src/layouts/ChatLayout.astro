@@ -15,6 +15,7 @@ import NewPostModal from '../components/modals/NewPostModal.astro';
 import ProfileTab from '../components/tabs/ProfileTab.astro';
 import LoginModal from '../components/modals/LoginModal.astro';
 import OnboardingModal from '../components/modals/OnboardingModal.astro';
+import { LegalWelcomeModal } from '../components/onboarding/LegalWelcomeModal';
 import CommunityTab from '../components/tabs/CommunityTab.astro';
 import DMsTab from '../components/tabs/DMsTab.astro';
 import MapWidget from '../components/widgets/MapWidget.astro';
@@ -53,6 +54,7 @@ import MapWidget from '../components/widgets/MapWidget.astro';
 
         <!-- Lottie Web Player -->
         <NewPostModal />
+        <LegalWelcomeModal client:only="preact" />
 
         <script>
             window.switchTab = function(tab) {

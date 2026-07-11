@@ -1,6 +1,7 @@
 import { h, Fragment } from 'preact';
 import type { CardData } from './types';
 import { CardWrapper } from './CardShared';
+import { IconPin, IconCompass } from '../Icons';
 
 const formatContent = (text: string) => {
     let html = text.replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -20,7 +21,7 @@ export const MapCard = ({ data, msgId }: { data: CardData; msgId: string }) => {
                     onClick={() => { (window as any).openFullscreenMap(String(data.lat), String(data.lon), msgId); }}
                     style={{ background: 'var(--primary-color)', color: 'white', border: 'none', padding: '12px', borderRadius: '12px', fontWeight: '600', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', cursor: 'pointer' }}
                 >
-                    <div style={{ background: 'white', borderRadius: '50%', width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px' }}>📍</div> 
+                    <IconPin size={18} color="white" /> 
                     Ver {data.locationTitle || data.title || 'ubicación'} en mapa
                 </button>
             </div>
@@ -37,8 +38,8 @@ export const NavigationCard = ({ data }: { data: CardData }) => {
                 <div className="card mt-sm" style={{ border: '2px solid var(--primary-color)', borderRadius: '12px', overflow: 'hidden' }}>
                     <div className="card-body" style={{ padding: '16px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
-                            <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#e0f2fe', color: 'var(--primary-color)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem' }}>
-                                🧭
+                            <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#e0f2fe', color: 'var(--primary-color)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                <IconCompass size={24} color="var(--primary-color)" />
                             </div>
                             <div>
                                 <h3 style={{ margin: '0 0 4px 0', fontSize: '1.1rem', color: 'var(--text-color)' }}>Navegación Activa</h3>

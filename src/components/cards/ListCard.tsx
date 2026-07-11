@@ -1,6 +1,7 @@
 import { h } from 'preact';
 import type { CardData } from './types';
 import { CardWrapper, CardButton } from './CardShared';
+import { IconPin } from '../Icons';
 
 export const ListCard = ({ data }: { data: CardData }) => {
     return (
@@ -16,8 +17,8 @@ export const ListCard = ({ data }: { data: CardData }) => {
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
                     {data.listItems && data.listItems.map((item, i) => (
                         <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 0', borderBottom: i < data.listItems!.length - 1 ? '1px solid var(--border-color)' : 'none' }}>
-                            <div style={{ fontSize: '1.5rem', width: '40px', textAlign: 'center', flexShrink: 0 }}>
-                                {item.icon || '📌'}
+                            <div style={{ width: '40px', display: 'flex', justifyContent: 'center', flexShrink: 0, color: 'var(--primary-color)' }}>
+                                <IconPin size={24} color="currentColor" />
                             </div>
                             <div style={{ flex: 1 }}>
                                 <div style={{ fontWeight: '600', color: 'var(--text-color)', fontSize: '0.95rem' }}>{item.title}</div>

@@ -1,6 +1,7 @@
 import { h } from 'preact';
 import type { CardData } from './types';
 import { CardWrapper, CardButton } from './CardShared';
+import { IconImage } from '../Icons';
 
 export const HeroCard = ({ data }: { data: CardData }) => {
     const defaultImg = 'linear-gradient(45deg, #f1f5f9, #e2e8f0)';
@@ -10,8 +11,8 @@ export const HeroCard = ({ data }: { data: CardData }) => {
             {data.imageUrl ? (
                 <img src={data.imageUrl} alt={data.title || 'Imagen'} style={{ width: '100%', height: '180px', objectFit: 'cover' }} />
             ) : (
-                <div style={{ width: '100%', height: '180px', background: defaultImg, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94a3b8', fontSize: '2.5rem', borderBottom: '1px solid var(--border-color)' }}>
-                    🖼️
+                <div style={{ width: '100%', height: '180px', background: defaultImg, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94a3b8', borderBottom: '1px solid var(--border-color)' }}>
+                    <IconImage size={48} color="#94a3b8" />
                 </div>
             )}
             
