@@ -1,0 +1,128 @@
+                        <!-- CALCULATOR SECTION -->
+        <section class="calculator-section" id="calculadora" style="padding: 4rem 0;">
+            <div class="container">
+                <h2 class="section-title" data-translate="calc-title">Taxímetro Inteligente</h2>
+                <p class="section-subtitle" data-translate="calc-subtitle">Calcula el precio estimado de tu trayecto al instante</p>
+                <div class="booking-card glass" style="margin: 0 auto;">
+                    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                        
+                        <!-- Origen con número -->
+                        <div class="form-group" style="gap: 0.25rem;">
+                            <label for="calc-origin"><span data-translate="form-pickup">Desde (Origen)</span></label>
+                            <div style="display: flex; gap: 0.5rem; position: relative; flex-wrap: nowrap;">
+                                <div class="input-icon-wrapper" style="flex: 1; min-width: 0;">
+                                    <i data-lucide="locate" style="cursor: pointer; pointer-events: auto; color: var(--brand-cyan);" onclick="window.geolocateOrigin('calc-origin')"></i>
+                                    <input type="text" id="calc-origin" class="glass-input with-icon" placeholder="Origen (ej. Av. Andalucía)" autocomplete="off" style="width: 100%;">
+                                    <div id="origin-suggestions" class="autocomplete-suggestions hidden"></div>
+                                </div>
+                                <div style="width: 70px; flex-shrink: 0;">
+                                    <input type="text" id="calc-origin-num" class="glass-input" placeholder="Nº" style="width: 100%; text-align: center; padding: 1.2rem;">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Destino con número -->
+                        <div class="form-group" style="gap: 0.25rem;">
+                            <label for="calc-destination"><span data-translate="form-dropoff">Hasta (Destino)</span></label>
+                            <div style="display: flex; gap: 0.5rem; position: relative; flex-wrap: nowrap;">
+                                <div class="input-icon-wrapper" style="flex: 1; min-width: 0;">
+                                    <i data-lucide="flag"></i>
+                                    <input type="text" id="calc-destination" class="glass-input with-icon" placeholder="Destino (ej. Plaza Asdrúbal)" autocomplete="off" style="width: 100%;">
+                                <div id="dest-suggestions" class="autocomplete-suggestions hidden"></div>
+                            </div>
+                            <div style="width: 70px; flex-shrink: 0;">
+                                <input type="text" id="calc-dest-num" class="glass-input" placeholder="Nº" style="width: 100%; text-align: center; padding: 1.2rem;">
+                            </div>
+                        </div>
+
+                        <!-- Selector de Cuándo -->
+                        <div class="form-group" style="gap: 0.25rem;">
+                            <label for="calc-when"><span>¿Cuándo viajas?</span></label>
+                            <div class="input-icon-wrapper">
+                                <i data-lucide="calendar-clock"></i>
+                                <select id="calc-when" class="glass-input with-icon" style="appearance: none; -webkit-appearance: none; cursor: pointer;">
+                                    <option value="now">Ahora mismo</option>
+                                    <option value="later">Elegir Fecha y Hora</option>
+                                </select>
+                                <i data-lucide="chevron-down" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); opacity: 0.5; pointer-events: none;"></i>
+                            </div>
+                        </div>
+
+                        <!-- Fecha y Hora (Oculto por defecto) -->
+                        <div id="calc-datetime-container" class="form-row hidden" style="display: flex; gap: 1rem; flex-wrap: nowrap;">
+                            <div class="form-group" style="flex: 1; min-width: 0;">
+                                <label for="calc-date"><span>Fecha</span></label>
+                                <div class="input-icon-wrapper">
+                                    <i data-lucide="calendar"></i>
+                                    <input type="date" id="calc-date" class="glass-input with-icon">
+                                </div>
+                            </div>
+                            <div class="form-group" style="flex: 1; min-width: 0;">
+                                <label for="calc-time"><span>Hora</span></label>
+                                <div class="input-icon-wrapper">
+                                    <i data-lucide="clock"></i>
+                                    <input type="time" id="calc-time" class="glass-input with-icon">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Botón SUPLEMENTOS -->
+                        <div style="margin-top: 0.5rem;">
+                            <button type="button" id="btn-calc-supplements" onclick="toggleCalcSupplements()" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 0.8rem 1rem; border-radius: 12px; cursor: pointer; font-weight: 600; font-family: 'Outfit', sans-serif;">
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <i data-lucide="plus-circle" style="color: var(--brand-cyan);"></i> SUPLEMENTOS
+                                </div>
+                                <i data-lucide="chevron-down" id="calc-supplements-chevron"></i>
+                            </button>
+                            
+                            <!-- Contenedor de Suplementos -->
+                            <div id="calc-supplements-container" class="hidden" style="background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 1rem; margin-top: 0.5rem;">
+                                <div class="chip-group" style="justify-content: flex-start;">
+                                    <div class="chip-wrapper">
+                                        <span class="chip-label">Maletas grandes</span>
+                                        <div class="booking-chip stepper-chip-container">
+                                            <button type="button" class="stepper-btn-full" onclick="updateCalcLuggage(-1)">-</button>
+                                            <div class="stepper-content">
+                                                <i data-lucide="briefcase" class="chip-icon"></i> <span class="chip-text" id="calc-luggage">0</span>
+                                            </div>
+                                            <button type="button" class="stepper-btn-full" onclick="updateCalcLuggage(1)">+</button>
+                                        </div>
+                                    </div>
+                                    <div class="chip-wrapper" style="width: 100%; margin-top: 0.5rem;">
+                                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: var(--text-muted); font-size: 0.9rem;">
+                                            <input type="checkbox" id="calc-renfe-toggle" onchange="toggleCalcRenfe()" style="accent-color: var(--brand-cyan); width: 16px; height: 16px;">
+                                            Suplemento Salida Renfe (+0,82€)
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button class="btn btn-glow" style="width: 100%; margin-top: 0.5rem;" onclick="calculateRoute()">
+                            <span data-translate="calc-btn">Calcular Precio</span> <i data-lucide="calculator" size="18"></i>
+                        </button>
+                        
+                                                <!-- Resultado -->
+                        <div id="calc-result" style="display: none; text-align: center; margin-top: 1rem; border-top: 1px solid var(--glass-border); padding-top: 1.5rem;">
+                            <div style="display: flex; justify-content: center; gap: 2rem; margin-bottom: 1rem;">
+                                <p style="color: var(--text-muted); font-size: 0.9rem;"><span data-translate="calc-dist">Distancia:</span> <strong id="calc-dist-val" style="color: #fff;">0 km</strong></p>
+                                <p style="color: var(--text-muted); font-size: 0.9rem;"><span data-translate="calc-time">Tiempo:</span> <strong id="calc-time-val" style="color: #fff;">0 min</strong></p>
+                            </div>
+                            <div style="font-size: 3rem; font-weight: 800; color: var(--brand-cyan);" id="calc-price-val">0,00€</div>
+                            <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.5rem;" data-translate="calc-disclaimer">*Precio estimado. El taxímetro oficial determina el precio exacto.</p>
+                            
+                            <!-- Mapa de la ruta -->
+                            <div id="calc-map" style="width: 100%; height: 250px; border-radius: 10px; margin-top: 1.5rem; border: 1px solid var(--glass-border); display: none;"></div>
+                        </div>
+                        
+                        <!-- Estados (Carga/Error) -->
+                        <div id="calc-loading" style="display: none; text-align: center; margin-top: 1rem; color: var(--text-muted);">
+                            <i data-lucide="loader-2" class="spin" style="animation: spin 1s linear infinite;"></i> <span data-translate="calc-loading">Calculando ruta óptima...</span>
+                        </div>
+                        <div id="calc-error" style="display: none; text-align: center; margin-top: 1rem; color: #ff6b6b; font-size: 0.9rem;">
+                            <i data-lucide="alert-circle" size="14"></i> <span id="calc-error-text">No se pudo encontrar la ruta. Verifica las direcciones.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>

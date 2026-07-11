@@ -1,0 +1,33 @@
+<section class="info-section" id="paradas">
+            <div class="container">
+                <h2 class="section-title" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                    <span data-translate="map-title">Mapa de Paradas</span>
+                </h2>
+                <p class="section-subtitle" style="text-align: center; color: var(--text-muted); margin-bottom: 2.5rem; font-size: 1.1rem;" data-translate="stops-map-sub">Encuentra la parada de taxi más cercana a tu ubicación en Cádiz.</p>
+
+                <!-- MAPA LEAFLET DIRECTO -->
+                <div class="map-controls md3-actions" style="display: flex; justify-content: center; gap: 0.5rem; margin-bottom: 1.5rem; flex-direction: row; flex-wrap: wrap;">
+                    <button id="btn-todas" class="md3-btn md3-primary" style="flex: 1; padding: 0.6rem 0.2rem; font-size: 0.85rem; justify-content: center;">Todas</button>
+                    <button id="btn-cercana" class="md3-btn md3-tonal" style="flex: 1; padding: 0.6rem 0.2rem; font-size: 0.85rem; justify-content: center;">Más Cercana</button>
+                    <button id="btn-elegir" class="md3-btn md3-tonal" style="flex: 1; padding: 0.6rem 0.2rem; font-size: 0.85rem; justify-content: center;">Elegir</button>
+                </div>
+                
+                <!-- Selector de Paradas (Modo Elegir) -->
+                <div id="elegir-select-container" style="display: none; margin-bottom: 1.5rem; position: relative;"></div>
+
+                <div class="map-container" style="position: relative; border-radius: 30px; overflow: hidden; border: 1px solid var(--glass-border); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2); margin-bottom: 2rem;">
+                    <!-- Overlay dinámico (Contenedor) -->
+                    <div id="map-overlay-info" style="position: absolute; top: 15px; left: 15px; right: 15px; z-index: 90; display: none; pointer-events: none; transition: all 0.8s cubic-bezier(0.1, 0.9, 0.2, 1) 0.4s; transform: translateY(-20px); opacity: 0;">
+                    </div>
+                    
+                    <!-- Mapa Base -->
+                    <div id="map" style="width: 100%; aspect-ratio: 16/9; max-height: 70vh; background-color: #e5e3df; filter: contrast(1.1) opacity(0.9) saturate(1.2); transition: aspect-ratio 0.4s ease;"></div>
+                </div>
+                
+                <!-- Lista dinámica de paradas -->
+                <div id="paradas-list-container" style="display: flex; flex-direction: column; gap: 0.8rem; margin-bottom: 2rem;"></div>
+                
+                <!-- Contenedor dinámico de rutas paso a paso -->
+                <div id="directions-container"></div>
+            </div>
+        </section>

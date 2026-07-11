@@ -1,0 +1,421 @@
+import { translations, state, routeState, routeData, calcState, calcContext } from './config.js';
+import { updatePriceUI, updateCalcPriceUI, calculateRoute } from './pricing.js';
+
+export function updateDynamicAd() {
+    const adTitle = document.getElementById('ad-title');
+    const adDesc = document.getElementById('ad-desc');
+    
+    if (!adTitle || !adDesc) return;
+    
+    const hour = new Date().getHours();
+    let timeOfDay = 'morning';
+    
+    if (hour >= 13 && hour < 21) {
+        timeOfDay = 'afternoon';
+    } else if (hour >= 21 || hour < 7) {
+        timeOfDay = 'night';
+    }
+    
+    const titleKey = `ad-title-${timeOfDay}`;
+    const descKey = `ad-desc-${timeOfDay}`;
+    
+    adTitle.innerHTML = translations[state.currentLanguage][titleKey];
+    adDesc.innerHTML = translations[state.currentLanguage][descKey];
+}
+
+export function setLanguage(lang) {
+    if (!translations[lang]) return;
+    state.currentLanguage = lang;
+    
+    localStorage.setItem('cadiz_taxi_lang', lang);
+    
+    document.querySelectorAll('[data-translate]').forEach(elem => {
+        const key = elem.getAttribute('data-translate');
+        if (key === 'ad-title-morning' || key === 'ad-desc-morning') {
+            return;
+        }
+        if (translations[lang][key]) {
+            elem.innerHTML = translations[lang][key];
+        }
+    });
+    
+    document.querySelectorAll('[data-translate-placeholder]').forEach(elem => {
+        const key = elem.getAttribute('data-translate-placeholder');
+        if (translations[lang][key]) {
+            elem.placeholder = translations[lang][key];
+        }
+    });
+    
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.id === `lang-${lang}`);
+    });
+    
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+    
+    updateDynamicAd();
+    
+    Object.keys(routeData).forEach(id => updatePriceUI(id));
+}
+
+export function toggleTime(id) {
+    routeState[id].isDay = !routeState[id].isDay;
+    const btn = document.getElementById('time-toggle-'+id);
+    const festivoBtn = document.getElementById('festivo-toggle-'+id);
+    
+    if (routeState[id].isDay) {
+        btn.classList.add('active');
+        btn.innerHTML = `<i data-lucide="sun" size="14"></i> <span id="time-text-${id}" data-translate="btn-day">${state.currentLanguage === "es" ? "Día" : "Day"}</span>`;
+        if(festivoBtn) festivoBtn.style.display = '';
+    } else {
+        btn.classList.remove('active');
+        btn.innerHTML = `<i data-lucide="moon" size="14"></i> <span id="time-text-${id}" data-translate="btn-night">${state.currentLanguage === "es" ? "Noche" : "Night"}</span>`;
+        if(festivoBtn) festivoBtn.style.display = 'none';
+    }
+    lucide.createIcons();
+    updatePriceUI(id);
+}
+
+export function toggleFestivo(id) {
+    routeState[id].isFestivo = !routeState[id].isFestivo;
+    const btn = document.getElementById('festivo-toggle-'+id);
+    if (routeState[id].isFestivo) {
+        btn.classList.add('active');
+    } else {
+        btn.classList.remove('active');
+    }
+    updatePriceUI(id);
+}
+
+export function toggleRenfe(id) {
+    routeState[id].renfe = !routeState[id].renfe;
+    const btn = document.getElementById('renfe-toggle-'+id);
+    if (routeState[id].renfe) {
+        btn.classList.add('active');
+    } else {
+        btn.classList.remove('active');
+    }
+    updatePriceUI(id);
+}
+
+export function updateLuggage(id, delta) {
+    let newL = routeState[id].luggage + delta;
+    if (newL < 0) newL = 0;
+    if (newL > 10) newL = 10;
+    routeState[id].luggage = newL;
+    document.getElementById('luggage-'+id).innerText = newL;
+    const container = document.getElementById('maleta-container-'+id);
+    if (newL > 0) {
+        container.classList.add('active');
+    } else {
+        container.classList.remove('active');
+    }
+    updatePriceUI(id);
+}
+
+export function toggleCalcTime() {
+    calcState.isDay = !calcState.isDay;
+    const btn = document.getElementById('calc-time-toggle');
+    const festivoBtn = document.getElementById('calc-festivo-toggle');
+    
+    if (calcState.isDay) {
+        btn.classList.add('active');
+        btn.innerHTML = `<i data-lucide="sun" size="14"></i> <span id="calc-time-text" data-translate="btn-day">${state.currentLanguage === "es" ? "Día" : "Day"}</span>`;
+        if(festivoBtn) festivoBtn.style.display = 'inline-flex';
+    } else {
+        btn.classList.remove('active');
+        btn.innerHTML = `<i data-lucide="moon" size="14"></i> <span id="calc-time-text" data-translate="btn-night">${state.currentLanguage === "es" ? "Noche" : "Night"}</span>`;
+        if(festivoBtn) festivoBtn.style.display = 'none';
+        calcState.isFestivo = false;
+        if(festivoBtn) festivoBtn.classList.remove('active');
+    }
+    if (window.lucide) window.lucide.createIcons();
+    updateCalcPriceUI();
+}
+
+export function toggleCalcFestivo() {
+    if(!calcState.isDay) return;
+    calcState.isFestivo = !calcState.isFestivo;
+    document.getElementById('calc-festivo-toggle').classList.toggle('active', calcState.isFestivo);
+    updateCalcPriceUI();
+}
+
+export function toggleCalcRenfe() {
+    calcState.hasRenfe = !calcState.hasRenfe;
+    document.getElementById('calc-renfe-toggle').classList.toggle('active', calcState.hasRenfe);
+    updateCalcPriceUI();
+}
+
+export function updateCalcLuggage(delta) {
+    let newL = calcState.luggage + delta;
+    if (newL < 0) newL = 0;
+    if (newL > 10) newL = 10;
+    calcState.luggage = newL;
+    document.getElementById('calc-luggage').innerText = newL;
+    const container = document.getElementById('calc-maleta-container');
+    if (newL > 0) {
+        container.classList.add('active');
+    } else {
+        container.classList.remove('active');
+    }
+    updateCalcPriceUI();
+}
+
+export function setupPhotonAutocomplete(inputId, suggestionsId, onSelect, strictCadiz = false) {
+    const input = document.getElementById(inputId);
+    const suggestionsBox = document.getElementById(suggestionsId);
+    let debounceTimer;
+
+    input.addEventListener('input', function() {
+        clearTimeout(debounceTimer);
+        const val = this.value.trim();
+        suggestionsBox.innerHTML = '';
+        
+        if (val.length < 3) {
+            suggestionsBox.classList.add('hidden');
+            onSelect(null);
+            return;
+        }
+
+        debounceTimer = setTimeout(async () => {
+            try {
+                let url = `https://photon.komoot.io/api/?q=${encodeURIComponent(val)}&lat=36.52&lon=-6.29&limit=5`;
+                if (strictCadiz) {
+                    url += "&bbox=-6.32,36.48,-6.25,36.54";
+                }
+                const res = await fetch(url);
+                const data = await res.json();
+                
+                if (data.features && data.features.length > 0) {
+                    suggestionsBox.classList.remove('hidden');
+                    
+                    const seen = new Set();
+                    let count = 0;
+                    
+                    const sanitizeStr = (s) => {
+                        let clean = s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+                        clean = clean.replace(/^(calle |c\/ |avenida |av\.|av |plaza |pl\.|pl |paseo |ps\.|glorieta |carril )/, "");
+                        return clean.trim();
+                    };
+                    
+                    const searchSanitized = sanitizeStr(val);
+                    
+                    data.features.forEach(feature => {
+                        if (count >= 5) return;
+                        
+                        const props = feature.properties;
+                        const name = props.name || props.street || "";
+                        const city = props.city || props.town || props.village || props.county || "";
+                        
+                        if (!name) return;
+                        
+                        const nameSanitized = sanitizeStr(name);
+                        if (searchSanitized.length > 0 && !nameSanitized.includes(searchSanitized)) {
+                            return; 
+                        }
+                        
+                        if (strictCadiz) {
+                            const cityNormalized = city.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+                            if (cityNormalized && cityNormalized !== "cadiz") {
+                                return;
+                            }
+                        }
+                        
+                        const uniqueKey = name.toLowerCase();
+                        if (seen.has(uniqueKey)) return;
+                        seen.add(uniqueKey);
+                        
+                        count++;
+                        
+                        const type = ""; // Quitamos los emojis horribles
+                        const displayName = `<span style="font-weight: 400;">${name}</span> <span style="font-size:0.85em; color:var(--text-muted)">(${city || 'Cádiz'})</span>`;
+                        
+                        const div = document.createElement('div');
+                        div.style.padding = '10px 15px';
+                        div.style.cursor = 'pointer';
+                        div.style.borderBottom = '1px solid rgba(255,255,255,0.05)';
+                        div.style.fontFamily = 'inherit';
+                        div.style.whiteSpace = 'nowrap';
+                        div.style.overflow = 'hidden';
+                        div.style.textOverflow = 'ellipsis';
+                        div.innerHTML = displayName;
+                        div.addEventListener('click', () => {
+                            input.value = `${name}, ${city || 'Cádiz'}`.replace(/, $/, "");
+                            onSelect({
+                                name: name,
+                                city: city || 'Cádiz',
+                                lat: feature.geometry.coordinates[1],
+                                lon: feature.geometry.coordinates[0]
+                            });
+                            suggestionsBox.classList.add('hidden');
+                        });
+                        suggestionsBox.appendChild(div);
+                    });
+                    
+                    if (count === 0) {
+                        suggestionsBox.innerHTML = '<div style="padding: 10px; color: var(--text-muted); font-size: 0.9em; text-align: center;">No se han encontrado resultados.</div>';
+                        suggestionsBox.classList.remove('hidden');
+                    }
+                } else {
+                    suggestionsBox.innerHTML = '<div style="padding: 10px; color: var(--text-muted); font-size: 0.9em; text-align: center;">No se han encontrado resultados.</div>';
+                    suggestionsBox.classList.remove('hidden');
+                }
+            } catch (e) {
+                console.error("Photon API Error:", e);
+            }
+        }, 300);
+    });
+
+    document.addEventListener('click', (e) => {
+        if (e.target !== input && e.target !== suggestionsBox) {
+            suggestionsBox.classList.add('hidden');
+        }
+    });
+}
+
+export function geolocateOrigin() {
+    const input = document.getElementById('calc-origin');
+    if (input && input.value.trim() !== '') return;
+
+    if (!navigator.geolocation) {
+        return;
+    }
+    
+    // Mostramos estado de carga visual en el input
+    if (input) {
+        input.placeholder = "Buscando tu ubicación...";
+    }
+
+    navigator.geolocation.getCurrentPosition(async (position) => {
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
+        calcState.originLat = lat;
+        calcState.originLon = lon;
+        try {
+            const res = await fetch("https://photon.komoot.io/reverse?lat=" + lat + "&lon=" + lon);
+            const data = await res.json();
+            if (data.features && data.features.length > 0) {
+                const props = data.features[0].properties;
+                const street = props.street || props.name || "Ubicación actual";
+                if (input && input.value.trim() === '') {
+                    input.value = street;
+                }
+                calcContext.selectedOrigin = {
+                    name: street,
+                    city: props.city || 'Cádiz',
+                    lat: lat,
+                    lon: lon
+                };
+            } else {
+                if (input && input.value.trim() === '') {
+                    input.value = lat.toFixed(4) + ", " + lon.toFixed(4);
+                }
+                calcContext.selectedOrigin = {
+                    name: "Ubicación detectada",
+                    city: 'Cádiz',
+                    lat: lat,
+                    lon: lon
+                };
+            }
+        } catch(e) {
+            if (input && input.value.trim() === '') {
+                input.value = "Ubicación detectada";
+            }
+            calcContext.selectedOrigin = {
+                name: "Ubicación detectada",
+                city: 'Cádiz',
+                lat: lat,
+                lon: lon
+            };
+        }
+        if (input) input.placeholder = "Origen (ej. Av. Andalucía)";
+    }, () => {
+        // Fallo silencioso si deniega el GPS
+        if (input) input.placeholder = "Origen (ej. Av. Andalucía)";
+    });
+}
+
+export function confirmReservation(event) {
+    event.preventDefault();
+    const name = document.getElementById('b-name').value;
+    const date = document.getElementById('b-date').value;
+    const time = document.getElementById('b-time').value;
+    const phone = document.getElementById('b-phone').value;
+    const pickup = document.getElementById('b-pickup').value;
+    const dropoff = document.getElementById('b-dropoff').value;
+    
+    const confirmMsg = state.currentLanguage === 'es' 
+        ? "Aviso importante: Tienes que esperar a que te confirmemos la reserva. ¿Estás de acuerdo?" 
+        : "Important notice: You must wait for us to confirm your booking. Do you agree?";
+    
+    if (!window.confirm(confirmMsg)) {
+        return false;
+    }
+    
+    const email = "contacto@radiotaxicadiz.es";
+    const subject = state.currentLanguage === 'es' 
+        ? `Solicitud de reserva de Taxi - ${name} - ${date}`
+        : `Taxi booking request - ${name} - ${date}`;
+    
+    const body = state.currentLanguage === 'es'
+        ? `¡Hola equipo de Radio Taxi Cádiz!\n\nSoy ${name} y necesito reservar un taxi con los siguientes detalles:\n\n📱 Teléfono: ${phone}\n📍 Recogida: ${pickup}\n🏁 Destino: ${dropoff}\n📅 Día: ${date}\n🕒 Hora: ${time}\n\nQuedo a la espera de vuestra confirmación. ¡Muchas gracias y un saludo!\n\nAtentamente,\n${name}`
+        : `Hello Radio Taxi Cádiz team!\n\nMy name is ${name} and I would like to book a taxi with the following details:\n\n📱 Phone: ${phone}\n📍 Pickup: ${pickup}\n🏁 Destination: ${dropoff}\n📅 Date: ${date}\n🕒 Time: ${time}\n\nI look forward to your confirmation. Thank you very much!\n\nBest regards,\n${name}`;
+    
+    window.location.href = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    return false;
+}
+
+// Global click listener for accordions (all devices + outside click)
+document.addEventListener('click', function(e) {
+    let card = e.target.closest('.destination-card, .mini-dest-card');
+    let toggleBtn = e.target.closest('.dest-action-toggle');
+    
+    // 1. If clicking outside any card, close ALL open accordions
+    if (!card) {
+        document.querySelectorAll('.dest-actions-content.open, .dest-action-toggle.open').forEach(el => el.classList.remove('open'));
+        return;
+    }
+
+    // 2. We clicked inside a card. Close all OTHER accordions.
+    document.querySelectorAll('.dest-actions-content.open, .dest-action-toggle.open').forEach(el => {
+        if (!card.contains(el)) {
+            el.classList.remove('open');
+        }
+    });
+
+    // 3. Prevent toggle if clicking on interactive elements inside the card
+    if (!toggleBtn && (e.target.closest('.md3-btn') || 
+                       e.target.closest('button[onclick]') || 
+                       e.target.closest('a') || 
+                       e.target.closest('.price-disclaimer'))) {
+        return; 
+    }
+    
+    // 4. Toggle the clicked card
+    let content = card.querySelector('.dest-actions-content');
+    let cardToggle = card.querySelector('.dest-action-toggle');
+    
+    if (content) {
+        // Prevent default if it was an explicit click on the button to avoid double firing
+        if (toggleBtn && e.type === 'click') {
+            e.preventDefault();
+        }
+        
+        let wasClosed = !content.classList.contains('open');
+        
+        content.classList.toggle('open');
+        if (cardToggle) cardToggle.classList.toggle('open');
+        if (window.lucide) window.lucide.createIcons();
+
+        // Scroll card to top of view when opened
+        if (wasClosed) {
+            // Use 300ms timeout to wait for the CSS expansion transition to finish before scrolling
+            setTimeout(() => {
+                const rect = card.getBoundingClientRect();
+                const offset = window.scrollY + rect.top - 80; // 80px offset for header
+                window.scrollTo({ top: offset, behavior: 'smooth' });
+            }, 300); 
+        }
+    }
+});

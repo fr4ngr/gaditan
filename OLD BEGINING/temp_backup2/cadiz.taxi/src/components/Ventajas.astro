@@ -1,0 +1,148 @@
+---
+// src/components/Ventajas.astro
+---
+<section class="ventajas-section" style="padding: 1.5rem 0; overflow: hidden; background: rgba(0,0,0,0.2); border-bottom: 1px solid rgba(255,255,255,0.05); margin-bottom: 2rem;">
+    <!-- El contenedor que hace de 'ventana' scrollable -->
+    <div class="ticker-wrapper" id="ventajas-ticker" style="width: 100%; display: flex; overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none;">
+        <!-- El track que contiene los elementos -->
+        <div class="trust-features" id="ventajas-track" style="display: flex; gap: 2rem; padding: 0 1.5rem; white-space: nowrap; align-items: center; width: max-content;">
+            <div class="feature-item" style="display: flex; align-items: center; gap: 0.5rem; color: var(--text-muted); font-size: 0.95rem; font-weight: 500;">
+                <i data-lucide="shield-check" style="color: var(--brand-cyan);" size="18"></i> <span style="color: white;">Taxis Autorizados</span>
+            </div>
+            <div class="feature-item" style="display: flex; align-items: center; gap: 0.5rem; color: var(--text-muted); font-size: 0.95rem; font-weight: 500;">
+                <i data-lucide="clock" style="color: var(--brand-cyan);" size="18"></i> <span style="color: white;">Servicio 24 Horas</span>
+            </div>
+            <div class="feature-item" style="display: flex; align-items: center; gap: 0.5rem; color: var(--text-muted); font-size: 0.95rem; font-weight: 500;">
+                <i data-lucide="credit-card" style="color: var(--brand-cyan);" size="18"></i> <span style="color: white;">Pago con Tarjeta / Bizum</span>
+            </div>
+            <div class="feature-item" style="display: flex; align-items: center; gap: 0.5rem; color: var(--text-muted); font-size: 0.95rem; font-weight: 500;">
+                <i data-lucide="baby" style="color: var(--brand-cyan);" size="18"></i> <span style="color: white;">Carritos Infantiles Gratis</span>
+            </div>
+            <div class="feature-item" style="display: flex; align-items: center; gap: 0.5rem; color: var(--text-muted); font-size: 0.95rem; font-weight: 500;">
+                <i data-lucide="accessibility" style="color: var(--brand-cyan);" size="18"></i> <span style="color: white;">Vehículos Adaptados</span>
+            </div>
+        </div>
+    </div>
+    
+    <style>
+        /* Ocultar barra de scroll nativa */
+        .ticker-wrapper::-webkit-scrollbar { display: none; }
+        .feature-item { user-select: none; } /* Prevenir selección al arrastrar en PC */
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const ticker = document.getElementById('ventajas-ticker');
+            const track = document.getElementById('ventajas-track');
+            
+            if (!ticker || !track) return;
+
+            // Variables de estado
+            let isPaused = false;
+            let animationId;
+            // Velocidad de desplazamiento (píxeles por frame)
+            const speed = 0.8; 
+            
+            // Clonar los elementos originales 2 veces para asegurar espacio de sobra al hacer swipe
+            const originalItems = Array.from(track.children);
+            
+            // Añadir clones
+            originalItems.forEach(item => {
+                const clone = item.cloneNode(true);
+                clone.setAttribute('aria-hidden', 'true'); // Accesibilidad
+                track.appendChild(clone);
+            });
+            originalItems.forEach(item => {
+                const clone2 = item.cloneNode(true);
+                clone2.setAttribute('aria-hidden', 'true');
+                track.appendChild(clone2);
+            });
+
+            // Calcular el punto de reinicio:
+            // Es el ancho exacto del grupo original más 1 gap (32px por el gap de 2rem).
+            // Lo calculamos midiendo la distancia desde el inicio del primer elemento original hasta el primer clon.
+            let resetPoint = 0;
+            const calculateResetPoint = () => {
+                const firstClone = track.children[originalItems.length];
+                if (firstClone) {
+                    resetPoint = firstClone.offsetLeft - track.children[0].offsetLeft;
+                }
+            };
+            
+            // Recalcular si cambia el tamaño de la pantalla
+            window.addEventListener('resize', calculateResetPoint);
+            // Calcular ahora, pero damos un pequeño delay para que las fuentes/iconos carguen
+            setTimeout(calculateResetPoint, 500);
+
+            // Bucle de animación fluida
+            const loop = () => {
+                if (!isPaused && resetPoint > 0) {
+                    ticker.scrollLeft += speed;
+                    
+                    // Si hemos llegado al punto donde empieza el bloque clonado
+                    if (ticker.scrollLeft >= resetPoint) {
+                        // Reseteamos imperceptiblemente
+                        ticker.scrollLeft -= resetPoint;
+                    }
+                }
+                animationId = requestAnimationFrame(loop);
+            };
+
+            // Iniciar bucle
+            loop();
+
+            // Interacciones del usuario: Pausar auto-scroll si el usuario quiere deslizar a su antojo
+            const pauseTicker = () => { isPaused = true; };
+            const resumeTicker = () => { isPaused = false; };
+
+            // Táctil (Móvil)
+            ticker.addEventListener('touchstart', pauseTicker, { passive: true });
+            ticker.addEventListener('touchend', resumeTicker);
+            
+            // Ratón (Escritorio)
+            ticker.addEventListener('mouseenter', pauseTicker);
+            ticker.addEventListener('mouseleave', resumeTicker);
+            
+            // Control de "arrastre" manual en escritorio (Drag to scroll)
+            let isDown = false;
+            let startX;
+            let scrollLeft;
+
+            ticker.addEventListener('mousedown', (e) => {
+                isDown = true;
+                pauseTicker();
+                ticker.style.cursor = 'grabbing';
+                startX = e.pageX - ticker.offsetLeft;
+                scrollLeft = ticker.scrollLeft;
+            });
+            ticker.addEventListener('mouseup', () => {
+                isDown = false;
+                resumeTicker();
+                ticker.style.cursor = 'pointer';
+            });
+            ticker.addEventListener('mouseleave', () => {
+                isDown = false;
+                resumeTicker();
+                ticker.style.cursor = 'pointer';
+            });
+            ticker.addEventListener('mousemove', (e) => {
+                if (!isDown) return;
+                e.preventDefault();
+                const x = e.pageX - ticker.offsetLeft;
+                const walk = (x - startX) * 2; // Multiplicador de velocidad de arrastre
+                ticker.scrollLeft = scrollLeft - walk;
+            });
+            
+            // Reseteo inteligente si el usuario hace swipe demasiado a la izquierda/derecha
+            ticker.addEventListener('scroll', () => {
+                if (isPaused && resetPoint > 0) {
+                    if (ticker.scrollLeft >= resetPoint * 2) {
+                        ticker.scrollLeft -= resetPoint;
+                    } else if (ticker.scrollLeft <= 0) {
+                        ticker.scrollLeft += resetPoint;
+                    }
+                }
+            }, { passive: true });
+        });
+    </script>
+</section>

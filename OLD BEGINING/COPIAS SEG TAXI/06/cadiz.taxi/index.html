@@ -1,0 +1,540 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taxi Cádiz | Teléfonos, Reservas y Precios</title>
+    <meta name="description" content="Guía turística y directorio independiente de Taxis en Cádiz. Encuentra teléfonos, tarifas estimadas a aeropuertos y paradas principales.">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="Taxi Cádiz | Guía Local y Traslados">
+    <meta property="og:description" content="Directorio rápido para pedir tu taxi en Cádiz. Teléfonos directos, precios a aeropuertos y puerto de cruceros.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://cadiz.taxi/">
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+    <!-- Schema.org Data for SEO -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Guía Taxis de Cádiz",
+      "description": "Directorio informativo sobre servicios de transporte urbano e interurbano en Cádiz.",
+      "url": "https://cadiz.taxi/"
+    }
+    </script>
+    
+    <!-- Tipografía Premium: Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <link rel="stylesheet" href="styles.css?v=1.9.69">
+</head>
+<body>
+    <!-- Header Glassmorphism -->
+    <header class="header glass-nav">
+        <div class="container header-content">
+            <div class="logo">
+                <img src="logo.png" alt="Cádiz Taxi Logo" class="logo-img">
+                <span class="logo-text">Cádiz.Taxi</span>
+            </div>
+            <div class="header-right">
+                <nav class="nav-links">
+                    <a href="#tarifas" data-translate="nav-prices">Precios</a>
+                    <a href="#reservas" data-translate="nav-booking">Reservar</a>
+                    <a href="#paradas" data-translate="nav-stops">Paradas</a>
+                    <a href="#faq" data-translate="nav-faq">Preguntas</a>
+                </nav>
+                <div class="lang-selector">
+                    <button class="lang-btn active" id="lang-es" aria-label="Español">🇪🇸</button>
+                    <button class="lang-btn" id="lang-en" aria-label="English">🇬🇧</button>
+                </div>
+                <a href="tel:956212121" class="btn-header-call">
+                    <i data-lucide="phone" size="16"></i> <span class="hide-mobile" data-translate="nav-call">Llama Ya</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Section con Imagen Generada -->
+        <section class="hero">
+            <div class="hero-bg"></div>
+            <div class="hero-overlay"></div>
+            <div class="container hero-content">
+                <h1 class="hero-title" id="hero-title" data-translate="hero-title">Taxis Oficiales <br>de Cádiz</h1>
+                <p class="hero-subtitle" data-translate="hero-subtitle">Pide un taxi, resérvalo o consulta las tarifas. Toda la info que necesitas en cadiz.taxi</p>
+                <div class="hero-actions" style="max-width: 500px; margin-inline: auto;">
+                    <a href="tel:956212121" class="btn btn-glow" id="hero-call-btn" data-translate="hero-call-btn" style="flex: 1;">
+                        <i data-lucide="phone"></i> &iexcl;LLAMA YA!
+                    </a>
+                    <a href="https://wa.me/34956212121" target="_blank" class="btn btn-whatsapp" id="hero-wa-btn" data-translate="hero-wa-btn" style="flex: 1;">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24" style="margin-right: 0.3rem;"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> WhatsApp
+                    </a>
+                </div>
+                <div class="trust-badges">
+                    <button type="button" class="glass-badge" style="cursor: pointer; font-family: inherit;" onclick="alert('Todos los taxis cuentan con licencia municipal oficial del Ayuntamiento de Cádiz, garantizando tu seguridad y tarifas reguladas.')"><i data-lucide="shield-check" size="16"></i> <span data-translate="badge-official">Autorizados</span> <i data-lucide="info" size="16"></i></button>
+                    <span class="glass-badge"><i data-lucide="clock" size="16"></i> <span data-translate="badge-24h">24 Horas</span></span>
+                    <span class="glass-badge"><i data-lucide="credit-card" size="16"></i> <span data-translate="badge-card">Tarjeta</span></span>
+                    <span class="glass-badge"><i data-lucide="receipt" size="16"></i> <span data-translate="badge-receipt">Factura</span></span>
+                    <span class="glass-badge"><i data-lucide="accessibility" size="16"></i> <span data-translate="badge-adapted">Adaptados</span></span>
+                    <button type="button" class="glass-badge" style="cursor: pointer; font-family: inherit;" onclick="alert('Cádiz cuenta con taxis de gran capacidad (hasta 8 plazas). Consulta disponibilidad al contactar con la central.')"><i data-lucide="users" size="16"></i> <span data-translate="badge-eurotaxi">8 Plazas</span> <i data-lucide="info" size="16"></i></button>
+                    <button type="button" class="glass-badge" style="cursor: pointer; font-family: inherit;" onclick="alert('La inmensa mayor\u00EDa de taxistas aceptan Bizum, consulta antes de subirte.')"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="margin-right:-2px;"><line x1="5" y1="19" x2="19" y2="5" /><line x1="5" y1="11" x2="11" y2="5" /><line x1="13" y1="19" x2="19" y2="13" /><circle cx="4" cy="4" r="1" fill="currentColor" stroke="none" /><circle cx="20" cy="20" r="1" fill="currentColor" stroke="none" /></svg> <span>Bizum</span> <i data-lucide="info" size="16"></i></button>
+                </div>
+            </div>
+        </section>
+
+
+
+        <!-- Precios -->
+        <section class="pricing-section" id="tarifas">
+            <div class="container">
+                <h2 class="section-title" data-translate="pricing-title">Tarifas Oficiales</h2>
+                
+                <h3 class="subsection-title" data-translate="urban-fares-title" style="margin-bottom: 1.5rem;">Tarifas Urbanas</h3>
+                  <div class="table-responsive glass" style="margin-bottom: 3rem; overflow-x: auto;">
+                    <table class="glass-table">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>
+                                    <div style="display: flex; flex-direction: column; align-items: center; gap: 0.3rem;">
+                                        <i data-lucide="sun" size="24" style="color: var(--brand-cyan);"></i>
+                                        <span data-translate="day-fare">Día</span>
+                                        <span class="table-schedule" style="margin-top:0;" data-translate="day-fare-sub">L-V (7h - 21h)</span>
+                                    </div>
+                                </th>
+                                <th>
+                                    <div style="display: flex; flex-direction: column; align-items: center; gap: 0.3rem;">
+                                        <i data-lucide="moon" size="24" style="color: var(--brand-blue);"></i>
+                                        <span data-translate="night-fare">Noche</span>
+                                        <span class="table-schedule" style="margin-top:0;" data-translate="night-fare-sub">Noches y Festivos</span>
+                                    </div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong data-translate="min-fare">Carrera mínima</strong></td>
+                                <td>3,56&nbsp;€</td>
+                                <td>4,43&nbsp;€</td>
+                            </tr>
+                            <tr>
+                                <td><strong data-translate="flag-drop">Bajada de bandera</strong></td>
+                                <td>1,39&nbsp;€</td>
+                                <td>1,73&nbsp;€</td>
+                            </tr>
+                            <tr>
+                                <td><strong data-translate="price-km">Precio kilómetro</strong></td>
+                                <td>0,70&nbsp;€</td>
+                                <td>0,90&nbsp;€</td>
+                            </tr>
+                            <tr>
+                                <td><strong data-translate="waiting-hour">Hora de espera</strong></td>
+                                <td>18,97&nbsp;€</td>
+                                <td>23,66&nbsp;€</td>
+                            </tr>
+                            <tr style="background: rgba(255,255,255,0.02);">
+                                <td colspan="3" style="text-align: center; vertical-align: middle; font-weight: 700; color: var(--brand-cyan); padding-top: 0.8rem; padding-bottom: 0.6rem; border-bottom: none; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;" data-translate="supplements-title">Suplementos</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div style="display: flex; align-items: center; gap: 0.4rem;">
+                                        <button type="button" style="background: none; border: none; padding: 0; cursor: pointer; color: var(--text-muted); display: inline-flex;" onclick="alert('Este suplemento de 0,82&nbsp;€ se aplica exclusivamente a los viajes con ORIGEN en la parada de taxis de la estación de tren (Renfe). No se cobra si tu destino es la estación.')">
+                                            <i data-lucide="info" size="14"></i>
+                                        </button>
+                                        <strong data-translate="supp-train">Salida Renfe</strong>
+                                    </div>
+                                </td>
+                                <td colspan="2" style="text-align: center; vertical-align: middle;">0,82&nbsp;€</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div style="display: flex; align-items: center; gap: 0.4rem;">
+                                        <button type="button" style="background: none; border: none; padding: 0; cursor: pointer; color: var(--text-muted); display: inline-flex;" onclick="alert('El suplemento de 0,51&nbsp;€ es aplicable a bultos o maletas que superen los 60 cm. Quedan totalmente EXENTOS de cobro: sillas de ruedas, andadores, carritos de bebé y carros de la compra.')">
+                                            <i data-lucide="info" size="14"></i>
+                                        </button>
+                                        <strong data-translate="supp-luggage">Maleta grande</strong>
+                                    </div>
+                                </td>
+                                <td colspan="2" style="text-align: center; vertical-align: middle;">0,51&nbsp;€</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                  <h3 class="subsection-title" data-translate="interurban-fares-title" style="margin-bottom: 1.5rem;">Tarifas Interurbanas</h3>
+                  <div class="table-responsive glass" style="margin-bottom: 3rem; overflow-x: auto;">
+                    <table class="glass-table">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>
+                                    <div style="display: flex; flex-direction: column; align-items: center; gap: 0.3rem;">
+                                        <i data-lucide="sun" size="24" style="color: var(--brand-cyan);"></i>
+                                        <span data-translate="day-fare">Día</span>
+                                        <span class="table-schedule" style="margin-top:0;" data-translate="inter-day-fare-sub">L-V (6h - 22h)</span>
+                                    </div>
+                                </th>
+                                <th>
+                                    <div style="display: flex; flex-direction: column; align-items: center; gap: 0.3rem;">
+                                        <i data-lucide="moon" size="24" style="color: var(--brand-blue);"></i>
+                                        <span data-translate="night-fare">Noche</span>
+                                        <span class="table-schedule" style="margin-top:0;" data-translate="inter-night-fare-sub">Noches y Festivos</span>
+                                    </div>
+                                </th>
+                            </tr>
+                        </thead>
+                                                <tbody>
+                            <tr>
+                                <td><strong data-translate="min-fare">Carrera mínima</strong></td>
+                                <td>3,83&nbsp;€</td>
+                                <td>4,51&nbsp;€</td>
+                            </tr>
+                            <tr>
+                                <td><strong data-translate="flag-drop">Bajada de bandera</strong></td>
+                                <td>3,66&nbsp;€</td>
+                                <td>3,60&nbsp;€</td>
+                            </tr>
+                            <tr>
+                                <td><strong data-translate="price-km">Precio kilómetro</strong></td>
+                                <td>0,71&nbsp;€</td>
+                                <td>0,82&nbsp;€</td>
+                            </tr>
+                            <tr>
+                                <td><strong data-translate="waiting-hour">Hora de espera</strong></td>
+                                <td>17,57&nbsp;€</td>
+                                <td>20,71&nbsp;€</td>
+                            </tr>
+                        </tbody>
+</tbody>
+                    </table>
+                </div>
+
+                <h3 class="subsection-title" data-translate="popular-destinations">Trayectos Populares</h3>
+                <div class="pricing-grid">
+                    <!-- Jerez -->
+                    <div class="price-card destination-card glass" data-id="jerez">
+                        <img src="jerez.jpg" alt="Aeropuerto de Jerez" class="destination-img">
+                        <div class="destination-content">
+                            <div class="dest-from" data-translate="dest-from">DESDE CÁDIZ A</div>
+                              <h3 data-translate="dest-jerez-title">Aeropuerto de Jerez</h3>
+                            <div class="price-display">
+                                <p class="price" id="price-jerez">0,00€</p>
+                                <span class="price-aprox">aprox.</span>
+                            </div>
+                              <p class="price-disclaimer" data-translate="price-disclaimer">Precio apróximado calculado con la ruta más corta disponible y las condiciones de tráfico más favorables.</p>
+                            <div class="interactive-controls">
+                                <button class="pill-toggle active" id="time-toggle-jerez" onclick="toggleTime('jerez')">
+                                    <i data-lucide="sun" size="14"></i> <span id="time-text-jerez" data-translate="btn-day">Día</span>
+                                </button>
+                                <button class="pill-toggle" id="festivo-toggle-jerez" onclick="toggleFestivo('jerez')">
+                                    <i data-lucide="calendar" size="14"></i> <span id="festivo-text-jerez" data-translate="btn-festivo">Festivo</span>
+                                </button>
+                                <button class="pill-toggle" id="renfe-toggle-jerez" onclick="toggleRenfe('jerez')">
+                                    <i data-lucide="train" size="14"></i> <span data-translate="btn-renfe">Renfe</span>
+                                </button>
+                                <div class="luggage-counter">
+                                    <i data-lucide="briefcase" size="14"></i>
+                                    <button class="cnt-btn" onclick="updateLuggage('jerez', -1)">-</button>
+                                    <span id="luggage-jerez">0</span>
+                                    <button class="cnt-btn" onclick="updateLuggage('jerez', 1)">+</button>
+                                </div>
+                                <div class="pill-toggle" style="cursor: default;">
+                                    <i data-lucide="map-pin" size="14"></i> <span>45 km</span>
+                                </div>
+                                <div class="pill-toggle" style="cursor: default;">
+                                    <i data-lucide="clock" size="14"></i> <span data-translate="dest-jerez-time"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                                        <!-- Bahia Sur -->
+                    <div class="price-card destination-card glass" data-id="bahia">
+                        <img src="bahia.png" alt="Bahía Sur San Fernando" class="destination-img">
+                        <div class="destination-content">
+                            <div class="dest-from" data-translate="dest-from">DESDE CÁDIZ A</div>
+                              <h3 data-translate="dest-bahia-title">Bahía Sur (San Fernando)</h3>
+                            <div class="price-display">
+                                <p class="price" id="price-bahia">0,00€</p>
+                                <span class="price-aprox">aprox.</span>
+                            </div>
+                              <p class="price-disclaimer" data-translate="price-disclaimer">Precio apróximado calculado con la ruta más corta disponible y las condiciones de tráfico más favorables.</p>
+                            <div class="interactive-controls">
+                                <button class="pill-toggle active" id="time-toggle-bahia" onclick="toggleTime('bahia')">
+                                    <i data-lucide="sun" size="14"></i> <span id="time-text-bahia" data-translate="btn-day">Día</span>
+                                </button>
+                                <button class="pill-toggle" id="festivo-toggle-bahia" onclick="toggleFestivo('bahia')">
+                                    <i data-lucide="calendar" size="14"></i> <span id="festivo-text-bahia" data-translate="btn-festivo">Festivo</span>
+                                </button>
+                                <button class="pill-toggle" id="renfe-toggle-bahia" onclick="toggleRenfe('bahia')">
+                                    <i data-lucide="train" size="14"></i> <span data-translate="btn-renfe">Renfe</span>
+                                </button>
+                                <div class="luggage-counter">
+                                    <i data-lucide="briefcase" size="14"></i>
+                                    <button class="cnt-btn" onclick="updateLuggage('bahia', -1)">-</button>
+                                    <span id="luggage-bahia">0</span>
+                                    <button class="cnt-btn" onclick="updateLuggage('bahia', 1)">+</button>
+                                </div>
+                                <div class="pill-toggle" style="cursor: default;">
+                                    <i data-lucide="map-pin" size="14"></i> <span>12 km</span>
+                                </div>
+                                <div class="pill-toggle" style="cursor: default;">
+                                    <i data-lucide="clock" size="14"></i> <span data-translate="dest-bahia-time"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                                        <!-- Chiclana -->
+                    <div class="price-card destination-card glass" data-id="chiclana">
+                        <img src="chiclana.jpg" alt="Chiclana Novo Sancti Petri" class="destination-img">
+                        <div class="destination-content">
+                            <div class="dest-from" data-translate="dest-from">DESDE CÁDIZ A</div>
+                              <h3 data-translate="dest-chiclana-title">Chiclana (Novo S. Petri)</h3>
+                            <div class="price-display">
+                                <p class="price" id="price-chiclana">0,00€</p>
+                                <span class="price-aprox">aprox.</span>
+                            </div>
+                              <p class="price-disclaimer" data-translate="price-disclaimer">Precio apróximado calculado con la ruta más corta disponible y las condiciones de tráfico más favorables.</p>
+                            <div class="interactive-controls">
+                                <button class="pill-toggle active" id="time-toggle-chiclana" onclick="toggleTime('chiclana')">
+                                    <i data-lucide="sun" size="14"></i> <span id="time-text-chiclana" data-translate="btn-day">Día</span>
+                                </button>
+                                <button class="pill-toggle" id="festivo-toggle-chiclana" onclick="toggleFestivo('chiclana')">
+                                    <i data-lucide="calendar" size="14"></i> <span id="festivo-text-chiclana" data-translate="btn-festivo">Festivo</span>
+                                </button>
+                                <button class="pill-toggle" id="renfe-toggle-chiclana" onclick="toggleRenfe('chiclana')">
+                                    <i data-lucide="train" size="14"></i> <span data-translate="btn-renfe">Renfe</span>
+                                </button>
+                                <div class="luggage-counter">
+                                    <i data-lucide="briefcase" size="14"></i>
+                                    <button class="cnt-btn" onclick="updateLuggage('chiclana', -1)">-</button>
+                                    <span id="luggage-chiclana">0</span>
+                                    <button class="cnt-btn" onclick="updateLuggage('chiclana', 1)">+</button>
+                                </div>
+                                <div class="pill-toggle" style="cursor: default;">
+                                    <i data-lucide="map-pin" size="14"></i> <span>35 km</span>
+                                </div>
+                                <div class="pill-toggle" style="cursor: default;">
+                                    <i data-lucide="clock" size="14"></i> <span data-translate="dest-chiclana-time"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    </div>
+                  </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Reservas Anticipadas -->
+        <!-- CALCULATOR SECTION -->
+        <section class="calculator-section" id="calculadora" style="padding: 4rem 0;">
+            <div class="container">
+                <h2 class="section-title" data-translate="calc-title">Calculadora de Tarifas</h2>
+                <p class="section-subtitle" data-translate="calc-subtitle">Calcula el precio estimado de tu trayecto al instante</p>
+                <div class="glass" style="max-width: 600px; margin: 0 auto; padding: 2rem; border-radius: 20px;">
+                    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                        <div style="position: relative;">
+                            <i data-lucide="map-pin" style="position: absolute; left: 1rem; top: 1rem; color: var(--text-muted);"></i>
+                            <input type="text" id="calc-origin" placeholder="Origen (ej. Estación de Tren, Cádiz)" style="width: 100%; padding: 1rem 1rem 1rem 3rem; border-radius: 10px; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.05); color: #fff; font-family: inherit;">
+                        </div>
+                        <div style="position: relative;">
+                            <i data-lucide="flag" style="position: absolute; left: 1rem; top: 1rem; color: var(--text-muted);"></i>
+                            <input type="text" id="calc-destination" placeholder="Destino (ej. Playa Victoria, Cádiz)" style="width: 100%; padding: 1rem 1rem 1rem 3rem; border-radius: 10px; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.05); color: #fff; font-family: inherit;">
+                        </div>
+                        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                            <button id="calc-btn-day" class="btn-toggle active" onclick="setCalcTime(true)">
+                                <i data-lucide="sun" size="14"></i> <span data-translate="btn-day">Día</span>
+                            </button>
+                            <button id="calc-btn-night" class="btn-toggle" onclick="setCalcTime(false)">
+                                <i data-lucide="moon" size="14"></i> <span data-translate="btn-night">Noche</span>
+                            </button>
+                            <button id="calc-btn-festivo" class="btn-toggle" onclick="toggleCalcFestivo()">
+                                <i data-lucide="calendar" size="14"></i> <span data-translate="btn-festivo">Festivo</span>
+                            </button>
+                        </div>
+                        <button class="btn btn-glow" style="width: 100%;" onclick="calculateRoute()">
+                            <span data-translate="calc-btn">Calcular Precio</span> <i data-lucide="calculator" size="18"></i>
+                        </button>
+                        <div id="calc-result" style="display: none; text-align: center; margin-top: 1rem; border-top: 1px solid var(--glass-border); padding-top: 1.5rem;">
+                            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 0.5rem;" id="calc-dist-text">Distancia: <strong id="calc-dist-val" style="color: #fff;">0 km</strong></p>
+                            <div style="font-size: 3rem; font-weight: 800; color: var(--brand-cyan);" id="calc-price-val">0,00€</div>
+                            <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.5rem;" data-translate="calc-disclaimer">*Precio estimado. Pueden aplicarse suplementos por maletas o estación.</p>
+                        </div>
+                        <div id="calc-loading" style="display: none; text-align: center; margin-top: 1rem; color: var(--text-muted);">
+                            <i data-lucide="loader-2" class="spin" style="animation: spin 1s linear infinite;"></i> <span data-translate="calc-loading">Calculando ruta...</span>
+                        </div>
+                        <div id="calc-error" style="display: none; text-align: center; margin-top: 1rem; color: #ff6b6b; font-size: 0.9rem;">
+                            <i data-lucide="alert-circle" size="14"></i> <span id="calc-error-text">No se pudo encontrar la ruta. Verifica las direcciones.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="booking-section" id="reservas">
+            <div class="container">
+                <h2 class="section-title" data-translate="booking-title">Reserva tu Taxi</h2>
+                
+                <div class="booking-card glass">
+                    <form id="booking-form" class="booking-form">
+                        <div class="form-group">
+                            <label for="b-name"><i data-lucide="user" size="18"></i> <span data-translate="form-name">Nombre</span></label>
+                            <input type="text" id="b-name" placeholder="Tu nombre y apellidos" data-translate-placeholder="form-name-placeholder" required class="glass-input">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="b-date"><i data-lucide="calendar" size="18"></i> <span data-translate="form-date">Fecha</span></label>
+                                <input type="date" id="b-date" required class="glass-input">
+                            </div>
+                            <div class="form-group">
+                                <label for="b-time"><i data-lucide="clock" size="18"></i> <span data-translate="form-time">Hora</span></label>
+                                <input type="time" id="b-time" required class="glass-input">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="b-pickup"><i data-lucide="map-pin" size="18"></i> <span data-translate="form-pickup">Recogida</span></label>
+                            <input type="text" id="b-pickup" placeholder="Ej. Hotel Playa Victoria" data-translate-placeholder="form-pickup-placeholder" required class="glass-input">
+                        </div>
+                        <div class="form-group">
+                            <label for="b-dropoff"><i data-lucide="map" size="18"></i> <span data-translate="form-dropoff">Destino</span></label>
+                            <input type="text" id="b-dropoff" placeholder="Ej. Aeropuerto de Jerez" data-translate-placeholder="form-dropoff-placeholder" required class="glass-input">
+                        </div>
+                        <button type="submit" class="btn btn-glow" style="width:100%; margin-top: 1rem;" id="booking-submit-btn" data-translate="form-submit">
+                            <i data-lucide="mail"></i> Solicitar Reserva por Email
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- Paradas y Mapa -->
+        <section class="info-section" id="paradas">
+            <div class="container">
+                <h2 class="section-title" data-translate="map-title">Mapa de Paradas</h2>
+
+                <!-- MAPA LEAFLET DIRECTO -->
+                <!-- Trust Badge -->
+                <div class="map-trust-badge">
+                    <span><i data-lucide="map-pin" style="width:16px;height:16px;"></i> <span data-translate="map-badge-stops">28 paradas oficiales</span></span>
+                    <span><i data-lucide="clock" style="width:16px;height:16px;"></i> <span data-translate="map-badge-24h">Servicio 24h</span></span>
+                    <span><i data-lucide="shield-check" style="width:16px;height:16px;"></i> <span data-translate="map-badge-coverage">Cobertura total Cádiz capital</span></span>
+                </div>
+                <div class="map-container" style="border-radius: 20px; overflow: hidden; border: 1px solid var(--glass-border); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);">
+                    <div id="map" style="width: 100%; height: 450px; background-color: #e5e3df; filter: contrast(1.1) opacity(0.9) saturate(1.2);"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Preguntas Frecuentes -->
+        <section class="faq-section" id="faq">
+            <div class="container">
+                <h2 class="section-title" data-translate="faq-title">Preguntas Frecuentes del Turista</h2>
+                <p class="section-subtitle" data-translate="faq-subtitle">Todo lo que necesitas saber para moverte por Cádiz en taxi</p>
+                
+                <div class="faq-list">
+                    <!-- FAQ 1 -->
+                    <div class="faq-item glass">
+                        <button class="faq-toggle" aria-expanded="false">
+                            <span data-translate="faq-q1">¿Se puede pagar con tarjeta de crédito?</span>
+                            <i data-lucide="chevron-down" class="faq-icon"></i>
+                        </button>
+                        <div class="faq-content">
+                            <p data-translate="faq-a1">Sí, la gran mayoría de taxis en Cádiz están equipados con TPV para aceptar pagos con tarjeta (Visa, Mastercard).</p>
+                        </div>
+                    </div>
+                    
+                    <!-- FAQ 2 -->
+                    <div class="faq-item glass">
+                        <button class="faq-toggle" aria-expanded="false">
+                            <span data-translate="faq-q2">¿Tengo que pagar suplemento por equipaje?</span>
+                            <i data-lucide="chevron-down" class="faq-icon"></i>
+                        </button>
+                        <div class="faq-content">
+                            <p data-translate="faq-a2">El equipaje estándar de mano o maletas habituales no tienen suplemento. Bultos especiales de gran tamaño pueden estar sujetos a suplementos municipales según ordenanza.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- FAQ 3 -->
+                    <div class="faq-item glass">
+                        <button class="faq-toggle" aria-expanded="false">
+                            <span data-translate="faq-q3">¿Puedo viajar con mi mascota?</span>
+                            <i data-lucide="chevron-down" class="faq-icon"></i>
+                        </button>
+                        <div class="faq-content">
+                            <p data-translate="faq-a3">Depende de cada conductor, pero generalmente sí si viajan en transportín cerrado adecuado. Los perros de asistencia (perros guía) están siempre garantizados y autorizados por ley.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- FAQ 4 -->
+                    <div class="faq-item glass">
+                        <button class="faq-toggle" aria-expanded="false">
+                            <span data-translate="faq-q4">¿Emitís factura o recibo oficial?</span>
+                            <i data-lucide="chevron-down" class="faq-icon"></i>
+                        </button>
+                        <div class="faq-content">
+                            <p data-translate="faq-a4">Sí, todos los vehículos cuentan con impresora obligatoria para emitir tickets desglosados con impuestos y número de licencia oficial, ideal para justificar tus gastos de empresa.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- FAQ 5 -->
+                    <div class="faq-item glass">
+                        <button class="faq-toggle" aria-expanded="false">
+                            <span data-translate="faq-q5">¿Cómo identifico a un taxista oficial?</span>
+                            <i data-lucide="chevron-down" class="faq-icon"></i>
+                        </button>
+                        <div class="faq-content">
+                            <p data-translate="faq-a5">Por normativa municipal, todos los conductores deben exhibir de forma visible su tarjeta identificativa con nombre y número de licencia, garantizando tu seguridad y profesionalidad.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="logo">
+                        <img src="logo.png" alt="Cádiz Taxi Logo" class="logo-img">
+                        <span class="logo-text">Cádiz.Taxi</span>
+                    </div>
+                    <p data-translate="footer-desc">Directorio turístico independiente para la movilidad en la bahía.</p>
+                </div>
+            </div>
+            <div class="legal-disclaimer glass">
+                <p data-translate="footer-disclaimer"><strong>Aviso Legal y Exención de Responsabilidad:</strong> cadiz.taxi es un portal web de carácter estrictamente informativo y publicitario, independiente de Radio Taxi Cádiz y del Ayuntamiento de Cádiz. Toda la información proporcionada es orientativa y recopilada de fuentes públicas. No nos hacemos responsables de posibles modificaciones en las tarifas o variaciones. Recomendamos solicitar el precio final al conductor antes de iniciar el trayecto.</p>
+            </div>
+            <div class="footer-bottom">
+                <p data-translate="footer-copyright">&copy; 2026 Cádiz.Taxi. Diseñado para deslumbrar.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Botones Flotantes (Solo Móvil) -->
+    <div class="fab-container">
+        <a href="https://wa.me/34956212121" class="fab-btn fab-whatsapp" aria-label="WhatsApp" target="_blank">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+            </svg>
+        </a>
+        <a href="tel:+34956212121" class="fab-btn fab-call" aria-label="Llamar">
+            <i data-lucide="phone"></i>
+        </a>
+    </div>
+
+    <!-- Script de IA Dinámica, Traducciones y Acordeones -->
+    <script src="script.js?v=1.9.69"></script>
+</body>
+</html>

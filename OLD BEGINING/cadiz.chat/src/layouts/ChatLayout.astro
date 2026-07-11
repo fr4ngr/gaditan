@@ -1,0 +1,53 @@
+---
+// src/layouts/ChatLayout.astro
+import '../styles/chat.css';
+interface Props {
+	title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="es">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="description" content="Asistente Inteligente de Cádiz" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="generator" content={Astro.generator} />
+		<title>{title}</title>
+	</head>
+	<body>
+        <div class="app-container">
+            <header class="chat-header">
+                <div class="chat-header-info">
+                    <div class="chat-avatar">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM11 19.93C7.06 19.43 4 16.05 4 12C4 7.95 7.06 4.57 11 4.07V19.93ZM13 4.07C16.94 4.57 20 7.95 20 12C20 16.05 16.94 19.43 13 19.93V4.07Z" fill="currentColor"/>
+                        </svg>
+                    </div>
+                    <div class="chat-title-group">
+                        <h1>Cádiz Plus</h1>
+                        <span class="chat-subtitle">Asistente de Movilidad</span>
+                    </div>
+                </div>
+            </header>
+            
+            <main class="messages-area" id="messages-container">
+                <slot />
+            </main>
+
+            <footer class="input-area">
+                <div class="chat-input-wrapper">
+                    <input type="text" class="chat-input" placeholder="Pregunta por un taxi, bus, ruta..." aria-label="Escribe tu mensaje">
+                </div>
+                <button class="send-button" aria-label="Enviar mensaje">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path>
+                    </svg>
+                </button>
+            </footer>
+        </div>
+	</body>
+</html>

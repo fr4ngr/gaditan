@@ -110,6 +110,65 @@ import MapWidget from '../components/widgets/MapWidget.astro';
                     if (window.loadCommunity) window.loadCommunity();
                 }
             };
+            let audioRecorder = null;
+            let audioChunks = [];
+            window.currentAudioBlob = null;
+
+            document.addEventListener('DOMContentLoaded', () => {
+                const recordBtn = document.getElementById('record-audio-btn');
+                const deleteAudioBtn = document.getElementById('delete-audio-btn');
+                const statusTxt = document.getElementById('record-audio-status');
+                
+                if (recordBtn) {
+                    recordBtn.addEventListener('click', async () => {
+                        if (audioRecorder && audioRecorder.state === 'recording') {
+                            // Stop recording
+                            audioRecorder.stop();
+                            recordBtn.innerText = '🎙️';
+                            recordBtn.style.background = 'var(--primary-color)';
+                            statusTxt.innerText = 'Grabación completada';
+                            deleteAudioBtn.style.display = 'block';
+                        } else {
+                            // Start recording
+                            try {
+                                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                                audioRecorder = new MediaRecorder(stream);
+                                audioChunks = [];
+                                
+                                audioRecorder.ondataavailable = e => {
+                                    if (e.data.size > 0) audioChunks.push(e.data);
+                                };
+                                
+                                audioRecorder.onstop = () => {
+                                    window.currentAudioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                                    stream.getTracks().forEach(track => track.stop());
+                                };
+                                
+                                audioRecorder.start();
+                                recordBtn.innerText = '⏹️';
+                                recordBtn.style.background = '#ef4444';
+                                statusTxt.innerText = 'Grabando...';
+                                deleteAudioBtn.style.display = 'none';
+                            } catch (err) {
+                                alert("No se pudo acceder al micrófono.");
+                                console.error(err);
+                            }
+                        }
+                    });
+                }
+                
+                if (deleteAudioBtn) {
+                    deleteAudioBtn.addEventListener('click', () => {
+                        window.currentAudioBlob = null;
+                        if (statusTxt) statusTxt.innerText = 'Grabar nota de voz';
+                        deleteAudioBtn.style.display = 'none';
+                        if (recordBtn) {
+                            recordBtn.innerText = '🎙️';
+                            recordBtn.style.background = 'var(--primary-color)';
+                        }
+                    });
+                }
+            });
 
             window.openNewPostModal = async function() {
                 try {
@@ -121,6 +180,16 @@ import MapWidget from '../components/widgets/MapWidget.astro';
                     }
                     document.getElementById('new-post-content').value = '';
                     document.getElementById('new-post-image').value = '';
+                    window.currentAudioBlob = null;
+                    const statusTxt = document.getElementById('record-audio-status');
+                    const deleteAudioBtn = document.getElementById('delete-audio-btn');
+                    const recordBtn = document.getElementById('record-audio-btn');
+                    if (statusTxt) statusTxt.innerText = 'Grabar nota de voz';
+                    if (deleteAudioBtn) deleteAudioBtn.style.display = 'none';
+                    if (recordBtn) {
+                        recordBtn.innerText = '🎙️';
+                        recordBtn.style.background = 'var(--primary-color)';
+                    }
                     document.getElementById('new-post-modal').style.display = 'flex';
                 } catch (e) {
                     console.error("Auth check failed", e);
@@ -131,10 +200,11 @@ import MapWidget from '../components/widgets/MapWidget.astro';
                 const content = document.getElementById('new-post-content').value;
                 const fileInput = document.getElementById('new-post-image');
                 const file = fileInput.files?.[0];
+                const audioBlob = window.currentAudioBlob;
                 const btn = document.getElementById('submit-post-btn');
 
-                if (!content && !file) {
-                    alert("Añade un texto o una foto.");
+                if (!content && !file && !audioBlob) {
+                    alert("Añade un texto, una foto o un audio.");
                     return;
                 }
 
@@ -158,6 +228,7 @@ import MapWidget from '../components/widgets/MapWidget.astro';
                     const formData = new FormData();
                     if (content) formData.append('content', content);
                     if (file) formData.append('image', file);
+                    if (audioBlob) formData.append('audio', audioBlob, 'audio.webm');
                     if (coords) {
                         formData.append('lat', coords.lat);
                         formData.append('lon', coords.lon);
@@ -171,6 +242,8 @@ import MapWidget from '../components/widgets/MapWidget.astro';
                     if (res.ok) {
                         document.getElementById('new-post-modal').style.display = 'none';
                         window.loadFeed();
+                        btn.innerText = "Publicar";
+                        btn.disabled = false;
                         // Forzar a recargar el mapa
                         if (window.renderMapMarkers) window.renderMapMarkers();
                     } else {

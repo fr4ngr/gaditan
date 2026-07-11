@@ -1,0 +1,111 @@
+---
+// src/components/Header.astro
+---
+
+<!-- Header Glassmorphism (Dynamic Island) -->
+<header class="header glass-nav" id="main-header" style="cursor: pointer;">
+    <div class="container header-content" style="padding: 0; position: relative;">
+        <nav id="header-state-nav" style="display: flex; justify-content: space-between; align-items: center; width: 100%; position: relative;">
+            
+            <!-- Izquierda: Hamburguesa (Solo Móvil) + Logo -->
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <button class="hamburger-btn hide-desktop" id="mobile-menu-btn" aria-label="Abrir menú" style="background: none; border: none; cursor: pointer; display: flex; align-items: center;">
+                    <i data-lucide="menu" stroke-width="3" style="color: #0891b2;"></i>
+                </button>
+                <span class="logo-text" style="color: #0f172a; font-weight: 800; font-size: 1.5rem; letter-spacing: -0.5px;">cadiz<span style="font-weight: 800; color: #0891b2;">.taxi</span></span>
+            </div>
+            
+            <!-- Centro: Navegación (Solo Escritorio) -->
+            <div class="nav-links hide-mobile" style="display: flex; gap: 1.5rem; align-items: center;">
+                <a href="#tarifas" data-translate="nav-prices" style="color: #334155; text-decoration: none; font-size: 0.95rem; font-weight: 600; transition: color 0.2s ease;">Precios Oficiales</a>
+                <a href="#reservas" data-translate="nav-booking" style="color: #334155; text-decoration: none; font-size: 0.95rem; font-weight: 600; transition: color 0.2s ease;">Calculadora</a>
+                <a href="#paradas" data-translate="nav-stops" style="color: #334155; text-decoration: none; font-size: 0.95rem; font-weight: 600; transition: color 0.2s ease;">Mapa de Paradas</a>
+                <a href="#faq" data-translate="nav-faq" style="color: #334155; text-decoration: none; font-size: 0.95rem; font-weight: 600; transition: color 0.2s ease;">FAQ</a>
+            </div>
+
+            <!-- Derecha: Buscador e Idioma (Estático) -->
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                
+                <!-- Botón Lupa -->
+                <button id="open-search-btn" style="background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; padding: 0;">
+                    <i data-lucide="search" style="color: #334155; width: 22px; height: 22px;"></i>
+                </button>
+                
+                <!-- Botón Idioma (Bandera) -->
+                <div style="position: relative;">
+                    <button id="lang-toggle" style="background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; padding: 0;">
+                        <i data-lucide="globe" style="color: #334155; width: 22px; height: 22px;"></i>
+                    </button>
+                    
+                    <!-- Menú Idioma -->
+                    <div class="lang-menu" id="lang-menu">
+                        <button class="lang-btn active" id="lang-es">🇪🇸 Español</button>
+                        <button class="lang-btn" id="lang-en">🇬🇧 English</button>
+                    </div>
+                </div>
+                
+            </div>
+            
+        </nav>
+    </div>
+</header>
+
+<!-- Mobile Menu Overlay & Drawer -->
+<div class="mobile-menu-overlay" id="mobile-overlay"></div>
+<div class="mobile-menu-drawer" id="mobile-drawer">
+    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem;">
+        <span style="font-weight: 800; font-size: 1.2rem;">Menú</span>
+        <button id="close-mobile-menu" style="background:transparent; border:none; color:white; padding:0.5rem; border-radius:8px; cursor:pointer;"><i data-lucide="x" size="24"></i></button>
+    </div>
+    <a href="#tarifas" class="mobile-nav-link" data-translate="nav-prices">Precios Oficiales</a>
+    <a href="#reservas" class="mobile-nav-link" data-translate="nav-booking">Calculadora</a>
+    <a href="#paradas" class="mobile-nav-link" data-translate="nav-stops">Mapa de Paradas</a>
+    <a href="#faq" class="mobile-nav-link" data-translate="nav-faq">Preguntas Frecuentes</a>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Language Dropdown Logic
+    const langToggle = document.getElementById('lang-toggle');
+    const langMenu = document.getElementById('lang-menu');
+    const currentLangIcon = document.getElementById('current-lang-icon');
+
+    langToggle?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        langMenu?.classList.toggle('show');
+    });
+
+    document.addEventListener('click', () => {
+        langMenu?.classList.remove('show');
+    });
+
+    // Language selection (Visual update, actual translation logic handled elsewhere)
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const isEnglish = btn.id === 'lang-en';
+            if (currentLangIcon) currentLangIcon.textContent = isEnglish ? '🇬🇧' : '🇪🇸';
+            langMenu?.classList.remove('show');
+        });
+    });
+
+    // Mobile Menu Logic
+    const mobileBtn = document.getElementById('mobile-menu-btn');
+    const closeBtn = document.getElementById('close-mobile-menu');
+    const overlay = document.getElementById('mobile-overlay');
+    const drawer = document.getElementById('mobile-drawer');
+    const mobileLinks = document.querySelectorAll('.mobile-nav-link');
+
+    const toggleMenu = () => {
+        overlay?.classList.toggle('show');
+        drawer?.classList.toggle('show');
+    };
+
+    mobileBtn?.addEventListener('click', toggleMenu);
+    closeBtn?.addEventListener('click', toggleMenu);
+    overlay?.addEventListener('click', toggleMenu);
+    
+    mobileLinks.forEach(link => {
+        link.addEventListener('click', toggleMenu);
+    });
+});
+</script>

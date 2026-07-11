@@ -1,0 +1,406 @@
+---
+// src/layouts/ChatLayout.astro
+import '../styles/chat.css';
+interface Props {
+	title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="es">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="description" content="Asistente Inteligente de Cádiz" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="generator" content={Astro.generator} />
+		<title>{title}</title>
+		
+		<!-- Leaflet CSS & JS -->
+		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+		<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+		
+		<!-- Leaflet Routing Machine CSS & JS -->
+		<link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
+		<script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+
+        <!-- Lottie Web Player -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.12.2/lottie.min.js"></script>
+        
+        <style>
+            /* Permitir scroll nativo horizontal para el swiper */
+            .leaflet-container {
+                touch-action: pan-x pan-y !important;
+            }
+        </style>
+	</head>
+	<body>
+        <div class="app-container" style="display: flex; flex-direction: column; height: 100dvh; max-width: 100%;">
+            <!-- CABECERA ÚNICA Y ESTÁTICA -->
+            <header class="chat-header" id="main-header" style="display: flex; justify-content: space-between; align-items: center; position: relative; max-width: 480px; margin: 0 auto; width: 100%;">
+                
+                <!-- Info Central (Avatar y Títulos) -->
+                <div class="chat-header-info" id="header-info" style="display: flex; align-items: center; gap: 0.5rem;">
+                    <div class="logo" id="header-lottie" style="width: 56px; height: 56px; overflow: hidden; flex-shrink: 0;"></div>
+                    <div class="chat-title-group" id="header-title-group">
+                        <h1 id="header-title">cadiz.chat</h1>
+                        <span class="chat-subtitle" id="header-subtitle">Asistente Virtual</span>
+                    </div>
+                </div>
+                
+                <!-- Botones de Acción (Derecha) -->
+                <div class="theme-picker-container" id="header-actions" style="display: flex; gap: 8px; position: relative;">
+                    <button id="bookmarks-btn" class="theme-btn" aria-label="Ver Guardados" onclick="window.switchPanel('guardados')" style="position: relative; display: flex; align-items: center; justify-content: center;">
+                        <svg id="bookmark-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/>
+                        </svg>
+                        <span id="bookmarks-badge" style="display: none; position: absolute; top: -2px; right: -2px; background: #ef4444; color: white; border-radius: 50%; width: 16px; height: 16px; font-size: 10px; font-weight: bold; align-items: center; justify-content: center;">0</span>
+                    </button>
+                    <button id="theme-btn" class="theme-btn" aria-label="Opciones" onclick="const m = document.getElementById('dropdown-menu'); m.style.display = m.style.display === 'flex' ? 'none' : 'flex';">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/>
+                        </svg>
+                    </button>
+                    
+                    <!-- Menú de opciones -->
+                    <div id="dropdown-menu" style="display: none; position: absolute; top: 100%; right: 0; margin-top: 8px; background: var(--header-bg); border: 1px solid var(--header-border); border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); flex-direction: column; min-width: 180px; z-index: 1000; overflow: hidden;">
+                        <button onclick="window.toggleDarkMode(); document.getElementById('dropdown-menu').style.display = 'none';" style="display: flex; align-items: center; gap: 8px; padding: 12px 16px; width: 100%; background: none; border: none; cursor: pointer; color: var(--primary-color); font-weight: 600; font-size: 14px; text-align: left; transition: background 0.2s;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
+                            </svg>
+                            Modo Oscuro
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- CONTENEDOR DESLIZABLE (SWIPER) -->
+            <div class="swiper-container" id="main-swiper" style="flex: 1; width: 100%; min-height: 0;">
+                <div class="swiper-wrapper">
+                    
+                    <!-- PANEL 0: GUARDADOS -->
+                    <div class="swipe-panel" id="panel-guardados">
+                        <main class="messages-area" id="saved-messages-container" style="padding: 20px; width: 100%; max-width: 480px; margin: 0 auto; height: 100%; overflow-y: auto; background: #0f172a; position: relative;">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
+                                <button class="back-swipe-btn" style="color: #60a5fa;" onclick="window.switchPanel('chat')" aria-label="Volver">⬅ Volver al Chat</button>
+                                <h2 style="margin:0; font-size:16px; color: #f8fafc; letter-spacing: 0.5px;">⭐ Guardados</h2>
+                            </div>
+                            <p style="color: #94a3b8; text-align:center; margin-top:40px; font-weight: 300;">No tienes mensajes guardados aún.</p>
+                        </main>
+                    </div>
+
+                    <!-- PANEL 1: CHAT PRINCIPAL -->
+                    <div class="swipe-panel" id="panel-chat">
+                        <main class="messages-area" id="messages-container" style="width: 100%; max-width: 480px; margin: 0 auto; height: 100%; overflow-y: auto; background: var(--chat-bg); padding-bottom: 90px;">
+                            <slot />
+                        </main>
+                    </div>
+
+                    <!-- PANEL 2: PANTALLA COMPLETA (WIDGETS) -->
+                    <div class="swipe-panel" id="panel-fullscreen" style="position: relative; display: flex; justify-content: center;">
+                        <button id="map-close-btn" class="map-close-btn" onclick="window.switchPanel('chat')" style="position: absolute; top: 16px; right: 16px; z-index: 1005; box-shadow: 0 2px 10px rgba(0,0,0,0.1); background: var(--header-bg); color: var(--text-primary); border: none; width: 40px; height: 40px; border-radius: 50%; font-size: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: opacity 0.3s, transform 0.3s; opacity: 1;" aria-label="Cerrar Mapa">
+                            ✕
+                        </button>
+
+                        <div id="map-top-pills" style="position: absolute; top: 64px; right: 16px; z-index: 1005; display: none; flex-direction: column; gap: 8px; align-items: flex-end;">
+                        </div>
+                        
+                        <!-- Contenedor UI de la InfoPill -->
+                        <div id="map-ui-container" style="position: absolute; top: 16px; left: 50%; z-index: 1001; transform: translateX(-50%); width: calc(100% - 32px); max-width: 448px; display: flex; flex-direction: column; gap: 8px; transition: opacity 0.3s, transform 0.3s; opacity: 0; pointer-events: none;">
+                            <!-- Píldora informativa de parada -->
+                            <div id="map-info-pill" style="background: var(--header-bg); border-radius: 20px; padding: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); display: flex; flex-direction: column; gap: 14px; border: 1px solid var(--header-border); pointer-events: auto;">
+                            
+                            <div style="display: flex; align-items: flex-start; gap: 12px;">
+                                <div style="flex: 1;">
+                                    <div id="map-info-label" style="font-size: 10px; font-weight: 700; color: var(--primary-color); letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 2px;">PARADA DE TAXI</div>
+                                    <h3 id="map-info-title" style="margin: 0; font-size: 16px; color: var(--text-primary); font-weight: 600;">Nombre</h3>
+                                    <p id="map-info-desc" style="margin: 3px 0 0 0; font-size: 13px; color: var(--text-secondary); line-height: 1.3;">Descripción</p>
+                                </div>
+                                <button onclick="window.closeMapInfoPill()" style="background: var(--chat-bg); border: none; font-size: 14px; color: var(--text-secondary); cursor: pointer; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: background 0.2s; flex-shrink: 0;" aria-label="Cerrar información">✕</button>
+                            </div>
+
+                            <div id="map-pill-actions" style="display: flex; gap: 10px;">
+                                <button id="pill-btn-directions" onclick="window.mapActionDirections()" style="flex: 1; padding: 10px; border-radius: 12px; border: none; background: var(--chat-bg); color: var(--text-primary); font-weight: 600; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: background 0.2s;">
+                                    Cómo ir
+                                </button>
+                                <button id="pill-btn-reserve" onclick="window.mapActionReserve()" style="display: none; flex: 1; padding: 10px; border-radius: 12px; border: none; background: var(--chat-bg); color: var(--text-primary); font-weight: 600; font-size: 13px; cursor: pointer; align-items: center; justify-content: center; gap: 6px; transition: background 0.2s;">
+                                    Reservar Taxi
+                                </button>
+                                <button id="pill-btn-taxi" onclick="window.mapActionTaxi()" style="flex: 1; padding: 10px; border-radius: 12px; border: none; background: var(--primary-color); color: white; font-weight: 600; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: opacity 0.2s;">
+                                    Pedir Taxi
+                                </button>
+                            </div>
+                            
+                            <!-- Instrucción paso a paso (aparece al pedir indicaciones) -->
+                            <div id="route-instruction" style="display: none; width: 100%; align-items: center; gap: 14px; padding: 12px; border-radius: 16px; background: var(--chat-bg); border: 1px solid var(--header-border);">
+                                <div style="background: var(--primary-color); color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M12 19V5" />
+                                        <path d="M5 12l7-7 7 7" />
+                                    </svg>
+                                </div>
+                                <div style="display: flex; flex-direction: column; gap: 2px;">
+                                    <span id="route-instruction-action" style="font-size: 15px; font-weight: 700; color: var(--text-primary);">Calculando...</span>
+                                    <span id="route-instruction-street" style="font-size: 12px; font-weight: 500; color: var(--text-secondary);">Buscando ruta a pie</span>
+                                </div>
+                            </div>
+                            </div>
+                            
+                            <!-- Píldoras flotantes de ruta (Distancia y Tiempo) debajo de la tarjeta -->
+                            <div id="map-floating-route-stats" style="display: none; justify-content: flex-end; gap: 8px; pointer-events: none;">
+                                <div id="route-time" style="background: var(--primary-color); color: white; padding: 6px 14px; border-radius: 20px; font-size: 14px; font-weight: 700; box-shadow: 0 4px 10px rgba(0,0,0,0.15); pointer-events: auto; display: flex; align-items: center; justify-content: center; height: 32px; box-sizing: border-box;">-- min</div>
+                                <div id="route-distance" style="background: var(--header-bg); color: var(--text-primary); border: 1px solid var(--header-border); padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; box-shadow: 0 4px 10px rgba(0,0,0,0.15); pointer-events: auto; display: flex; align-items: center; justify-content: center; height: 32px; box-sizing: border-box;">-- m</div>
+                            </div>
+                        </div>
+
+                        <div id="fullscreen-widget-area" style="width: 100%; max-width: 480px; height: 100%; position: relative; background: var(--bg-color);">
+                            <!-- Widgets inyectados por JS -->
+                            <div style="display: flex; height: 100%; align-items: center; justify-content: center; color: var(--text-secondary);">
+                                Cargando...
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            
+            <!-- ÁREA DE INPUT ESTÁTICA Y FLOTANTE -->
+            <div class="input-area" id="main-input" style="width: 100%; max-width: 480px; margin: 0 auto;">
+                <div class="chat-input-wrapper">
+                    <textarea id="chat-input" class="chat-input" placeholder="Pregunta por una parada, tarifa..." rows="1"></textarea>
+                    <button id="send-btn" class="send-button" aria-label="Enviar mensaje">
+                        <div id="lottie-send" style="width: 100%; height: 100%; transform: scale(1.65);"></div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Capa de Navegación en Vivo a Pantalla Completa -->
+            <div id="fullscreen-nav-layer" class="fullscreen-nav closed">
+                <button class="nav-close-btn" onclick="window.exitLiveNavigation()" aria-label="Cerrar Navegación">✕</button>
+                <button id="nav-dev-btn" class="nav-dev-btn" style="display:none;">DEV: FAKE GPS</button>
+                
+                <div class="nav-top-panel">
+                    <div class="nav-eta" id="nav-eta">-- min</div>
+                    <div class="nav-distance" id="nav-distance">-- km</div>
+                </div>
+                
+                <div id="nav-map" class="nav-map-container"></div>
+                
+                <div class="nav-bottom-panel">
+                    <div class="nav-instruction-pill" id="nav-instruction">
+                        <span class="nav-icon" id="nav-instruction-icon">🧭</span>
+                        <div class="nav-text-container">
+                            <div class="nav-main-text" id="nav-instruction-text">Buscando ruta...</div>
+                            <div class="nav-sub-text" id="nav-instruction-dist"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <style is:global>
+            /* ELIMINAR FONDO GRIS POR DEFECTO DE LEAFLET AL CARGAR */
+            .leaflet-container {
+                background: var(--bg-color) !important;
+            }
+            
+            /* RUTAS ANIMADAS (Hormiguitas) */
+            .animated-route {
+                animation: dash-animation 2s linear infinite;
+            }
+            @keyframes dash-animation {
+                to {
+                    stroke-dashoffset: -20;
+                }
+            }
+
+            /* SWIPER LAYOUT */
+            body, html {
+                margin: 0; padding: 0;
+                overflow: hidden; /* Prevent scrolling on body, swiper handles it */
+            }
+            .swiper-container {
+                width: 100vw;
+                height: 100dvh;
+                overflow-x: auto; /* Enable manual swiping */
+                overflow-y: hidden;
+                scroll-snap-type: x mandatory;
+                scroll-behavior: smooth;
+                background: var(--header-border); /* Background for the gaps between scaled cards */
+            }
+            /* Hide scrollbar for swiper */
+            .swiper-container::-webkit-scrollbar {
+                display: none;
+            }
+            .swiper-container {
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+            .swiper-wrapper {
+                display: flex;
+                width: 300vw;
+                height: 100%;
+            }
+            .swipe-panel {
+                width: 100vw;
+                flex-shrink: 0;
+                height: 100%;
+                scroll-snap-align: center;
+                scroll-snap-stop: always; /* Force stop on each panel */
+                display: flex;
+                flex-direction: column;
+                align-items: center; /* Center the .app-container */
+            }
+            
+            .back-swipe-btn {
+                background: transparent;
+                border: none;
+                color: var(--primary-color);
+                font-weight: 600;
+                font-size: 1rem;
+                cursor: pointer;
+                padding: 10px 0;
+            }
+
+            .theme-btn {
+                background: transparent;
+                border: none;
+                color: var(--text-primary);
+                font-size: 1.2rem;
+                cursor: pointer;
+                padding: 5px;
+                border-radius: 50%;
+                transition: background 0.2s;
+            }
+            .theme-btn:hover {
+                background: rgba(128,128,128,0.2);
+            }
+        </style>
+        
+        <script>
+            const THEMES = {
+                classic: {
+                    '--bg-color': '#f8fafc',
+                    '--header-bg': '#ffffff',
+                    '--header-border': '#e2e8f0',
+                    '--text-primary': '#1e293b',
+                    '--text-secondary': '#64748b',
+                    '--primary-color': '#3b82f6',
+                    '--primary-hover': '#2563eb',
+                    '--chat-bg': '#f1f5f9',
+                    '--bubble-user-bg': '#3b82f6',
+                    '--bubble-user-text': '#ffffff',
+                    '--bubble-bot-bg': '#ffffff',
+                    '--bubble-bot-text': '#1e293b',
+                    '--bubble-bot-border': '#e2e8f0',
+                    '--input-bg': '#ffffff',
+                    '--input-border': '#e2e8f0'
+                },
+                oscuro: {
+                    '--bg-color': '#000000',
+                    '--header-bg': '#121212',
+                    '--header-border': '#2d2d2d',
+                    '--text-primary': '#ffffff',
+                    '--text-secondary': '#a0a0a0',
+                    '--primary-color': '#8b5cf6',
+                    '--primary-hover': '#7c3aed',
+                    '--chat-bg': '#000000',
+                    '--bubble-user-bg': '#8b5cf6',
+                    '--bubble-user-text': '#ffffff',
+                    '--bubble-bot-bg': '#1e1e1e',
+                    '--bubble-bot-text': '#ffffff',
+                    '--bubble-bot-border': '#2d2d2d',
+                    '--input-bg': '#121212',
+                    '--input-border': '#2d2d2d'
+                }
+            };
+        
+            function applyTheme(themeName) {
+                const theme = THEMES[themeName];
+                if (!theme) return;
+                
+                for (const [key, value] of Object.entries(theme)) {
+                    document.documentElement.style.setProperty(key, value);
+                }
+                localStorage.setItem('cadiz_chat_theme', themeName);
+            }
+
+            window.toggleDarkMode = function() {
+                const currentTheme = localStorage.getItem('cadiz_chat_theme') || 'classic';
+                if (currentTheme === 'oscuro') {
+                    applyTheme('classic');
+                } else {
+                    applyTheme('oscuro');
+                }
+            };
+        
+            document.addEventListener('DOMContentLoaded', () => {
+                const savedTheme = localStorage.getItem('cadiz_chat_theme') || 'classic';
+                applyTheme(savedTheme);
+                
+                // Clic fuera del menú para cerrarlo
+                document.addEventListener('click', (e) => {
+                    const btn = document.getElementById('theme-btn');
+                    const menu = document.getElementById('dropdown-menu');
+                    if (menu && btn && !btn.contains(e.target) && !menu.contains(e.target)) {
+                        menu.style.display = 'none';
+                    }
+                });
+
+                // Cierre magnético manejado por CSS (scroll-snap-type: x mandatory)
+                // Se ha eliminado el efecto "deck de cartas" por preferencia del usuario.
+                const swiper = document.getElementById('main-swiper');
+                if (!swiper) return;
+                
+                // --- INICIALIZAR LOTTIE ANIMATION EN BOTÓN DE ENVIAR ---
+                const lottieContainer = document.getElementById('lottie-send');
+                if (lottieContainer && window.lottie) {
+                    const sendAnim = window.lottie.loadAnimation({
+                        container: lottieContainer,
+                        renderer: 'svg',
+                        loop: false,
+                        autoplay: false,
+                        path: '/lottie/upload-loop.json' // Archivo tintado
+                    });
+                    
+                    // Asegurar que comience en el primer frame estático
+                    sendAnim.addEventListener('DOMLoaded', () => {
+                        sendAnim.goToAndStop(0, true);
+                        sendAnim.setSpeed(2); // Doble de rápido
+                    });
+                    
+                    // Al disparar el envío, reproducir desde el principio
+                    document.getElementById('send-btn')?.addEventListener('click', () => {
+                        sendAnim.goToAndPlay(0, true);
+                    });
+                    
+                    // Cuando termine la animación (es loop: false), devolver al primer frame
+                    sendAnim.addEventListener('complete', () => {
+                        sendAnim.goToAndStop(0, true);
+                    });
+                }
+
+                // --- INICIALIZAR LOTTIE ANIMATION EN HEADER ---
+                const headerLottie = document.getElementById('header-lottie');
+                if (headerLottie && window.lottie) {
+                    const headerAnim = window.lottie.loadAnimation({
+                        container: headerLottie,
+                        renderer: 'svg',
+                        loop: true,
+                        autoplay: true,
+                        path: '/lottie/chat.json',
+                        rendererSettings: {
+                            preserveAspectRatio: 'xMidYBottom slice'
+                        }
+                    });
+                    
+                    headerAnim.addEventListener('DOMLoaded', () => {
+                        headerAnim.setSpeed(0.5);
+                    });
+                }
+            });
+        </script>
+    </body>
+</html>
