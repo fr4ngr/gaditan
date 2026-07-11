@@ -138,13 +138,30 @@ import MapWidget from '../components/widgets/MapWidget.astro';
                     return;
                 }
 
-                btn.innerText = "Subiendo...";
+                btn.innerText = "Localizando...";
                 btn.disabled = true;
 
                 try {
+                    const getPosition = () => new Promise((resolve) => {
+                        if (!navigator.geolocation) return resolve(null);
+                        navigator.geolocation.getCurrentPosition(
+                            pos => resolve({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
+                            err => resolve(null),
+                            { timeout: 5000, enableHighAccuracy: true }
+                        );
+                    });
+                    
+                    const coords = await getPosition();
+                    
+                    btn.innerText = "Subiendo...";
+
                     const formData = new FormData();
                     if (content) formData.append('content', content);
                     if (file) formData.append('image', file);
+                    if (coords) {
+                        formData.append('lat', coords.lat);
+                        formData.append('lon', coords.lon);
+                    }
 
                     const res = await fetch('/api/posts/create', {
                         method: 'POST',
@@ -154,6 +171,8 @@ import MapWidget from '../components/widgets/MapWidget.astro';
                     if (res.ok) {
                         document.getElementById('new-post-modal').style.display = 'none';
                         window.loadFeed();
+                        // Forzar a recargar el mapa
+                        if (window.renderMapMarkers) window.renderMapMarkers();
                     } else {
                         const err = await res.json();
                         alert("Error al publicar: " + (err.error || "Desconocido"));

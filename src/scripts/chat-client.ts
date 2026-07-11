@@ -673,11 +673,15 @@ import { renderCardDOM } from '../components/cards/CardRenderer';
                         
                         map.setView([stop.lat, stop.lon], 16);
                         map.removeLayer(markersLayer); 
+                        if (window.postsLayer) map.removeLayer(window.postsLayer);
                         
                         if (window.currentActiveMarker) map.removeLayer(window.currentActiveMarker);
                         window.currentActiveMarker = mapL.marker([stop.lat, stop.lon], {icon: targetIcon}).addTo(map);
                     });
                 });
+                
+                // Cargar publicaciones sociales
+                if (window.renderMapMarkers) window.renderMapMarkers();
             } else if (lat && lon) {
                 map.setView([lat, lon], 16);
                 const marker = mapL.marker([lat, lon]).addTo(map);
@@ -725,10 +729,11 @@ import { renderCardDOM } from '../components/cards/CardRenderer';
             if (window.currentActiveMarker) window.currentMap.removeLayer(window.currentActiveMarker);
             if (window.currentAirportRouteLayer) window.currentMap.removeLayer(window.currentAirportRouteLayer);
             window.currentMap.addLayer(window.currentMarkersLayer);
+            if (window.postsLayer) window.currentMap.addLayer(window.postsLayer);
         }
     };
 
-    window.openMapInfoPill = function(title: string, desc: string, lat: string | number, lon: string | number, type: 'stop' | 'airport' = 'stop') {
+    window.openMapInfoPill = function(title: string, desc: string, lat: string | number, lon: string | number, type: 'stop' | 'airport' | 'post' = 'stop') {
         const mapL = (window as any).L;
         window.activeMapStopLat = parseFloat(lat as string);
         window.activeMapStopLon = parseFloat(lon as string);
@@ -750,7 +755,11 @@ import { renderCardDOM } from '../components/cards/CardRenderer';
                     descEl.innerText = desc || '';
                 }
             }
-            if (labelEl) labelEl.innerText = type === 'airport' ? 'DESTINO:' : 'PARADA DE TAXI';
+            if (labelEl) {
+                if (type === 'airport') labelEl.innerText = 'DESTINO:';
+                else if (type === 'post') labelEl.innerText = 'PUBLICACIÓN LOCAL';
+                else labelEl.innerText = 'PARADA DE TAXI';
+            }
             
             const actions = document.getElementById('map-pill-actions');
             const floatingStats = document.getElementById('map-floating-route-stats');
@@ -784,6 +793,42 @@ import { renderCardDOM } from '../components/cards/CardRenderer';
             mapCloseBtn.style.pointerEvents = 'none';
             mapCloseBtn.style.transform = 'scale(0.8)';
         }
+    };
+
+    window.renderMapMarkers = async function() {
+        if (!window.currentMap) return;
+        const map = window.currentMap;
+        const mapL = (window as any).L;
+        
+        try {
+            const res = await fetch('/api/posts/list?limit=50');
+            if (!res.ok) return;
+            const data = await res.json();
+            
+            if (window.postsLayer) map.removeLayer(window.postsLayer);
+            window.postsLayer = mapL.layerGroup().addTo(map);
+
+            const postIcon = mapL.divIcon({
+                html: '<div style="background:#e91e63; border: 2px solid white; width:22px; height:22px; border-radius:50%; box-shadow:0 2px 6px rgba(0,0,0,0.4); display:flex; align-items:center; justify-content:center;"><span style="color:white; font-size:12px;">💬</span></div>',
+                className: '', iconSize: [22, 22], iconAnchor: [11, 11]
+            });
+
+            data.posts.forEach((post: any) => {
+                if (post.lat && post.lon) {
+                    const marker = mapL.marker([post.lat, post.lon], {icon: postIcon});
+                    marker.addTo(window.postsLayer);
+                    marker.on('click', () => {
+                        window.openMapInfoPill(post.user_name || 'Alguien', post.content || 'Sin texto', post.lat, post.lon, 'post');
+                        map.setView([post.lat, post.lon], 16);
+                        if (window.currentMarkersLayer) map.removeLayer(window.currentMarkersLayer);
+                        if (window.postsLayer) map.removeLayer(window.postsLayer);
+                        
+                        if (window.currentActiveMarker) map.removeLayer(window.currentActiveMarker);
+                        window.currentActiveMarker = mapL.marker([post.lat, post.lon], {icon: postIcon}).addTo(map);
+                    });
+                }
+            });
+        } catch(e) { console.error("Error cargando posts en mapa:", e); }
     };
 
     window.mapActionDirections = function(forceType?: 'stop' | 'airport') {
