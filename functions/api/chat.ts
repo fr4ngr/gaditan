@@ -169,7 +169,7 @@ ${b.content}
         };
 
         let responseText = '';
-        let currentModel = 'gemini-1.5-flash';
+        let currentModel = 'gemini-1.5-flash-001';
         let latencyMs = 0;
         let tokensUsed = 0;
         const startTime = Date.now();
@@ -273,8 +273,8 @@ ${b.content}
             
         } catch (error: any) {
             console.error("Error with model:", error);
-            // Return the actual error to the client to debug why gemini-1.5-flash failed
-            return new Response(JSON.stringify({ error: `gemini-1.5-flash error: ${error.message || JSON.stringify(error)}` }), {
+            // Return the actual error to the client to debug why gemini-1.5-flash-001 failed
+            return new Response(JSON.stringify({ error: `gemini-1.5-flash-001 error: ${error.message || JSON.stringify(error)}` }), {
                 status: 500,
                 headers: { 'Content-Type': 'application/json' }
             });
