@@ -1,4 +1,4 @@
-import { GoogleGenAI } from '@google/genai';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 export async function onRequestPost(context) {
     const { request, env } = context;
@@ -25,31 +25,22 @@ export async function onRequestPost(context) {
             return new Response(JSON.stringify({ error: "GEMINI_API_KEY is missing." }), { status: 500 });
         }
 
-        const ai = new GoogleGenAI({ apiKey: env.GEMINI_API_KEY });
+        const genAI = new GoogleGenerativeAI(env.GEMINI_API_KEY);
+        const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
         const prompt = "Eres un transcriptor experto. Convierte este documento a texto limpio en formato Markdown. Si ves tablas, tarifas o precios, organízalos matemáticamente utilizando la sintaxis de tablas de Markdown (filas y columnas). No inventes información, transcribe exactamente lo que ves, pero estructurado para que una IA lo pueda leer fácilmente. Devuelve ÚNICAMENTE el código Markdown, sin introducciones.";
 
-        const response = await ai.models.generateContent({
-            model: 'gemini-1.5-flash-001',
-            contents: [
-                {
-                    role: 'user',
-                    parts: [
-                        {
-                            inlineData: {
-                                mimeType: mimeType,
-                                data: base64Data
-                            }
-                        },
-                        {
-                            text: prompt
-                        }
-                    ]
+        const response = await model.generateContent([
+            prompt,
+            {
+                inlineData: {
+                    mimeType: mimeType,
+                    data: base64Data
                 }
-            ]
-        });
+            }
+        ]);
 
-        const extractedText = response.text || "";
+        const extractedText = response.response.text() || "";
 
         return new Response(JSON.stringify({ success: true, text: extractedText }), {
             status: 200,

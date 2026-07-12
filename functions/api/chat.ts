@@ -1,4 +1,4 @@
-import { GoogleGenAI, Type } from '@google/genai';
+import { GoogleGenerativeAI, SchemaType } from '@google/generative-ai';
 import { brains, systemPromptA, systemPromptB, abConfig } from './compiled-brains';
 
 function hashCode(str) {
@@ -38,8 +38,7 @@ export async function onRequestPost(context) {
             });
         }
 
-        // Inicializar Gemini usando la clave secreta del entorno (Cloudflare)
-        const ai = new GoogleGenAI({ apiKey: env.GEMINI_API_KEY });
+        const genAI = new GoogleGenerativeAI(env.GEMINI_API_KEY);
 
         // ----------------------------------------------------
         // RAG VECTOR SEARCH (Cloudflare Vectorize)
@@ -47,15 +46,12 @@ export async function onRequestPost(context) {
         let cerebrosXml = "";
         let cerebrosFiltrados = [];
         try {
-            // 1. Convertir la pregunta del usuario en un vector (Embedding)
             const aiEmbedding = await env.AI.run('@cf/baai/bge-large-en-v1.5', { text: [userMessage] });
             const vector = aiEmbedding.data[0];
 
-            // 2. Buscar en Vectorize los 3 textos más relevantes
             const vecMatches = await env.VECTORIZE_INDEX.query(vector, { topK: 3 });
             
             if (vecMatches && vecMatches.matches && vecMatches.matches.length > 0) {
-                // 3. Extraer los IDs encontrados y buscar su contenido real en D1
                 const matchIds = vecMatches.matches.map(m => m.id);
                 const placeholders = matchIds.map(() => '?').join(',');
                 const query = `SELECT * FROM knowledge_base WHERE id IN (${placeholders})`;
@@ -78,56 +74,56 @@ ${b.content}
         const systemInstruction = (activeSystemPrompt || "Eres un asistente.").replace('{{CEREBROS_INJECTION_POINT}}', `<cerebros_activos>\n${cerebrosXml}\n</cerebros_activos>\n${userCityContext}`);
 
         const schema = {
-            type: Type.OBJECT,
+            type: SchemaType.OBJECT,
             properties: {
                 cardType: {
-                    type: Type.STRING,
+                    type: SchemaType.STRING,
                     enum: ['TextCard', 'MapCard', 'NavigationCard', 'GalleryCard', 'HeroCard', 'ListCard', 'BusinessCard', 'ArticleCard', 'AlertCard', 'ProductCard', 'ProfileCard'],
                     description: "El tipo de tarjeta visual a mostrar."
                 },
                 content: {
-                    type: Type.STRING,
+                    type: SchemaType.STRING,
                     description: "Mensaje principal del asistente."
                 },
-                badge: { type: Type.STRING, description: "Etiqueta superior (ej. '🏛️ Historia', '⚠️ Alerta')." },
-                title: { type: Type.STRING, description: "Título principal de la tarjeta." },
-                subtitle: { type: Type.STRING, description: "Subtítulo o texto secundario corto." },
-                imageUrl: { type: Type.STRING, description: "URL de una imagen principal (para HeroCard, ProductCard, ProfileCard)." },
-                imageUrls: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Lista de URLs de imágenes (para GalleryCard)." },
+                badge: { type: SchemaType.STRING, description: "Etiqueta superior (ej. '🏛️ Historia', '⚠️ Alerta')." },
+                title: { type: SchemaType.STRING, description: "Título principal de la tarjeta." },
+                subtitle: { type: SchemaType.STRING, description: "Subtítulo o texto secundario corto." },
+                imageUrl: { type: SchemaType.STRING, description: "URL de una imagen principal (para HeroCard, ProductCard, ProfileCard)." },
+                imageUrls: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING }, description: "Lista de URLs de imágenes (para GalleryCard)." },
                 listItems: { 
-                    type: Type.ARRAY, 
+                    type: SchemaType.ARRAY, 
                     items: { 
-                        type: Type.OBJECT, 
+                        type: SchemaType.OBJECT, 
                         properties: { 
-                            title: { type: Type.STRING }, 
-                            subtitle: { type: Type.STRING },
-                            icon: { type: Type.STRING }
+                            title: { type: SchemaType.STRING }, 
+                            subtitle: { type: SchemaType.STRING },
+                            icon: { type: SchemaType.STRING }
                         },
                         required: ["title"]
                     }, 
                     description: "Elementos de una lista (para ListCard)." 
                 },
-                lat: { type: Type.STRING, description: "Latitud exacta (MapCard, NavigationCard)." },
-                lon: { type: Type.STRING, description: "Longitud exacta (MapCard, NavigationCard)." },
-                locationTitle: { type: Type.STRING, description: "Nombre del lugar (MapCard, NavigationCard)." },
-                price: { type: Type.STRING, description: "Precio actual (ProductCard, BusinessCard)." },
-                oldPrice: { type: Type.STRING, description: "Precio anterior tachado (ProductCard)." },
-                contactName: { type: Type.STRING, description: "Nombre del contacto (BusinessCard, ProfileCard)." },
-                phoneNumber: { type: Type.STRING, description: "Teléfono (BusinessCard, ProfileCard)." },
-                whatsappNumber: { type: Type.STRING, description: "WhatsApp (BusinessCard, ProfileCard)." },
-                email: { type: Type.STRING, description: "Email (BusinessCard, ProfileCard)." },
-                website: { type: Type.STRING, description: "URL de la página web (BusinessCard)." },
-                buttonText: { type: Type.STRING, description: "Texto del botón principal." },
-                buttonAction: { type: Type.STRING, description: "Comando o prompt interno a enviar cuando se hace clic en el botón." },
+                lat: { type: SchemaType.STRING, description: "Latitud exacta (MapCard, NavigationCard)." },
+                lon: { type: SchemaType.STRING, description: "Longitud exacta (MapCard, NavigationCard)." },
+                locationTitle: { type: SchemaType.STRING, description: "Nombre del lugar (MapCard, NavigationCard)." },
+                price: { type: SchemaType.STRING, description: "Precio actual (ProductCard, BusinessCard)." },
+                oldPrice: { type: SchemaType.STRING, description: "Precio anterior tachado (ProductCard)." },
+                contactName: { type: SchemaType.STRING, description: "Nombre del contacto (BusinessCard, ProfileCard)." },
+                phoneNumber: { type: SchemaType.STRING, description: "Teléfono (BusinessCard, ProfileCard)." },
+                whatsappNumber: { type: SchemaType.STRING, description: "WhatsApp (BusinessCard, ProfileCard)." },
+                email: { type: SchemaType.STRING, description: "Email (BusinessCard, ProfileCard)." },
+                website: { type: SchemaType.STRING, description: "URL de la página web (BusinessCard)." },
+                buttonText: { type: SchemaType.STRING, description: "Texto del botón principal." },
+                buttonAction: { type: SchemaType.STRING, description: "Comando o prompt interno a enviar cuando se hace clic en el botón." },
                 intentCategory: {
-                    type: Type.STRING,
+                    type: SchemaType.STRING,
                     description: "Categoría de la intención del usuario. OBLIGATORIO.",
                     enum: ["Gastronomia", "Transporte y movilidad", "Alojamiento", "Clima", "Playas", "Zonas verdes", "Bahía", "Deporte", "Belleza", "Eventos-Agenda", "Compras", "Kids", "Mascotas", "Caravana", "Inclusivo", "Love", "Social-Sostenible", "Iglesias", "Catedral", "La Caleta", "Historia", "Arte", "Crucerista", "Flamencos", "Ocio", "Otros"]
                 },
                 suggestedBlocks: {
-                    type: Type.ARRAY,
+                    type: SchemaType.ARRAY,
                     items: {
-                        type: Type.STRING
+                        type: SchemaType.STRING
                     },
                     description: "1 a 3 bloques sugeridos para guiar al usuario hacia la conversión."
                 }
@@ -156,10 +152,10 @@ ${b.content}
                 name: "get_beach_conditions",
                 description: "Llama a esta función EXCLUSIVAMENTE cuando el usuario te pregunte explícitamente por el clima, el tiempo o el estado de las PLAYAS (ej. 'cómo está la playa', 'hace día de playa en la caleta', 'estado de las olas'). Devuelve datos reales de AEMET (temperatura del agua, oleaje, viento, sensación térmica). NO la llames para saludos genéricos.",
                 parameters: {
-                    type: Type.OBJECT,
+                    type: SchemaType.OBJECT,
                     properties: {
                         beach_id: {
-                            type: Type.STRING,
+                            type: SchemaType.STRING,
                             description: "El ID de la playa a consultar. Usa '1101201' si preguntan por La Caleta. Usa '1101203' si preguntan por La Victoria, Cortadura, Santa Maria del Mar, o por las playas de Cádiz en general."
                         }
                     },
@@ -169,40 +165,38 @@ ${b.content}
         };
 
         let responseText = '';
-        let currentModel = 'gemini-1.5-flash-001';
+        let currentModel = 'gemini-1.5-flash';
         let latencyMs = 0;
         let tokensUsed = 0;
         const startTime = Date.now();
         
         try {
-            // PRIMERA LLAMADA: Con tools, pero SIN responseMimeType ni schema (porque son incompatibles)
-            let configObj = {
-                systemInstruction: systemInstruction,
-                temperature: 0.1,
-                tools: [beachTool]
-            };
-
-            let response = await ai.models.generateContent({
+            let model = genAI.getGenerativeModel({
                 model: currentModel,
-                contents: historyContents,
-                config: configObj
+                systemInstruction: systemInstruction,
+                generationConfig: {
+                    temperature: 0.1
+                },
+                tools: [beachTool]
+            });
+
+            let response = await model.generateContent({
+                contents: historyContents
             });
 
             // Handle Function Call for Beaches
-            if (response.functionCalls && response.functionCalls.length > 0) {
-                const call = response.functionCalls[0];
+            if (response.response.functionCalls() && response.response.functionCalls().length > 0) {
+                const call = response.response.functionCalls()[0];
                 if (call.name === 'get_beach_conditions') {
                     const beachId = call.args.beach_id || '1101203';
                     let beachData = { error: "No se pudo obtener datos" };
                     
                     try {
-                        // 1. Try Cache First (Cerebro B)
                         const cacheResult = await env.DB.prepare('SELECT value FROM system_cache WHERE key = ?').bind(`beach_${beachId}`).first();
                         if (cacheResult && cacheResult.value) {
                             beachData = JSON.parse(cacheResult.value);
                             beachData.fuente = "Caché Rápida (Cerebro B)";
                         } else {
-                            // 2. Fallback to API (Cerebro A)
                             const playaRes = await fetch(`https://opendata.aemet.es/opendata/api/prediccion/especifica/playa/${beachId}/?api_key=${env.AEMET_API_KEY}`);
                             const playaJson = await playaRes.json();
                             if (playaJson.estado == 200 && playaJson.datos) {
@@ -227,7 +221,6 @@ ${b.content}
                         console.error("AEMET Cache/API error:", e);
                     }
 
-                    // Append model's function call to history
                     historyContents.push({
                         role: 'model',
                         parts: [{
@@ -238,9 +231,8 @@ ${b.content}
                         }]
                     });
 
-                    // Append function response back to history
                     historyContents.push({
-                        role: 'user',
+                        role: 'function',
                         parts: [{
                             functionResponse: {
                                 name: call.name,
@@ -249,32 +241,31 @@ ${b.content}
                         }]
                     });
 
-                    // SEGUNDA LLAMADA: Sin tools, pero CON responseMimeType y schema para forzar el JSON
-                    let configObjFinal = {
-                        systemInstruction: systemInstruction,
-                        responseMimeType: "application/json",
-                        responseSchema: schema,
-                        temperature: 0.1
-                    };
-
-                    response = await ai.models.generateContent({
+                    model = genAI.getGenerativeModel({
                         model: currentModel,
-                        contents: historyContents,
-                        config: configObjFinal
+                        systemInstruction: systemInstruction,
+                        generationConfig: {
+                            responseMimeType: "application/json",
+                            responseSchema: schema,
+                            temperature: 0.1
+                        }
+                    });
+
+                    response = await model.generateContent({
+                        contents: historyContents
                     });
                 }
             }
             
-            responseText = response.text;
+            responseText = response.response.text();
             latencyMs = Date.now() - startTime;
-            if (response.usageMetadata) {
-                tokensUsed = response.usageMetadata.totalTokenCount || 0;
+            if (response.response.usageMetadata) {
+                tokensUsed = response.response.usageMetadata.totalTokenCount || 0;
             }
             
         } catch (error: any) {
             console.error("Error with model:", error);
-            // Return the actual error to the client to debug why gemini-1.5-flash-001 failed
-            return new Response(JSON.stringify({ error: `gemini-1.5-flash-001 error: ${error.message || JSON.stringify(error)}` }), {
+            return new Response(JSON.stringify({ error: `gemini-1.5-flash error: ${error.message || JSON.stringify(error)}` }), {
                 status: 500,
                 headers: { 'Content-Type': 'application/json' }
             });
@@ -284,7 +275,6 @@ ${b.content}
         try {
             let cleanText = responseText.replace(/```json/gi, '').replace(/```/g, '').trim();
             
-            // AUTO-HEALING: Extraer el primer bloque JSON válido (balanceo de llaves)
             let startIdx = cleanText.indexOf('{');
             let jsonExtracted = null;
             if (startIdx !== -1) {
@@ -313,7 +303,7 @@ ${b.content}
                             jsonExtracted = JSON.parse(cleanText.substring(startIdx, i + 1));
                             break;
                         } catch(e) {
-                            // Ignorar y seguir intentando si falla por alguna razón
+                            // Ignorar
                         }
                     }
                 }
@@ -322,18 +312,14 @@ ${b.content}
             if (jsonExtracted) {
                 parsedData = jsonExtracted;
             } else {
-                parsedData = JSON.parse(cleanText); // Intentar parsear todo si no se encontró un bloque claro
+                parsedData = JSON.parse(cleanText);
             }
         } catch(e) {
-            // Si todo falla, limpiar las partes que parezcan JSON para no mostrarlas en crudo
             let fallbackText = responseText.replace(/\{"cardType.*?\}/gs, '').trim();
             if (!fallbackText) fallbackText = "Ha ocurrido un error entendiendo el formato de la respuesta.";
             parsedData = { cardType: 'TextCard', content: fallbackText, suggestedBlocks: ['¿Qué más puedo ver?'], intentCategory: 'Otros' };
         }
 
-        // ----------------------------------------------------
-        // LOG CONVERSATION TO D1 DATABASE IN BACKGROUND
-        // ----------------------------------------------------
         if (env.DB) {
             context.waitUntil((async () => {
                 try {
@@ -369,3 +355,4 @@ ${b.content}
         });
     }
 }
+
