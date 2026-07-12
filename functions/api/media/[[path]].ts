@@ -21,8 +21,11 @@ export async function onRequestGet(context) {
         headers.set('Cache-Control', 'public, max-age=31536000, immutable');
         
         const contentType = headers.get('content-type') || '';
-        if (!contentType.startsWith('image/')) {
+        if (!contentType.startsWith('image/') && !contentType.startsWith('audio/') && !contentType.startsWith('video/')) {
             headers.set('Content-Disposition', 'attachment');
+        } else {
+            headers.set('Content-Disposition', 'inline');
+            headers.set('Accept-Ranges', 'bytes');
         }
 
         return new Response(object.body, { headers });

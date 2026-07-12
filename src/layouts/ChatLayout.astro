@@ -110,65 +110,7 @@ import MapWidget from '../components/widgets/MapWidget.astro';
                     if (window.loadCommunity) window.loadCommunity();
                 }
             };
-            let audioRecorder = null;
-            let audioChunks = [];
-            window.currentAudioBlob = null;
 
-            document.addEventListener('DOMContentLoaded', () => {
-                const recordBtn = document.getElementById('record-audio-btn');
-                const deleteAudioBtn = document.getElementById('delete-audio-btn');
-                const statusTxt = document.getElementById('record-audio-status');
-                
-                if (recordBtn) {
-                    recordBtn.addEventListener('click', async () => {
-                        if (audioRecorder && audioRecorder.state === 'recording') {
-                            // Stop recording
-                            audioRecorder.stop();
-                            recordBtn.innerText = '🎙️';
-                            recordBtn.style.background = 'var(--primary-color)';
-                            statusTxt.innerText = 'Grabación completada';
-                            deleteAudioBtn.style.display = 'block';
-                        } else {
-                            // Start recording
-                            try {
-                                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                                audioRecorder = new MediaRecorder(stream);
-                                audioChunks = [];
-                                
-                                audioRecorder.ondataavailable = e => {
-                                    if (e.data.size > 0) audioChunks.push(e.data);
-                                };
-                                
-                                audioRecorder.onstop = () => {
-                                    window.currentAudioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-                                    stream.getTracks().forEach(track => track.stop());
-                                };
-                                
-                                audioRecorder.start();
-                                recordBtn.innerText = '⏹️';
-                                recordBtn.style.background = '#ef4444';
-                                statusTxt.innerText = 'Grabando...';
-                                deleteAudioBtn.style.display = 'none';
-                            } catch (err) {
-                                alert("No se pudo acceder al micrófono.");
-                                console.error(err);
-                            }
-                        }
-                    });
-                }
-                
-                if (deleteAudioBtn) {
-                    deleteAudioBtn.addEventListener('click', () => {
-                        window.currentAudioBlob = null;
-                        if (statusTxt) statusTxt.innerText = 'Grabar nota de voz';
-                        deleteAudioBtn.style.display = 'none';
-                        if (recordBtn) {
-                            recordBtn.innerText = '🎙️';
-                            recordBtn.style.background = 'var(--primary-color)';
-                        }
-                    });
-                }
-            });
 
             window.openNewPostModal = async function() {
                 try {
@@ -184,9 +126,20 @@ import MapWidget from '../components/widgets/MapWidget.astro';
                     const statusTxt = document.getElementById('record-audio-status');
                     const deleteAudioBtn = document.getElementById('delete-audio-btn');
                     const recordBtn = document.getElementById('record-audio-btn');
-                    if (statusTxt) statusTxt.innerText = 'Grabar nota de voz';
+                    const indicator = document.getElementById('recording-indicator');
+                    const previewContainer = document.getElementById('audio-preview-container');
+                    const previewAudio = document.getElementById('audio-preview');
+                    
+                    if (statusTxt) {
+                        statusTxt.style.display = 'block';
+                        statusTxt.innerText = 'Grabar nota de voz';
+                    }
                     if (deleteAudioBtn) deleteAudioBtn.style.display = 'none';
+                    if (indicator) indicator.style.display = 'none';
+                    if (previewContainer) previewContainer.style.display = 'none';
+                    if (previewAudio) previewAudio.src = '';
                     if (recordBtn) {
+                        recordBtn.style.display = 'flex';
                         recordBtn.innerText = '🎙️';
                         recordBtn.style.background = 'var(--primary-color)';
                     }
@@ -1087,5 +1040,83 @@ import MapWidget from '../components/widgets/MapWidget.astro';
             </div>
         </div>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
+        
+        <script>
+            import { AudioRecorderManager } from '../scripts/audio-recorder';
+            
+            document.addEventListener('DOMContentLoaded', () => {
+                const recordBtn = document.getElementById('record-audio-btn');
+                const deleteAudioBtn = document.getElementById('delete-audio-btn');
+                const statusTxt = document.getElementById('record-audio-status');
+                const indicator = document.getElementById('recording-indicator');
+                const previewContainer = document.getElementById('audio-preview-container');
+                const previewAudio = document.getElementById('audio-preview');
+                
+                let audioManager = new AudioRecorderManager(
+                    () => {
+                        // onStart
+                        if (recordBtn) {
+                            recordBtn.innerText = '⏹️';
+                            recordBtn.style.background = '#ef4444';
+                        }
+                        if (statusTxt) statusTxt.style.display = 'none';
+                        if (indicator) indicator.style.display = 'block';
+                        if (deleteAudioBtn) deleteAudioBtn.style.display = 'none';
+                        if (previewContainer) previewContainer.style.display = 'none';
+                    },
+                    (audioBlob, audioUrl) => {
+                        // onStop
+                        (window as any).currentAudioBlob = audioBlob;
+                        if (recordBtn) {
+                            recordBtn.innerText = '🎙️';
+                            recordBtn.style.background = 'var(--primary-color)';
+                            recordBtn.style.display = 'none'; // Ocultar mientras haya audio
+                        }
+                        if (indicator) indicator.style.display = 'none';
+                        if (statusTxt) statusTxt.style.display = 'none';
+                        
+                        if (previewContainer) previewContainer.style.display = 'block';
+                        if (previewAudio) (previewAudio as HTMLAudioElement).src = audioUrl;
+                        if (deleteAudioBtn) deleteAudioBtn.style.display = 'block';
+                    },
+                    (err) => {
+                        alert("No se pudo acceder al micrófono.");
+                        if (indicator) indicator.style.display = 'none';
+                        if (statusTxt) statusTxt.style.display = 'block';
+                        if (recordBtn) {
+                            recordBtn.innerText = '🎙️';
+                            recordBtn.style.background = 'var(--primary-color)';
+                        }
+                    }
+                );
+                
+                if (recordBtn) {
+                    recordBtn.addEventListener('click', () => {
+                        if (audioManager.isRecording()) {
+                            audioManager.stopRecording();
+                        } else {
+                            audioManager.startRecording();
+                        }
+                    });
+                }
+                
+                if (deleteAudioBtn) {
+                    deleteAudioBtn.addEventListener('click', () => {
+                        (window as any).currentAudioBlob = null;
+                        if (previewAudio) (previewAudio as HTMLAudioElement).src = '';
+                        if (previewContainer) previewContainer.style.display = 'none';
+                        if (deleteAudioBtn) deleteAudioBtn.style.display = 'none';
+                        
+                        if (recordBtn) {
+                            recordBtn.style.display = 'flex';
+                        }
+                        if (statusTxt) {
+                            statusTxt.style.display = 'block';
+                            statusTxt.innerText = 'Grabar nota de voz';
+                        }
+                    });
+                }
+            });
+        </script>
     </body>
 </html>

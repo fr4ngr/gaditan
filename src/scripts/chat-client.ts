@@ -745,7 +745,7 @@ import { renderCardDOM } from '../components/cards/CardRenderer';
         }
     };
 
-    window.openMapInfoPill = function(title: string, desc: string, lat: string | number, lon: string | number, type: 'stop' | 'airport' | 'post' = 'stop') {
+    window.openMapInfoPill = function(title: string, desc: string, lat: string | number, lon: string | number, type: 'stop' | 'airport' | 'post' = 'stop', extraData?: any) {
         const mapL = (window as any).L;
         window.activeMapStopLat = parseFloat(lat as string);
         window.activeMapStopLon = parseFloat(lon as string);
@@ -764,7 +764,10 @@ import { renderCardDOM } from '../components/cards/CardRenderer';
                     descEl.style.display = 'none';
                 } else {
                     descEl.style.display = 'block';
-                    descEl.innerText = desc || '';
+                    descEl.innerHTML = desc ? desc.replace(/\n/g, '<br/>') : '';
+                    if (extraData && extraData.audio_url) {
+                        descEl.innerHTML += `<div style="margin-top: 12px;"><audio controls src="${extraData.audio_url}" style="width: 100%; height: 36px; outline: none;"></audio></div>`;
+                    }
                 }
             }
             if (labelEl) {
@@ -830,7 +833,7 @@ import { renderCardDOM } from '../components/cards/CardRenderer';
                     const marker = mapL.marker([post.lat, post.lon], {icon: postIcon});
                     marker.addTo(window.postsLayer);
                     marker.on('click', () => {
-                        window.openMapInfoPill(post.user_name || 'Alguien', post.content || 'Sin texto', post.lat, post.lon, 'post');
+                        window.openMapInfoPill(post.user_name || 'Alguien', post.content || 'Sin texto', post.lat, post.lon, 'post', { audio_url: post.audio_url });
                         map.setView([post.lat, post.lon], 16);
                         if (window.currentMarkersLayer) map.removeLayer(window.currentMarkersLayer);
                         if (window.postsLayer) map.removeLayer(window.postsLayer);
