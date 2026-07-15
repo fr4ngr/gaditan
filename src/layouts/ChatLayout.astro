@@ -90,8 +90,6 @@ import MapWidget from '../components/widgets/MapWidget.astro';
                     document.getElementById('tab-chat').style.display = 'flex';
                     const nav = document.getElementById('nav-tab-chat');
                     if (nav) { nav.classList.add('active'); nav.style.color = 'var(--primary-color)'; }
-                    const swiperWidth = swiper ? swiper.clientWidth : window.innerWidth;
-                    if (swiper) swiper.scrollTo({ left: swiperWidth, behavior: 'smooth' });
                 } else {
                     if (swiper) swiper.scrollTo({ left: 0, behavior: 'smooth' });
                     const targetTab = document.getElementById('tab-' + tab);
@@ -408,47 +406,24 @@ import MapWidget from '../components/widgets/MapWidget.astro';
             <div id="tabs-wrapper" style="flex: 1; width: 100%; min-height: 0; display: flex; flex-direction: column; position: relative;">
                 
                 <!-- TAB CHAT -->
-                <div id="tab-chat" style="flex: 1; width: 100%; min-height: 0; display: flex; flex-direction: column; position: relative;">
-                    <!-- CONTENEDOR DESLIZABLE (SWIPER) -->
-                    <div class="swiper-container" id="main-swiper" style="flex: 1; width: 100%; min-height: 0;">
-                <div class="swiper-wrapper">
+                <div id="tab-chat" style="flex: 1; width: 100%; min-height: 0; display: flex; flex-direction: column; position: relative; background: var(--chat-bg);">
+                    <div style="width: 100%; max-width: 480px; margin: 0 auto; padding-top: 60px; z-index: 10;">
+                        <WidgetsTab />
+                    </div>
+                    <main class="messages-area" id="messages-container" style="width: 100%; max-width: 480px; margin: 0 auto; height: 100%; overflow-y: auto; padding-top: 20px; padding-bottom: 160px; scroll-behavior: smooth;">
+                        <slot />
+                    </main>
                     
-                    <!-- PANEL 0: GUARDADOS -->
-                    <div class="swipe-panel" id="panel-guardados">
-                        <main class="messages-area" id="saved-messages-container" style="padding: 20px; width: 100%; max-width: 480px; margin: 0 auto; height: 100%; overflow-y: auto; background: #0f172a; position: relative;">
-                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
-                                <button class="back-swipe-btn" style="color: #60a5fa;" onclick="window.switchPanel('chat')" aria-label="Volver">⬅ Volver al Chat</button>
-                                <h2 style="margin:0; font-size:16px; color: #f8fafc; letter-spacing: 0.5px;">⭐ Guardados</h2>
-                            </div>
-                            <p style="color: #94a3b8; text-align:center; margin-top:40px; font-weight: 300;">No tienes mensajes guardados aún.</p>
-                        </main>
+                    <!-- ÁREA DE INPUT ESTÁTICA Y FLOTANTE -->
+                    <div class="input-area" id="main-input" style="width: 100%; max-width: 480px; margin: 0 auto; padding-bottom: 0.5rem;">
+                        <div class="chat-input-wrapper">
+                            <textarea id="chat-input" class="chat-input" placeholder="Pregunta lo que necesites..." rows="1"></textarea>
+                            <button id="send-btn" class="send-button" aria-label="Enviar mensaje">
+                                <div id="lottie-send" style="width: 100%; height: 100%; transform: scale(1.65);"></div>
+                            </button>
+                        </div>
                     </div>
-
-                    <!-- PANEL 1: CHAT PRINCIPAL -->
-                    <div class="swipe-panel" id="panel-chat" style="position: relative; display: flex; flex-direction: column; width: 100%; height: 100%; background: var(--chat-bg);">
-                        <main class="messages-area" id="messages-container" style="width: 100%; max-width: 480px; margin: 0 auto; height: 100%; overflow-y: auto; padding-top: 80px; padding-bottom: 160px; scroll-behavior: smooth;">
-                            <div style="width: 100%; margin-bottom: 1rem;">
-                                <WidgetsTab />
-                            </div>
-                            <slot />
-                        </main>
-                    </div>
-
-
-
-                </div>
-            </div>
-            
-            <!-- ÁREA DE INPUT ESTÁTICA Y FLOTANTE -->
-            <div class="input-area" id="main-input" style="width: 100%; max-width: 480px; margin: 0 auto; padding-bottom: 0.5rem;">
-                <div class="chat-input-wrapper">
-                    <textarea id="chat-input" class="chat-input" placeholder="Pregunta lo que necesites..." rows="1"></textarea>
-                    <button id="send-btn" class="send-button" aria-label="Enviar mensaje">
-                        <div id="lottie-send" style="width: 100%; height: 100%; transform: scale(1.65);"></div>
-                    </button>
-                </div>
-            </div>
-            </div> <!-- END TAB CHAT -->
+                </div> <!-- END TAB CHAT --><!-- END TAB CHAT -->
 
             <!-- TAB MAPA -->
                 <MapWidget />

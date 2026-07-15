@@ -238,43 +238,12 @@ import { renderCardDOM } from '../components/cards/CardRenderer';
     }
 
     // --- LÓGICA DE NAVEGACIÓN Y CABECERA ESTÁTICA ---
-    document.addEventListener("DOMContentLoaded", () => {
-        const swiper = document.getElementById('main-swiper');
-        if (swiper) {
-            swiper.style.scrollBehavior = 'auto';
-            swiper.scrollLeft = swiper.clientWidth;
-            setTimeout(() => { swiper.style.scrollBehavior = 'smooth'; }, 50);
-
-            let mapLoadedOnSwipe = false;
-            swiper.addEventListener('scroll', () => {
-                if (!mapLoadedOnSwipe && swiper.scrollLeft > swiper.clientWidth * 1.5) {
-                    mapLoadedOnSwipe = true;
-                    if (!(window as any).currentMap) {
-                        if (typeof window.openFullscreenMap === 'function') {
-                            window.openFullscreenMap(null, null, 'swipe');
-                        }
-                    }
-                }
-            });
-        }
-    });
-
     window.switchPanel = function(panelId: 'guardados' | 'chat' | 'mapa') {
-        const swiper = document.getElementById('main-swiper');
-        if (!swiper) return;
-
-        let leftPos = 0;
-        
-        if (panelId === 'guardados') {
-            leftPos = 0;
-        } else if (panelId === 'chat') {
-            leftPos = swiper.clientWidth;
-        } else if (panelId === 'mapa') {
-            if (window.switchTab) window.switchTab('mapa');
-            return;
+        if (panelId === 'mapa' && window.switchTab) {
+            window.switchTab('mapa');
+        } else if (panelId === 'chat' && window.switchTab) {
+            window.switchTab('chat');
         }
-        
-        swiper.scrollTo({ left: leftPos, behavior: 'instant' });
     };
 
     window.initializeGlobalMap = function() {
@@ -1646,19 +1615,13 @@ import { renderCardDOM } from '../components/cards/CardRenderer';
     document.addEventListener('DOMContentLoaded', () => {
         if (window.updateBookmarksBadge) window.updateBookmarksBadge();
         window.renderSavedMessages();
-        const swiper = document.getElementById('main-swiper');
-        if (swiper) {
-            setTimeout(() => {
-                swiper.scrollTo({ left: swiper.clientWidth, behavior: 'instant' });
-                
-                const urlParams = new URLSearchParams(window.location.search);
-                if (urlParams.get('login') === 'success') {
-                    if (typeof window.switchTab === 'function') {
-                        window.switchTab('muro');
-                    }
-                    window.history.replaceState({}, document.title, window.location.pathname);
-                }
-            }, 50);
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('login') === 'success') {
+            if (typeof window.switchTab === 'function') {
+                window.switchTab('muro');
+            }
+            window.history.replaceState({}, document.title, window.location.pathname);
         }
 
         let cropperInstance: any = null;
