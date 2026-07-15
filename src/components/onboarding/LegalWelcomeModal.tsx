@@ -28,8 +28,8 @@ export const LegalWelcomeModal = ({ onComplete }: OnboardingProps) => {
         // Registrar el consentimiento explícito localmente (se debe enviar al backend posteriormente)
         localStorage.setItem('gaditan_consent_media_gps', mediaGPSAccepted.toString());
         
-        onComplete && onComplete(profile);
         setIsVisible(false);
+        window.location.reload();
     };
 
     if (!isVisible) return null;

@@ -1,8 +1,8 @@
 ---
 // src/components/tabs/ProfileTab.astro
 ---
-<!-- TAB PERFIL (Antiguo Muro) -->
-<div id="tab-muro" style="display: none; flex: 1; width: 100%; min-height: 0; flex-direction: column; background: var(--bg-color); max-width: 480px; margin: 0 auto; overflow-y: auto;">
+<!-- TAB PERFIL -->
+<div id="tab-perfil" style="display: none; flex: 1; width: 100%; min-height: 0; flex-direction: column; background: var(--bg-color); max-width: 480px; margin: 0 auto; overflow-y: auto; padding-top: 84px;">
     <div style="flex: 1; padding: 24px 16px; display: flex; flex-direction: column; gap: 24px;">
         
         <!-- Tarjeta de Cuenta -->
@@ -38,12 +38,28 @@
         <div>
             <h4 style="margin: 0 0 12px 12px; font-size: 13px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Tus Contenidos</h4>
             <div style="background: var(--chat-bg); border-radius: 20px; overflow: hidden; border: 1px solid var(--border-color); box-shadow: 0 4px 15px rgba(0,0,0,0.02);">
-                <button onclick="window.switchTab('chat'); setTimeout(() => window.switchPanel('guardados'), 50);" style="display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 16px; background: none; border: none; cursor: pointer; border-bottom: 1px solid var(--border-color);">
+                <button onclick="alert('Próximamente: Mis Favoritos')" style="display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 16px; background: none; border: none; cursor: pointer; border-bottom: 1px solid var(--border-color);">
                     <div style="display: flex; align-items: center; gap: 12px; color: var(--text-primary); font-weight: 600; font-size: 16px;">
                         <div style="background: rgba(239, 68, 68, 0.1); color: #ef4444; width: 36px; height: 36px; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
                         </div>
                         Mis Favoritos Guardados
+                    </div>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--text-secondary);"><polyline points="9 18 15 12 9 6"/></svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Pasaporte -->
+        <div>
+            <h4 style="margin: 0 0 12px 12px; font-size: 13px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Logros</h4>
+            <div style="background: var(--chat-bg); border-radius: 20px; overflow: hidden; border: 1px solid var(--border-color); box-shadow: 0 4px 15px rgba(0,0,0,0.02);">
+                <button onclick="alert('Tu pasaporte interactivo estará disponible próximamente. ¡Prepárate para coleccionar sellos por todo Cádiz!')" style="display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 16px; background: none; border: none; cursor: pointer;">
+                    <div style="display: flex; align-items: center; gap: 12px; color: var(--text-primary); font-weight: 600; font-size: 16px;">
+                        <div style="background: rgba(34, 197, 94, 0.1); color: #22c55e; width: 36px; height: 36px; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="15" x2="12" y2="17"/></svg>
+                        </div>
+                        Mi Pasaporte (Próximamente)
                     </div>
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--text-secondary);"><polyline points="9 18 15 12 9 6"/></svg>
                 </button>
@@ -57,9 +73,9 @@
                 <button onclick="window.toggleDarkMode()" style="display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 16px; background: none; border: none; cursor: pointer;">
                     <div style="display: flex; align-items: center; gap: 12px; color: var(--text-primary); font-weight: 600; font-size: 16px;">
                         <div style="background: rgba(59, 130, 246, 0.1); color: #3b82f6; width: 36px; height: 36px; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
                         </div>
-                        Cambiar Tema Visual
+                        Modo Claro / Oscuro
                     </div>
                 </button>
             </div>

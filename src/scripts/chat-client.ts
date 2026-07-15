@@ -270,10 +270,11 @@ import { renderCardDOM } from '../components/cards/CardRenderer';
         } else if (panelId === 'chat') {
             leftPos = window.innerWidth;
         } else if (panelId === 'mapa') {
-            leftPos = window.innerWidth * 2;
+            if (window.switchTab) window.switchTab('mapa');
+            return;
         }
-
-        swiper.scrollTo({ left: leftPos, behavior: 'smooth' });
+        
+        swiper.scrollTo({ left: leftPos, behavior: 'instant' });
     };
 
     window.openFullscreenMap = function(lat: string | null, lon: string | null, msgId: string) {

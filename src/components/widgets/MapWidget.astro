@@ -2,15 +2,9 @@
 // src/components/widgets/MapWidget.astro
 ---
 
-<!-- PANEL 2: PANTALLA COMPLETA (WIDGETS) -->
-<div class="swipe-panel" id="panel-fullscreen" style="position: relative; display: flex; justify-content: center;">
-    <button id="map-close-btn" class="map-close-btn" onclick="window.switchPanel('chat')" style="position: absolute; top: 16px; right: 16px; z-index: 1005; box-shadow: 0 2px 10px rgba(0,0,0,0.1); background: var(--header-bg); color: var(--text-primary); border: none; width: 40px; height: 40px; border-radius: 50%; font-size: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: opacity 0.3s, transform 0.3s; opacity: 1;" aria-label="Cerrar Mapa">
-        ✕
-    </button>
+<!-- TAB MAPA -->
+<div id="tab-mapa" style="display: none; flex: 1; flex-direction: column; width: 100%; min-height: 0; position: relative; background: var(--bg-color);">
 
-    <div id="map-top-pills" style="position: absolute; top: 64px; right: 16px; z-index: 1005; display: none; flex-direction: column; gap: 8px; align-items: flex-end;">
-    </div>
-    
     <!-- Contenedor UI de la InfoPill -->
     <div id="map-ui-container" style="position: absolute; top: 16px; left: 50%; z-index: 1001; transform: translateX(-50%); width: calc(100% - 32px); max-width: 448px; display: flex; flex-direction: column; gap: 8px; transition: opacity 0.3s, transform 0.3s; opacity: 0; pointer-events: none;">
         <!-- Píldora informativa de parada -->
@@ -60,4 +54,211 @@
             Cargando...
         </div>
     </div>
+
+    <!-- Filtros Container (Top) -->
+    <div id="map-filters-pills" style="position: absolute; top: 84px; left: 50%; z-index: 1001; transform: translateX(-50%) translateY(-20px); width: calc(100% - 32px); display: flex; justify-content: center; gap: 8px; opacity: 0; pointer-events: none; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+        <button class="filter-pill active" onclick="window.selectMapLayer('popular')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path></svg>
+            Popular
+        </button>
+        <button class="filter-pill" onclick="window.selectMapLayer('red')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+            Mi Red
+        </button>
+        <button class="filter-pill" onclick="window.selectMapLayer('parami')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2 5 5 2-5 2-2 5-2-5-5-2 5-2 2-5z"></path><path d="M19 19l1 2 2 1-2 1-1 2-1-2-2-1 2-1 1-2z"></path></svg>
+            Para Mí
+        </button>
+    </div>
+
+    <!-- RADIAL MENUS CONTAINER -->
+    <div id="map-actions-container" style="position: absolute; bottom: 96px; right: 16px; z-index: 1005; display: flex; flex-direction: column; gap: 16px; align-items: flex-end;">
+        
+        <!-- Add Post Vertical Speed Dial -->
+        <div class="radial-menu-wrapper" id="radial-menu-add">
+            <button class="radial-pill-item" style="--ty: -200px;" onclick="window.openNewPostModal('photo')">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                Foto
+            </button>
+            <button class="radial-pill-item" style="--ty: -140px;" onclick="window.openNewPostModal('video')">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
+                Vídeo
+            </button>
+            <button class="radial-pill-item" style="--ty: -80px;" onclick="window.openNewPostModal('audio')">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg>
+                Nota de voz
+            </button>
+            
+            <button class="radial-main-btn primary" onclick="window.toggleRadialMenu('add')" aria-label="Añadir publicación">
+                <div class="plus-icon">+</div>
+            </button>
+        </div>
+
+        <!-- Filtros Button -->
+        <button id="map-filters-btn" class="radial-main-btn" onclick="window.toggleFilters()" aria-label="Filtros">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="21" y1="4" x2="14" y2="4"></line>
+                <line x1="10" y1="4" x2="3" y2="4"></line>
+                <line x1="21" y1="12" x2="12" y2="12"></line>
+                <line x1="8" y1="12" x2="3" y2="12"></line>
+                <line x1="21" y1="20" x2="16" y2="20"></line>
+                <line x1="12" y1="20" x2="3" y2="20"></line>
+                <line x1="14" y1="2" x2="14" y2="6"></line>
+                <line x1="8" y1="10" x2="8" y2="14"></line>
+                <line x1="16" y1="18" x2="16" y2="22"></line>
+            </svg>
+        </button>
+    </div>
 </div>
+
+<style>
+    .leaflet-bottom.leaflet-right {
+        margin-bottom: 96px !important;
+    }
+    
+    /* Radial Menus */
+    .radial-menu-wrapper {
+        position: relative;
+        width: 56px;
+        height: 56px;
+    }
+    .radial-main-btn {
+        position: relative;
+        z-index: 2;
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: var(--header-bg);
+        border: 1px solid var(--header-border);
+        color: var(--text-primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        cursor: pointer;
+        transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.2s;
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+    }
+    .radial-main-btn.primary {
+        background: var(--primary-color);
+        color: white;
+        border: none;
+    }
+    .radial-main-btn .plus-icon {
+        font-size: 28px;
+        transition: transform 0.3s;
+    }
+    .radial-menu-wrapper.open .radial-main-btn .plus-icon {
+        transform: rotate(45deg);
+    }
+    .radial-menu-wrapper.open .radial-main-btn:not(.primary) svg {
+        transform: scale(0.9);
+        opacity: 0.8;
+    }
+
+    .radial-pill-item {
+        position: absolute;
+        right: 0;
+        top: 6px;
+        height: 44px;
+        padding: 0 16px;
+        border-radius: 22px;
+        background: color-mix(in srgb, var(--header-bg) 85%, transparent);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid var(--header-border);
+        color: var(--text-primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        cursor: pointer;
+        opacity: 0;
+        pointer-events: none;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        z-index: 1;
+        font-size: 14px;
+        font-weight: 600;
+        white-space: nowrap;
+        transform-origin: right center;
+    }
+    .radial-menu-wrapper.open .radial-pill-item {
+        opacity: 1;
+        pointer-events: auto;
+        transform: translate(0, var(--ty));
+    }
+    .radial-menu-wrapper.open .radial-pill-item:nth-child(1) { transition-delay: 0.05s; }
+    .radial-menu-wrapper.open .radial-pill-item:nth-child(2) { transition-delay: 0.1s; }
+    .radial-menu-wrapper.open .radial-pill-item:nth-child(3) { transition-delay: 0.15s; }
+
+    #map-filters-pills.open {
+        opacity: 1;
+        pointer-events: auto;
+        transform: translateX(-50%) translateY(0);
+    }
+    .filter-pill {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        background: color-mix(in srgb, var(--header-bg) 85%, transparent);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid var(--header-border);
+        border-radius: 20px;
+        padding: 8px 16px;
+        color: var(--text-primary);
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        transition: all 0.2s;
+        white-space: nowrap;
+    }
+    .filter-pill:hover {
+        background: rgba(255,255,255,0.05);
+    }
+    .filter-pill.active {
+        background: var(--primary-color);
+        color: white;
+        border-color: var(--primary-color);
+    }
+</style>
+
+<script>
+    if (typeof window !== 'undefined') {
+        window.toggleRadialMenu = function(menuId) {
+            const wrapper = document.getElementById('radial-menu-' + menuId);
+            const filtersPills = document.getElementById('map-filters-pills');
+            
+            // Si abrimos 'add', cerramos filtros
+            if (menuId === 'add') {
+                if (wrapper) wrapper.classList.toggle('open');
+                if (filtersPills) filtersPills.classList.remove('open');
+            }
+        };
+
+        window.toggleFilters = function() {
+            const filtersPills = document.getElementById('map-filters-pills');
+            const addMenu = document.getElementById('radial-menu-add');
+            
+            if (filtersPills) filtersPills.classList.toggle('open');
+            if (addMenu) addMenu.classList.remove('open');
+        };
+
+        window.selectMapLayer = function(layerId) {
+            // Update active state visually
+            document.querySelectorAll('.filter-pill').forEach(btn => btn.classList.remove('active'));
+            if (event && event.currentTarget) {
+                event.currentTarget.classList.add('active');
+            }
+            
+            // Close menu
+            const filtersPills = document.getElementById('map-filters-pills');
+            if (filtersPills) filtersPills.classList.remove('open');
+            
+            console.log("Capa cambiada a:", layerId);
+        };
+    }
+</script>
