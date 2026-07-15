@@ -91,12 +91,6 @@ import MapWidget from '../components/widgets/MapWidget.astro';
                     const nav = document.getElementById('nav-tab-chat');
                     if (nav) { nav.classList.add('active'); nav.style.color = 'var(--primary-color)'; }
                     if (swiper) swiper.scrollTo({ left: window.innerWidth, behavior: 'smooth' });
-                } else if (tab === 'mapa') {
-                    document.getElementById('tab-chat').style.display = 'flex';
-                    document.getElementById('tab-mapa').style.display = 'flex';
-                    const nav = document.getElementById('nav-tab-mapa');
-                    if (nav) { nav.classList.add('active'); nav.style.color = 'var(--primary-color)'; }
-                    if (swiper) swiper.scrollTo({ left: window.innerWidth * 2, behavior: 'smooth' });
                 } else {
                     if (swiper) swiper.scrollTo({ left: 0, behavior: 'smooth' });
                     const targetTab = document.getElementById('tab-' + tab);
@@ -107,6 +101,12 @@ import MapWidget from '../components/widgets/MapWidget.astro';
                     if (tab === 'muro' && window.loadFeed) window.loadFeed();
                     if (tab === 'dms' && window.loadDMsInbox) window.loadDMsInbox();
                     if (tab === 'comunidad' && window.loadCommunity) window.loadCommunity();
+                    if (tab === 'mapa') {
+                        if (window.renderMapMarkers) window.renderMapMarkers();
+                        setTimeout(() => {
+                            if (window.map) window.map.invalidateSize();
+                        }, 300);
+                    }
                 }
             };
 
@@ -430,8 +430,7 @@ import MapWidget from '../components/widgets/MapWidget.astro';
                         </main>
                     </div>
 
-                    <!-- PANEL 2: PANTALLA COMPLETA (WIDGETS) -->
-                    <MapWidget />
+
 
                 </div>
             </div>
@@ -446,6 +445,11 @@ import MapWidget from '../components/widgets/MapWidget.astro';
                 </div>
             </div>
             </div> <!-- END TAB CHAT -->
+
+            <!-- TAB MAPA -->
+            <div id="tab-mapa" style="display: none; flex: 1; width: 100%; height: 100%; flex-direction: column; position: relative;">
+                <MapWidget />
+            </div>
 
             <!-- TAB MURO -->
             <MuroTab />
