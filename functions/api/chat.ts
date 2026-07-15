@@ -132,19 +132,20 @@ ${b.content}
         };
 
         // Injecting the Profile into the prompt
-        let finalSystemPrompt = activeSystemPrompt;
+        let finalSystemPrompt = systemInstruction;
         if (userProfile && userProfile !== 'desconocido') {
             finalSystemPrompt += `\n\n<GADITAN_PROFILE>\nEl usuario actual se ha identificado como: **${userProfile.toUpperCase()}**.\nAdapta tus respuestas, recomendaciones y tono a este perfil. Por ejemplo, si es Turista recomiéndale básicos; si es Gaditano, cosas locales o avanzadas; si es Negocio, facilítale opciones profesionales.\n</GADITAN_PROFILE>`;
         }
 
         // Construir la estructura final que Gemini espera
-        let apiHistory = [];
+        let apiHistory: any[] = [];
         if (finalSystemPrompt) {
             apiHistory.push({ role: 'user', parts: [{ text: finalSystemPrompt }] });
             apiHistory.push({ role: 'model', parts: [{ text: 'Entendido. Actuaré según las directrices y el esquema JSON establecido, considerando el perfil del usuario.' }] });
         }
 
-        const historyContents = body.history && body.history.length > 0 ? body.history : [{ role: 'user', parts: [{ text: userMessage }] }];
+        let historyContents = body.history && body.history.length > 0 ? body.history : [{ role: 'user', parts: [{ text: userMessage }] }];
+        historyContents = [...apiHistory, ...historyContents];
         const inputType = body.inputType || 'typed';
 
         const beachTool = {
@@ -173,7 +174,6 @@ ${b.content}
         try {
             let model = genAI.getGenerativeModel({
                 model: currentModel,
-                systemInstruction: systemInstruction,
                 generationConfig: {
                     temperature: 0.1
                 },
@@ -243,7 +243,6 @@ ${b.content}
 
                     model = genAI.getGenerativeModel({
                         model: currentModel,
-                        systemInstruction: systemInstruction,
                         generationConfig: {
                             responseMimeType: "application/json",
                             responseSchema: schema,
