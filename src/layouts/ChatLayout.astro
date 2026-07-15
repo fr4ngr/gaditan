@@ -102,9 +102,12 @@ import MapWidget from '../components/widgets/MapWidget.astro';
                     if (tab === 'dms' && window.loadDMsInbox) window.loadDMsInbox();
                     if (tab === 'comunidad' && window.loadCommunity) window.loadCommunity();
                     if (tab === 'mapa') {
+                        if (!window.currentMap && window.initializeGlobalMap) {
+                            window.initializeGlobalMap();
+                        }
                         if (window.renderMapMarkers) window.renderMapMarkers();
                         setTimeout(() => {
-                            if (window.map) window.map.invalidateSize();
+                            if (window.currentMap) window.currentMap.invalidateSize();
                         }, 300);
                     }
                 }

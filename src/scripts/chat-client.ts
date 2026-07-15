@@ -277,6 +277,36 @@ import { renderCardDOM } from '../components/cards/CardRenderer';
         swiper.scrollTo({ left: leftPos, behavior: 'instant' });
     };
 
+    window.initializeGlobalMap = function() {
+        const container = document.getElementById('fullscreen-widget-area');
+        if (!container) return;
+
+        container.innerHTML = `<div id="fullscreen-leaflet-global" style="width: 100%; height: 100%;"></div>`;
+
+        setTimeout(() => {
+            const mapL = (window as any).L;
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            
+            const map = mapL.map(`fullscreen-leaflet-global`, { 
+                zoomControl: false, 
+                dragging: !isMobile,
+                tap: !isMobile
+            });
+            
+            mapL.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { maxZoom: 20 }).addTo(map);
+            map.setView([36.516, -6.283], 13);
+            
+            window.currentMap = map;
+            
+            if (isMobile) {
+                map.dragging.enable();
+                map.tap.enable();
+            }
+            
+            if (window.renderMapMarkers) window.renderMapMarkers();
+        }, 100);
+    };
+
     window.openFullscreenMap = function(lat: string | null, lon: string | null, msgId: string) {
         window.switchPanel('mapa');
         if (window.closeMapInfoPill) window.closeMapInfoPill();
