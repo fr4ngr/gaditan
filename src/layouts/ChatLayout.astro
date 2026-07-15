@@ -231,7 +231,7 @@ import MapWidget from '../components/widgets/MapWidget.astro';
                         const date = dateObj.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' }) + ' a las ' + dateObj.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
                         
                         const div = document.createElement('div');
-                        div.style.cssText = "background: var(--header-bg); border: 1px solid var(--header-border); border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);";
+                        div.style.cssText = "background: var(--header-bg); border: 1px solid var(--header-border); border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); overflow: hidden;";
 
                         const headerDiv = document.createElement('div');
                         headerDiv.style.cssText = "display: flex; align-items: center; gap: 12px;";
@@ -288,7 +288,7 @@ import MapWidget from '../components/widgets/MapWidget.astro';
                         if (post.image_url) {
                             const postImg = document.createElement('img');
                             postImg.src = post.image_url;
-                            postImg.style.cssText = "width: 100%; border-radius: 12px; max-height: 300px; object-fit: cover; margin-top: 4px;";
+                            postImg.style.cssText = "width: calc(100% + 32px); margin-left: -16px; margin-right: -16px; border-radius: 0; max-height: 300px; object-fit: cover; margin-top: 4px;";
                             postImg.alt = "Post image";
                             postImg.loading = "lazy";
                             div.appendChild(postImg);
