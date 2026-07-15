@@ -54,7 +54,7 @@ export async function onRequestPost(context) {
             });
             
             // Better to just store filename and proxy builds it
-            imageUrl = `/api/media/${encodeURIComponent(filename)}`;
+            imageUrl = `/api/media/${filename}`;
         }
 
         // 3.5 Upload to R2 if audio exists
@@ -82,7 +82,7 @@ export async function onRequestPost(context) {
                 httpMetadata: { contentType: audio.type }
             });
             
-            audioUrl = `/api/media/${encodeURIComponent(filename)}`;
+            audioUrl = `/api/media/${filename}`;
         }
 
         // 4. Save to D1

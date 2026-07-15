@@ -1,0 +1,82 @@
+---
+// src/components/tabs/MelkartTab.astro
+---
+
+<!-- TAB MELKART -->
+<div id="tab-melkart" style="display: none; flex: 1; width: 100%; min-height: 0; flex-direction: column; background: var(--bg-color); max-width: 480px; margin: 0 auto; overflow-y: auto; padding-top: 84px; padding-bottom: 100px;">
+    <!-- Encabezado de la tienda -->
+    <div style="padding: 16px; background: var(--header-bg); border-bottom: 1px solid var(--header-border); position: sticky; top: 0; z-index: 10;">
+        <h2 style="margin: 0 0 12px 0; font-size: 20px; color: var(--text-primary); display: flex; align-items: center; gap: 8px; font-weight: 700;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary-color);">
+                <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path>
+                <path d="M3 6h18"></path>
+                <path d="M16 10a4 4 0 0 1-8 0"></path>
+            </svg>
+            Melkart Shop
+        </h2>
+        <div style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none;">
+            <button class="melkart-filter active" style="background: var(--chat-bg); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: 16px; padding: 6px 12px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap;">🌴 Experiencias</button>
+            <button class="melkart-filter" style="background: transparent; color: var(--text-secondary); border: 1px solid transparent; border-radius: 16px; padding: 6px 12px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap;">🚕 Bonos de Taxi</button>
+            <button class="melkart-filter" style="background: transparent; color: var(--text-secondary); border: 1px solid transparent; border-radius: 16px; padding: 6px 12px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap;">🏺 Artesanía</button>
+        </div>
+    </div>
+
+    <!-- Lista de Productos/Servicios -->
+    <div style="padding: 16px; display: flex; flex-direction: column; gap: 16px;">
+        <!-- TARJETA 1 -->
+        <div style="background: var(--header-bg); border: 1px solid var(--header-border); border-radius: 20px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); display: flex; flex-direction: column; transition: transform 0.2s;">
+            <div style="height: 140px; background: linear-gradient(135deg, #0284c7, #0369a1); position: relative; display: flex; align-items: center; justify-content: center; color: white;">
+                <span style="font-size: 3rem;">⛵</span>
+                <span style="position: absolute; top: 12px; right: 12px; background: rgba(0,0,0,0.6); padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; letter-spacing: 0.5px; backdrop-filter: blur(4px);">POPULAR</span>
+            </div>
+            <div style="padding: 16px; display: flex; flex-direction: column; gap: 8px;">
+                <h3 style="margin: 0; font-size: 16px; color: var(--text-primary); font-weight: 700;">Atardecer en Velero por la Caleta</h3>
+                <p style="margin: 0; font-size: 13px; color: var(--text-secondary); line-height: 1.4;">Disfruta de una puesta de sol inolvidable navegando frente al Castillo de San Sebastián con copa de vino de la tierra y aperitivo incluido.</p>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
+                    <div>
+                        <span style="font-size: 18px; font-weight: 800; color: var(--text-primary);">35,00 €</span>
+                        <span style="font-size: 11px; color: var(--text-secondary); margin-left: 2px;">/ persona</span>
+                    </div>
+                    <button onclick="alert('Funcionalidad de reserva en desarrollo en la versión beta.')" style="background: var(--primary-color); color: white; border: none; border-radius: 12px; padding: 8px 16px; font-size: 13px; font-weight: 700; cursor: pointer; transition: background 0.2s;">Reservar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- TARJETA 2 (Bono de Taxi) -->
+        <div style="background: var(--header-bg); border: 1px solid var(--header-border); border-radius: 20px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); display: flex; flex-direction: column; transition: transform 0.2s;">
+            <div style="height: 140px; background: linear-gradient(135deg, #eab308, #ca8a04); position: relative; display: flex; align-items: center; justify-content: center; color: white;">
+                <span style="font-size: 3rem;">🚕</span>
+                <span style="position: absolute; top: 12px; right: 12px; background: #22c55e; color: white; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; letter-spacing: 0.5px;">AHORRO</span>
+            </div>
+            <div style="padding: 16px; display: flex; flex-direction: column; gap: 8px;">
+                <h3 style="margin: 0; font-size: 16px; color: var(--text-primary); font-weight: 700;">Bono Descuento de Taxi 15€</h3>
+                <p style="margin: 0; font-size: 13px; color: var(--text-secondary); line-height: 1.4;">Saldo monedero para canjear en tus trayectos de taxi por la ciudad de Cádiz solicitados desde la aplicación.</p>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
+                    <div>
+                        <span style="font-size: 18px; font-weight: 800; color: var(--text-primary);">12,00 €</span>
+                        <span style="font-size: 11px; color: #22c55e; font-weight: 600; margin-left: 4px;">ahorras 20%</span>
+                    </div>
+                    <button onclick="alert('Funcionalidad de compra en desarrollo en la versión beta.')" style="background: var(--primary-color); color: white; border: none; border-radius: 12px; padding: 8px 16px; font-size: 13px; font-weight: 700; cursor: pointer; transition: background 0.2s;">Comprar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- TARJETA 3 -->
+        <div style="background: var(--header-bg); border: 1px solid var(--header-border); border-radius: 20px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); display: flex; flex-direction: column; transition: transform 0.2s;">
+            <div style="height: 140px; background: linear-gradient(135deg, #a855f7, #7e22ce); position: relative; display: flex; align-items: center; justify-content: center; color: white;">
+                <span style="font-size: 3rem;">🏺</span>
+            </div>
+            <div style="padding: 16px; display: flex; flex-direction: column; gap: 8px;">
+                <h3 style="margin: 0; font-size: 16px; color: var(--text-primary); font-weight: 700;">Ruta del Cádiz Fenicio y Romano</h3>
+                <p style="margin: 0; font-size: 13px; color: var(--text-secondary); line-height: 1.4;">Visita guiada exclusiva con historiador local al yacimiento arqueológico Gadir y al Teatro Romano de Cádiz con entrada preferente.</p>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
+                    <div>
+                        <span style="font-size: 18px; font-weight: 800; color: var(--text-primary);">18,00 €</span>
+                        <span style="font-size: 11px; color: var(--text-secondary); margin-left: 2px;">/ persona</span>
+                    </div>
+                    <button onclick="alert('Funcionalidad de reserva en desarrollo en la versión beta.')" style="background: var(--primary-color); color: white; border: none; border-radius: 12px; padding: 8px 16px; font-size: 13px; font-weight: 700; cursor: pointer; transition: background 0.2s;">Reservar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

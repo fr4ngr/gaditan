@@ -19,6 +19,7 @@ import OnboardingModal from '../components/modals/OnboardingModal.astro';
 import { LegalWelcomeModal } from '../components/onboarding/LegalWelcomeModal';
 import CommunityTab from '../components/tabs/CommunityTab.astro';
 import DMsTab from '../components/tabs/DMsTab.astro';
+import MelkartTab from '../components/tabs/MelkartTab.astro';
 import MapWidget from '../components/widgets/MapWidget.astro';
 ---
 
@@ -69,32 +70,32 @@ import MapWidget from '../components/widgets/MapWidget.astro';
                 const tabDms = document.getElementById('tab-dms');
                 const tabComunidad = document.getElementById('tab-comunidad');
                 const tabMapa = document.getElementById('tab-mapa');
+                const tabMelkart = document.getElementById('tab-melkart');
+                const tabPerfil = document.getElementById('tab-perfil');
                 
                 const navChat = document.getElementById('nav-tab-chat');
                 const navMuro = document.getElementById('nav-tab-muro');
                 const navDms = document.getElementById('nav-tab-dms');
                 const navComunidad = document.getElementById('nav-tab-comunidad');
+                const navMapa = document.getElementById('nav-tab-mapa');
+                const navMelkart = document.getElementById('nav-tab-melkart');
 
                 // Hide all
                 tabChat.style.display = 'none';
                 tabMuro.style.display = 'none';
-                const tabPerfil = document.getElementById('tab-perfil');
                 if (tabPerfil) tabPerfil.style.display = 'none';
                 if (tabDms) tabDms.style.display = 'none';
                 if (tabComunidad) tabComunidad.style.display = 'none';
                 if (tabMapa) tabMapa.style.display = 'none';
+                if (tabMelkart) tabMelkart.style.display = 'none';
                 
-                navChat.classList.remove('active');
-                navMuro.classList.remove('active');
-                if (navDms) navDms.classList.remove('active');
-                if (navComunidad) navComunidad.classList.remove('active');
-                const navMapaTab = document.getElementById('nav-tab-mapa');
-                if (navMapaTab) navMapaTab.classList.remove('active');
+                if (navChat) { navChat.classList.remove('active'); navChat.style.color = 'var(--text-secondary)'; }
+                if (navMuro) { navMuro.classList.remove('active'); navMuro.style.color = 'var(--text-secondary)'; }
+                if (navDms) { navDms.classList.remove('active'); navDms.style.color = 'var(--text-secondary)'; }
+                if (navComunidad) { navComunidad.classList.remove('active'); navComunidad.style.color = 'var(--text-secondary)'; }
+                if (navMapa) { navMapa.classList.remove('active'); navMapa.style.color = 'var(--text-secondary)'; }
+                if (navMelkart) { navMelkart.classList.remove('active'); navMelkart.style.color = 'var(--text-secondary)'; }
                 
-                navChat.style.color = 'var(--text-secondary)';
-                navMuro.style.color = 'var(--text-secondary)';
-                if (navDms) navDms.style.color = 'var(--text-secondary)';
-                if (navComunidad) navComunidad.style.color = 'var(--text-secondary)';
                 const bottomNav = document.getElementById('bottom-nav');
                 const mainInput = document.getElementById('main-input');
 
@@ -107,8 +108,10 @@ import MapWidget from '../components/widgets/MapWidget.astro';
 
                 if (tab === 'chat') {
                     tabChat.style.display = 'flex';
-                    navChat.classList.add('active');
-                    navChat.style.color = 'var(--primary-color)';
+                    if (navChat) {
+                        navChat.classList.add('active');
+                        navChat.style.color = 'var(--primary-color)';
+                    }
                     
                     if (bottomNav) {
                         bottomNav.style.bottom = 'auto';
@@ -121,6 +124,12 @@ import MapWidget from '../components/widgets/MapWidget.astro';
                         mainInput.style.transform = 'translateX(-50%) translateY(0)';
                         mainInput.style.opacity = '1';
                         mainInput.style.pointerEvents = 'auto';
+                    }
+                    
+                    // Asegurar que muestre el panel de chat y no guardados o mapa
+                    const swiper = document.getElementById('main-swiper');
+                    if (swiper) {
+                        swiper.scrollTo({ left: window.innerWidth, behavior: 'instant' });
                     }
                 } else {
                     if (bottomNav) {
@@ -137,28 +146,47 @@ import MapWidget from '../components/widgets/MapWidget.astro';
 
                     if (tab === 'muro') {
                         tabMuro.style.display = 'flex';
-                        navMuro.classList.add('active');
-                        navMuro.style.color = 'var(--primary-color)';
-                        window.loadFeed();
+                        if (navMuro) {
+                            navMuro.classList.add('active');
+                            navMuro.style.color = 'var(--primary-color)';
+                        }
+                        if (window.loadFeed) window.loadFeed();
                     } else if (tab === 'dms') {
                         if (tabDms) tabDms.style.display = 'flex';
-                        if (navDms) navDms.classList.add('active');
-                        if (navDms) navDms.style.color = 'var(--primary-color)';
+                        if (navDms) {
+                            navDms.classList.add('active');
+                            navDms.style.color = 'var(--primary-color)';
+                        }
                         if (window.loadDMsInbox) window.loadDMsInbox();
                     } else if (tab === 'mapa') {
+                        tabChat.style.display = 'flex';
                         if (tabMapa) tabMapa.style.display = 'flex';
-                        const navMapa = document.getElementById('nav-tab-mapa');
                         if (navMapa) {
                             navMapa.classList.add('active');
                             navMapa.style.color = 'var(--primary-color)';
                         }
+                        
+                        // Deslizar al panel del mapa (Panel 2)
+                        const swiper = document.getElementById('main-swiper');
+                        if (swiper) {
+                            swiper.scrollTo({ left: window.innerWidth * 2, behavior: 'instant' });
+                        }
+                        
                         if (!document.getElementById('fullscreen-leaflet-main') && window.openFullscreenMap) {
                             window.openFullscreenMap(null, null, 'main');
                         }
+                    } else if (tab === 'melkart') {
+                        if (tabMelkart) tabMelkart.style.display = 'flex';
+                        if (navMelkart) {
+                            navMelkart.classList.add('active');
+                            navMelkart.style.color = 'var(--primary-color)';
+                        }
                     } else if (tab === 'comunidad') {
                         if (tabComunidad) tabComunidad.style.display = 'flex';
-                        if (navComunidad) navComunidad.classList.add('active');
-                        if (navComunidad) navComunidad.style.color = 'var(--primary-color)';
+                        if (navComunidad) {
+                            navComunidad.classList.add('active');
+                            navComunidad.style.color = 'var(--primary-color)';
+                        }
                         if (window.loadCommunity) window.loadCommunity();
                     } else if (tab === 'perfil') {
                         if (tabPerfil) tabPerfil.style.display = 'flex';
