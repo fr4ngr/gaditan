@@ -10,7 +10,7 @@ export async function onRequestGet(context) {
         let query = `
             SELECT 
                 p.id, p.content, p.image_url, p.audio_url, p.created_at, p.user_id, p.lat, p.lon,
-                u.name as user_name, COALESCE(u.picture, u.avatar_url) as user_avatar
+                u.name as user_name, COALESCE(u.picture, u.avatar_url) as user_avatar, u.profile as user_profile
             FROM posts p
             JOIN users u ON p.user_id = u.id
         `;
