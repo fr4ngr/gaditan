@@ -20,6 +20,7 @@ import { LegalWelcomeModal } from '../components/onboarding/LegalWelcomeModal';
 import CommunityTab from '../components/tabs/CommunityTab.astro';
 import DMsTab from '../components/tabs/DMsTab.astro';
 import MelkartTab from '../components/tabs/MelkartTab.astro';
+import WidgetsTab from '../components/tabs/WidgetsTab.astro';
 import MapWidget from '../components/widgets/MapWidget.astro';
 ---
 
@@ -420,8 +421,11 @@ import MapWidget from '../components/widgets/MapWidget.astro';
                     </div>
 
                     <!-- PANEL 1: CHAT PRINCIPAL -->
-                    <div class="swipe-panel" id="panel-chat">
-                        <main class="messages-area" id="messages-container" style="width: 100%; max-width: 480px; margin: 0 auto; height: 100%; overflow-y: auto; background: var(--chat-bg); padding-bottom: 160px;">
+                    <div class="swipe-panel" id="panel-chat" style="position: relative; display: flex; flex-direction: column; width: 100%; height: 100%; background: var(--chat-bg);">
+                        <main class="messages-area" id="messages-container" style="width: 100%; max-width: 480px; margin: 0 auto; height: 100%; overflow-y: auto; padding-top: 80px; padding-bottom: 160px; scroll-behavior: smooth;">
+                            <div style="width: 100%; margin-bottom: 1rem;">
+                                <WidgetsTab />
+                            </div>
                             <slot />
                         </main>
                     </div>
@@ -567,13 +571,13 @@ import MapWidget from '../components/widgets/MapWidget.astro';
         </div>
 
             <nav id="bottom-nav" style="width: calc(100% - 32px); max-width: 448px; margin: 0; background: color-mix(in srgb, var(--header-bg) 75%, transparent); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid var(--header-border); border-radius: 40px; box-shadow: 0 8px 32px rgba(0,0,0,0.1); display: flex; justify-content: space-around; padding: 8px 8px; position: fixed; bottom: max(16px, env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); z-index: 3000; flex-shrink: 0;">
-                <button onclick="window.switchTab('comunidad')" id="nav-tab-comunidad" class="nav-tab" style="background: none; border: none; display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text-secondary); cursor: pointer; flex: 1;">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                    <span style="font-size: 11px; font-weight: 600;">Comunidad</span>
-                </button>
                 <button onclick="window.switchTab('muro')" id="nav-tab-muro" class="nav-tab" style="background: none; border: none; display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text-secondary); cursor: pointer; flex: 1;">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
                     <span style="font-size: 11px; font-weight: 600;">Muro</span>
+                </button>
+                <button onclick="window.switchTab('mapa')" id="nav-tab-mapa" class="nav-tab" style="background: none; border: none; display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text-secondary); cursor: pointer; flex: 1;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg>
+                    <span style="font-size: 11px; font-weight: 600;">Mapa</span>
                 </button>
                 <button onclick="window.switchTab('chat')" id="nav-tab-chat" class="nav-tab active" style="background: none; border: none; display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--primary-color); cursor: pointer; flex: 1;">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>

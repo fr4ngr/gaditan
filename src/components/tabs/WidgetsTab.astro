@@ -1,0 +1,86 @@
+---
+// src/components/tabs/WidgetsTab.astro
+---
+<!-- WIDGETS CAROUSEL -->
+<style>
+.widgets-carousel {
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    padding: 12px 16px;
+    gap: 12px;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Firefox */
+}
+.widgets-carousel::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
+}
+.widget-card {
+    flex: 0 0 auto;
+    width: 140px;
+    height: 70px;
+    background: linear-gradient(135deg, var(--header-bg), var(--bg-color));
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    scroll-snap-align: start;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+.widget-title {
+    font-size: 11px;
+    color: var(--text-secondary);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.widget-value {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+</style>
+
+<div id="tab-widgets" class="widgets-carousel">
+    <!-- WIDGET: Clima -->
+    <div class="widget-card" onclick="window.openWeatherModal()" style="cursor: pointer;">
+        <div class="widget-title">
+            <span>⛅</span> Clima local
+        </div>
+        <div class="widget-value">24°C Soleado</div>
+    </div>
+
+    <!-- WIDGET: Transporte -->
+    <div class="widget-card">
+        <div class="widget-title">
+            <span>🚌</span> Bus L1
+        </div>
+        <div class="widget-value">Llega en 4 min</div>
+    </div>
+
+    <!-- WIDGET: Agenda -->
+    <div class="widget-card">
+        <div class="widget-title">
+            <span>🎭</span> Carnaval
+        </div>
+        <div class="widget-value">Faltan 142 días</div>
+    </div>
+
+    <!-- WIDGET: Añadir -->
+    <div class="widget-card" style="width: auto; background: transparent; border: 1px dashed var(--border-color); align-items: center; justify-content: center; color: var(--primary-color);">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+    </div>
+</div>
