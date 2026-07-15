@@ -30,6 +30,10 @@
 		{
 			"binding": "AVATAR_BUCKET",
 			"bucket_name": "cadiz-avatars"
+		},
+		{
+			"binding": "BUCKET",
+			"bucket_name": "cadiz-media"
 		}
 	]
 }
