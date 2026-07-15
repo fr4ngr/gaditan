@@ -242,12 +242,12 @@ import { renderCardDOM } from '../components/cards/CardRenderer';
         const swiper = document.getElementById('main-swiper');
         if (swiper) {
             swiper.style.scrollBehavior = 'auto';
-            swiper.scrollLeft = window.innerWidth;
+            swiper.scrollLeft = swiper.clientWidth;
             setTimeout(() => { swiper.style.scrollBehavior = 'smooth'; }, 50);
 
             let mapLoadedOnSwipe = false;
             swiper.addEventListener('scroll', () => {
-                if (!mapLoadedOnSwipe && swiper.scrollLeft > window.innerWidth * 1.5) {
+                if (!mapLoadedOnSwipe && swiper.scrollLeft > swiper.clientWidth * 1.5) {
                     mapLoadedOnSwipe = true;
                     if (!(window as any).currentMap) {
                         if (typeof window.openFullscreenMap === 'function') {
@@ -268,7 +268,7 @@ import { renderCardDOM } from '../components/cards/CardRenderer';
         if (panelId === 'guardados') {
             leftPos = 0;
         } else if (panelId === 'chat') {
-            leftPos = window.innerWidth;
+            leftPos = swiper.clientWidth;
         } else if (panelId === 'mapa') {
             if (window.switchTab) window.switchTab('mapa');
             return;
@@ -1649,7 +1649,7 @@ import { renderCardDOM } from '../components/cards/CardRenderer';
         const swiper = document.getElementById('main-swiper');
         if (swiper) {
             setTimeout(() => {
-                swiper.scrollTo({ left: window.innerWidth, behavior: 'instant' });
+                swiper.scrollTo({ left: swiper.clientWidth, behavior: 'instant' });
                 
                 const urlParams = new URLSearchParams(window.location.search);
                 if (urlParams.get('login') === 'success') {

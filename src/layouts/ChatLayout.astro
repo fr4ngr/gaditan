@@ -90,7 +90,8 @@ import MapWidget from '../components/widgets/MapWidget.astro';
                     document.getElementById('tab-chat').style.display = 'flex';
                     const nav = document.getElementById('nav-tab-chat');
                     if (nav) { nav.classList.add('active'); nav.style.color = 'var(--primary-color)'; }
-                    if (swiper) swiper.scrollTo({ left: window.innerWidth, behavior: 'smooth' });
+                    const swiperWidth = swiper ? swiper.clientWidth : window.innerWidth;
+                    if (swiper) swiper.scrollTo({ left: swiperWidth, behavior: 'smooth' });
                 } else {
                     if (swiper) swiper.scrollTo({ left: 0, behavior: 'smooth' });
                     const targetTab = document.getElementById('tab-' + tab);
@@ -682,7 +683,7 @@ import MapWidget from '../components/widgets/MapWidget.astro';
                 height: 100%;
             }
             .swipe-panel {
-                width: 100vw;
+                width: 100%;
                 flex-shrink: 0;
                 height: 100%;
                 scroll-snap-align: center;
