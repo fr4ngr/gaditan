@@ -227,7 +227,8 @@ import MapWidget from '../components/widgets/MapWidget.astro';
 
                     container.innerHTML = '';
                     data.posts.forEach(post => {
-                        const date = new Date(post.created_at).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
+                        const dateObj = new Date(post.created_at);
+                        const date = dateObj.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' }) + ' a las ' + dateObj.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
                         
                         const div = document.createElement('div');
                         div.style.cssText = "background: var(--header-bg); border: 1px solid var(--header-border); border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);";
