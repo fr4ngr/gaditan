@@ -244,18 +244,13 @@ import MapWidget from '../components/widgets/MapWidget.astro';
 
                         const nameContainer = document.createElement('div');
                         nameContainer.style.cursor = 'pointer';
+                        nameContainer.style.flex = '1';
                         nameContainer.onclick = () => window.openPublicProfile(post.user_id);
                         
                         const nameDiv = document.createElement('div');
                         nameDiv.style.cssText = "font-weight: 600; color: var(--text-primary); font-size: 15px; display: flex; align-items: center; gap: 8px;";
                         nameDiv.textContent = post.user_name || 'Usuario';
                         
-                        if (post.user_profile && post.user_profile !== 'desconocido') {
-                            const pill = document.createElement('span');
-                            pill.style.cssText = "font-size: 10px; padding: 2px 6px; border-radius: 8px; background: var(--primary-color); color: white; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;";
-                            pill.textContent = post.user_profile;
-                            nameDiv.appendChild(pill);
-                        }
                         const dateDiv = document.createElement('div');
                         dateDiv.style.cssText = "font-size: 12px; color: var(--text-secondary);";
                         dateDiv.textContent = date;
@@ -265,11 +260,18 @@ import MapWidget from '../components/widgets/MapWidget.astro';
                         headerDiv.appendChild(img);
                         headerDiv.appendChild(nameContainer);
 
+                        if (post.user_profile && post.user_profile !== 'desconocido') {
+                            const pill = document.createElement('span');
+                            pill.style.cssText = "font-size: 10px; padding: 2px 6px; border-radius: 8px; background: var(--primary-color); color: white; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;";
+                            pill.textContent = post.user_profile;
+                            headerDiv.appendChild(pill);
+                        }
+
                         // Add DM Button if not my own post
                         if (post.user_id && dataMe && dataMe.user && post.user_id !== dataMe.user.id) {
                             const dmBtn = document.createElement('button');
                             dmBtn.innerHTML = '✉️ Mensaje';
-                            dmBtn.style.cssText = "margin-left: auto; background: var(--chat-bg); border: 1px solid var(--border-color); color: var(--primary-color); border-radius: 12px; padding: 6px 12px; font-size: 12px; font-weight: 600; cursor: pointer;";
+                            dmBtn.style.cssText = "background: var(--chat-bg); border: 1px solid var(--border-color); color: var(--primary-color); border-radius: 12px; padding: 6px 12px; font-size: 12px; font-weight: 600; cursor: pointer;";
                             dmBtn.onclick = () => window.openDMChat(post.user_id, post.user_name, post.user_avatar);
                             headerDiv.appendChild(dmBtn);
                         }
