@@ -399,7 +399,12 @@ ${b.content}
                 generationConfig: {
                     temperature: 0.1
                 },
-                tools: [beachTool, transportTool, { googleSearch: {} }]
+                tools: [beachTool, transportTool, { googleSearch: {} }],
+                toolConfig: {
+                    functionCallingConfig: { mode: "AUTO" },
+                    include_server_side_tool_invocations: true,
+                    includeServerSideToolInvocations: true
+                }
             });
 
             let response = await model.generateContent({
@@ -510,7 +515,12 @@ ${b.content}
                             responseSchema: schema,
                             temperature: 0.1
                         },
-                        tools: [beachTool, transportTool, { googleSearch: {} }]
+                        tools: [beachTool, transportTool, { googleSearch: {} }],
+                        toolConfig: {
+                            functionCallingConfig: { mode: "AUTO" },
+                            include_server_side_tool_invocations: true,
+                            includeServerSideToolInvocations: true
+                        }
                     });
 
                     response = await model.generateContent({
