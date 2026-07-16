@@ -26,7 +26,7 @@ export async function onRequestPost(context) {
         }
 
         const genAI = new GoogleGenerativeAI(env.GEMINI_API_KEY);
-        const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash-001' });
+        const model = genAI.getGenerativeModel({ model: 'gemini-3.5-flash' });
 
         const prompt = "Eres un transcriptor experto. Convierte este documento a texto limpio en formato Markdown. Si ves tablas, tarifas o precios, organízalos matemáticamente utilizando la sintaxis de tablas de Markdown (filas y columnas). No inventes información, transcribe exactamente lo que ves, pero estructurado para que una IA lo pueda leer fácilmente. Devuelve ÚNICAMENTE el código Markdown, sin introducciones.";
 

@@ -166,7 +166,7 @@ ${b.content}
         };
 
         let responseText = '';
-        let currentModel = 'gemini-1.5-flash-001';
+        let currentModel = 'gemini-3.5-flash';
         let latencyMs = 0;
         let tokensUsed = 0;
         const startTime = Date.now();
@@ -264,7 +264,7 @@ ${b.content}
             
         } catch (error: any) {
             console.error("Error with model:", error);
-            return new Response(JSON.stringify({ error: `gemini-1.5-flash-001 error: ${error.message || JSON.stringify(error)}` }), {
+            return new Response(JSON.stringify({ error: `gemini-3.5-flash error: ${error.message || JSON.stringify(error)}` }), {
                 status: 500,
                 headers: { 'Content-Type': 'application/json' }
             });
