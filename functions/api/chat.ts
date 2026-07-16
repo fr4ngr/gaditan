@@ -388,7 +388,7 @@ ${b.content}
         };
 
         let responseText = '';
-        let currentModel = 'gemini-3.5-flash';
+        let currentModel = env.GEMINI_MODEL || 'gemini-3.5-flash';
         let latencyMs = 0;
         let tokensUsed = 0;
         const startTime = Date.now();
