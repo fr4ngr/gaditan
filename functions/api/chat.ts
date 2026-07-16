@@ -399,7 +399,7 @@ ${b.content}
                 generationConfig: {
                     temperature: 0.1
                 },
-                tools: [beachTool, transportTool]
+                tools: [beachTool, transportTool, { googleSearch: {} }]
             });
 
             let response = await model.generateContent({
@@ -510,7 +510,7 @@ ${b.content}
                             responseSchema: schema,
                             temperature: 0.1
                         },
-                        tools: [beachTool, transportTool]
+                        tools: [beachTool, transportTool, { googleSearch: {} }]
                     });
 
                     response = await model.generateContent({
