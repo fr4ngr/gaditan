@@ -1,86 +1,296 @@
 ---
 // src/components/tabs/WidgetsTab.astro
 ---
-<!-- WIDGETS CAROUSEL -->
+
 <style>
-.widgets-carousel {
-    display: flex;
-    flex-direction: row;
-    overflow-x: auto;
+.widgets-container {
     padding: 12px 16px;
-    gap: 12px;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none; /* Firefox */
-}
-.widgets-carousel::-webkit-scrollbar {
-    display: none; /* Chrome/Safari */
-}
-.widget-card {
-    flex: 0 0 auto;
-    width: 140px;
-    height: 70px;
-    background: linear-gradient(135deg, var(--header-bg), var(--bg-color));
-    border: 1px solid var(--border-color);
-    border-radius: 16px;
-    padding: 10px 12px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 4px;
-    scroll-snap-align: start;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-}
-.widget-title {
-    font-size: 11px;
-    color: var(--text-secondary);
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 8px;
+    position: relative;
+    z-index: 50;
 }
-.widget-value {
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--text-primary);
-    white-space: nowrap;
+.widget-pill {
+    flex: 1;
+    height: 36px;
+    background: linear-gradient(135deg, var(--header-bg), var(--bg-color));
+    border: 1px solid var(--border-color);
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     overflow: hidden;
-    text-overflow: ellipsis;
+    position: relative;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    user-select: none;
+    touch-action: pan-x; /* Allow horizontal scroll on page, but capture vertical for swipe */
+}
+.widget-add-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--header-bg);
+    border: 1px dashed var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-color);
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: transform 0.2s, background 0.2s;
+}
+.widget-add-btn:active {
+    transform: scale(0.9);
+    background: var(--chat-bg);
+}
+.widget-pill-content {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.3s;
+    position: absolute;
+    width: 100%;
+    justify-content: center;
+}
+.widget-modal {
+    position: absolute;
+    top: 56px;
+    left: 16px;
+    right: 16px;
+    background: var(--header-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-10px);
+    transition: opacity 0.3s, transform 0.3s;
+    z-index: 100;
+}
+.widget-modal.open {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+}
+.widget-option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+}
+.widget-option.selected {
+    border-color: var(--primary-color);
+    background: var(--chat-bg);
 }
 </style>
 
-<div id="tab-widgets" class="widgets-carousel">
-    <!-- WIDGET: Clima -->
-    <div class="widget-card" onclick="window.openWeatherModal()" style="cursor: pointer;">
-        <div class="widget-title">
-            <span>⛅</span> Clima local
+<div class="widgets-container" id="widgets-main-container">
+    <div class="widget-pill" id="widget-active-pill">
+        <div class="widget-pill-content" id="widget-pill-inner">
+            <span style="color: var(--text-secondary);">Elige tus widgets</span>
         </div>
-        <div class="widget-value">24°C Soleado</div>
     </div>
-
-    <!-- WIDGET: Transporte -->
-    <div class="widget-card">
-        <div class="widget-title">
-            <span>🚌</span> Bus L1
-        </div>
-        <div class="widget-value">Llega en 4 min</div>
-    </div>
-
-    <!-- WIDGET: Agenda -->
-    <div class="widget-card">
-        <div class="widget-title">
-            <span>🎭</span> Carnaval
-        </div>
-        <div class="widget-value">Faltan 142 días</div>
-    </div>
-
-    <!-- WIDGET: Añadir -->
-    <div class="widget-card" style="width: auto; background: transparent; border: 1px dashed var(--border-color); align-items: center; justify-content: center; color: var(--primary-color);">
+    
+    <div class="widget-add-btn" id="widget-add-btn">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <line x1="12" y1="5" x2="12" y2="19"></line>
             <line x1="5" y1="12" x2="19" y2="12"></line>
         </svg>
     </div>
+
+    <!-- Floating Modal -->
+    <div class="widget-modal" id="widget-selection-modal">
+        <h4 style="margin:0; font-size: 14px; color: var(--text-primary); text-align: center;">Configurar Widgets</h4>
+        <div id="widget-options-list" style="display: flex; flex-direction: column; gap: 8px; max-height: 250px; overflow-y: auto;">
+            <!-- Rendered by JS -->
+        </div>
+    </div>
 </div>
+
+<script>
+    const AVAILABLE_WIDGETS = [
+        { id: 'clima', icon: '⛅', title: 'Clima local', value: '24°C Soleado', action: 'window.openWeatherModal()' },
+        { id: 'transporte', icon: '🚌', title: 'Bus L1', value: 'Llega en 4 min' },
+        { id: 'agenda', icon: '🎭', title: 'Carnaval', value: 'Faltan 142 días' },
+        { id: 'mareas', icon: '🌊', title: 'Mareas', value: 'Pleamar 14:30' }
+    ];
+
+    let selectedWidgets = [];
+    let currentIndex = 0;
+    let modalOpen = false;
+    let currentUserId = null;
+
+    const modal = document.getElementById('widget-selection-modal');
+    const addBtn = document.getElementById('widget-add-btn');
+    const optionsList = document.getElementById('widget-options-list');
+    const pill = document.getElementById('widget-active-pill');
+    const pillInner = document.getElementById('widget-pill-inner');
+
+    async function initWidgets() {
+        try {
+            const res = await fetch('/api/auth/me');
+            const data = await res.json();
+            if (data.user) {
+                currentUserId = data.user.id;
+                const saved = localStorage.getItem('gaditan_widgets_' + currentUserId);
+                if (saved) {
+                    selectedWidgets = JSON.parse(saved);
+                }
+            } else {
+                selectedWidgets = []; 
+            }
+        } catch (e) {
+            console.error('Error fetching user for widgets', e);
+        }
+
+        renderPill();
+        renderOptions();
+    }
+
+    function renderOptions() {
+        optionsList.innerHTML = '';
+        AVAILABLE_WIDGETS.forEach(widget => {
+            const isSelected = selectedWidgets.find(w => w.id === widget.id);
+            const opt = document.createElement('div');
+            opt.className = 'widget-option' + (isSelected ? ' selected' : '');
+            opt.innerHTML = `
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <span style="font-size:18px;">${widget.icon}</span>
+                    <span style="font-weight:600; font-size:13px; color:var(--text-primary);">${widget.title}</span>
+                </div>
+                <div style="width:20px; height:20px; border-radius:50%; border:2px solid ${isSelected ? 'var(--primary-color)' : 'var(--border-color)'}; background:${isSelected ? 'var(--primary-color)' : 'transparent'}; display:flex; align-items:center; justify-content:center;">
+                    ${isSelected ? '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>' : ''}
+                </div>
+            `;
+            opt.onclick = (e) => {
+                e.stopPropagation();
+                if (isSelected) {
+                    selectedWidgets = selectedWidgets.filter(w => w.id !== widget.id);
+                } else {
+                    selectedWidgets.push(widget);
+                }
+                
+                if (currentUserId) {
+                    localStorage.setItem('gaditan_widgets_' + currentUserId, JSON.stringify(selectedWidgets));
+                }
+                currentIndex = 0;
+                renderPill();
+                renderOptions();
+            };
+            optionsList.appendChild(opt);
+        });
+    }
+
+    function renderPill(direction = 0) {
+        if (selectedWidgets.length === 0) {
+            pillInner.innerHTML = '<span style="color: var(--text-secondary);">Elige tus widgets</span>';
+            pill.onclick = null;
+            return;
+        }
+        
+        if (currentIndex >= selectedWidgets.length) currentIndex = 0;
+        if (currentIndex < 0) currentIndex = selectedWidgets.length - 1;
+
+        const activeWidget = selectedWidgets[currentIndex];
+
+        if (direction !== 0) {
+            const oldInner = pillInner.cloneNode(true);
+            oldInner.id = '';
+            pill.appendChild(oldInner);
+            pillInner.style.transition = 'none';
+            pillInner.style.transform = `translateY(${direction > 0 ? 100 : -100}%)`;
+            pillInner.style.opacity = '0';
+            
+            // Set new content immediately for the animation to show it sliding in
+            pillInner.innerHTML = `
+                <span style="font-size:16px;">${activeWidget.icon}</span>
+                <span>${activeWidget.title} <span style="color:var(--text-secondary); font-weight:normal; margin-left:4px;">${activeWidget.value}</span></span>
+            `;
+            
+            requestAnimationFrame(() => {
+                pillInner.style.transition = 'transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.3s';
+                pillInner.style.transform = 'translateY(0)';
+                pillInner.style.opacity = '1';
+                
+                oldInner.style.transform = `translateY(${direction > 0 ? -100 : 100}%)`;
+                oldInner.style.opacity = '0';
+                setTimeout(() => oldInner.remove(), 300);
+            });
+        } else {
+            pillInner.innerHTML = `
+                <span style="font-size:16px;">${activeWidget.icon}</span>
+                <span>${activeWidget.title} <span style="color:var(--text-secondary); font-weight:normal; margin-left:4px;">${activeWidget.value}</span></span>
+            `;
+        }
+        
+        if (activeWidget.action) {
+            pill.onclick = () => eval(activeWidget.action);
+            pill.style.cursor = 'pointer';
+        } else {
+            pill.onclick = null;
+            pill.style.cursor = 'default';
+        }
+    }
+
+    addBtn.onclick = (e) => {
+        e.stopPropagation();
+        modalOpen = !modalOpen;
+        if (modalOpen) {
+            modal.classList.add('open');
+            renderOptions();
+        } else {
+            modal.classList.remove('open');
+        }
+    };
+
+    let startY = 0;
+    let isSwiping = false;
+
+    pill.addEventListener('touchstart', (e) => {
+        if (selectedWidgets.length <= 1) return;
+        startY = e.touches[0].clientY;
+        isSwiping = true;
+    }, { passive: true });
+
+    pill.addEventListener('touchmove', (e) => {
+        if (!isSwiping) return;
+    }, { passive: true });
+
+    pill.addEventListener('touchend', (e) => {
+        if (!isSwiping) return;
+        isSwiping = false;
+        const endY = e.changedTouches[0].clientY;
+        const diff = endY - startY;
+
+        if (Math.abs(diff) > 20) {
+            if (diff > 0) {
+                currentIndex--;
+                renderPill(-1);
+            } else {
+                currentIndex++;
+                renderPill(1);
+            }
+        }
+    });
+
+    document.addEventListener('click', (e) => {
+        if (modalOpen && !modal.contains(e.target) && !addBtn.contains(e.target)) {
+            modal.classList.remove('open');
+            modalOpen = false;
+        }
+    });
+
+    initWidgets();
+</script>
