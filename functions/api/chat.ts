@@ -42,71 +42,206 @@ export async function onRequestPost(context) {
         const genAI = new GoogleGenerativeAI(env.GEMINI_API_KEY);
 
         // ----------------------------------------------------
-        // ZERO-LATENCY FAST PATH (Regex Intent Router)
+        // DYNAMIC REAL-TIME TRANSPORT RESOLVER & BEACH CACHE
         // ----------------------------------------------------
         const msgLower = (userMessage || '').toLowerCase();
-        let fastPathKey = null;
+        let isTransportQuery = false;
+        let isBeachQuery = false;
 
-        if (msgLower.includes('bus') || msgLower.includes('autobus') || msgLower.includes('catamaran') || msgLower.includes('barco') || msgLower.includes('horario') || msgLower.includes('tiempo') || msgLower.includes('clima') || msgLower.includes('playa')) {
-            if ((msgLower.includes('catamaran') || msgLower.includes('barco')) && (msgLower.includes('puerto') || msgLower.includes('santa maria'))) {
-                fastPathKey = 'cron_transport_catamaran_puerto';
-            } else if ((msgLower.includes('catamaran') || msgLower.includes('barco')) && msgLower.includes('rota')) {
-                fastPathKey = 'cron_transport_catamaran_rota';
-            } else if ((msgLower.includes('bus') || msgLower.includes('autobus')) && msgLower.includes('san fernando')) {
-                fastPathKey = 'cron_transport_bus_sanfernando';
-            } else if ((msgLower.includes('bus') || msgLower.includes('autobus')) && msgLower.includes('chiclana')) {
-                fastPathKey = 'cron_transport_bus_chiclana';
-            } else if ((msgLower.includes('bus') || msgLower.includes('autobus')) && msgLower.includes('puerto real')) {
-                fastPathKey = 'cron_transport_bus_puertoreal';
-            } else if (msgLower.includes('cementerio')) {
-                fastPathKey = 'cron_transport_bus_cementerio_ida';
-            } else if (msgLower.includes('caleta')) {
-                fastPathKey = 'cron_beach_1101201';
-            } else if (msgLower.includes('playa') || msgLower.includes('victoria') || msgLower.includes('cortadura') || msgLower.includes('clima') || msgLower.includes('tiempo')) {
-                fastPathKey = 'cron_beach_1101203';
+        if (msgLower.includes('bus') || msgLower.includes('autobus') || msgLower.includes('catamaran') || msgLower.includes('barco') || msgLower.includes('horario')) {
+            isTransportQuery = true;
+        } else if (msgLower.includes('playa') || msgLower.includes('caleta') || msgLower.includes('victoria') || msgLower.includes('cortadura') || msgLower.includes('tiempo') || msgLower.includes('clima')) {
+            isBeachQuery = true;
+        }
+
+        if (isTransportQuery) {
+            try {
+                let destination = null;
+                let targetIdParadas = [300, 14]; // Plaza de España + Estación
+                let isCatamaran = false;
+                let icon = '🚌';
+
+                if (msgLower.includes('catamaran') || msgLower.includes('barco')) {
+                    isCatamaran = true;
+                    targetIdParadas = [304]; // Puerto de Cádiz
+                    icon = '⛴️';
+                }
+
+                // Detect destination town
+                if (msgLower.includes('san fernando') || msgLower.includes('m-010') || msgLower.includes('m-011')) {
+                    destination = 'San Fernando';
+                } else if (msgLower.includes('chiclana') || msgLower.includes('m-020')) {
+                    destination = 'Chiclana';
+                } else if (msgLower.includes('puerto real') || msgLower.includes('m-030') || msgLower.includes('m-036')) {
+                    destination = 'Puerto Real';
+                } else if (msgLower.includes('el puerto') || msgLower.includes('santa maria') || msgLower.includes('puerto de santa maria')) {
+                    destination = 'El Puerto';
+                } else if (msgLower.includes('rota')) {
+                    destination = 'Rota';
+                } else if (msgLower.includes('jerez')) {
+                    destination = 'Jerez';
+                } else if (msgLower.includes('sanlucar') || msgLower.includes('sanlúcar')) {
+                    destination = 'Sanlúcar';
+                } else if (msgLower.includes('chipiona')) {
+                    destination = 'Chipiona';
+                } else if (msgLower.includes('medina')) {
+                    destination = 'Medina';
+                } else if (msgLower.includes('algeciras')) {
+                    destination = 'Algeciras';
+                } else if (msgLower.includes('conil')) {
+                    destination = 'Conil';
+                } else if (msgLower.includes('tarifa')) {
+                    destination = 'Tarifa';
+                } else if (msgLower.includes('barbate')) {
+                    destination = 'Barbate';
+                } else if (msgLower.includes('vejer')) {
+                    destination = 'Vejer';
+                }
+
+                if (destination) {
+                    // Check if it is outside the CTAN Bahía de Cádiz consortium (static fallback)
+                    const staticRoutes: Record<string, any> = {
+                        'Algeciras': {
+                            title: 'Horarios Cádiz - Algeciras',
+                            badge: '🚌 Horarios Generales',
+                            content: 'Aquí tienes los horarios habituales de la línea Cádiz - Algeciras (operado por Transportes Comes):',
+                            listItems: [
+                                { title: '07:00, 09:00, 11:30', subtitle: 'Salidas de Mañana (Directo / Ruta)', icon: '🚌' },
+                                { title: '14:00, 15:30, 17:30, 20:00', subtitle: 'Salidas de Tarde (Directo / Ruta)', icon: '🚌' },
+                                { title: '1h 45m (Directo) / 2h 30m (Ruta)', subtitle: 'Duración estimada del viaje', icon: '⏱️' }
+                            ]
+                        },
+                        'Conil': {
+                            title: 'Horarios Cádiz - Conil',
+                            badge: '🚌 Horarios Generales',
+                            content: 'Aquí tienes los horarios habituales de la línea Cádiz - Conil de la Frontera (operado por Comes):',
+                            listItems: [
+                                { title: '08:00, 09:30, 11:00, 12:30', subtitle: 'Salidas de Mañana', icon: '🚌' },
+                                { title: '14:00, 16:00, 18:30, 20:00, 21:30', subtitle: 'Salidas de Tarde/Noche', icon: '🚌' },
+                                { title: '50 minutos', subtitle: 'Duración estimada del viaje', icon: '⏱️' }
+                            ]
+                        },
+                        'Tarifa': {
+                            title: 'Horarios Cádiz - Tarifa',
+                            badge: '🚌 Horarios Generales',
+                            content: 'Aquí tienes los horarios habituales de la línea Cádiz - Tarifa (operado por Comes):',
+                            listItems: [
+                                { title: '07:00, 09:00, 11:30', subtitle: 'Salidas de Mañana', icon: '🚌' },
+                                { title: '14:00, 15:30, 17:30, 20:00', subtitle: 'Salidas de Tarde/Noche', icon: '🚌' },
+                                { title: '1h 30m', subtitle: 'Duración estimada del viaje', icon: '⏱️' }
+                            ]
+                        }
+                    };
+
+                    if (staticRoutes[destination]) {
+                        const card = {
+                            cardType: 'ListCard',
+                            ...staticRoutes[destination],
+                            intentCategory: 'Transporte y movilidad',
+                            suggestedBlocks: ['Ver paradas cercanas', '¿Cuánto cuesta el billete?']
+                        };
+                        return new Response(JSON.stringify(card), {
+                            status: 200,
+                            headers: { 'Content-Type': 'application/json' }
+                        });
+                    }
+
+                    // Otherwise, fetch live CTAN API
+                    let allServices = [];
+                    for (const stopId of targetIdParadas) {
+                        try {
+                            const res = await fetch(`http://api.ctan.es/v1/Consorcios/2/paradas/${stopId}/servicios`, { signal: AbortSignal.timeout(4000) });
+                            const json = await res.json();
+                            if (json && json.servicios) {
+                                allServices = allServices.concat(json.servicios);
+                            }
+                        } catch (e) {
+                            console.error(`Error querying CTAN stop ${stopId}:`, e);
+                        }
+                    }
+
+                    // Filter matching destinations
+                    let upcoming = allServices.filter((s: any) => 
+                        s.destino && s.destino.toLowerCase().includes(destination.toLowerCase())
+                    );
+
+                    // Sort by departure time
+                    upcoming.sort((a: any, b: any) => a.servicio.localeCompare(b.servicio));
+
+                    // Map to card items
+                    const listItems = upcoming.slice(0, 4).map((s: any) => ({
+                        title: `${s.servicio} - Línea ${s.linea}`,
+                        subtitle: s.nombre,
+                        icon: icon
+                    }));
+
+                    if (listItems.length > 0) {
+                        const card = {
+                            cardType: 'ListCard',
+                            content: `Aquí tienes las próximas salidas en tiempo real desde Cádiz hacia ${destination}:`,
+                            title: `Próximas salidas a ${destination} (Tiempo Real)`,
+                            badge: isCatamaran ? '⛴️ Catamarán en Vivo' : '🚌 Autobuses en Vivo',
+                            listItems: listItems,
+                            intentCategory: 'Transporte y movilidad',
+                            suggestedBlocks: ['Ver paradas cercanas', '¿Y para volver?']
+                        };
+
+                        return new Response(JSON.stringify(card), {
+                            status: 200,
+                            headers: { 'Content-Type': 'application/json' }
+                        });
+                    } else {
+                        const card = {
+                            cardType: 'ListCard',
+                            content: `No hay salidas programadas en las próximas horas desde Cádiz hacia ${destination} en tiempo real.`,
+                            title: `Salidas a ${destination}`,
+                            badge: '🚌 Transporte',
+                            listItems: [
+                                { title: 'Sin servicios inminentes', subtitle: 'Prueba a consultar horarios generales en Comes.', icon: '⚠️' }
+                            ],
+                            intentCategory: 'Transporte y movilidad'
+                        };
+                        return new Response(JSON.stringify(card), {
+                            status: 200,
+                            headers: { 'Content-Type': 'application/json' }
+                        });
+                    }
+                }
+            } catch (fpError) {
+                console.error("Fast-Path Transport Error:", fpError);
             }
         }
 
-        if (fastPathKey && env.DB) {
+        if (isBeachQuery && env.DB) {
             try {
+                let fastPathKey = null;
+                if (msgLower.includes('caleta')) {
+                    fastPathKey = 'cron_beach_1101201';
+                } else {
+                    fastPathKey = 'cron_beach_1101203';
+                }
+
                 const cacheResult = await env.DB.prepare('SELECT value FROM system_cache WHERE key = ?').bind(fastPathKey).first();
                 if (cacheResult && cacheResult.value) {
                     const parsedData = JSON.parse(cacheResult.value as string);
-                    
-                    context.waitUntil((async () => {
-                        try {
-                            const intentCat = parsedData.intentCategory || 'FastPath';
-                            const botRespText = parsedData.content || 'Respuesta rápida de caché';
-                            await env.DB.prepare(
-                                "INSERT INTO chat_logs (user_message, bot_response, intent_category, latency_ms, tokens_used, brains_injected, input_type, ab_variant) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
-                            ).bind(userMessage, botRespText, intentCat, 45, 0, 'fast-path-regex', body.inputType || 'typed', activeVariant).run();
-                        } catch (dbError) {}
-                    })());
-
                     return new Response(JSON.stringify(parsedData), {
                         status: 200,
                         headers: { 'Content-Type': 'application/json' }
                     });
                 } else {
-                    // CACHE MISS FALLBACK: Trigger cron logic natively to pre-warm immediately
-                    try {
-                        await populateCache(env);
-                        
-                        // Try reading from cache again
-                        const cacheResult2 = await env.DB.prepare('SELECT value FROM system_cache WHERE key = ?').bind(fastPathKey).first();
-                        if (cacheResult2 && cacheResult2.value) {
-                             const parsedData = JSON.parse(cacheResult2.value as string);
-                             return new Response(JSON.stringify(parsedData), {
-                                 status: 200,
-                                 headers: { 'Content-Type': 'application/json' }
-                             });
-                        }
-                    } catch (cronError) {
-                        console.error("Fast-Path Native Cron Error:", cronError);
+                    // Cache miss fallback
+                    await populateCache(env);
+                    const cacheResult2 = await env.DB.prepare('SELECT value FROM system_cache WHERE key = ?').bind(fastPathKey).first();
+                    if (cacheResult2 && cacheResult2.value) {
+                        const parsedData = JSON.parse(cacheResult2.value as string);
+                        return new Response(JSON.stringify(parsedData), {
+                            status: 200,
+                            headers: { 'Content-Type': 'application/json' }
+                        });
                     }
                 }
-            } catch (fpError) {
-                console.error("Fast-Path Error:", fpError);
+            } catch (beachError) {
+                console.error("Fast-Path Beach Error:", beachError);
             }
         }
 
