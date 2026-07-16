@@ -56,44 +56,7 @@
     width: 100%;
     justify-content: center;
 }
-.widget-modal {
-    position: absolute;
-    top: 56px;
-    left: 16px;
-    right: 16px;
-    background: var(--header-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 16px;
-    padding: 16px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    opacity: 0;
-    pointer-events: none;
-    transform: translateY(-10px);
-    transition: opacity 0.3s, transform 0.3s;
-    z-index: 100;
-}
-.widget-modal.open {
-    opacity: 1;
-    pointer-events: auto;
-    transform: translateY(0);
-}
-.widget-option {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 12px;
-    border: 1px solid var(--border-color);
-    border-radius: 12px;
-    cursor: pointer;
-    transition: background 0.2s, border-color 0.2s;
-}
-.widget-option.selected {
-    border-color: var(--primary-color);
-    background: var(--chat-bg);
-}
+
 </style>
 
 <div class="widgets-container" id="widgets-main-container">
@@ -110,13 +73,7 @@
         </svg>
     </div>
 
-    <!-- Floating Modal -->
-    <div class="widget-modal" id="widget-selection-modal">
-        <h4 style="margin:0; font-size: 14px; color: var(--text-primary); text-align: center;">Configurar Widgets</h4>
-        <div id="widget-options-list" style="display: flex; flex-direction: column; gap: 8px; max-height: 250px; overflow-y: auto;">
-            <!-- Rendered by JS -->
-        </div>
-    </div>
+
 </div>
 
 <script>
@@ -129,12 +86,9 @@
 
     let selectedWidgets = [];
     let currentIndex = 0;
-    let modalOpen = false;
     let currentUserId = null;
 
-    const modal = document.getElementById('widget-selection-modal');
     const addBtn = document.getElementById('widget-add-btn');
-    const optionsList = document.getElementById('widget-options-list');
     const pill = document.getElementById('widget-active-pill');
     const pillInner = document.getElementById('widget-pill-inner');
 
@@ -156,42 +110,38 @@
         }
 
         renderPill();
-        renderOptions();
+        renderPill();
     }
 
-    function renderOptions() {
-        optionsList.innerHTML = '';
-        AVAILABLE_WIDGETS.forEach(widget => {
-            const isSelected = selectedWidgets.find(w => w.id === widget.id);
-            const opt = document.createElement('div');
-            opt.className = 'widget-option' + (isSelected ? ' selected' : '');
-            opt.innerHTML = `
-                <div style="display:flex; align-items:center; gap:8px;">
-                    <span style="font-size:18px;">${widget.icon}</span>
-                    <span style="font-weight:600; font-size:13px; color:var(--text-primary);">${widget.title}</span>
-                </div>
-                <div style="width:20px; height:20px; border-radius:50%; border:2px solid ${isSelected ? 'var(--primary-color)' : 'var(--border-color)'}; background:${isSelected ? 'var(--primary-color)' : 'transparent'}; display:flex; align-items:center; justify-content:center;">
-                    ${isSelected ? '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>' : ''}
-                </div>
-            `;
-            opt.onclick = (e) => {
-                e.stopPropagation();
-                if (isSelected) {
-                    selectedWidgets = selectedWidgets.filter(w => w.id !== widget.id);
-                } else {
-                    selectedWidgets.push(widget);
-                }
-                
-                if (currentUserId) {
-                    localStorage.setItem('gaditan_widgets_' + currentUserId, JSON.stringify(selectedWidgets));
-                }
-                currentIndex = 0;
-                renderPill();
-                renderOptions();
-            };
-            optionsList.appendChild(opt);
-        });
-    }
+    (window as any).toggleWidget = function(widgetId, btnEl) {
+        const widget = AVAILABLE_WIDGETS.find(w => w.id === widgetId);
+        if (!widget) return;
+        
+        const isSelected = selectedWidgets.some(w => w.id === widgetId);
+        if (isSelected) {
+            selectedWidgets = selectedWidgets.filter(w => w.id !== widgetId);
+            btnEl.style.borderColor = 'var(--border-color)';
+            btnEl.style.background = 'transparent';
+            const checkCircle = btnEl.querySelector('.check-circle');
+            checkCircle.innerHTML = '';
+            checkCircle.style.borderColor = 'var(--border-color)';
+            checkCircle.style.background = 'transparent';
+        } else {
+            selectedWidgets.push(widget);
+            btnEl.style.borderColor = 'var(--primary-color)';
+            btnEl.style.background = 'var(--chat-bg)';
+            const checkCircle = btnEl.querySelector('.check-circle');
+            checkCircle.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+            checkCircle.style.borderColor = 'var(--primary-color)';
+            checkCircle.style.background = 'var(--primary-color)';
+        }
+        
+        if (currentUserId) {
+            localStorage.setItem('gaditan_widgets_' + currentUserId, JSON.stringify(selectedWidgets));
+        }
+        currentIndex = 0;
+        renderPill();
+    };
 
     function renderPill(direction = 0) {
         if (selectedWidgets.length === 0) {
@@ -246,12 +196,40 @@
 
     addBtn.onclick = (e) => {
         e.stopPropagation();
-        modalOpen = !modalOpen;
-        if (modalOpen) {
-            modal.classList.add('open');
-            renderOptions();
+        
+        let html = `
+            <div style="margin-bottom: 12px; color: var(--text-primary); font-size: 14px;">
+                Aquí tienes los widgets disponibles. Toca para activarlos o desactivarlos:
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+        `;
+        
+        AVAILABLE_WIDGETS.forEach(widget => {
+            const isSelected = selectedWidgets.some(w => w.id === widget.id);
+            const border = isSelected ? 'var(--primary-color)' : 'var(--border-color)';
+            const bg = isSelected ? 'var(--chat-bg)' : 'transparent';
+            const circleBg = isSelected ? 'var(--primary-color)' : 'transparent';
+            const circleCheck = isSelected ? '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>' : '';
+            
+            html += `
+                <div onclick="window.toggleWidget('${widget.id}', this)" style="display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; border: 1px solid ${border}; background: ${bg}; border-radius: 12px; cursor: pointer; transition: all 0.2s;">
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <span style="font-size:18px;">${widget.icon}</span>
+                        <span style="font-weight:600; font-size:13px; color:var(--text-primary);">${widget.title}</span>
+                    </div>
+                    <div class="check-circle" style="width:20px; height:20px; border-radius:50%; border:2px solid ${border}; background:${circleBg}; display:flex; align-items:center; justify-content:center; transition: all 0.2s;">
+                        ${circleCheck}
+                    </div>
+                </div>
+            `;
+        });
+        
+        html += `</div>`;
+        
+        if (typeof (window as any).addMessage === 'function') {
+            (window as any).addMessage('bot', html);
         } else {
-            modal.classList.remove('open');
+            console.warn("addMessage function not found in window");
         }
     };
 
@@ -285,12 +263,6 @@
         }
     });
 
-    document.addEventListener('click', (e) => {
-        if (modalOpen && !modal.contains(e.target) && !addBtn.contains(e.target)) {
-            modal.classList.remove('open');
-            modalOpen = false;
-        }
-    });
 
     initWidgets();
 </script>

@@ -115,6 +115,8 @@ import { renderCardDOM } from '../components/cards/CardRenderer';
             scrollToBottom();
         }
     }
+    
+    (window as any).addMessage = addMessage;
 
     function showTypingIndicator() {
         const id = 'typing-' + Date.now();
