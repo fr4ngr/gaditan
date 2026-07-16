@@ -1,17 +1,9 @@
-export async function onRequestGet(context) {
-    const { request, env } = context;
-
-    // Proteger el cron endpoint con una clave sencilla
-    const authHeader = request.headers.get('Authorization');
-    if (authHeader !== `Bearer ${env.CRON_SECRET || 'gaditan-cron-123'}`) {
-        return new Response("Unauthorized", { status: 401 });
-    }
-
+export async function populateCache(env: any) {
     const startTime = Date.now();
     const results = {
         transport: 0,
         beaches: 0,
-        errors: []
+        errors: [] as string[]
     };
 
     const ctanRoutes = [
@@ -104,6 +96,21 @@ export async function onRequestGet(context) {
             }
         }
     }
+
+    return results;
+}
+
+export async function onRequestGet(context: any) {
+    const { request, env } = context;
+
+    // Proteger el cron endpoint con una clave sencilla
+    const authHeader = request.headers.get('Authorization');
+    if (authHeader !== `Bearer ${env.CRON_SECRET || 'gaditan-cron-123'}`) {
+        return new Response("Unauthorized", { status: 401 });
+    }
+
+    const startTime = Date.now();
+    const results = await populateCache(env);
 
     return new Response(JSON.stringify({ 
         success: true, 

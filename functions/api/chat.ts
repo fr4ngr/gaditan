@@ -1,5 +1,6 @@
 import { GoogleGenerativeAI, SchemaType } from '@google/generative-ai';
 import { brains, systemPromptA, systemPromptB, abConfig } from './compiled-brains';
+import { populateCache } from './cron';
 
 function hashCode(str) {
     let hash = 0;
@@ -87,14 +88,9 @@ export async function onRequestPost(context) {
                         headers: { 'Content-Type': 'application/json' }
                     });
                 } else {
-                    // CACHE MISS FALLBACK: Trigger cron synchronously to pre-warm immediately
+                    // CACHE MISS FALLBACK: Trigger cron logic natively to pre-warm immediately
                     try {
-                        const cronUrl = new URL(request.url);
-                        cronUrl.pathname = '/api/cron';
-                        const cronSecret = env.CRON_SECRET || 'gaditan-cron-123';
-                        await fetch(cronUrl.toString(), {
-                            headers: { 'Authorization': `Bearer ${cronSecret}` }
-                        });
+                        await populateCache(env);
                         
                         // Try reading from cache again
                         const cacheResult2 = await env.DB.prepare('SELECT value FROM system_cache WHERE key = ?').bind(fastPathKey).first();
@@ -106,7 +102,7 @@ export async function onRequestPost(context) {
                              });
                         }
                     } catch (cronError) {
-                        console.error("Fast-Path Cron Trigger Error:", cronError);
+                        console.error("Fast-Path Native Cron Error:", cronError);
                     }
                 }
             } catch (fpError) {
