@@ -67,9 +67,11 @@
     </div>
     
     <div class="widget-add-btn" id="widget-add-btn">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="12" y1="5" x2="12" y2="19"></line>
-            <line x1="5" y1="12" x2="19" y2="12"></line>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7"></rect>
+            <rect x="14" y="3" width="7" height="7"></rect>
+            <rect x="14" y="14" width="7" height="7"></rect>
+            <rect x="3" y="14" width="7" height="7"></rect>
         </svg>
     </div>
 
@@ -198,10 +200,9 @@
         e.stopPropagation();
         
         let html = `
-            <div style="margin-bottom: 12px; color: var(--text-primary); font-size: 14px;">
-                Aquí tienes los widgets disponibles. Toca para activarlos o desactivarlos:
-            </div>
-            <div style="display: flex; flex-direction: column; gap: 8px;">
+            <div style="display: flex; flex-direction: column; gap: 8px; width: 100%;">
+                <span class="bubble" style="align-self: flex-start; margin-bottom: 4px;">Aquí tienes los widgets disponibles. Toca para activarlos o desactivarlos:</span>
+                <div style="display: flex; flex-direction: column; gap: 8px; width: 100%;">
         `;
         
         AVAILABLE_WIDGETS.forEach(widget => {
@@ -224,7 +225,7 @@
             `;
         });
         
-        html += `</div>`;
+        html += `</div></div>`;
         
         if (typeof (window as any).addMessage === 'function') {
             (window as any).addMessage('bot', html);
