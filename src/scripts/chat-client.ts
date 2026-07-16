@@ -55,32 +55,47 @@ import { renderCardDOM } from '../components/cards/CardRenderer';
         const messageDiv = document.createElement('div');
         messageDiv.className = `message ${sender}`;
         
-        const contentWrapper = document.createElement('div');
-        contentWrapper.style.display = 'contents';
+        let containerEl = document.createElement('div');
+        containerEl.style.display = 'contents';
+
+        let innerElement: HTMLElement;
+        
         if (typeof content === 'string') {
-            contentWrapper.innerHTML = content;
+            containerEl.innerHTML = content;
+            innerElement = containerEl.firstElementChild as HTMLElement;
+            if (!innerElement) {
+                innerElement = document.createElement('span');
+                innerElement.className = 'bubble';
+                innerElement.innerHTML = content;
+                containerEl.innerHTML = '';
+                containerEl.appendChild(innerElement);
+            }
         } else {
-            contentWrapper.appendChild(content);
+            innerElement = content;
+            containerEl.appendChild(innerElement);
         }
-        
-        const metaDiv = document.createElement('div');
-        metaDiv.className = 'message-meta';
-        metaDiv.innerHTML = `<span class="message-time">${time}</span>`;
-        
-        messageDiv.appendChild(contentWrapper);
-        messageDiv.appendChild(metaDiv);
-        
+
+        const footerDiv = document.createElement('div');
+        footerDiv.style.display = 'flex';
+        footerDiv.style.justifyContent = 'space-between';
+        footerDiv.style.alignItems = 'center';
+        footerDiv.style.marginTop = '8px';
+        footerDiv.style.paddingTop = '8px';
+        footerDiv.style.borderTop = '1px solid var(--border-color, #eaeaea)';
+        footerDiv.style.width = '100%';
+
+        const timeSpan = document.createElement('span');
+        timeSpan.className = 'message-time';
+        timeSpan.innerHTML = time;
+        timeSpan.style.fontSize = '11px';
+        timeSpan.style.color = 'var(--text-secondary)';
+
         if (sender === 'bot') {
-            const rawContent = typeof content === 'string' ? encodeURIComponent(content) : encodeURIComponent(contentWrapper.innerHTML);
-            
+            const rawContent = typeof content === 'string' ? encodeURIComponent(content) : encodeURIComponent(innerElement.outerHTML);
             const actionsDiv = document.createElement('div');
             actionsDiv.className = 'msg-actions-row';
             actionsDiv.style.display = 'flex';
-            actionsDiv.style.justifyContent = 'flex-end';
             actionsDiv.style.gap = '8px';
-            actionsDiv.style.marginTop = '4px';
-            actionsDiv.style.marginBottom = '8px';
-            actionsDiv.style.marginRight = '8px';
             
             actionsDiv.innerHTML = `
                 <button class="action-btn thumb-up" onclick="window.toggleThumb(this)" aria-label="Me gusta" style="background: transparent; color: var(--text-secondary); border: none; padding: 4px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: color 0.2s, transform 0.1s;">
@@ -96,19 +111,20 @@ import { renderCardDOM } from '../components/cards/CardRenderer';
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
                 </button>
             `;
-            
-            // Insertar la fila de acciones antes de las píldoras (suggested-blocks-container) o al final
-            const suggestedBlocks = messageDiv.querySelector('.suggested-blocks-container');
-            const metaBlock = messageDiv.querySelector('.message-meta');
-            
-            if (suggestedBlocks && suggestedBlocks.parentNode) {
-                suggestedBlocks.parentNode.insertBefore(actionsDiv, suggestedBlocks);
-            } else if (metaBlock && metaBlock.parentNode) {
-                metaBlock.parentNode.insertBefore(actionsDiv, metaBlock);
-            } else {
-                messageDiv.appendChild(actionsDiv);
-            }
+            footerDiv.appendChild(timeSpan);
+            footerDiv.appendChild(actionsDiv);
+        } else {
+            footerDiv.style.justifyContent = 'flex-end';
+            footerDiv.appendChild(timeSpan);
         }
+
+        if (innerElement.tagName.toLowerCase() === 'span') {
+            innerElement.style.display = 'flex';
+            innerElement.style.flexDirection = 'column';
+        }
+        
+        innerElement.appendChild(footerDiv);
+        messageDiv.appendChild(containerEl);
         
         messagesContainer?.appendChild(messageDiv);
         if (shouldScroll) {
@@ -118,16 +134,28 @@ import { renderCardDOM } from '../components/cards/CardRenderer';
     
     (window as any).addMessage = addMessage;
 
-    function showTypingIndicator() {
+    function showTypingIndicator(messageText?: string) {
         const id = 'typing-' + Date.now();
         const wrapper = document.createElement('div');
         wrapper.className = 'message bot';
         wrapper.id = id;
-        wrapper.innerHTML = `
-            <div class="bubble typing-indicator" style="padding: 0; display: flex; align-items: center; justify-content: center; width: 64px; height: 40px; overflow: hidden;">
-                <div id="lottie-${id}" style="width: 100%; height: 100%; transform: scale(1.8);"></div>
-            </div>
-        `;
+        
+        let innerHtml = '';
+        if (messageText) {
+            innerHtml = `
+                <div class="bubble typing-indicator" style="padding: 8px 16px; display: flex; align-items: center; gap: 8px;">
+                    <div id="lottie-${id}" style="width: 24px; height: 24px; transform: scale(1.5);"></div>
+                    <span style="font-size: 0.9rem; color: var(--text-secondary);">${messageText}</span>
+                </div>
+            `;
+        } else {
+            innerHtml = `
+                <div class="bubble typing-indicator" style="padding: 0; display: flex; align-items: center; justify-content: center; width: 64px; height: 40px; overflow: hidden;">
+                    <div id="lottie-${id}" style="width: 100%; height: 100%; transform: scale(1.8);"></div>
+                </div>
+            `;
+        }
+        wrapper.innerHTML = innerHtml;
         document.getElementById('messages-container')?.appendChild(wrapper);
         scrollToBottom();
         
@@ -180,8 +208,13 @@ import { renderCardDOM } from '../components/cards/CardRenderer';
         if (!isHiddenInit) {
             inputField.value = '';
         }
+        const msgLower = text.toLowerCase();
+        let loadingMsg = undefined;
+        if (msgLower.includes('bus') || msgLower.includes('autobus') || msgLower.includes('catamaran') || msgLower.includes('barco') || msgLower.includes('horario') || msgLower.includes('tiempo') || msgLower.includes('clima') || msgLower.includes('playa')) {
+            loadingMsg = "Consultando base de datos rápida...";
+        }
 
-        const typingId = showTypingIndicator();
+        const typingId = showTypingIndicator(loadingMsg);
 
         let sessionId = localStorage.getItem('cadiz_chat_session');
         if (!sessionId) {

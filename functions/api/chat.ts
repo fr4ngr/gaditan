@@ -41,6 +41,80 @@ export async function onRequestPost(context) {
         const genAI = new GoogleGenerativeAI(env.GEMINI_API_KEY);
 
         // ----------------------------------------------------
+        // ZERO-LATENCY FAST PATH (Regex Intent Router)
+        // ----------------------------------------------------
+        const msgLower = (userMessage || '').toLowerCase();
+        let fastPathKey = null;
+
+        if (msgLower.includes('bus') || msgLower.includes('autobus') || msgLower.includes('catamaran') || msgLower.includes('barco') || msgLower.includes('horario') || msgLower.includes('tiempo') || msgLower.includes('clima') || msgLower.includes('playa')) {
+            if ((msgLower.includes('catamaran') || msgLower.includes('barco')) && (msgLower.includes('puerto') || msgLower.includes('santa maria'))) {
+                fastPathKey = 'cron_transport_catamaran_puerto';
+            } else if ((msgLower.includes('catamaran') || msgLower.includes('barco')) && msgLower.includes('rota')) {
+                fastPathKey = 'cron_transport_catamaran_rota';
+            } else if ((msgLower.includes('bus') || msgLower.includes('autobus')) && msgLower.includes('san fernando')) {
+                fastPathKey = 'cron_transport_bus_sanfernando';
+            } else if ((msgLower.includes('bus') || msgLower.includes('autobus')) && msgLower.includes('chiclana')) {
+                fastPathKey = 'cron_transport_bus_chiclana';
+            } else if ((msgLower.includes('bus') || msgLower.includes('autobus')) && msgLower.includes('puerto real')) {
+                fastPathKey = 'cron_transport_bus_puertoreal';
+            } else if (msgLower.includes('cementerio')) {
+                fastPathKey = 'cron_transport_bus_cementerio_ida';
+            } else if (msgLower.includes('caleta')) {
+                fastPathKey = 'cron_beach_1101201';
+            } else if (msgLower.includes('playa') || msgLower.includes('victoria') || msgLower.includes('cortadura') || msgLower.includes('clima') || msgLower.includes('tiempo')) {
+                fastPathKey = 'cron_beach_1101203';
+            }
+        }
+
+        if (fastPathKey && env.DB) {
+            try {
+                const cacheResult = await env.DB.prepare('SELECT value FROM system_cache WHERE key = ?').bind(fastPathKey).first();
+                if (cacheResult && cacheResult.value) {
+                    const parsedData = JSON.parse(cacheResult.value as string);
+                    
+                    context.waitUntil((async () => {
+                        try {
+                            const intentCat = parsedData.intentCategory || 'FastPath';
+                            const botRespText = parsedData.content || 'Respuesta rápida de caché';
+                            await env.DB.prepare(
+                                "INSERT INTO chat_logs (user_message, bot_response, intent_category, latency_ms, tokens_used, brains_injected, input_type, ab_variant) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+                            ).bind(userMessage, botRespText, intentCat, 45, 0, 'fast-path-regex', body.inputType || 'typed', activeVariant).run();
+                        } catch (dbError) {}
+                    })());
+
+                    return new Response(JSON.stringify(parsedData), {
+                        status: 200,
+                        headers: { 'Content-Type': 'application/json' }
+                    });
+                } else {
+                    // CACHE MISS FALLBACK: Trigger cron synchronously to pre-warm immediately
+                    try {
+                        const cronUrl = new URL(request.url);
+                        cronUrl.pathname = '/api/cron';
+                        const cronSecret = env.CRON_SECRET || 'gaditan-cron-123';
+                        await fetch(cronUrl.toString(), {
+                            headers: { 'Authorization': `Bearer ${cronSecret}` }
+                        });
+                        
+                        // Try reading from cache again
+                        const cacheResult2 = await env.DB.prepare('SELECT value FROM system_cache WHERE key = ?').bind(fastPathKey).first();
+                        if (cacheResult2 && cacheResult2.value) {
+                             const parsedData = JSON.parse(cacheResult2.value as string);
+                             return new Response(JSON.stringify(parsedData), {
+                                 status: 200,
+                                 headers: { 'Content-Type': 'application/json' }
+                             });
+                        }
+                    } catch (cronError) {
+                        console.error("Fast-Path Cron Trigger Error:", cronError);
+                    }
+                }
+            } catch (fpError) {
+                console.error("Fast-Path Error:", fpError);
+            }
+        }
+
+        // ----------------------------------------------------
         // RAG VECTOR SEARCH (Cloudflare Vectorize)
         // ----------------------------------------------------
         let cerebrosXml = "";
@@ -165,6 +239,23 @@ ${b.content}
             }]
         };
 
+        const transportTool = {
+            functionDeclarations: [{
+                name: "get_transport_schedule",
+                description: "Llama a esta función EXCLUSIVAMENTE cuando el usuario pregunte por horarios, próximas salidas o tiempos de espera de transporte público metropolitano desde o hacia Cádiz (ej. 'cuándo sale el catamarán', 'autobús a San Fernando', 'bus a Chiclana', 'horario al cementerio mancomunado'). Devuelve las próximas salidas reales del Consorcio de Transportes.",
+                parameters: {
+                    type: SchemaType.OBJECT,
+                    properties: {
+                        route: {
+                            type: SchemaType.STRING,
+                            description: "La ruta solicitada. Debe ser uno de los siguientes valores exactos: 'catamaran_puerto', 'catamaran_rota', 'bus_sanfernando', 'bus_chiclana', 'bus_puertoreal', 'bus_cementerio_ida', 'bus_cementerio_vuelta'."
+                        }
+                    },
+                    required: ["route"]
+                }
+            }]
+        };
+
         let responseText = '';
         let currentModel = 'gemini-3.5-flash';
         let latencyMs = 0;
@@ -177,25 +268,27 @@ ${b.content}
                 generationConfig: {
                     temperature: 0.1
                 },
-                tools: [beachTool]
+                tools: [beachTool, transportTool]
             });
 
             let response = await model.generateContent({
                 contents: historyContents
             });
 
-            // Handle Function Call for Beaches
+            // Handle Function Call
             if (response.response.functionCalls() && response.response.functionCalls().length > 0) {
                 const call = response.response.functionCalls()[0];
+                let toolResponseData = { error: "No se pudo obtener datos" };
+                let toolCalled = true;
+
                 if (call.name === 'get_beach_conditions') {
                     const beachId = call.args.beach_id || '1101203';
-                    let beachData = { error: "No se pudo obtener datos" };
                     
                     try {
                         const cacheResult = await env.DB.prepare('SELECT value FROM system_cache WHERE key = ?').bind(`beach_${beachId}`).first();
                         if (cacheResult && cacheResult.value) {
-                            beachData = JSON.parse(cacheResult.value);
-                            beachData.fuente = "Caché Rápida (Cerebro B)";
+                            toolResponseData = JSON.parse(cacheResult.value);
+                            toolResponseData.fuente = "Caché Rápida (Cerebro B)";
                         } else {
                             const playaRes = await fetch(`https://opendata.aemet.es/opendata/api/prediccion/especifica/playa/${beachId}/?api_key=${env.AEMET_API_KEY}`);
                             const playaJson = await playaRes.json();
@@ -204,7 +297,7 @@ ${b.content}
                                 const dataArr = await dataRes.json();
                                 if (dataArr && dataArr[0] && dataArr[0].prediccion && dataArr[0].prediccion.dia) {
                                     const todayData = dataArr[0].prediccion.dia[0];
-                                    beachData = {
+                                    toolResponseData = {
                                         nombre: dataArr[0].nombre,
                                         estadoCielo: todayData.estadoCielo ? todayData.estadoCielo.descripcion1 : "N/A",
                                         viento: todayData.viento ? todayData.viento.descripcion1 : "N/A",
@@ -220,15 +313,53 @@ ${b.content}
                     } catch (e) {
                         console.error("AEMET Cache/API error:", e);
                     }
+                } else if (call.name === 'get_transport_schedule') {
+                    const route = call.args.route;
+                    let idParada = null;
+                    let targetDestino = null;
 
+                    if (route === 'catamaran_puerto') { idParada = 193; targetDestino = 'El Puerto'; }
+                    else if (route === 'catamaran_rota') { idParada = 193; targetDestino = 'Rota'; }
+                    else if (route === 'bus_sanfernando') { idParada = 300; targetDestino = 'San Fernando'; }
+                    else if (route === 'bus_chiclana') { idParada = 300; targetDestino = 'Chiclana'; }
+                    else if (route === 'bus_puertoreal') { idParada = 300; targetDestino = 'Puerto Real'; }
+                    else if (route === 'bus_cementerio_ida') { idParada = 300; targetDestino = 'Cementerio'; }
+                    else if (route === 'bus_cementerio_vuelta') { idParada = 56; targetDestino = 'Cádiz'; }
+                    
+                    if (idParada) {
+                        try {
+                            const res = await fetch(`http://api.ctan.es/v1/Consorcios/2/paradas/${idParada}/servicios`, { signal: AbortSignal.timeout(5000) });
+                            const json = await res.json();
+                            if (json && json.servicios) {
+                                let upcoming = json.servicios;
+                                if (targetDestino) {
+                                    upcoming = upcoming.filter(s => s.destino && s.destino.toLowerCase().includes(targetDestino.toLowerCase()));
+                                }
+                                
+                                toolResponseData = {
+                                    ruta_solicitada: route,
+                                    parada_origen: json.servicios[0] ? json.servicios[0].nombreParada || `Parada ${idParada}` : 'Desconocida',
+                                    proximas_salidas: upcoming.slice(0, 3).map(s => ({
+                                        hora: s.servicio,
+                                        linea: s.linea,
+                                        destino: s.destino,
+                                        nombre_ruta: s.nombre
+                                    })),
+                                    fuente: "Consorcio de Transportes de Andalucía (CTAN en vivo)"
+                                };
+                            }
+                        } catch(e) {
+                            console.error("CTAN API error:", e);
+                        }
+                    }
+                } else {
+                    toolCalled = false;
+                }
+
+                if (toolCalled) {
                     historyContents.push({
                         role: 'model',
-                        parts: [{
-                            functionCall: {
-                                name: call.name,
-                                args: call.args
-                            }
-                        }]
+                        parts: response.response.candidates[0].content.parts
                     });
 
                     historyContents.push({
@@ -236,7 +367,7 @@ ${b.content}
                         parts: [{
                             functionResponse: {
                                 name: call.name,
-                                response: beachData
+                                response: toolResponseData
                             }
                         }]
                     });
@@ -247,7 +378,8 @@ ${b.content}
                             responseMimeType: "application/json",
                             responseSchema: schema,
                             temperature: 0.1
-                        }
+                        },
+                        tools: [beachTool, transportTool]
                     });
 
                     response = await model.generateContent({
@@ -264,7 +396,17 @@ ${b.content}
             
         } catch (error: any) {
             console.error("Error with model:", error);
-            return new Response(JSON.stringify({ error: `gemini-3.5-flash error: ${error.message || JSON.stringify(error)}` }), {
+            let fallbackMsg = "Ha ocurrido un error de conexión con mi cerebro. Por favor, inténtalo de nuevo en unos segundos.";
+            if (error.message && error.message.includes('524')) {
+                fallbackMsg = "¡Uf! La conexión ha tardado demasiado y se ha agotado el tiempo de espera. ¿Podrías repetírmelo?";
+            } else if (error.message && error.message.includes('429')) {
+                fallbackMsg = "Estoy hablando con demasiada gente a la vez y me he quedado sin aliento. ¡Dame 1 minuto!";
+            } else if (error.message && error.message.includes('503')) {
+                fallbackMsg = "Mis servidores están saturados temporalmente. Por favor, inténtalo de nuevo en unos segundos.";
+            } else if (error.message) {
+                fallbackMsg = `Error interno: ${error.message}`;
+            }
+            return new Response(JSON.stringify({ error: fallbackMsg }), {
                 status: 500,
                 headers: { 'Content-Type': 'application/json' }
             });
@@ -340,11 +482,15 @@ ${b.content}
             headers: { 'Content-Type': 'application/json' }
         });
 
-    } catch (error) {
+    } catch (error: any) {
         let errorMessage = "Ha ocurrido un error inesperado.";
         if (error.message && error.message.includes('429')) {
             errorMessage = "¡Uf! Estoy hablando con demasiada gente a la vez y me he quedado sin aliento (Límite de la capa gratuita). Espera 1 minuto e inténtalo de nuevo.";
-        } else {
+        } else if (error.message && error.message.includes('524')) {
+            errorMessage = "¡Uf! La conexión ha tardado demasiado y se ha agotado el tiempo de espera. ¿Podrías repetírmelo?";
+        } else if (error.message && error.message.includes('503')) {
+            errorMessage = "Mis servidores están saturados temporalmente. Por favor, inténtalo de nuevo en unos segundos.";
+        } else if (error.message) {
             errorMessage = error.message;
         }
 
