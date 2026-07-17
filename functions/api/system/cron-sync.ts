@@ -62,6 +62,39 @@ export async function onRequestGet(context) {
             results.beaches = "failed";
         }
 
+        // 3. Tarea 2: Ingesta de Horarios de Transportes (CTAN)
+        try {
+            const stopsToSync = [
+                { consorcioId: 2, stopId: 193 }, // Catamarán Puerto / Rota (Bahía)
+                { consorcioId: 2, stopId: 300 }, // Bus San Fernando / Chiclana / Puerto Real (Bahía)
+                { consorcioId: 2, stopId: 56 },  // Bus Cementerio Vuelta (Bahía)
+                { consorcioId: 5, stopId: 1 },   // Bus Algeciras Estación San Bernardo (Gibraltar)
+                { consorcioId: 5, stopId: 116 }, // Bus La Línea (Gibraltar)
+                { consorcioId: 5, stopId: 143 }  // Bus Tarifa Apeadero (Gibraltar)
+            ];
+
+            for (const item of stopsToSync) {
+                const res = await fetch(`http://api.ctan.es/v1/Consorcios/${item.consorcioId}/paradas/${item.stopId}/servicios`, { signal: AbortSignal.timeout(5000) });
+                if (!res.ok) continue;
+                
+                const json = await res.json();
+                if (json && json.servicios) {
+                    const upsertQuery = `
+                        INSERT INTO system_cache (key, value) 
+                        VALUES (?, ?)
+                        ON CONFLICT(key) DO UPDATE SET 
+                            value = excluded.value, 
+                            updated_at = CURRENT_TIMESTAMP;
+                    `;
+                    await env.DB.prepare(upsertQuery).bind(`transport_${item.consorcioId}_${item.stopId}`, JSON.stringify(json.servicios)).run();
+                }
+            }
+            results.transport = "updated";
+        } catch (e) {
+            console.error("Error fetching CTAN in cron:", e);
+            results.transport = "failed";
+        }
+
         return new Response(JSON.stringify({ 
             success: true, 
             message: "Cerebro B ha sincronizado los datos correctamente.",

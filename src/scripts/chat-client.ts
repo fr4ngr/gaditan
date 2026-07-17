@@ -134,28 +134,16 @@ import { renderCardDOM } from '../components/cards/CardRenderer';
     
     (window as any).addMessage = addMessage;
 
-    function showTypingIndicator(messageText?: string) {
+    function showTypingIndicator() {
         const id = 'typing-' + Date.now();
         const wrapper = document.createElement('div');
         wrapper.className = 'message bot';
         wrapper.id = id;
-        
-        let innerHtml = '';
-        if (messageText) {
-            innerHtml = `
-                <div class="bubble typing-indicator" style="padding: 8px 16px; display: flex; align-items: center; gap: 8px;">
-                    <div id="lottie-${id}" style="width: 24px; height: 24px; transform: scale(1.5);"></div>
-                    <span style="font-size: 0.9rem; color: var(--text-secondary);">${messageText}</span>
-                </div>
-            `;
-        } else {
-            innerHtml = `
-                <div class="bubble typing-indicator" style="padding: 0; display: flex; align-items: center; justify-content: center; width: 64px; height: 40px; overflow: hidden;">
-                    <div id="lottie-${id}" style="width: 100%; height: 100%; transform: scale(1.8);"></div>
-                </div>
-            `;
-        }
-        wrapper.innerHTML = innerHtml;
+        wrapper.innerHTML = `
+            <div class="bubble typing-indicator" style="padding: 0; display: flex; align-items: center; justify-content: center; width: 64px; height: 40px; overflow: hidden;">
+                <div id="lottie-${id}" style="width: 100%; height: 100%; transform: scale(1.8);"></div>
+            </div>
+        `;
         document.getElementById('messages-container')?.appendChild(wrapper);
         scrollToBottom();
         
@@ -208,13 +196,8 @@ import { renderCardDOM } from '../components/cards/CardRenderer';
         if (!isHiddenInit) {
             inputField.value = '';
         }
-        const msgLower = text.toLowerCase();
-        let loadingMsg = undefined;
-        if (msgLower.includes('bus') || msgLower.includes('autobus') || msgLower.includes('catamaran') || msgLower.includes('barco') || msgLower.includes('horario') || msgLower.includes('tiempo') || msgLower.includes('clima') || msgLower.includes('playa')) {
-            loadingMsg = "Consultando base de datos rápida...";
-        }
 
-        const typingId = showTypingIndicator(loadingMsg);
+        const typingId = showTypingIndicator();
 
         let sessionId = localStorage.getItem('cadiz_chat_session');
         if (!sessionId) {

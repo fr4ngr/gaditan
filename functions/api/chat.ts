@@ -1,6 +1,5 @@
 import { GoogleGenerativeAI, SchemaType } from '@google/generative-ai';
 import { brains, systemPromptA, systemPromptB, abConfig } from './compiled-brains';
-import { populateCache } from './cron';
 
 function hashCode(str) {
     let hash = 0;
@@ -40,248 +39,6 @@ export async function onRequestPost(context) {
         }
 
         const genAI = new GoogleGenerativeAI(env.GEMINI_API_KEY);
-
-        // ----------------------------------------------------
-        // DYNAMIC REAL-TIME TRANSPORT RESOLVER & BEACH CACHE
-        // ----------------------------------------------------
-        const msgLower = (userMessage || '').toLowerCase();
-        let isTransportQuery = false;
-        let isBeachQuery = false;
-
-        if (msgLower.includes('bus') || msgLower.includes('autobus') || msgLower.includes('catamaran') || msgLower.includes('barco') || msgLower.includes('horario')) {
-            isTransportQuery = true;
-        } else if (msgLower.includes('playa') || msgLower.includes('caleta') || msgLower.includes('victoria') || msgLower.includes('cortadura') || msgLower.includes('tiempo') || msgLower.includes('clima')) {
-            isBeachQuery = true;
-        }
-
-        if (isTransportQuery) {
-            try {
-                let idConsorcio = 2;
-                let destination = null;
-                let origin = null;
-                let targetIdParadas = [300, 14]; // Plaza de España + Estación (Cádiz)
-                let isCatamaran = false;
-                let icon = '🚌';
-
-                if (msgLower.includes('catamaran') || msgLower.includes('barco')) {
-                    isCatamaran = true;
-                    targetIdParadas = [304]; // Puerto de Cádiz
-                    icon = '⛴️';
-                }
-
-                // Detect origin town if specified
-                if (msgLower.includes('desde algeciras') || msgLower.includes('de algeciras') || msgLower.includes('en algeciras')) origin = 'Algeciras';
-                else if (msgLower.includes('desde la linea') || msgLower.includes('de la línea') || msgLower.includes('en la línea')) origin = 'La Línea';
-                else if (msgLower.includes('desde tarifa') || msgLower.includes('de tarifa') || msgLower.includes('en tarifa')) origin = 'Tarifa';
-                else if (msgLower.includes('desde san roque') || msgLower.includes('de san roque') || msgLower.includes('en san roque')) origin = 'San Roque';
-
-                // Detect destination town
-                if (msgLower.includes('san fernando') || msgLower.includes('m-010') || msgLower.includes('m-011')) {
-                    destination = 'San Fernando';
-                } else if (msgLower.includes('chiclana') || msgLower.includes('m-020')) {
-                    destination = 'Chiclana';
-                } else if (msgLower.includes('puerto real') || msgLower.includes('m-030') || msgLower.includes('m-036')) {
-                    destination = 'Puerto Real';
-                } else if (msgLower.includes('el puerto') || msgLower.includes('santa maria') || msgLower.includes('puerto de santa maria')) {
-                    destination = 'El Puerto';
-                } else if (msgLower.includes('rota')) {
-                    destination = 'Rota';
-                } else if (msgLower.includes('jerez')) {
-                    destination = 'Jerez';
-                } else if (msgLower.includes('sanlucar') || msgLower.includes('sanlúcar')) {
-                    destination = 'Sanlúcar';
-                } else if (msgLower.includes('chipiona')) {
-                    destination = 'Chipiona';
-                } else if (msgLower.includes('medina')) {
-                    destination = 'Medina';
-                } else if (msgLower.includes('algeciras')) {
-                    destination = 'Algeciras';
-                } else if (msgLower.includes('conil')) {
-                    destination = 'Conil';
-                } else if (msgLower.includes('tarifa')) {
-                    destination = 'Tarifa';
-                } else if (msgLower.includes('barbate')) {
-                    destination = 'Barbate';
-                } else if (msgLower.includes('vejer')) {
-                    destination = 'Vejer';
-                } else if (msgLower.includes('la linea') || msgLower.includes('la línea')) {
-                    destination = 'La Línea';
-                } else if (msgLower.includes('san roque')) {
-                    destination = 'San Roque';
-                } else if (msgLower.includes('los barrios')) {
-                    destination = 'Los Barrios';
-                }
-
-                // Determine if we should query Consorcio 5 (Campo de Gibraltar)
-                const campoGibraltarTowns = ['Algeciras', 'La Línea', 'Tarifa', 'San Roque', 'Los Barrios'];
-                if (origin && campoGibraltarTowns.includes(origin)) {
-                    idConsorcio = 5;
-                    if (origin === 'Algeciras') targetIdParadas = [1];
-                    else if (origin === 'La Línea') targetIdParadas = [116];
-                    else if (origin === 'Tarifa') targetIdParadas = [143];
-                    else if (origin === 'San Roque') targetIdParadas = [85];
-                } else if (!origin && campoGibraltarTowns.includes(destination) && (msgLower.includes('desde') || msgLower.includes('salidas de'))) {
-                    // E.g. "salidas desde Tarifa" -> Shows next departures from Tarifa
-                    idConsorcio = 5;
-                    if (msgLower.includes('tarifa')) targetIdParadas = [143];
-                    else if (msgLower.includes('algeciras')) targetIdParadas = [1];
-                    else if (msgLower.includes('la linea') || msgLower.includes('la línea')) targetIdParadas = [116];
-                    destination = null; // Show all departures
-                }
-
-                if (destination || origin || (idConsorcio === 5)) {
-                    // Check if it is outside the CTAN Bahía de Cádiz consortium (static fallback from Cádiz capital)
-                    const staticRoutes: Record<string, any> = {
-                        'Algeciras': {
-                            title: 'Horarios Cádiz - Algeciras',
-                            badge: '🚌 Horarios Generales',
-                            content: 'Aquí tienes los horarios habituales de la línea Cádiz - Algeciras (operado por Transportes Comes):',
-                            listItems: [
-                                { title: '07:00, 09:00, 11:30', subtitle: 'Salidas de Mañana (Directo / Ruta)', icon: '🚌' },
-                                { title: '14:00, 15:30, 17:30, 20:00', subtitle: 'Salidas de Tarde (Directo / Ruta)', icon: '🚌' },
-                                { title: '1h 45m (Directo) / 2h 30m (Ruta)', subtitle: 'Duración estimada del viaje', icon: '⏱️' }
-                            ]
-                        },
-                        'Conil': {
-                            title: 'Horarios Cádiz - Conil',
-                            badge: '🚌 Horarios Generales',
-                            content: 'Aquí tienes los horarios habituales de la línea Cádiz - Conil de la Frontera (operado por Comes):',
-                            listItems: [
-                                { title: '08:00, 09:30, 11:00, 12:30', subtitle: 'Salidas de Mañana', icon: '🚌' },
-                                { title: '14:00, 16:00, 18:30, 20:00, 21:30', subtitle: 'Salidas de Tarde/Noche', icon: '🚌' },
-                                { title: '50 minutos', subtitle: 'Duración estimada del viaje', icon: '⏱️' }
-                            ]
-                        },
-                        'Tarifa': {
-                            title: 'Horarios Cádiz - Tarifa',
-                            badge: '🚌 Horarios Generales',
-                            content: 'Aquí tienes los horarios habituales de la línea Cádiz - Tarifa (operado por Comes):',
-                            listItems: [
-                                { title: '07:00, 09:00, 11:30', subtitle: 'Salidas de Mañana', icon: '🚌' },
-                                { title: '14:00, 15:30, 17:30, 20:00', subtitle: 'Salidas de Tarde/Noche', icon: '🚌' },
-                                { title: '1h 30m', subtitle: 'Duración estimada del viaje', icon: '⏱️' }
-                            ]
-                        }
-                    };
-
-                    if (!origin && destination && staticRoutes[destination]) {
-                        const card = {
-                            cardType: 'ListCard',
-                            ...staticRoutes[destination],
-                            intentCategory: 'Transporte y movilidad',
-                            suggestedBlocks: ['Ver paradas cercanas', '¿Cuánto cuesta el billete?']
-                        };
-                        return new Response(JSON.stringify(card), {
-                            status: 200,
-                            headers: { 'Content-Type': 'application/json' }
-                        });
-                    }
-
-                    // Otherwise, fetch live CTAN API (Consorcio 2 or 5)
-                    let allServices = [];
-                    for (const stopId of targetIdParadas) {
-                        try {
-                            const res = await fetch(`http://api.ctan.es/v1/Consorcios/${idConsorcio}/paradas/${stopId}/servicios`, { signal: AbortSignal.timeout(4000) });
-                            const json = await res.json();
-                            if (json && json.servicios) {
-                                allServices = allServices.concat(json.servicios);
-                            }
-                        } catch (e) {
-                            console.error(`Error querying CTAN stop ${stopId} on Consorcio ${idConsorcio}:`, e);
-                        }
-                    }
-
-                    // Filter matching destinations if specified
-                    let upcoming = allServices;
-                    if (destination) {
-                        upcoming = allServices.filter((s: any) => 
-                            s.destino && s.destino.toLowerCase().includes(destination.toLowerCase())
-                        );
-                    }
-
-                    // Sort by departure time
-                    upcoming.sort((a: any, b: any) => a.servicio.localeCompare(b.servicio));
-
-                    // Map to card items
-                    const listItems = upcoming.slice(0, 4).map((s: any) => ({
-                        title: `${s.servicio} - Línea ${s.linea}`,
-                        subtitle: s.nombre,
-                        icon: icon
-                    }));
-
-                    if (listItems.length > 0) {
-                        const labelDest = destination || (origin ? `Salidas desde ${origin}` : 'Parada');
-                        const card = {
-                            cardType: 'ListCard',
-                            content: destination 
-                                ? `Aquí tienes las próximas salidas en tiempo real desde ${origin || 'Cádiz'} hacia ${destination}:`
-                                : `Aquí tienes las próximas salidas en tiempo real desde la estación de ${origin || 'esta parada'}:`,
-                            title: `Salidas a ${labelDest} (Tiempo Real)`,
-                            badge: isCatamaran ? '⛴️ Catamarán en Vivo' : '🚌 Autobuses en Vivo',
-                            listItems: listItems,
-                            intentCategory: 'Transporte y movilidad',
-                            suggestedBlocks: ['Ver paradas cercanas', '¿Y para volver?']
-                        };
-
-                        return new Response(JSON.stringify(card), {
-                            status: 200,
-                            headers: { 'Content-Type': 'application/json' }
-                        });
-                    } else {
-                        const labelDest = destination || 'tu destino';
-                        const card = {
-                            cardType: 'ListCard',
-                            content: `No hay salidas programadas en las próximas horas desde la parada hacia ${labelDest} en tiempo real.`,
-                            title: `Salidas a ${labelDest}`,
-                            badge: '🚌 Transporte',
-                            listItems: [
-                                { title: 'Sin servicios inminentes', subtitle: 'Prueba a consultar horarios generales o usa otra línea.', icon: '⚠️' }
-                            ],
-                            intentCategory: 'Transporte y movilidad'
-                        };
-                        return new Response(JSON.stringify(card), {
-                            status: 200,
-                            headers: { 'Content-Type': 'application/json' }
-                        });
-                    }
-                }
-            } catch (fpError) {
-                console.error("Fast-Path Transport Error:", fpError);
-            }
-        }
-
-        if (isBeachQuery && env.DB) {
-            try {
-                let fastPathKey = null;
-                if (msgLower.includes('caleta')) {
-                    fastPathKey = 'cron_beach_1101201';
-                } else {
-                    fastPathKey = 'cron_beach_1101203';
-                }
-
-                const cacheResult = await env.DB.prepare('SELECT value FROM system_cache WHERE key = ?').bind(fastPathKey).first();
-                if (cacheResult && cacheResult.value) {
-                    const parsedData = JSON.parse(cacheResult.value as string);
-                    return new Response(JSON.stringify(parsedData), {
-                        status: 200,
-                        headers: { 'Content-Type': 'application/json' }
-                    });
-                } else {
-                    // Cache miss fallback
-                    await populateCache(env);
-                    const cacheResult2 = await env.DB.prepare('SELECT value FROM system_cache WHERE key = ?').bind(fastPathKey).first();
-                    if (cacheResult2 && cacheResult2.value) {
-                        const parsedData = JSON.parse(cacheResult2.value as string);
-                        return new Response(JSON.stringify(parsedData), {
-                            status: 200,
-                            headers: { 'Content-Type': 'application/json' }
-                        });
-                    }
-                }
-            } catch (beachError) {
-                console.error("Fast-Path Beach Error:", beachError);
-            }
-        }
 
         // ----------------------------------------------------
         // RAG VECTOR SEARCH (Cloudflare Vectorize)
@@ -411,13 +168,13 @@ ${b.content}
         const transportTool = {
             functionDeclarations: [{
                 name: "get_transport_schedule",
-                description: "Llama a esta función EXCLUSIVAMENTE cuando el usuario pregunte por horarios, próximas salidas o tiempos de espera de transporte público metropolitano desde o hacia Cádiz (ej. 'cuándo sale el catamarán', 'autobús a San Fernando', 'bus a Chiclana', 'horario al cementerio mancomunado'). Devuelve las próximas salidas reales del Consorcio de Transportes.",
+                description: "Llama a esta función EXCLUSIVAMENTE cuando el usuario pregunte por horarios, próximas salidas o tiempos de espera de transporte público metropolitano desde o hacia Cádiz o el Campo de Gibraltar (ej. 'cuándo sale el catamarán', 'autobús a San Fernando', 'bus a Chiclana', 'horario al cementerio mancomunado', 'autobus de Tarifa', 'bus de Algeciras'). Devuelve las próximas salidas reales del Consorcio de Transportes.",
                 parameters: {
                     type: SchemaType.OBJECT,
                     properties: {
                         route: {
                             type: SchemaType.STRING,
-                            description: "La ruta solicitada. Debe ser uno de los siguientes valores exactos: 'catamaran_puerto', 'catamaran_rota', 'bus_sanfernando', 'bus_chiclana', 'bus_puertoreal', 'bus_cementerio_ida', 'bus_cementerio_vuelta'."
+                            description: "La ruta solicitada. Debe ser uno de los siguientes valores exactos: 'catamaran_puerto', 'catamaran_rota', 'bus_sanfernando', 'bus_chiclana', 'bus_puertoreal', 'bus_cementerio_ida', 'bus_cementerio_vuelta', 'bus_algeciras', 'bus_lalinea', 'bus_tarifa'."
                         }
                     },
                     required: ["route"]
@@ -426,7 +183,7 @@ ${b.content}
         };
 
         let responseText = '';
-        let currentModel = env.GEMINI_MODEL || 'gemini-3.5-flash';
+        let currentModel = 'gemini-3.5-flash';
         let latencyMs = 0;
         let tokensUsed = 0;
         const startTime = Date.now();
@@ -437,12 +194,7 @@ ${b.content}
                 generationConfig: {
                     temperature: 0.1
                 },
-                tools: [beachTool, transportTool, { googleSearch: {} }],
-                toolConfig: {
-                    functionCallingConfig: { mode: "AUTO" },
-                    include_server_side_tool_invocations: true,
-                    includeServerSideToolInvocations: true
-                }
+                tools: [beachTool, transportTool]
             });
 
             let response = await model.generateContent({
@@ -490,6 +242,7 @@ ${b.content}
                 } else if (call.name === 'get_transport_schedule') {
                     const route = call.args.route;
                     let idParada = null;
+                    let consorcioId = 2; // Por defecto Bahía de Cádiz
                     let targetDestino = null;
 
                     if (route === 'catamaran_puerto') { idParada = 193; targetDestino = 'El Puerto'; }
@@ -499,27 +252,89 @@ ${b.content}
                     else if (route === 'bus_puertoreal') { idParada = 300; targetDestino = 'Puerto Real'; }
                     else if (route === 'bus_cementerio_ida') { idParada = 300; targetDestino = 'Cementerio'; }
                     else if (route === 'bus_cementerio_vuelta') { idParada = 56; targetDestino = 'Cádiz'; }
+                    // Campo de Gibraltar
+                    else if (route === 'bus_algeciras') { idParada = 1; consorcioId = 5; targetDestino = 'Algeciras'; }
+                    else if (route === 'bus_lalinea') { idParada = 116; consorcioId = 5; targetDestino = 'La Línea'; }
+                    else if (route === 'bus_tarifa') { idParada = 143; consorcioId = 5; targetDestino = 'Tarifa'; }
                     
                     if (idParada) {
                         try {
-                            const res = await fetch(`http://api.ctan.es/v1/Consorcios/2/paradas/${idParada}/servicios`, { signal: AbortSignal.timeout(5000) });
-                            const json = await res.json();
-                            if (json && json.servicios) {
-                                let upcoming = json.servicios;
+                            const cacheKey = `transport_${consorcioId}_${idParada}`;
+                            const cacheResult = await env.DB.prepare('SELECT value, updated_at FROM system_cache WHERE key = ?').bind(cacheKey).first();
+                            
+                            let servicios = null;
+                            let needsRevalidate = false;
+                            
+                            if (cacheResult && cacheResult.value) {
+                                servicios = JSON.parse(cacheResult.value);
+                                const updatedAt = new Date(cacheResult.updated_at).getTime();
+                                // Si tiene más de 10 minutos se revalida
+                                if (Date.now() - updatedAt > 10 * 60 * 1000) {
+                                    needsRevalidate = true;
+                                }
+                            } else {
+                                needsRevalidate = true;
+                            }
+                            
+                            const revalidate = async () => {
+                                try {
+                                    const res = await fetch(`http://api.ctan.es/v1/Consorcios/${consorcioId}/paradas/${idParada}/servicios`, { signal: AbortSignal.timeout(5000) });
+                                    if (res.ok) {
+                                        const json = await res.json();
+                                        if (json && json.servicios) {
+                                            const upsertQuery = `
+                                                INSERT INTO system_cache (key, value) 
+                                                VALUES (?, ?)
+                                                ON CONFLICT(key) DO UPDATE SET 
+                                                    value = excluded.value, 
+                                                    updated_at = CURRENT_TIMESTAMP;
+                                            `;
+                                            await env.DB.prepare(upsertQuery).bind(cacheKey, JSON.stringify(json.servicios)).run();
+                                            return json.servicios;
+                                        }
+                                    }
+                                } catch (err) {
+                                    console.error("Error revalidando transportes en background:", err);
+                                }
+                                return null;
+                            };
+                            
+                            if (needsRevalidate) {
+                                if (servicios) {
+                                    // SWR (Stale-While-Revalidate): devolvemos los datos cacheados y refrescamos en background
+                                    context.waitUntil(revalidate());
+                                } else {
+                                    // Si no hay caché de ningún tipo, hacemos fetch síncrono
+                                    servicios = await revalidate();
+                                }
+                            }
+                            
+                            if (servicios) {
+                                const formatter = new Intl.DateTimeFormat("es-ES", {
+                                    timeZone: "Europe/Madrid",
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                    hour12: false
+                                });
+                                const nowMadrid = formatter.format(new Date()).trim();
+                                
+                                // Filtrar viajes que sean a partir de la hora actual de Madrid
+                                let upcoming = servicios.filter(s => s.servicio && s.servicio >= nowMadrid);
+                                
                                 if (targetDestino) {
                                     upcoming = upcoming.filter(s => s.destino && s.destino.toLowerCase().includes(targetDestino.toLowerCase()));
                                 }
                                 
                                 toolResponseData = {
                                     ruta_solicitada: route,
-                                    parada_origen: json.servicios[0] ? json.servicios[0].nombreParada || `Parada ${idParada}` : 'Desconocida',
+                                    parada_origen: servicios[0] ? servicios[0].nombreParada || `Parada ${idParada}` : 'Desconocida',
                                     proximas_salidas: upcoming.slice(0, 3).map(s => ({
                                         hora: s.servicio,
                                         linea: s.linea,
                                         destino: s.destino,
                                         nombre_ruta: s.nombre
                                     })),
-                                    fuente: "Consorcio de Transportes de Andalucía (CTAN en vivo)"
+                                    fuente: needsRevalidate && !cacheResult ? "Consorcio de Transportes (Live)" : "Consorcio de Transportes (Caché D1)"
                                 };
                             }
                         } catch(e) {
@@ -553,12 +368,7 @@ ${b.content}
                             responseSchema: schema,
                             temperature: 0.1
                         },
-                        tools: [beachTool, transportTool, { googleSearch: {} }],
-                        toolConfig: {
-                            functionCallingConfig: { mode: "AUTO" },
-                            include_server_side_tool_invocations: true,
-                            includeServerSideToolInvocations: true
-                        }
+                        tools: [beachTool, transportTool]
                     });
 
                     response = await model.generateContent({
