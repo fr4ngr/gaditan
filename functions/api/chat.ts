@@ -252,9 +252,23 @@ ${b.content}
                                 }
                                 
                                 const nextTimes = upcoming.slice(0, 3).map(s => s.servicio).join(', ');
+                                
+                                let subtitleText = 'No hay más salidas programadas para hoy';
+                                if (servicios.length === 0) {
+                                    if (item.route.includes('cementerio')) {
+                                        subtitleText = 'Hoy no hay servicio para esta línea (solo opera los sábados, domingos y festivos)';
+                                    } else {
+                                        subtitleText = 'Hoy no hay salidas programadas para esta línea';
+                                    }
+                                } else if (upcoming.length === 0) {
+                                    subtitleText = 'Hoy ya han finalizado todas las salidas de esta línea';
+                                } else {
+                                    subtitleText = `Próximas salidas: ${nextTimes}`;
+                                }
+
                                 listItems.push({
                                     title: item.name,
-                                    subtitle: nextTimes ? `Próximas salidas: ${nextTimes}` : 'No hay más salidas programadas para hoy',
+                                    subtitle: subtitleText,
                                     icon: item.route.startsWith('catamaran') ? '🚢' : '🚌'
                                 });
                             }
