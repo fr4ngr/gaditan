@@ -195,7 +195,7 @@ ${b.content}
         const isTransportQuery = msgLower.includes('bus') || msgLower.includes('autobús') || msgLower.includes('autobuses') || msgLower.includes('catamaran') || msgLower.includes('catamarán') || msgLower.includes('barco') || msgLower.includes('barquito') || msgLower.includes('horario') || msgLower.includes('salidas') || msgLower.includes('líneas') || msgLower.includes('lineas');
         const isBeachQuery = msgLower.includes('playa') || msgLower.includes('caleta') || msgLower.includes('victoria') || msgLower.includes('cortadura') || msgLower.includes('santa maría') || msgLower.includes('oleaje') || msgLower.includes('olas');
 
-        if ((isTransportQuery || isBeachQuery) && (!body.history || body.history.length <= 2)) {
+        if (isTransportQuery || isBeachQuery) {
             try {
                 if (isTransportQuery) {
                     const destinationsToSearch = [];
