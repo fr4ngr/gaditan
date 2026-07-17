@@ -187,7 +187,143 @@ ${b.content}
         let latencyMs = 0;
         let tokensUsed = 0;
         const startTime = Date.now();
-        
+
+        // ----------------------------------------------------
+        // 0. FAST-PATH INTENT ROUTER (Bypasses Gemini entirely for zero-latency)
+        // ----------------------------------------------------
+        const msgLower = userMessage.toLowerCase().trim();
+        const isTransportQuery = msgLower.includes('bus') || msgLower.includes('autobús') || msgLower.includes('autobuses') || msgLower.includes('catamaran') || msgLower.includes('catamarán') || msgLower.includes('barco') || msgLower.includes('barquito') || msgLower.includes('horario') || msgLower.includes('salidas') || msgLower.includes('líneas') || msgLower.includes('lineas');
+        const isBeachQuery = msgLower.includes('playa') || msgLower.includes('caleta') || msgLower.includes('victoria') || msgLower.includes('cortadura') || msgLower.includes('santa maría') || msgLower.includes('oleaje') || msgLower.includes('olas');
+
+        if ((isTransportQuery || isBeachQuery) && (!body.history || body.history.length <= 2)) {
+            try {
+                if (isTransportQuery) {
+                    const destinationsToSearch = [];
+                    if (msgLower.includes('rota')) destinationsToSearch.push({ route: 'catamaran_rota', idParada: 193, consorcioId: 2, targetDestino: 'Rota', name: '🚢 Catamarán a Rota' });
+                    if (msgLower.includes('puerto')) destinationsToSearch.push({ route: 'catamaran_puerto', idParada: 193, consorcioId: 2, targetDestino: 'El Puerto', name: '🚢 Catamarán a El Puerto' });
+                    if (msgLower.includes('san fernando') || msgLower.includes('la isla')) destinationsToSearch.push({ route: 'bus_sanfernando', idParada: 300, consorcioId: 2, targetDestino: 'San Fernando', name: '🚌 Autobús a San Fernando' });
+                    if (msgLower.includes('chiclana')) destinationsToSearch.push({ route: 'bus_chiclana', idParada: 300, consorcioId: 2, targetDestino: 'Chiclana', name: '🚌 Autobús a Chiclana' });
+                    if (msgLower.includes('puerto real')) destinationsToSearch.push({ route: 'bus_puertoreal', idParada: 300, consorcioId: 2, targetDestino: 'Puerto Real', name: '🚌 Autobús a Puerto Real' });
+                    if (msgLower.includes('cementerio')) {
+                        if (msgLower.includes('vuelta') || msgLower.includes('regreso') || msgLower.includes('volver')) {
+                            destinationsToSearch.push({ route: 'bus_cementerio_vuelta', idParada: 56, consorcioId: 2, targetDestino: 'Cádiz', name: '🚌 Autobús Cementerio ➔ Cádiz' });
+                        } else {
+                            destinationsToSearch.push({ route: 'bus_cementerio_ida', idParada: 300, consorcioId: 2, targetDestino: 'Cementerio', name: '🚌 Autobús Cádiz ➔ Cementerio' });
+                        }
+                    }
+                    if (msgLower.includes('algeciras')) destinationsToSearch.push({ route: 'bus_algeciras', idParada: 1, consorcioId: 5, targetDestino: 'Algeciras', name: '🚌 Autobús a Algeciras' });
+                    if (msgLower.includes('linea') || msgLower.includes('línea')) destinationsToSearch.push({ route: 'bus_lalinea', idParada: 116, consorcioId: 5, targetDestino: 'La Línea', name: '🚌 Autobús a La Línea' });
+                    if (msgLower.includes('tarifa')) destinationsToSearch.push({ route: 'bus_tarifa', idParada: 143, consorcioId: 5, targetDestino: 'Tarifa', name: '🚌 Autobús a Tarifa' });
+
+                    if (destinationsToSearch.length > 0) {
+                        const listItems = [];
+                        for (const item of destinationsToSearch) {
+                            const cacheKey = `transport_${item.consorcioId}_${item.idParada}`;
+                            const cacheResult = await env.DB.prepare('SELECT value, updated_at FROM system_cache WHERE key = ?').bind(cacheKey).first();
+                            
+                            let servicios = null;
+                            if (cacheResult && cacheResult.value) {
+                                servicios = JSON.parse(cacheResult.value);
+                            } else {
+                                const res = await fetch(`http://api.ctan.es/v1/Consorcios/${item.consorcioId}/paradas/${item.idParada}/servicios`, { signal: AbortSignal.timeout(4000) }).catch(() => null);
+                                if (res && res.ok) {
+                                    const json = await res.json();
+                                    if (json && json.servicios) {
+                                        servicios = json.servicios;
+                                        context.waitUntil(env.DB.prepare(`
+                                            INSERT INTO system_cache (key, value) VALUES (?, ?)
+                                            ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = CURRENT_TIMESTAMP
+                                        `).bind(cacheKey, JSON.stringify(servicios)).run());
+                                    }
+                                }
+                            }
+                            
+                            if (servicios) {
+                                const formatter = new Intl.DateTimeFormat("es-ES", {
+                                    timeZone: "Europe/Madrid",
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                    hour12: false
+                                });
+                                const nowMadrid = formatter.format(new Date()).trim();
+                                let upcoming = servicios.filter(s => s.servicio && s.servicio >= nowMadrid);
+                                if (item.targetDestino) {
+                                    upcoming = upcoming.filter(s => s.destino && s.destino.toLowerCase().includes(item.targetDestino.toLowerCase()));
+                                }
+                                
+                                const nextTimes = upcoming.slice(0, 3).map(s => s.servicio).join(', ');
+                                listItems.push({
+                                    title: item.name,
+                                    subtitle: nextTimes ? `Próximas salidas: ${nextTimes}` : 'No hay más salidas programadas para hoy',
+                                    icon: item.route.startsWith('catamaran') ? '🚢' : '🚌'
+                                });
+                            }
+                        }
+
+                        if (listItems.length > 0) {
+                            const parsedData = {
+                                cardType: 'ListCard',
+                                content: `Hola, he consultado la base de datos local y aquí tienes los próximos horarios metropolitanos encontrados:`,
+                                title: 'Próximas Salidas (Caché D1)',
+                                listItems,
+                                intentCategory: 'Transporte y movilidad',
+                                suggestedBlocks: ['¿Qué tiempo hace en La Caleta?', 'Ver paradas en el mapa', '¿Cómo ir a San Fernando?']
+                            };
+
+                            if (env.DB) {
+                                context.waitUntil(env.DB.prepare(
+                                    "INSERT INTO chat_logs (user_message, bot_response, intent_category, latency_ms, tokens_used, brains_injected, input_type, ab_variant) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+                                ).bind(userMessage, parsedData.content, 'Transporte y movilidad', Date.now() - startTime, 0, 'Fast-Path Local', 'typed', activeVariant).run().catch(console.error));
+                            }
+
+                            return new Response(JSON.stringify(parsedData), {
+                                status: 200,
+                                headers: { 'Content-Type': 'application/json' }
+                            });
+                        }
+                    }
+                } else if (isBeachQuery) {
+                    let beachId = '1101203'; // Playa Victoria/Cortadura por defecto
+                    if (msgLower.includes('caleta')) beachId = '1101201';
+                    
+                    const cacheKey = `beach_${beachId}`;
+                    const cacheResult = await env.DB.prepare('SELECT value FROM system_cache WHERE key = ?').bind(cacheKey).first();
+                    
+                    if (cacheResult && cacheResult.value) {
+                        const data = JSON.parse(cacheResult.value);
+                        const parsedData = {
+                            cardType: 'TextCard',
+                            badge: '🌊 Clima de Playas',
+                            title: `Estado de la Playa: ${data.nombre}`,
+                            content: `Aquí tienes las condiciones actuales en **${data.nombre}**:\n\n` +
+                                     `• **Cielo:** ${data.estadoCielo || 'N/A'}\n` +
+                                     `• **Viento:** ${data.viento || 'N/A'}\n` +
+                                     `• **Oleaje:** ${data.oleaje || 'N/A'}\n` +
+                                     `• **Temp. Agua:** ${data.temperaturaAgua || 'N/A'}\n` +
+                                     `• **Sensación:** ${data.sensacionTermica || 'N/A'}\n` +
+                                     `• **Índice UV:** ${data.uvMax || 'N/A'}\n\n` +
+                                     `*Fuente: AEMET (Caché Rápida D1)*`,
+                            intentCategory: 'Playas',
+                            suggestedBlocks: ['Horario bus a San Fernando', 'Qué ver en Cádiz']
+                        };
+
+                        if (env.DB) {
+                            context.waitUntil(env.DB.prepare(
+                                "INSERT INTO chat_logs (user_message, bot_response, intent_category, latency_ms, tokens_used, brains_injected, input_type, ab_variant) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+                            ).bind(userMessage, parsedData.content, 'Playas', Date.now() - startTime, 0, 'Fast-Path Local', 'typed', activeVariant).run().catch(console.error));
+                        }
+
+                        return new Response(JSON.stringify(parsedData), {
+                            status: 200,
+                            headers: { 'Content-Type': 'application/json' }
+                        });
+                    }
+                }
+            } catch (fastPathErr) {
+                console.error("Fallo en enrutador rápido (Fast-Path):", fastPathErr);
+            }
+        }
+
         try {
             let model = genAI.getGenerativeModel({
                 model: currentModel,
